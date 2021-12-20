@@ -1,0 +1,8 @@
+body.mobile .screens > .addcamera{
+padding:12px 12px 0 12px;
+background:white;
+height:100%;
+overflow:auto;
+}
+
+body.mobile.addcamera #mobile-menu-btn{display:none;}

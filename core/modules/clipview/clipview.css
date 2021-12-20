@@ -1,0 +1,492 @@
+#clipplayer{
+}
+
+.screens > .clipview .plarea {
+    width: 100%;
+    max-height: 240px;
+    max-width: 320px;
+}
+
+.screens > .clipview .playerwrapper {
+    max-width: 1280px;
+    margin: 0px 20px 0 0px;
+    min-width: 320px;
+    flex: 1 5;
+}
+.screens > .clipview .ratio {
+max-height: 800px;
+max-width: calc(calc(100vh - 164px) * 640 / 358);
+}
+
+.screens > .clipview .ratio-inner {
+    position: relative;
+    height: 0;
+    border: none;
+}
+
+.screens > .clipview .ratio-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: #eee;
+    max-height: calc(100vh - 164px);
+    width: 100%;
+    height: 100%;
+}
+
+.screens > .clipview .ratio-4-3 {
+    padding-top: 56%;
+}
+
+.screens > .clipview .ratio-5-1 {
+    padding-top: 20%;
+}
+
+
+.screens > .clipview{
+width:100%;
+height:100%;
+}
+.screens > .clipview .wrapper{
+width: 100%;
+    height: 100%;
+    display: flex;
+justify-content: space-between;
+}
+
+.screens > .clipview .cliplistwrapper{
+flex: 10 10;
+    margin: 0;
+    min-width: 320px;
+    position: relative;
+    background: white;
+    padding: 0 20px 0;
+max-width:400px;
+}
+@media (max-width: 860px) {
+.screens > .clipview .wrapper{
+    flex-direction: column;
+}
+.screens > .clipview .cliplistwrapper{
+max-width:initial;
+}
+}
+
+.screens > .clipview .btnarea{
+text-align:right;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+padding-top: 17px;
+}
+.screens > .clipview .btnarea > div{
+flex: 1 1;
+    border-bottom: 2px solid #E7E7E7;
+    padding: 8px 8px 20px 8px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 600;
+    color: #212227;
+    text-transform: uppercase;
+}
+
+.screens > .clipview .btnarea .addnote, .screens > .clipview .btnarea .addshare{
+    cursor:pointer;
+    text-align: center;
+
+}
+
+.screens > .clipview:not(.showedittag) .addnote,
+.screens > .clipview:not(.showshare) .addshare,
+.screens > .clipview.showedittag .shownotes, .screens > .clipview.showshare .shownotes, 
+.screens > .clipview.showedittag .showevents, .screens > .clipview.showshare .showevents, {
+display:none;
+}
+
+.screens > .clipview.showedittag .addnote,
+.screens > .clipview.showshare .addshare {
+    border-bottom: 2px solid var(--main-color);
+}
+
+.screens > .clipview .share,
+.screens > .clipview .clipedit {
+    overflow-y: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 63px;
+    bottom: 0;
+    padding: 0;
+    background: white;
+    padding: 0 20px 0;
+}
+
+.screens > .clipview .eventslist events-list{
+width:100%;
+height:100%;
+display: block;
+}
+.screens > .clipview .cliplistwrapper .shareinfo{
+    min-height: 260px;
+display:none;
+font-size: 14px;
+position:relative;
+}
+.screens > .clipview .cliplistwrapper .shareinfo table{
+width:100%;
+    margin-bottom: 10px;
+}
+.screens > .clipview .cliplistwrapper .shareinfo table td{
+padding: 10px 0;
+}
+.screens > .clipview .cliplistwrapper .share{
+overflow-wrap: break-word;
+height:auto;
+}
+.screens > .clipview .cliplistwrapper .share .sharebnts{
+text-align:center;
+margin-top:20px;
+}
+.screens > .clipview .closebtn{
+    width: 24px;
+    height: 23px;
+    background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNMCAwaDI0djI0SDBWMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMTkgNi40MUwxNy41OSA1IDEyIDEwLjU5IDYuNDEgNSA1IDYuNDEgMTAuNTkgMTIgNSAxNy41OSA2LjQxIDE5IDEyIDEzLjQxIDE3LjU5IDE5IDE5IDE3LjU5IDEzLjQxIDEyIDE5IDYuNDF6IiBmaWxsPSIjY2ZjZmNmIi8+PC9zdmc+) center center no-repeat;
+    background-size: auto;
+    position: absolute;
+    top: 23px;
+    right: 21px;
+cursor:pointer;
+}
+
+.screens > .clipview .share .shareurl{
+    min-height: 260px;
+background-color: #fafafa;
+resize: none;
+}
+
+
+.screens > .clipview .cliplist .datetime{
+    font-weight: normal;
+    color: var(--main-color);
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+.screens > .clipview .cliplist .case{
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+}
+.screens > .clipview .cliplist .desc{
+margin: 10px 0;
+    font-size: 14px;
+    word-break: break-word;
+}
+.screens > .clipview .cliplist .clip{
+    color: gray;
+    border-top: 1px dashed lightgray;
+    padding: 5px 0 0 0;
+width:100%;
+text-align:right;
+}
+
+.screens > .clipview .cliplist .noevents{
+font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    position: absolute;
+    top: 49%;
+    left: 0;
+    right: 0;
+}
+
+.screens > .clipview .cliplist .noevents a{
+color: var(--main-color);
+}
+
+body .body .rightblock .screens-wrapper.screens {
+    padding: 0;
+}
+
+.screens > .clipview:not(.showfilterclip) .clipviewfilter:not(.vxgbutton),
+.screens > .clipview:not(.showedittag) .clipedit,
+.screens > .clipview:not(.showevents) .eventslist,
+.screens > .clipview:not(.shownotes) .cliplist,
+.screens > .clipview:not(.showcreateclip) .clip:not(.vxgbutton),
+.screens > .clipview:not(.showsnapshot) .snapshot:not(.vxgbutton),
+.screens > .clipview:not(.showshare) .share:not(.vxgbutton){
+display:none;
+}
+
+.screens > .clipview time-line-picker{
+display: block;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 62px;
+    min-width: 300px;    border: 1px solid lightgray;
+    background: rgb(244, 246, 250);
+}
+
+.screens > .clipview .info{
+margin: 13px 0;
+    color: var(--main-color);
+    font-weight: bold;
+}
+
+.screens > .clipview .clipviewfilter table,
+.screens > .clipview .clip table{
+font-size:14px;
+    width: 100%;
+margin-top: 20px;
+}
+.screens > .clipview .clipviewfilter table.inf,
+.screens > .clipview .clip table.inf{
+margin-bottom:20px;
+}
+.screens > .clipview .clipviewfilter table td,
+.screens > .clipview .clip table td{
+text-align:center;
+}
+.screens > .clipview .clipviewfilter table.inf td,
+.screens > .clipview .clip table.inf td{
+text-align:left;
+height: 30px;
+}
+.screens > .clipview .clipviewfilter span,
+.screens > .clipview .clip span{
+font-size:80%;
+}
+.screens > .clipview .clip input{
+    width: 100%;
+    padding: 5px;
+    text-align: left;
+    display: inline-block;
+}
+
+.screens > .clipview .clip textarea{
+    height:300px;
+    resize:none;
+}
+.screens > .clipview .cliptitle,.screens > .clipview .clipcase{
+width: 100%!important;
+    text-align: left!important;
+}
+
+
+.screens > .clipview .clipviewfilter,
+.screens > .clipview .clipedit,
+.screens > .clipview .clip,
+.screens > .clipview .snapshot,
+.screens > .clipview .share{
+background: white;
+flex-direction: column;
+height: auto;
+}
+.screens > .clipview .clipedit{
+display:flex;
+font-size:14px;
+padding-bottom: 20px;
+}
+.screens > .clipview .clipedit table{
+    margin-bottom: 15px;
+    margin-top: 10px;
+    border-collapse: collapse;
+}
+.screens > .clipview .clipedit table tr td:first-child{
+line-height: 28px;
+}
+.screens > .clipview .clipedit table tr td:last-child{
+text-align:right;
+}
+.screens > .clipview .clipedit input{
+    height: 30px;
+}
+.screens > .clipview .clipedit .datetime{
+    flex: 1;
+    line-height: 1em;
+    margin-bottom: 15px;
+    color: var(--main-color);
+    font-weight: bold;
+}
+.screens > .clipview textarea, .screens > .clipview input{
+padding: 20px;
+}
+.screens > .clipview .clipedit .tagdesc{
+    min-height: 90px;
+    max-height: 260px;
+    resize: none;
+    flex:50;
+    margin-bottom: 15px;
+}
+.screens > .clipview .clipedit textarea[disabled]{
+background: none;
+}
+.screens > .clipview .savewrapper{
+    max-height: 50px;
+    flex: 1;
+    text-align: left;
+    display: block;
+    justify-content: space-between;
+}
+
+.screens > .clipview .playerwrapper{
+text-align:center;
+    padding-left: 20px;
+}
+.screens > .clipview .playerwrapper .buttons{
+display: flex;
+    white-space: nowrap;
+    justify-content: space-evenly;
+margin-bottom: 15px;
+}
+.screens > .clipview .playerwrapper .buttons button{
+margin-top: 20px;
+    margin-right: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 30%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+max-width: 125px;
+}
+
+.screens > .clipview .vxgbutton{
+    max-width: 115px;
+flex:1;
+}
+.screens > .clipview .sharebnts .vxgbutton{
+width:110px;
+}
+.screens > .clipview div > .deltag{
+display:none;
+}
+
+.screens > .clipview .ncssclipbuttons{
+display:flex;
+justify-content: space-around;
+flex-flow: wrap;
+}
+
+.ncssclipbuttons .vxgbutton{
+white-space: nowrap;
+padding: 5px 18px;
+}
+
+.screens > .clipview .text-primary {
+    color: var(--main-color)!important;
+}
+.screens > .clipview .datepicker table tr td.active.active, .datepicker table tr td.active:hover.active {
+    background-color: var(--main-color)!important;
+}
+.headerBlock .header-left .mainbackbtn{
+    display: block!important;
+}
+
+
+.screens > .clipview .edtag{
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2LjAzMTYgNC45NDk3NUwxMy4yMDMyIDIuMTIxMzJDMTIuODEyNyAxLjczMDggMTIuMTc5NSAxLjczMDggMTEuNzg5IDIuMTIxMzJMMi40MjcxOCAxMS40ODMxQzIuMjUzOTkgMTEuNjU2MyAyLjE1MDM5IDExLjg4NyAyLjEzNjAxIDEyLjEzMTVMMS44OTMxNyAxNi4yNTk4TDYuMDIxNDMgMTYuMDE2OUM2LjI2NTkyIDE2LjAwMjYgNi40OTY2NCAxNS44OTkgNi42Njk4MiAxNS43MjU4TDE2LjAzMTYgNi4zNjM5NkMxNi40MjIyIDUuOTczNDQgMTYuNDIyMiA1LjM0MDI3IDE2LjAzMTYgNC45NDk3NVpNMTMuOTEwMyAxLjQxNDIxQzEzLjEyOTMgMC42MzMxNjUgMTEuODYyOSAwLjYzMzE2NSAxMS4wODE5IDEuNDE0MjFMMS43MjAwNyAxMC43NzZDMS4zNzM3MSAxMS4xMjI0IDEuMTY2NSAxMS41ODM4IDEuMTM3NzMgMTIuMDcyOEwwLjg5NDg5NCAxNi4yMDExQzAuODU5NzM0IDE2Ljc5ODggMS4zNTQxNyAxNy4yOTMyIDEuOTUxODkgMTcuMjU4MUw2LjA4MDE1IDE3LjAxNTJDNi41NjkxNCAxNi45ODY1IDcuMDMwNTYgMTYuNzc5MiA3LjM3NjkyIDE2LjQzMjlMMTYuNzM4NyA3LjA3MTA3QzE3LjUxOTggNi4yOTAwMiAxNy41MTk4IDUuMDIzNjkgMTYuNzM4NyA0LjI0MjY0TDEzLjkxMDMgMS40MTQyMVoiIGZpbGw9IiNCM0IzQjMiLz48cGF0aCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGQ9Ik0xMCAzLjVMMTQuNSA4IiBzdHJva2U9IiNCM0IzQjMiLz48L3N2Zz4=);
+    width: 23px;
+    height: 20px;
+    float: right;
+    margin-top: 5px;
+}
+
+.screens > .clipview .delete-title{
+    position: relative;
+    height: 100%;
+    color: #000000;
+    text-align: center;
+    padding: 13px 0px 0px 0px;
+}
+
+.ncssclipbuttons .downloadclip:focus {
+    outline: 0px;
+}
+
+.screens > .clipview .delete-header {
+    position: relative;
+    height: 40px;
+    border-color: #cfcfcf;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
+    margin-left: 32px;
+    margin-right: 32px;
+    font-size: 16px;
+}
+
+.screens > .clipview .clip-delete-dialog.visible {
+    display: block;
+}
+
+.screens > .clipview .clip-delete-dialog {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 5;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgb(0 0 0 / 20%);
+    transform: translate(-50%,-50%);
+}
+
+.screens > .clipview .delete-table {
+    padding: 5px 30px 10px 30px;
+}
+
+.screens > .clipview .delete-table > tbody > tr { 
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+.screens > .clipview .delete-clip-confirm {
+    display: inline-block;
+}
+
+.screens > .clipview .delete-clip-confirm ,
+.screens > .clipview .delete-clip-cancel  {
+    /*width: 100px;*/
+    text-align: center;
+}
+body.clipview .body .rightblock .screens-wrapper.screens{
+margin-right:0;
+}
+
+.smalltitle{
+font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    color: #B3B3B3;
+}
+
+body.clipview.mobile .screens{
+    margin-top: 0!important;
+}
+
+body.clipview.mobile .screens > .clipview .playerwrapper{
+    padding-left: 0!important;
+    margin-right: 0!important;
+}
+
+.clipview .ncssclipbuttons{
+white-space: nowrap;
+}
+
+.toclipboard{
+position: absolute;
+    right: 4px;
+    bottom: 4px;
+    cursor: pointer;
+}
+
+body.mobile.clipview .deleteclip span,
+body.mobile.clipview .downloadclip span{
+display:none;
+}
+
+
+body.mobile.clipview #mobile-menu-btn{display:none;}
+body.mobile.clipview .rightblock .headerBlock{padding-right:0;}

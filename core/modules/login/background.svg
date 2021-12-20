@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+			viewBox="0 0 1920 1080"
+			fill="none"
+			preserveAspectRatio="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<mask
+				id="mask0"
+				mask-type="alpha"
+				maskUnits="userSpaceOnUse"
+				x="0"
+				y="0"
+				width="1920"
+				height="1080"
+			>
+				<rect width="1920" height="1080" fill="#C4C4C4" />
+			</mask>
+			<g mask="url(#mask0)">
+				<path
+					d="M0 0H1920V206.5C1920 206.5 1636 436 960 643.25C284 850.5 0 1080 0 1080V0Z"
+					fill="url(#paint0_radial)"
+				/>
+				<path
+					d="M-222 -448H1698V-241.5L-222 632V-448Z"
+					fill="url(#paint1_linear)"
+				/>
+				<path
+					opacity="0.05"
+					d="M1264 513L1938 0V206.5L1264 513Z"
+					fill="url(#paint2_linear)"
+				/>
+				<path
+					opacity="0.05"
+					d="M0 932.5L867.5 672C867.5 672 559.5 772.5 353.5 875.5C131.975 976.255 0 1080.5 0 1080.5V932.5Z"
+					fill="#F9FAF7"
+				/>
+				<path
+					opacity="0.07"
+					d="M1919.5 259.5L1920 207C1920 207 1836.5 278 1575 407.5C1474 460.5 1184 569.5 1184 569.5C1184 569.5 1401 502 1545 441C1689 380 1919.5 259.5 1919.5 259.5Z"
+					fill="#191A18"
+				/>
+			</g>
+			<defs>
+				<radialGradient
+					id="paint0_radial"
+					cx="0"
+					cy="0"
+					r="1"
+					gradientUnits="userSpaceOnUse"
+					gradientTransform="translate(910.5 330) rotate(140.521) scale(1179.62 2682.66)"
+				>
+					<stop stop-color="#27282E" />
+					<stop offset="1" stop-color="#212227" />
+				</radialGradient>
+				<linearGradient
+					id="paint1_linear"
+					x1="662"
+					y1="-114"
+					x2="-897.23"
+					y2="1350.27"
+					gradientUnits="userSpaceOnUse"
+				>
+					<stop stop-color="#F0F2ED" stop-opacity="0" />
+					<stop offset="1" stop-color="#F0F2ED" stop-opacity="0.07" />
+				</linearGradient>
+				<linearGradient
+					id="paint2_linear"
+					x1="3515"
+					y1="-481.5"
+					x2="1123.5"
+					y2="513"
+					gradientUnits="userSpaceOnUse"
+				>
+					<stop stop-color="#F7FAF5" />
+					<stop offset="1" stop-color="#F0F2ED" stop-opacity="0" />
+				</linearGradient>
+			</defs>
+		</svg>

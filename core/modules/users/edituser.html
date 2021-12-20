@@ -1,0 +1,38 @@
+<div class="maxwidth">
+<form>
+<div class="form-group">
+    <label>User name</label>
+    <input autofocus="autofocus" name="username" >
+</div>
+<div class="form-group">
+    <label>Email</label>
+    <input name="email" >
+</div>
+<div class="form-group pass">
+    <label>Password</label>
+    <input name="password" type="password">
+</div>
+<div class="form-group">
+    <label>Address</label>
+    <input name="address" >
+</div>
+<div class="form-group" style="position:relative">
+    <label>Phone</label>
+    <div class="phoneprefix">+1</div>
+    <input type="number" name="phone" placeholder="9876543210">
+</div>
+
+<div class="form-group">
+    <label class="week_shedule">Week shedule</label><br/>
+    <week-sheduler name="shedule"></week-sheduler>
+<br><i>you will receive automated phone calls if your cameras detect people during these hours</i>
+</div>
+
+<div class="form-group">
+    <label>Notes</label>
+    <textarea name="desc" rows="5"></textarea>
+</div>
+</form>
+</div>
+<br/><br/>
+<button class="vxgbutton" onclick_toscreen="back">Back</button>&nbsp;&nbsp;&nbsp;<button class="vxgbutton apply">Apply</button>&nbsp;&nbsp;&nbsp;<button class="vxgbutton invite">Send invite</button>

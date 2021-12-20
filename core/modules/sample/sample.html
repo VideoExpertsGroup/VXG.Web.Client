@@ -1,0 +1,45 @@
+<h2>To screen button</h2>
+Implemented in core<br/>
+<div class="code">
+&lt;button class="vxgbutton" onclick_toscreen="profile"&gt;Profile&lt;/button&gt;<br/>
+&lt;a  onclick_toscreen="users"&gt;Users&lt;/a&gt;<br/><br/>
+</div>
+Samples: <button class="vxgbutton" onclick_toscreen="profile">Profile</button>    <a href="javascript:void(0)" onclick_toscreen="users">Users</a>
+<br/><br/>
+<h2>Back button</h2>
+Implemented in core<br/>
+<div class="code">
+&lt;button class="vxgbutton" onclick_toscreen="back"&gt;Back&lt;/button&gt;<br/>
+&lt;a  onclick_toscreen="back"&gt;Back&lt;/a&gt;<br/><br/>
+</div>
+Samples: <button class="vxgbutton" onclick_toscreen="back">Back</button>    <a href="javascript:void(0)" onclick_toscreen="back">Back</a>
+<br/><br/>
+<h2>Sign out button</h2>
+Implemented in "login" module<br/>
+<div class="code">
+&lt;button class="vxgbutton" onclick_logout&gt;Sign out&lt;/button&gt;<br/>
+&lt;a onclick_logout&gt;Sign out&lt;/a&gt;<br/><br/>
+</div>
+Samples: <button class="vxgbutton" onclick_logout>Sign out</button>    <a href="javascript:void(0)" onclick_logout>Sign out</a>
+<br/><br/>
+
+<h2>Camera preview with click-to-player event</h2>
+Implemented in "player" module. The camera token necessary for the module to work is set using the "camtoken" attribute. If the attribute is absent in the current element, the module will look for the attribute in the parent elements<br/>
+<div class="code">
+&lt;div access_token="eyJhY..."&gt;&lt;campreview onclick_toscreen="player"&gt;&lt;/campreview&gt;&lt;/div&gt;<br/>
+&lt;div access_token="217757"&gt;&lt;campreview onclick_toscreen="player"&gt;&lt;/campreview&gt;&lt;/div&gt;<br/>
+&lt;div access_token="+1"&gt;&lt;campreview onclick_toscreen="player"&gt;&lt;/campreview&gt;&lt;camfield field="name"&gt;&lt;/camfield&gt;/div&gt;
+<br/><br/>
+</div>
+Sample of first camera from "all cams token" of this user:<br/><br/><div access_token="+0"><campreview onclick_toscreen="player"></campreview><camfield field="name"></camfield> [<camfield field="channelID"></camfield>]</div><br/>
+Sample of second camera from "all cams token" of this user:<br/><br/><div access_token="+5"><campreview onclick_toscreen="player" ></campreview><camfield field="name"></camfield> [<camfield field="channelID"></camfield>]</div>
+<br/><br/>
+
+<h2>Custom element</h2>
+Sample of custom element "timer". Implemented in "sample" module<br/>
+<div class="code">
+&lt;timer/&gt;<br/><br/>
+</div>
+Sample: <timer/>
+<br/><br/>
+

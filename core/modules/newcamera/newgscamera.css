@@ -1,0 +1,123 @@
+newgscamera input, newgscamera select, newgscamera textarea {
+    background-color: #FFFFFF;
+    background-image: none;
+    border: 1px solid #ced4da;
+    border-radius: 1px;
+    color: inherit;
+    display: block;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    width: 100%;
+    box-sizing: border-box;
+outline: none;
+}
+newgscamera input:focus, newgscamera select:focus, newgscamera textarea:focus {
+border-color: #1779B3 !important;
+}
+
+newgscamera{
+    font-size: 12px;
+    font-weight: bold;
+font-family: 'Montserrat', sans-serif;
+    display: block;
+}
+newgscamera:not(.newcamera) .type a{
+display:none;
+}
+
+newgscamera:not(.ready) form{
+display:none;
+}
+
+newgscamera.onvif .rtspOnly{
+display:none;
+}
+newgscamera.cloud .notincloud{
+display:none;
+}
+newgscamera.rtsp .onvifOnly{
+display:none;
+}
+newgscamera.rtsp:not(.options) .options{
+display:none;
+}
+newgscamera .anccsUrlOptions{
+cursor: pointer;
+color: var(--main-color);
+}
+newgscamera .anccsUrlOptions:hover{
+font-weight:bold;
+}
+newgscamera .anccsUrlOptions:after{
+content:' >';
+}
+newgscamera.options .anccsUrlOptions:after{
+content:' <';
+}
+
+newgscamera:not(.wait) .wait, newgscamera.wait .apply, newgscamera.nodata form{
+display:none;
+}
+newgscamera.wait{
+}
+newgscamera.wait input, newgscamera.wait button, newgscamera.wait select, newgscamera.wait label.en{
+pointer-events: none;
+background:none;
+}
+newgscamera.wait label.en{
+margin-bottom:0;
+}
+
+newgscamera .wait a{
+color:blue;
+}
+
+newgscamera .wait{
+    color: black;
+    display: inline-block;
+}
+
+newgscamera.wait input{
+    pointer-events:none;
+}
+newgscamera .wait .spinner{
+width: 25px;
+    height: 13px;
+    display: inline-block;
+}
+
+newgscamera .spinner{
+background: url(spinner.gif) center center no-repeat!important;
+}
+newgscamera a, newgscamera a:hover{
+    color: var(--main-color);
+}
+
+.newcamera input:before {
+    cursor: pointer;
+    content: '';
+    width: 20px;
+    height: 20px;
+    align-items: center;
+    margin-left: -26px;
+    margin-top: 3px;
+    display: inline-block;
+background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIj48cmVjdCB4PSIwLjQiIHk9IjAuNCIgd2lkdGg9IjE5LjIiIGhlaWdodD0iMTkuMiIgcng9IjUuNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiLz48L3N2Zz4=) bottom no-repeat;
+background-size: cover!important;
+}
+.newcamera input:checked:before {
+background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMiAyIDIwIDIwIiBmaWxsPSJub25lIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDJDNC42ODYyOSAyIDIgNC42ODYyOSAyIDhWMTZDMiAxOS4zMTM3IDQuNjg2MjkgMjIgOCAyMkgxNkMxOS4zMTM3IDIyIDIyIDE5LjMxMzcgMjIgMTZWOEMyMiA0LjY4NjI5IDE5LjMxMzcgMiAxNiAySDhaTTcuNzE3MTYgMTIuMjgzTDEwLjU0NTYgMTUuMTExNEMxMC43MDE4IDE1LjI2NzYgMTAuOTU1MSAxNS4yNjc2IDExLjExMTMgMTUuMTExNEwxNi43NjgxIDkuNDU0NTNMMTYuMjAyNCA4Ljg4ODg1TDEwLjgyODQgMTQuMjYyOUw4LjI4Mjg1IDExLjcxNzNMNy43MTcxNiAxMi4yODNaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=) bottom no-repeat;
+}
+
+.newcamera input[disabled]:before{
+    cursor: default;
+}
+
+
+.newcamera input.svgbtnbefore {
+    margin-top: 3px;
+    margin-left: 26px;
+    position: relative;
+    height: 0;
+    width: 0;
+}

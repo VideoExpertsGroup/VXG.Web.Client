@@ -1,0 +1,76 @@
+<div class="wrapper">
+    <div class="playerwrapper">
+<!--        <div class="tonewver" title="To other player version"></div>-->
+        <k-player class="mainkplayer" autoprop thumbnails controls="k-control-zoom k-control-play k-control-speed k-control-timeinfo k-control-timepicker k-control-fullscreen k-control-volume" videomodule="k-video-vxg" options="{&quot;left_prefetch&quot;:1,&quot;right_prefetch&quot;:1,&quot;video_limit&quot;:100,&quot;max_buffer_size&quot;:1000}"></k-player>
+        <div class="ratio">
+            <div class="ratio-inner ratio-4-3">
+                <div id="tagsplayer" class="ratio-content" style="background-color: #000;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="tagslistwrapper">
+        <div class="btnarea"><div class="showevents">Events</div><div class="shownotes">Notes</div><div class="addnote">Add note<div class="closebtn svgbtn"></div></div><div class="addclip">Create clip<div class="closebtn svgbtn"></div></div><div class="addshare">Share<div class="closebtn svgbtn"></div></div><div class="setfilter">Filter<div class="closebtn svgbtn"></div></div></div>
+        <div class="tagsedit">
+            <table border=0>
+              <tr><td>Camera:</td><td class="camname"></td></tr>
+              <tr><td>Incident time:</td><td class="inctime"></td></tr>
+              <tr><td>Case:</td><td></td></tr>
+              <tr><td colspan=2 class="case"><input class="tagcase" type="text"/></td></tr>
+            </table>
+            <textarea class="tagdesc"></textarea>
+            <div class="savewrapper"><button class="vxgbutton-transparent cancel">Cancel</button>&nbsp;&nbsp;<button class="vxgbutton-transparent deltag">Delete</button>&nbsp;&nbsp;<button class="vxgbutton-transparent savetag">Save</button></div>
+        </div>
+        <div class="tagslist"></div>
+        <div class="eventslist">
+            <!-- events-list></events-list -->
+        </div>
+        <div class="tagsviewfilter">
+            <table border="0" class="inf">
+                <tr><td>Date:</td><td>
+            		<input type="text"  class="calendarStartDate" data-mask="9999/99/99" placeholder="">
+                </td></tr>
+                <tr><td>Time:</td><td>
+            		<input type="text"  class="calendarStartTime" data-mask="99:99" placeholder="">
+                </td></tr>
+                <tr><td>Period, hours:</td><td><input class="calendarPeriod" type="number" min="1" max="24" value="8"></td></tr>
+            </table>
+            <br/><br/>
+            <div class="savewrapper">
+                <button class="vxgbutton-transparent cancel">Cancel</button>&nbsp;&nbsp;&nbsp;<button class="vxgbutton-transparent clearfilterbtn">Clear filter</button>&nbsp;&nbsp;&nbsp;<button class="vxgbutton-transparent setfilterbtn">Set filter</button>
+            </div>
+        </div>
+        <div class="clip">
+            <table border="0" class="inf">
+                <tr><td>Incident time</td><td class="clipinctime"></td></tr>
+                <tr><td colspan=2>Before incident time</td></tr><tr><td colspan=2><input class="clipbefore" type="number" value="10"></td></tr>
+                <tr><td colspan=2>After incident time</td></tr><tr><td colspan=2><input class="clipafter" type="number" value="10"></td></tr>
+                <tr><td colspan=2>Name</td></tr><tr><td colspan=2><input type="text" class="cliptitle" value="" ></td></tr>
+                <tr><td colspan=2>Case</td></tr><tr><td colspan=2><input class="clipcase" type="text"/></td></tr>
+            </table>
+            <textarea></textarea>
+            <br/><br/>
+            <div class="savewrapper">
+                <button class="vxgbutton-transparent cancel">Cancel</button>&nbsp;&nbsp;&nbsp;<button class="vxgbutton-transparent createclipbtn">Create clip</button>
+            </div>
+        </div>
+        <div class="snapshot">
+            <div class="info">Snapshot time: <span class="snapshottime">2021-01-24 08:10:26 pm</span></div>
+            <time-line-picker centerutctime="1609459200000" frames="0" scale="80" class="snapshottime"></time-line-picker>
+            <br/><br/>
+            <button class="vxgbutton-transparent cancel">Cancel</button>&nbsp;&nbsp;&nbsp;<button class="vxgbutton-transparent createsnapshotbtn">Make a snapshot</button>
+        </div>
+        <div class="share">
+            <div class="sharebnts">
+            <button class="vxgbutton-transparent share1">30 min</button>&nbsp;&nbsp;&nbsp;<button class="vxgbutton-transparent share2">1 hour</button>&nbsp;&nbsp;&nbsp;<button class="vxgbutton-transparent share3">12 hour</button><br/><br/><br/>
+            </div>
+            <div class="shareinfo">
+                <table border="0">
+                    <tr><td>Created:</td><td class="sharecreated"></td></tr>
+                    <tr><td>Date of expiry:</td><td class="shareexpire"></td></tr>
+                </table>
+                <textarea disabled class="shareurl"></textarea>
+                <div class="vxgbutton-transparent toclipboard">COPY</div>
+            </div>
+        </div>
+    </div>
+</div>

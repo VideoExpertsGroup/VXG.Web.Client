@@ -1,0 +1,94 @@
+.screens > .newcamera{
+height: 100%;
+    overflow: hidden;
+    background: white;
+    padding: 25px;
+max-width:1220px;
+}
+
+body.mobile .screens > .newcamera{
+    padding: 0px 0 0px 12px;
+}
+
+.screens > .newcamera .newcameratabs{
+    overflow: hidden;
+    height: 100%;
+}
+body.mobile .screens > .newcamera .newcameratabs .maxwidth{
+}
+.screens > .newcamera .newcameratabs .add1.maxwidth{
+padding-right:25px;
+}
+.newcamerabtns{
+margin-right:12px;
+margin-bottom:20px;
+    display: flex;
+}
+.newcamerabtns .add1{
+max-width: 103px;
+    flex: 1 1 103px;
+}
+.newcamerabtns .add3{
+max-width: 116px;
+    flex: 1 1 116px;
+}
+.newcamerabtns .add2{
+    max-width: 162px;
+    flex: 1 1 162px;
+}
+body.mobile .newcamerabtns .add1,body.mobile .newcamerabtns .add2,body.mobile .newcamerabtns .add3{
+    max-width: inherit;
+}
+
+.newcameratabs > div.maxwidth{
+height: calc(100% - 46px);
+    overflow-y: auto;
+    max-width: 100%;
+padding-bottom: 25px;
+}
+
+.newcamerabtns > div{
+display: inline-block;
+    border-bottom: 2px solid #E7E7E7;
+    padding: 8px 0px 20px 0px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+    color: black;
+    cursor: pointer;
+    flex: 1 1;
+    text-align: center;
+}
+
+.newcameratabs.add1 .newcamerabtns .add1,
+.newcameratabs.add2 .newcamerabtns .add2,
+.newcameratabs.add3 .newcamerabtns .add3{
+border-bottom: 2px solid var(--main-color);
+}
+
+.newcameratabs:not(.add1) > .add1,
+.newcameratabs:not(.add2) > .add2,
+.newcameratabs:not(.add3) > .add3{
+display:none;
+}
+body.mobile .newcameratabs > .add1,
+body.mobile .newcameratabs > .add2,
+body.mobile .newcameratabs > .add3{
+    padding-right: 8px;
+}
+
+.newcameratabs h6{
+color: var(--main-color);
+margin-bottom:10px;
+}
+
+.vxgbutton.vvv{
+display: inline-block;
+    padding-top: 12px;
+    width: max-content;
+}
+body.newcamera .headerBlock .header-left .mainbackbtn{
+    display: block!important;
+}
+
+body.mobile.newcamera #mobile-menu-btn{display:none;}

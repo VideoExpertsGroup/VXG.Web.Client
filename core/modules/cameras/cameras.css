@@ -1,0 +1,569 @@
+.ratio2 {
+    width: 100%;
+}
+
+.ratio2-inner {
+    position: relative;
+    height: 0;
+    border: none;
+}
+
+.ratio2-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: #eee;
+}
+
+.ratio2-4-3 {
+    padding-top: 56%;
+}
+
+.screens > .cameras{
+width: 100%;
+    height: 100%;
+}
+body.mobile .screens > .cameras{
+padding-top:12px;
+}
+
+.screens > .cameras .cambd{
+width: 100%;
+display:flex;
+}
+
+.screens > .cameras .camlist{
+    display: flex;
+    margin: 0 0 0 0;
+    min-height: 30px;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.screens > .cameras .wrapper{
+display:none;
+}
+.screens > .cameras.grid .wrapper{
+    display:block;
+}
+
+.screens > .cameras.grid .camlist {
+flex-direction: column;
+    flex-wrap: nowrap;
+    width: 350px;
+    height: 100%;
+    padding-right: 10px;
+    overflow-y: auto;
+    margin-left: 13px;
+    min-width: 334px;
+position: relative;
+}
+
+.screens > .cameras.grid .camlist:not(.nobloor):after {
+    content: "";
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(0deg, rgb(244, 246, 250), transparent);
+    position: fixed;
+    bottom: 0;
+}
+.screens > .cameras.grid .camlist .camerablock {
+    margin: 0 0 1em 1em;
+}
+
+.screens > .cameras.grid{
+height:100%;
+}
+
+.screens > .cameras .gridmenu:focus:after {
+    transform: rotateX(180deg);
+}
+
+.header-right .gridmenu:focus { pointer-events:none; }
+.header-right .gridmenu:focus .menu-dropdown { opacity:1; visibility:visible; }
+
+body.mobile .header-right .gridmenu span, body.mobile .header-right .camerafilter span, body.mobile .header-right .addcamera span{
+display:none;
+}
+body.mobile .header-right .gridmenu:after{
+content:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KPHBhdGggZD0iTTMwLDhIMTBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjEwQzMyLDguOSwzMS4xLDgsMzAsOHogTTI4LDI4SDEyVjEyaDE2VjI4eiBNOTAsOEg3MCAgYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMlYxMEM5Miw4LjksOTEuMSw4LDkwLDh6IE04OCwyOEg3MlYxMmgxNlYyOHogTTYwLDhINDBjLTEuMSwwLTIsMC45LTIsMnYyMCAgYzAsMS4xLDAuOSwyLDIsMmgyMGMxLjEsMCwyLTAuOSwyLTJWMTBDNjIsOC45LDYxLjEsOCw2MCw4eiBNNTgsMjhINDJWMTJoMTZWMjh6IE0zMCwzOEgxMGMtMS4xLDAtMiwwLjktMiwydjIwYzAsMS4xLDAuOSwyLDIsMmgyMCAgYzEuMSwwLDItMC45LDItMlY0MEMzMiwzOC45LDMxLjEsMzgsMzAsMzh6IE0yOCw1OEgxMlY0MmgxNlY1OHogTTkwLDM4SDcwYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMiAgVjQwQzkyLDM4LjksOTEuMSwzOCw5MCwzOHogTTg4LDU4SDcyVjQyaDE2VjU4eiBNNjAsMzhINDBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjQwICBDNjIsMzguOSw2MS4xLDM4LDYwLDM4eiBNNTgsNThINDJWNDJoMTZWNTh6IE0zMCw2OEgxMGMtMS4xLDAtMiwwLjktMiwydjIwYzAsMS4xLDAuOSwyLDIsMmgyMGMxLjEsMCwyLTAuOSwyLTJWNzAgIEMzMiw2OC45LDMxLjEsNjgsMzAsNjh6IE0yOCw4OEgxMlY3MmgxNlY4OHogTTkwLDY4SDcwYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMlY3MCAgQzkyLDY4LjksOTEuMSw2OCw5MCw2OHogTTg4LDg4SDcyVjcyaDE2Vjg4eiBNNjAsNjhINDBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjcwICBDNjIsNjguOSw2MS4xLDY4LDYwLDY4eiBNNTgsODhINDJWNzJoMTZWODh6IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=)!important;
+}
+
+.header-right .camerafilter{
+width:100%;
+}
+
+.header-right .camerafilter:after {
+    content: url(/img/dropdown.svg);
+    padding: 0;
+    display: inline-block;
+margin-left: 6px;
+}
+
+body.mobile .header-right .camerafilter:after{
+content:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOS44MjU0IDUuMTQ5NjZDMTkuOTM2MiA1LjA1NDY3IDIwIDQuOTE2IDIwIDQuNzcwMDNWMC41QzIwIDAuMjIzODU4IDE5Ljc3NjEgMCAxOS41IDBIMC41QzAuMjIzODU3IDAgMCAwLjIyMzg1OCAwIDAuNVY0Ljc3MDAzQzAgNC45MTYgMC4wNjM3ODE0IDUuMDU0NjcgMC4xNzQ2MDQgNS4xNDk2Nkw2LjgyNTQgMTAuODUwM0M2LjkzNjIyIDEwLjk0NTMgNyAxMS4wODQgNyAxMS4yM1YxOS4yNUM3IDE5LjYwNjggNy4zNjI5NiAxOS44NDg4IDcuNjkyMzEgMTkuNzExNUwxMi42OTIzIDE3LjYyODJDMTIuODc4NiAxNy41NTA2IDEzIDE3LjM2ODUgMTMgMTcuMTY2N1YxMS4yM0MxMyAxMS4wODQgMTMuMDYzOCAxMC45NDUzIDEzLjE3NDYgMTAuODUwM0wxOS44MjU0IDUuMTQ5NjZaTTE4Ljg0IDQuNDY2NDhMMTIuNDE5NyA5Ljk2OTZDMTIuMDUxOCAxMC4yODUgMTEuODQgMTAuNzQ1NCAxMS44NCAxMS4yM1YxNi43MjY3TDguMTYgMTguMjZWMTEuMjNDOC4xNiAxMC43NDU0IDcuOTQ4MjUgMTAuMjg1IDcuNTgwMzEgOS45Njk2TDEuMTYgNC40NjY0OFYxLjE2SDE4Ljg0VjQuNDY2NDhaTTEyLjI0NjIgMTYuNTU3NEwxMi4yNDQ5IDE2LjU1OEwxMi4yNDYyIDE2LjU1NzRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=)!important;
+}
+
+body.mobile .header-right .addcamera:after {
+    content: "";
+    padding: 0;
+    display: inline-block;
+content:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMi41IDIuNSAxMSAxMSIgZmlsbD0ibm9uZSIgc3R5bGU9IiYjMTA7Ij4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDEzLjVDNy43MjM4NiAxMy41IDcuNSAxMy4yNzYxIDcuNSAxM1YzQzcuNSAyLjcyMzg2IDcuNzIzODYgMi41IDggMi41QzguMjc2MTQgMi41IDguNSAyLjcyMzg2IDguNSAzVjEzQzguNSAxMy4yNzYxIDguMjc2MTQgMTMuNSA4IDEzLjVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTIuNSA4QzIuNSA3LjcyMzg2IDIuNzIzODYgNy41IDMgNy41TDEzIDcuNUMxMy4yNzYxIDcuNSAxMy41IDcuNzIzODYgMTMuNSA4QzEzLjUgOC4yNzYxNCAxMy4yNzYxIDguNSAxMyA4LjVMMyA4LjVDMi43MjM4NiA4LjUgMi41IDguMjc2MTQgMi41IDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=)!important;
+}
+
+
+camera-map{width:100%;height:100%;display: block;}
+
+.screens > .cameras .cammap{
+    height: 100%;
+    width: 100%;
+}
+
+.screens > .cameras .camgrid2{
+display:none;
+display:flex;
+flex-wrap:wrap;
+    height: 100%;
+    width: 100%;
+justify-content: space-between;
+}
+
+.screens > .cameras .camgrid2 > div{
+width:50%;
+height:50%;
+background:black;
+    border-right: 3px solid white;
+    box-sizing: border-box;
+    border-bottom: 3px solid white;
+}
+.screens > .cameras .camgrid2.grid3 > div{
+width: 33.333333%;
+    height: 33.333333%;
+}
+.screens > .cameras .camgrid2.grid4 > div{
+width:25%;
+height:25%;
+}
+
+.screens > .cameras .camgrid2 > div.grid3, .screens > .cameras .camgrid2 > div.grid4{
+display:none;
+}
+.screens > .cameras .camgrid2.grid3 > div.grid3{
+display:block;
+}
+.screens > .cameras .camgrid2.grid4 > div.grid3, .screens > .cameras .camgrid2.grid4 > div.grid4{
+display:block;
+}
+
+
+.c2ameras.gridtop .wrapper{
+max-height:calc(100vh - 300px);
+}
+.c2ameras.gridtop .camgrid2{
+    max-height: calc(100vh - 300px);
+}
+
+
+
+
+
+
+.screens > .cameras.gridtop .cambd{
+    flex-direction: column;
+}
+.screens > .cameras.gridtop player{
+}
+
+.screens > .cameras.gridtop .camgrid{
+height: auto;
+}
+.screens > .cameras.gridtop .camlist{
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: auto!important;
+    height: 100%;
+    margin-left: -10px;
+}
+body.mobile .screens > .cameras.gridtop .camlist{
+justify-content: center;
+}
+
+.screens > .cameras.grid .cambd{
+height:100%;
+}
+.screens > .cameras.grid .camgrid{
+height:100%;
+}
+
+.screens > .cameras .camlist .camerablock .caminfo{
+font-size: 10px;
+    background: gray;
+    right: 10px;
+    float: right;
+    width: auto;
+    margin: 10px 0px 0 0;
+    height: auto;
+    color: white;
+    padding: 5px 12px 4px;
+    border-radius: 8px;
+    position: relative;
+    font-weight: normal;
+}
+.screens > .cameras .camlist .camerablock .caminfo.rec{
+    padding-right: 13px;
+}
+.screens > .cameras .camlist .camerablock .caminfo.online{
+background-color:var(--main-color);
+}
+.screens > .cameras .camlist .camerablock .caminfo.rec:after{
+content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 5px;
+    background-color: red;
+    position: absolute;
+    margin-top: 2px;
+    margin-left: 4px;
+}
+
+.screens > .cameras .camlist .camerablock{
+width: calc(100% - 4px);
+    height: 216px;
+    min-height: 216px;
+    display: block;
+    margin: 0 1em 1em 0;
+    box-shadow: 0 0 6px rgb(0 0 0 / 10%);
+    max-width: 322px;
+}
+body.mobile .screens > .cameras .camlist .camerablock{
+    margin: 0 0 10px 10px;
+}
+.screens > .cameras .camlist .camerablock:last-child{
+    margin-bottom: 0;
+}
+.screens > .cameras.gridtop .camlist .camerablock {
+}
+.screens > .cameras .camlist .camerablock campreview{
+width: 100%;
+    height: calc(100% - 46px);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: auto;
+    background-color: white;
+    cursor: pointer;
+}
+.screens > .cameras .camlist .camerablock campreview img{
+width:100%;
+height:100%;
+object-fit: cover;
+}
+.screens > .cameras .camlist .camerablock > div{
+    height: 46px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: 600;
+background:white;
+border-top: 1px solid var(--main-color);
+}
+
+.screens > .cameras .camlist .camerablock .settings{
+width:40px;
+height:46px;
+float:right;
+    background-repeat: no-repeat;
+    background-position: 16px center;
+cursor:pointer;
+}
+
+.screens > .cameras .camlist .camerablock .name{
+padding: 8px 10px 5px 16px;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: calc(100% - 60px);
+    max-height: 36px;
+}
+.screens > .cameras .camlist .camerablock .loc{
+font-size:8px;
+font-weight:400;
+color: #676A6C;
+padding: 0px 0px 0px 16px;
+}
+body.screens > .cameras .header-right .addcamera,body.screens > .cameras .header-right .nogrid, body.screens > .cameras .header-right .grid22, body.screens > .cameras .header-right .grid33, body.screens > .cameras .header-right .grid44, body.screens > .cameras .header-right .gridmap {
+    background-size: 75%;
+    background-repeat: no-repeat;
+    background-position: center;
+    display:flex;
+}
+
+body.screens > .cameras .header-right .nogrid, body.screens > .cameras .header-right .grid22, body.screens > .cameras .header-right .grid33, body.screens > .cameras .header-right .grid44, body.screens > .cameras .header-right .gridmap {
+    margin-left: 0;
+    padding: 0 5px;
+}
+
+.screens > .cameras .camgrid table{
+width:100%;
+}
+
+.screens > .cameras .camgrid table td{
+}
+.screens > .cameras .camgrid table td player{
+width:100%;
+height:100%;
+display:inline-block;
+}
+
+.screens > .cameras .camgrid{
+display:none;
+    width: 100%;
+}
+.screens > .cameras .camgrid.grid22, .screens > .cameras .camgrid.grid33, .screens > .cameras .camgrid.grid44{
+display:block;
+}
+.screens > .cameras .camgrid.grid22 td{
+width:50%;
+}
+.screens > .cameras .camgrid.grid22 tr:nth-child(3) td, .screens > .cameras .camgrid.grid22 tr:nth-child(4) td{
+display:none;
+}
+.screens > .cameras .camgrid.grid33 td{
+width:33%;
+}
+.screens > .cameras .camgrid.grid33 tr:nth-child(4) td{
+display:none;
+}
+.screens > .cameras .camgrid.grid44 td{
+width:25%;
+}
+
+.simplemenu{
+    position: fixed;
+    background: white;
+border-radius: 3px;
+    box-shadow: 0 0 3px rgba(86, 96, 117, 0.7);
+    font-size: 12px;
+    font-weight: 400;
+    z-index: 10;
+}
+.simplemenu > div{
+line-height: 25px;
+    padding: 7px 10px;
+    padding-left: 41px;
+}
+.simplemenu > div:hover{
+background-color: #f5f5f5;
+cursor:pointer;
+color:var(--main-color);
+}
+
+
+.header-right .gridmenu:after {
+    content: url("/img/dropdown.svg");
+    padding: 0;
+    display: inline-block;
+margin-left: 6px;
+
+}
+
+.screens > .cameras.nocameras .cambd{
+width:100%;
+height:100%;
+}
+
+.screens > .cameras.nocameras .cambd .camlist{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.screens > .cameras.nocameras .cambd .camlist a {
+    margin-left: 5px;
+    color: var(--main-color);
+}
+.screens > .cameras.nocameras .cambd .camlist a:hover {
+    color: var(--main-color);
+}
+
+
+.camerafilterContainer {
+    position: relative;
+}
+
+.locationContainer {
+    width: 250px;
+    background-color: #ffffff;
+    position: absolute;
+    top: 30px;
+    border: 1px solid #EFEFEF;
+    padding-bottom: 15px;
+    z-index: 10;
+}
+
+.locationContainer .locHeader {
+text-align: left;
+    font-size: 14px;
+    color: var(--main-color);
+    border-bottom: 1px solid #EFEFEF;
+    padding: 15px 0px;
+    margin: 0 20px;
+}
+
+.locationContainer .locList {
+min-height: 100px;
+    max-height: 300px;
+    overflow: auto;
+    padding: 5px 20px 15px;
+    position: relative;
+}
+
+ul.locationlist {
+padding: 0 0 14px 0;
+    margin-bottom: 0;
+    max-height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-bottom: 1px solid #E6E6E6;
+}
+
+ul.locationlist li {
+    list-style: none;
+    overflow: hidden;
+    position: relative;
+cursor:pointer;
+margin-top: 16px;
+}
+
+input.svgbtnbefore {
+    position: absolute;
+    height: 0;
+    width: 0;
+}
+ul.locationlist label {
+padding-left: 26px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #676A6C;
+    font-weight: 400;
+}
+
+.locationContainer .locList input + label {
+    display: flex;
+    align-items: center;
+    height: 20px;
+    position: relative;
+cursor:pointer;
+}
+
+.locationContainer .locList input + label span {
+padding-left: 33px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #676A6C;
+    font-weight: 400;
+}
+
+input:before {
+    cursor: pointer;
+    content: '';
+    width: 20px;
+    height: 20px;
+    align-items: center;
+    margin-left: -26px;
+    margin-top: 0px;
+    display: inline-block;
+background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIj48cmVjdCB4PSIwLjQiIHk9IjAuNCIgd2lkdGg9IjE5LjIiIGhlaWdodD0iMTkuMiIgcng9IjUuNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiLz48L3N2Zz4=) bottom no-repeat;
+background-size: cover!important;
+}
+input:checked:before {
+background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMiAyIDIwIDIwIiBmaWxsPSJub25lIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDJDNC42ODYyOSAyIDIgNC42ODYyOSAyIDhWMTZDMiAxOS4zMTM3IDQuNjg2MjkgMjIgOCAyMkgxNkMxOS4zMTM3IDIyIDIyIDE5LjMxMzcgMjIgMTZWOEMyMiA0LjY4NjI5IDE5LjMxMzcgMiAxNiAySDhaTTcuNzE3MTYgMTIuMjgzTDEwLjU0NTYgMTUuMTExNEMxMC43MDE4IDE1LjI2NzYgMTAuOTU1MSAxNS4yNjc2IDExLjExMTMgMTUuMTExNEwxNi43NjgxIDkuNDU0NTNMMTYuMjAyNCA4Ljg4ODg1TDEwLjgyODQgMTQuMjYyOUw4LjI4Mjg1IDExLjcxNzNMNy43MTcxNiAxMi4yODNaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=) bottom no-repeat;
+}
+
+.locationContainer .locFooter {
+    text-align: left;
+    padding: 15px 0px 0;
+    border-top: 1px solid #EFEFEF;
+    margin: 0 20px;
+}
+
+.locationContainer .locFooter #setLocations {
+    display: inline-block;
+}
+
+.header-right .gridmenu {
+    order: 2;
+    flex: 3 1 50px;
+    min-width: 25px;
+    max-width: 100px;
+}
+.header-right .addcamera {
+order: 10;
+    flex: 3 3 110px;
+    max-width: 110px;
+min-width:50px;
+}
+body.mobile .header-right .addcamera {
+    flex: 1 1 30px;
+min-width:30px;
+}
+.cameras .header-right .camerafilterContainer {
+    display: block;
+order:1;
+flex: 3 1 50px;
+min-width: 40px;
+max-width: 100px;
+}
+body:not(.cameras) .camerafilter{
+display:none;
+}
+
+.header-right .signout {
+    order: 100;
+    white-space: nowrap;
+}
+
+body.cameras .screens > .cameras .ratio2.wrapper .cloudplayer{
+box-shadow: none;
+}
+
+body.cameras.mobile .screens{
+    margin-top: 0!important;
+    margin-right: 0!important;
+    padding-left:0!important;
+}
+.cameras .header-right .gridmenu{
+display: inline-flex;
+}
+body.mobile.cameras .header-right .gridmenu{
+display: none!important;
+}
+
+body.mobile.cameras .mdialog{
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+body.mobile.cameras .mdialog h7{
+color: #7BB247;
+font-style: normal;
+font-weight: normal;
+font-size: 12px;
+border-bottom:1px solid #E6E6E6;
+    padding-bottom: 12px;
+}
+
+.screens > .cameras button.more{
+width: 90px;
+    margin: 15px auto;
+}
+.screens > .cameras .wmore{
+text-align: center;
+    margin: 0 0 1em 1em;
+    width: calc(100% - 4px);
+}

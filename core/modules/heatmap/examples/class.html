@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+          crossorigin="anonymous">
+    <style>
+        #field {
+            border: black 1px solid;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript" src="../../../jquery-3.1.0.min.js"></script>
+<script src="../VXGHeatmap/Heatmap.js"></script>
+<div class="container-md mt-3">
+    <div class="row">
+        <div class="col-3">
+            <label for="start" class="form-label">Start</label>
+            <input id="start" value="2021-01-14 12:00:00" class="form-control">
+
+            <label for="end" class="form-label">End</label>
+            <input id="end" value="2021-01-14 15:00:00" class="form-control">
+
+            <label for="access-token" class="form-label">Access token</label>
+            <input id="access-token" class="form-control">
+
+            <label for="origin" class="form-label">Origin</label>
+            <input id="origin" class="form-control" value="generated_from_live">
+
+            <label for="fuzz" class="form-label">Fuzz</label>
+            <input id="fuzz" value="0.1" class="form-control">
+
+            <label for="maxAmountThumbnailsAnalysis" class="form-label">Max Amount Thumbnails Analysis</label>
+            <input id="maxAmountThumbnailsAnalysis" value="20" class="form-control">
+
+            <label for="radius" class="form-label">Radius</label>
+            <input id="radius" value="5" class="form-control">
+
+            <label for="peak" class="form-label">Peak</label>
+            <input id="peak" value="60" class="form-control">
+
+            <label for="threshold" class="form-label">Threshold</label>
+            <input id="threshold" value="200" class="form-control">
+
+            <input type="button" value="Generate" id="gen" class="form-control btn-info">
+        </div>
+        <div id="field" class="col-9"></div>
+    </div>
+</div>
+
+<script>
+    $('#gen').click(() => {
+        const token = $('#access-token').val();
+        const start = $('#start').val();
+        const end = $('#end').val();
+        const origin = $('#origin').val();
+
+        const fuzz = parseFloat($('#fuzz').val());
+        const maxAmountThumbnailsAnalysis = parseInt($('#maxAmountThumbnailsAnalysis').val());
+        const radius = parseInt($('#radius').val());
+        const peak = parseFloat($('#peak').val());
+        const threshold = parseFloat($('#threshold').val());
+
+        let m = new VXGHeatmapModel(
+            token, start, end, origin, maxAmountThumbnailsAnalysis, fuzz, radius, peak, threshold
+        );
+        m.prepareData().done(function () {
+            console.log('success');
+            m.render($('#field'));
+        }).fail(function (e) {
+            console.log('failed:', e);
+        });
+    });
+</script>
+
+</body>
+</html>

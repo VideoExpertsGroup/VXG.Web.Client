@@ -1,0 +1,71 @@
+.cameras-list th {
+    text-align: center;
+}
+
+.cameras-list td {
+    height: 55px;
+    overflow: hidden;
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+    padding: .75rem;
+    max-width: 100px;
+    white-space: nowrap;
+    width: 100px;
+    text-align: center;
+}
+.cameras-list td:not(.showai) {
+    text-overflow: ellipsis;
+}
+.cameras-list td:first-child {
+    padding-left: 0;
+    padding-right: 20px;
+    cursor: pointer;
+}
+.cameras-list td:first-child campreview {
+    cursor: pointer;
+}
+
+.cameras-list td:nth-child(1) {
+    width: 220px;
+}
+
+.cameras-list td:nth-child(2) {
+    width: 200px;
+}
+.cameras-list .splan{
+padding:6px 11px;
+}
+
+.cameras-list td:nth-child(2), .cameras-list td:nth-child(3), .cameras-list td:nth-child(4) {
+}
+.cameras-list .showai button{
+    padding: 8px 18px!important;
+}
+
+.cameras-list td:last-child {
+    overflow: initial;
+}
+
+.cameras-list th {
+    vertical-align: middle;
+    height: 55px;
+}
+
+campreview{
+    width: 192px!important;
+    height: 108px!important;
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 2.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}

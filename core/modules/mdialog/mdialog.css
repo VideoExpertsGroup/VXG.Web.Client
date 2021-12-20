@@ -1,0 +1,28 @@
+body.dialog .dialogs{
+    background: #000a;
+}
+
+body.dialog .mdialog{
+    padding: 24px 48px 8px;
+}
+
+body.dialog .mdialog h7{
+font-family: Montserrat;
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+color: #676A6C;
+text-align: center;
+    width: 100%;
+    display: block;
+}
+
+body.dialog .mdialog p{
+font-family: Montserrat;
+font-style: normal;
+font-weight: normal;
+font-size: 12px;
+text-align:center;
+    margin-top: 8px;
+color: #676A6C;
+}

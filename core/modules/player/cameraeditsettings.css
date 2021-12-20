@@ -1,0 +1,34 @@
+cameraeditsettings input, cameraeditsettings select, cameraeditsettings textarea {
+    background-color: #FFFFFF;
+    background-image: none;
+    border: 1px solid #ced4da;
+    border-radius: 1px;
+    color: inherit;
+    display: block;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+cameraeditsettings:not(.wait) .wait, cameraeditsettings.wait .apply{
+display:none!important;
+}
+
+cameraeditsettings .wait .spinner{
+width: 25px;
+    height: 13px;
+    display: inline-block;
+}
+
+cameraeditsettings{
+display:block;
+}
+cameraeditsettings .wait{
+    text-align: center;
+    padding: 20px;
+}
+
+cameraeditsettings .spinner{
+background: url(spinner.gif) center center no-repeat!important;
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>VXG TEST</title>
+
+	<link rel="icon" href="../../favicon.ico">
+	<script type="text/javascript" src="snippet/jquery-3.1.0.min.js"></script>
+	<script type="text/javascript" src="snippet/Chart.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="VXGChart.css">
+	<script type="text/javascript" src="VXGChart.js"></script>
+
+	
+	<script>
+	    document.addEventListener('DOMContentLoaded', function(){
+		var visualOptions = {};
+		visualOptions.color_of_average_curve = (window.skin)? window.skin.color_of_average_curve : "#00ff00";
+		visualOptions.color_of_min_curve = (window.skin)? window.skin.color_of_min_curve : "#ff0000";
+		visualOptions.color_of_max_curve = (window.skin)? window.skin.color_of_max_curve : "#0000ff";
+		visualOptions.show_meta_select = true;
+		visualOptions.show_report_select = true;
+		visualOptions.show_period_select = true;
+
+		var targetElement0 = document.getElementById("linechart0");
+		var controller0 = new VXGChartController(targetElement0);
+
+		var targetElement1 = document.getElementById("linechart1");
+		var controller1 = new VXGChartController(targetElement1 , "Camera(Cars)", "Car");
+		
+		var targetElement2 = document.getElementById("linechart2");
+		var controller2 = new VXGChartController(targetElement2, "testcam", "Person", visualOptions);
+		
+		//immediatly load data
+		var accessToken2 = "";
+		targetElement2.setSource( accessToken2 );
+	    });
+	    
+	    function pointCallback( data ) {
+		console.log('URURURURUR ' + data.start + ' ' + data.end );
+	    };
+	
+	    function test_refresh() {
+		var targetElement0 = document.getElementById("linechart0");
+		var targetElement1 = document.getElementById("linechart1");
+		var targetElement2 = document.getElementById("linechart2");
+
+		var accessToken0 = "";
+		var accessToken1 = "";
+		var accessToken2 = "";
+		
+		targetElement0.setSource( accessToken0, "Camera(Persons)" );
+		targetElement0.setPointCallback(pointCallback);
+		
+		targetElement1.setSource( accessToken1);
+		targetElement2.setSource( accessToken2, "TimeShiftTest", 3600 );
+	    }
+	</script>
+</head>
+<body>
+<header>
+	<div class="t-header__background home-page">
+	</div>
+	<div class="t-header__content">
+		<div class="t-header__left">
+			<h1 class="t-header__title">
+				VXG Chart snippet
+			</h1>
+		</div>
+	</div>
+</header>
+
+<div>
+	<div id="linechart0"></div>
+	<div id="linechart1"></div>
+	<div id="linechart2"></div>
+</div>
+<button onclick="test_refresh();">Refresh</button>
+
+</body>
+</html>

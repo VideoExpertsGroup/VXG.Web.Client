@@ -1,0 +1,221 @@
+cameramd *{
+border-collapse: separate;
+}
+
+cameramd video {
+    height: 100%!important;
+}
+
+cameramd .dgrid{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+}
+
+cameramd .video-js{
+transform: none!important;
+position: initial!important;
+}
+
+cameramd{
+min-height: 40px;
+font-size: 16px;
+background-color:white;
+    user-select: none;
+    display: inline-block;
+}
+cameramd .mdwrap{
+position: relative;
+display: flex;
+    height: calc(100% - 40px);
+}
+
+cameramd .dgrid.disabled{
+pointer-events: none;
+}
+cameramd .dgrid table{
+width:100%;
+height:100%;
+border-spacing:0px;
+}
+
+cameramd .dgrid table td{
+border:1px solid rgba(0,0,0,0);
+}
+
+cameramd .dgrid td.active{
+border:1px solid red;
+background-color:rgba(255,0,0,0.1);
+}
+
+cameramd .dgrid table td.set{
+background-color:rgba(255,0,0,0.5);
+}
+cameramd .dgrid table td.unset{
+background-color:rgba(0,0,0,0.3);
+}
+cameramd .dgrid table td.set.active{
+border:1px solid rgba(0,0,0,0);
+}
+cameramd .dgrid td:hover{
+background-color:rgba(255,255,255,0.3);
+}
+cameramd .barea{
+    padding: 5px 10px;
+    box-sizing: content-box;
+display: flex;
+    background-color: white;
+    height: 30px;
+    border: none;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+cameramd .barea *{
+    font-size: 12px;
+    font-weight: bold;
+font-family: 'Montserrat', sans-serif;
+}
+
+cameramd .barea span{
+    margin-left: auto;
+    padding: 8px 12px 6px 0;
+}
+
+cameramd .barea input.sens{
+    width: 5em;
+    padding: 0px 12px 0;
+    height: 22px;
+    margin-top: 4px;
+}
+
+cameramd .barea label.en{
+padding:0!important;
+    display: flex;
+    align-items: center;
+margin-bottom:0;
+}
+
+cameramd .barea label.en input{
+width: auto;
+    display: inline-block;
+margin-right: 7px;
+}
+cameramd .barea .apply{
+width:80px;
+margin-left:auto;
+}
+
+cameramd .barea .apply.spinner{
+font-size: 1px;
+}
+cameramd .barea label{
+padding: 10px;
+}
+
+cameramd .cloudplayer{
+box-shadow:none;
+height:100%;
+}
+
+cameramd:not(.wait) .wait{
+display:none;
+}
+cameramd.wait{
+background-color: gray;
+}
+cameramd.wait input, cameramd.wait button, cameramd.wait label.en{
+pointer-events: none;
+}
+
+cameramd.wait.partially .en, cameramd.wait.partially .en *{
+pointer-events: all;
+}
+
+cameramd.wait label.en{
+margin-bottom:0;
+}
+
+cameramd .wait a{
+color:#ddddff;
+}
+
+cameramd .wait{
+position: absolute;
+    top: calc(50% - 0.5em);
+    left: 0;
+    right: 0;
+    z-index: 50;
+    text-align: center;
+    text-shadow: black 1px 1px 0, black -1px -1px 0, black -1px 1px 0, black 1px -1px 0;
+    color: white;
+    font-size: 23px;
+}
+
+cameramd.wait.partially .barea, cameramd.wait.partially .barea *{
+    opacity: inherit!important;
+}
+
+cameramd.wait  :not(.wait){
+    opacity: 0.7;
+}
+cameramd .wait .spinner{
+width: 25px;
+    height: 13px;
+    display: inline-block;
+}
+
+cameramd .video-js{
+padding-top:0px!important;
+}
+
+cameramd .spinner{
+background: url(spinner.gif) center center no-repeat!important;
+}
+
+.enable + span,
+.enable + span::before {
+    display: inline-block;
+    vertical-align: text-bottom;
+}
+.enable {
+    opacity: 0!important;
+    position: absolute;
+}
+ 
+.enable + span::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    margin: 0 10px 0 0;
+    border: solid 1px #a8a8a8;
+    line-height: 14px;
+    text-align: center;
+     
+    -moz-border-radius: 100%;
+    -webkit-border-radius: 100%;
+    border-radius: 100%;
+}
+.enable:disabled + span{
+    cursor: default;
+    -moz-opacity: .4;
+    -webkit-opacity: .4;
+    opacity: .4;
+}
+.enable + span::before{
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+.enable:checked + span::before{
+    content: "\2714";
+    font-size: 10px; 
+}
+.enable:checked + span::before {
+    background: var(--main-color);
+    color: white;
+}

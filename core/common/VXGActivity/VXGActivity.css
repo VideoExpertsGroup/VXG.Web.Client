@@ -1,0 +1,190 @@
+body .VXGActivityMore {
+    display: none;
+    margin: 10px auto;
+}
+
+.VXGActivityMore a, .VXGActivityMore a:hover {
+    color: var(--main-color);
+    text-decoration: none;
+}
+
+.VXGActivityWaiter.waitdata, .tagslist.spinner {
+    background: url(loader.gif) center center  no-repeat!important;
+    background-size: 50px 50px;
+    background-position: 50% 50%;
+    z-index: 1;
+}
+
+.VXGActivityFilter {
+    opacity: 0;
+    display: block;
+    z-index: -1;
+}
+
+
+.VXGActivityFilterCancel {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.VXGActivityFilterCheckbox {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  z-index: -16;
+  opacity: 0;
+}
+
+.VXGActivityFilterCheckbox+label {
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+  
+    border-radius: 50%;
+    border: 1px solid var(--main-color);
+    width: 34px;
+    height: 34px;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+.VXGActivityFilterCheckbox+label::before {
+    border-radius: 50%;
+    border: 1px solid var(--main-color);
+    width: 34px;
+    height: 34px;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+.VXGActivityFilterCheckbox:checked+label::before {
+    content: url("check.svg");
+    background-color: var(--main-color);
+    border-radius: 50%;
+    border: 1px solid var(--main-color);
+    width: 34px;
+    height: 34px;
+    padding-left: 5px;
+    align-items: center;
+}
+
+.VXGActivityFilter {
+    display: flex;
+    justify-content: center;
+}
+
+.VXGActivityFilter.visible {
+    background-color: #ffffff;
+    opacity: 1;
+    display:block;
+    z-index: 2;
+}
+
+.VXGActivityFilter .table-row{
+    justify-content: space-between;
+    align-items: center;
+}
+
+.VXGActivityFilterTable {
+    max-width: 325px;
+
+}
+
+.filter-setting .filter-label {
+    font-weight: bold;
+    font-size: 12px;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.filter-setting {
+    margin-bottom: 20px;
+}
+
+.filter-setting.flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+.filter-setting.flex > div:last-child {
+    flex-grow: 1;
+}
+
+.filter-setting input[type=number], .filter-setting input[type=text] {
+    display: block;
+    width: 100%;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-image: none;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.filter-setting > div {
+    display: flex;
+    align-items: center;
+}
+
+.VXGActivityNoEvents {
+    opacity: 0;
+    display: block;
+    z-index: -1;
+}
+
+.VXGActivityNoEvents.visible {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    opacity: 1;
+    z-index: 1;
+}
+
+.VXGActivityContainer2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding-top: 15px;    
+    
+    position: relative;    
+}
+
+
+.VXGActivityContainer2 > div {
+    grid-row-start: 1;
+    grid-column-start: 1;
+}
+
+.toeventview .event-info,
+.tometaview .event-info{
+    padding-right: 10px
+}
+
+.toeventview, .tometaview{
+    cursor:pointer;
+}
+
+.detected-label.empty {
+  background-color: #ffffff00;
+  color: #FFFFFFff;
+}
+
+.activity-content {
+    position: relative;
+}
+body.mobile .activity-content .feed-activity-list{
+display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    justify-content: center;
+}
+
+.block3 .content {
+    height: calc(100% - 30px);
+}
+.report_activitylist, .VXGActivityContainer, .VXGActivityContainer2 {
+    height: 100%;
+}
+

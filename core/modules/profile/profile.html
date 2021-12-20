@@ -1,0 +1,33 @@
+<div class="prifiletabs">
+<div class="tab1">Notification</div>
+<div class="tab2">Password</div>
+<div ifscreen="subscribe" class="tab3">Subsriptions</div>
+</div>
+<div class="wtab1 maxwidth"  style="position:relative">
+<label>Phone</label><br>
+<div class="phoneprefix">+1</div>
+<input type="number" class="" name="phone" placeholder="9876543210"><br/><br/>
+<label class="week_shedule">Week shedule: set hours for nighttime notifications</label><br/>
+<week-sheduler name="sheduler"></week-sheduler>
+<br><i>you will receive automated phone calls if your cameras detect people during these hours</i>
+<br/><br/><button class="submit2 vxgbutton">Apply</button>
+</div>
+<div class="wtab2 maxwidth">
+<label>Current Password *</label><br>
+<input type="password" class="pwd" name="current_password"><i class="showhidepass"></i><br><br>
+
+<label>New Password *</label><br>
+<input type="password" class="pwd" name="new_password"><i class="showhidepass"></i><br><br>
+
+<label>Confirm New Password *</label><br>
+<input type="password" class="pwd" name="reenter_new_password"><i class="showhidepass"></i>
+
+<br/><br/><button class="submit vxgbutton">Change password</button>
+
+</div>
+<div ifscreen="subscribe" class="wtab3">
+<div class="planlist"></div>
+<br/><br/>
+<button class="vxgbutton upgrade" ifscreen="subscribe" onclick_toscreen="subscribe">Upgrade</button>
+&nbsp;&nbsp;<button class="vxgbutton upgrade" ifscreen="unsubscribe" onclick_toscreen="unsubscribe">Unsubscribe</button>
+</div>

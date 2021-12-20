@@ -1,0 +1,234 @@
+.VXGArchieveMore.visible {
+    display: block!important;
+    height: 30px;
+}
+
+.feed-Archieve-list.arch-scrollable {
+  height: 100%;
+  overflow: auto;
+}
+
+.feed-Archieve-list .arch-image-container {
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-image: url("core/modules/archieve/archieve.svg");
+  background-position: 50%;
+  position: relative;
+}
+
+.feed-Archieve-element {
+  padding-bottom: 5px;
+  padding-right: 5px;
+  padding-left: 0px;
+  float: left;
+  background-color: transparent;
+  position: relative;
+  margin: 0 15px 15px 0;
+}
+
+.feed-Archieve-element,
+.media-body {
+  overflow: hidden;
+}
+.feed-Archieve-element > a img {
+  margin-right: 10px;
+}
+.feed-Archieve-element img.rounded-circle,
+.dropdown-messages-box img.rounded-circle {
+  width: 38px;
+  height: 38px;
+}
+
+.arch-clip-info {
+    display: grid;
+}
+
+.arch-camera-name {
+    margin-bottom: 10px;
+    margin-top: 5px;
+    max-width: 160px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+.detected-Archieve-label {
+/*  background-color: #7BB247;
+  color: #FFFFFF; */
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  padding: 1px 0px;
+  text-shadow: none;
+/*  border-radius: 0.25em;*/
+  line-height: 2;
+  white-space: nowrap;
+}
+
+.arch-image-container {
+    width: 320px;
+    height: 180px;
+}
+
+.arch-image-container > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+.VXGArchieveClipInfo {
+    position: relative;
+    box-shadow: 0 0 10px rgb(0 0 0 / 20%);
+}
+
+.VXGArchieveCardInfo {
+    height: 46px;
+    background-color: #fff;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    position: relative;
+}
+
+
+.VXGArchieveCardInfoMain {
+    position: absolute;
+    top:0;
+    bottom:0;
+    left: 0;
+    width:100%;
+    padding: 3px 30px 0px 0px;
+    overflow: hidden;
+}
+
+.VXGArchieveSettings {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-image: url('core/modules/archieve/VXGArchieve/setting.svg');
+    background-position: 13px center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    /*display: none;*/
+}
+
+.feed-Archieve-element .clip-info-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.feed-Archieve-element .clip-info-container .clip-size,
+.feed-Archieve-element .clip-info-container .clip-length {
+    position: absolute;
+    padding: 4px 10px 4px;
+    margin: 5px;
+    z-index: 2;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: normal;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background-color: var(--main-color);
+    color: #ffffff
+}
+
+.feed-Archieve-element .clip-info-container .clip-size {
+    left: 5px;
+    top: 5px;
+    border-top-left-radius: 11px;
+    border-bottom-left-radius: 11px;
+    border-top-right-radius: 11px;
+    border-bottom-right-radius: 11px;
+}
+
+.feed-Archieve-element .clip-info-container .clip-length {
+    right: 5px;
+    top: 5px;
+    border-top-left-radius: 11px;
+    border-bottom-left-radius: 11px;
+    border-top-right-radius: 11px;
+    border-bottom-right-radius: 11px;
+}
+
+.VXGArchievePlayButton {
+position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+/*    background-image: url(core/modules/archieve/VXGArchieve/play_arrow.svg);*/
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    cursor: pointer;
+    -webkit-filter: drop-shadow( 3px 3px 2px rgba(0, 0, 0, 0.7));
+    filter: drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7));
+}
+
+.VXGArchieveCardInfoTitle {
+    padding: 8px 0px 2px 16px;
+font-style: normal;
+font-weight: 600;
+font-size: 12px;
+white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.VXGArchieveCardInfoCamera {
+    padding: 2px 0px 0px 16px;
+font-style: normal;
+font-weight: normal;
+font-size: 8px;
+color: #676A6C;
+}
+
+.VXGArchieveCreated {
+float:right;
+}
+
+.VXGArchieveIncident {
+    display: none;
+}
+
+.VXGArchieveCardInfoIncident {
+    padding: 9px 0px 0px 10px;
+    font-size: 80%;
+    width: 80px;
+    display: table-cell;
+}
+
+.VXGArchieveCardInfoCreated {
+    padding: 2px 0px 0px 10px;
+    font-size: 80%;
+    width: 80px;    
+    display: none;
+}
+
+.VXGArchieveCardInfoIncidentValue {
+    padding: 9px 0px 0px 10px;
+    font-size: 80%;
+    width: 100%;
+    display: table-cell;
+    text-align: right;
+}
+
+.VXGArchieveCardInfoCreatedValue {
+    padding: 16px 16px 0px 10px;
+font-style: normal;
+font-weight: normal;
+font-size: 10px;
+    width: 100%;
+color: #B3B3B3;
+    display: table-cell;
+    text-align: right;
+}

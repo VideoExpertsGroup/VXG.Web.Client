@@ -1,0 +1,29 @@
+/* hide table headers */
+.screens > .reports .VXGCameraList table th {display:none!important;}
+
+/* hide filter button */
+.screens > .reports .block3 .addfilter {display:none!important;}
+
+/* hide mini sparkline */
+.sparkline-container span canvas {display:none!important;}
+
+/* hide report download button */
+.screens > .reports .reportDownload {display:none!important;}
+
+/* hide add camera button */
+.screens > .reports .addcamera {display:none!important;}
+
+/* hide search in activity screen */
+body.activity .header-search{display:none!important;}
+
+/* Do not change color and text decoration when mouse hover in "Contact us" button  */
+.bottom-global-menu a:hover {
+    color: white;
+    text-decoration: inherit;
+}
+
+/* Rename the first item in the left menu*/
+.leftblock .reports{font-size:0px;}
+.leftblock .reports:after{content:"Home";font-size:12px;}
+body.reports .rightblock .headerBlock .header-center{font-size: 0px;}
+body.reports .header-center:after{content:"Home";font-size: 16px;}

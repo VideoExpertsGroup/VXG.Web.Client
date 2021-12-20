@@ -1,0 +1,26 @@
+.archieve_archievelist {
+    font-size: 14px;
+    height: 100%;
+}
+
+.archive {
+    height: 100%;
+}
+body.mobile .archive {
+    padding:12px 0 0 0;
+}
+
+body.mobile .feed-Archieve-element{
+    margin: 0 0px 12px 10px!important;
+    padding-right: 0!important;
+    padding-bottom: 0!important;
+}
+
+body.mobile .feed-Archieve-list{
+margin-left: -10px;
+}
+
+.archive .header-search {
+    display:flex;
+    max-width: 300px;
+}

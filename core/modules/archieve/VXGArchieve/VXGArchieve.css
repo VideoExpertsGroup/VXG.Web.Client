@@ -1,0 +1,369 @@
+.VXGArchieveMore {
+    display: none!important;
+    margin: 10px auto;
+}
+
+.VXGArchieveWaiter {
+    display: none;
+}
+
+.VXGArchieveMore a, .VXGArchieveMore a:hover {
+    color: var(--main-color);
+    text-decoration: none;
+}
+
+.VXGArchieveWaiter.waitdata {
+    display: block;
+    background: url(core/modules/archieve/VXGArchieve/loader.gif) center center  no-repeat;
+    background-position: 50% 50%;
+    z-index: 5;
+}
+
+.VXGArchieveNoData {
+    opacity: 0;
+    display: block;
+    z-index: -1;
+}
+
+.VXGArchieveNoData.visible {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    opacity: 1;
+    z-index: 1;
+}
+
+.VXGArchieveContainer {
+    height: 100%;
+    position: inherit;
+
+}
+
+.VXGArchieveContainer2 {
+    position: relative;
+    padding-top: 15px;
+height:100%;
+}
+
+.VXGArchieveContainer2 > div {
+    position: absolute;
+    top: 0;
+    bottom:0;
+    left:0;
+    right:0;
+}
+
+body.mobile .feed-Archieve-list{
+display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    justify-content: center;
+}
+
+.detected-arch-label.empty {
+  background-color: #ffffff00;
+  color: #FFFFFFff;
+}
+
+.Archieve-content {
+    position: relative;
+}
+
+.block3 .content {
+    height: calc(100% - 30px);
+}
+.report_Archievelist {
+    height: 100%;
+}
+
+.VXGArchieveMenu.visible {
+    display: block;
+}
+.VXGArchieveMenu {
+    display: none;
+    position: absolute;
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0 0 3px rgba(86, 96, 117, 0.7);
+    font-size: 12px;
+    font-weight: 400;
+    bottom: 5px;
+    left: auto ;
+    right: 5px ;
+    z-index: 1;
+}
+.VXGArchieveMenu > div{
+    line-height:25px;
+    padding: 4px 10px;
+    padding-left: 35px;
+    text-align: left;
+    border-radius: inherit;
+}
+.VXGArchieveMenu > div:hover{
+    background-color: #f5f5f5;
+    cursor:pointer;
+}
+
+.VXGArchieveClipDownload:before {
+    background-image: url("core/modules/archieve/VXGArchieve/download.svg");
+}
+.VXGArchieveClipMeta:before {
+    background-image: url("core/modules/archieve/VXGArchieve/meta.svg");
+}
+.VXGArchieveClipShare:before {
+    background-image: url("core/modules/archieve/VXGArchieve/share.svg");
+}
+.VXGArchieveClipDelete:before {
+    background-image: url("core/modules/archieve/VXGArchieve/delete.svg");
+}
+
+.VXGArchieveMenu > div:before {
+    content: ' ';
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background-position: center center;
+    background-size: contain;
+    margin-left: -27px;
+    background-repeat: no-repeat;
+    filter: invert(47%) sepia(1%) saturate(1743%) hue-rotate(154deg) brightness(85%) contrast(82%);
+}
+
+.VXGArchievePlayer,
+.VXGArchieveShare,
+.VXGArchieveInfo {
+    display: none;
+    width: 40%;
+    min-width: 330px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    bottom:0;
+    background-color: #ffffff;
+    z-index: 3;
+}
+
+.VXGArchieveShareWaiter.waitdata,
+.VXGArchieveInfoWaiter.waitdata {
+    display: block;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-image: url(core/modules/archieve/VXGArchieve/loader.gif);
+}
+
+.VXGArchieveShareWaiter,
+.VXGArchieveInfoWaiter {
+    z-index: 4;
+    display: none;
+    position: absolute;
+    top:0px;
+    bottom:0px;
+    right:0px;
+    left:0px;
+}
+
+.VXGArchieveInfoHeader {
+    position: relative;
+    height: 40px;
+    border-color: #cfcfcf;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
+    margin-left: 32px;
+    margin-right: 32px;
+    font-size: 16px;
+}
+
+.VXGArchieveInfoContent {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 50px - 30px); /*controls:50px,header:30px */
+    padding: 0px 30px;
+}
+
+.VXGArchieveInfoControls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right:0;
+    width: 100%;
+    height: 40px;
+    margin: 10px 0px 10px 0px;
+    text-align: center;
+}
+
+.VXGArchievePlayerClose,
+.VXGArchieveShareClose,
+.VXGArchieveInfoClose{
+    position: absolute;
+    width: 24px;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-image: url("core/modules/archieve/VXGArchieve/close.svg");
+    background-position: center center;
+    margin: 0px 5px 0px 5px;
+    cursor: pointer;
+    right: 0;
+}
+
+.VXGArchieveInfoTitle{
+    position: relative;
+    height: 100%;
+    color: #000000;
+    text-align: left;
+    margin: 0px 40px 0px 0px;
+    padding: 13px 0px 0px 0px;
+}
+
+.VXGArchieveDeleteTitle{
+    position: relative;
+    height: 100%;
+    color: #000000;
+    text-align: center;
+    padding: 13px 0px 0px 0px;
+}
+
+.VXGArchievePlayer.visible,
+.VXGArchieveShare.visible,
+.VXGArchieveInfo.visible {
+    display: block;
+    box-shadow: 0 0 10px rgb(0 0 0 / 20%);
+}
+
+.VXGArchievePlayer .VXGArchiveInfoTable {
+    height: 1vw;
+}
+
+.VXGArchiveShareTable,
+.VXGArchiveInfoTable {
+    width: 100%;
+    height: 100%;
+    padding: 10px 0px 10px 0px;
+    table-layout: fixed;
+}
+
+
+.VXGArchiveShareTable > tbody > tr, 
+.VXGArchiveInfoTable > tbody > tr {
+    height: 30px;
+    padding: 5px 0px 0px 0px;
+}
+
+.VXGArchiveShareTable > tbody > tr > td {
+    overflow: hidden;
+}
+
+.VXGArchiveInfoTable > tbody > tr > td {
+    overflow: hidden;
+    width: 80px;
+}
+
+.VXGArchieveInfoCaseValue {
+    text-align: right;
+}
+
+.VXGArchieveShareError,
+.VXGArchieveInfoError {
+    color: red;
+    position: absolute;
+    height: 24px;
+    width: 100%;
+    bottom: 45px;
+    font-size: 12px;
+    padding: 0px 10px 0px 10px;
+}
+
+.VXGArchiveShareTable > tbody > tr > td > div {
+    width: 100%;
+}
+
+.VXGArchiveShareTable > tbody > tr > td:nth-child(2),
+.VXGArchiveInfoTable > tbody > tr > td:nth-child(2) {
+    text-align: end;
+    width: auto;
+}
+
+/*
+.VXGArchiveShareTable > tbody > tr:nth-child(3) > td {
+    text-align: center;
+}
+*/
+
+.VXGArchieveShareGroup {
+    text-align: center;
+}
+
+.VXGArchieveShareGroup > div {
+    width: 85px;
+    text-align: center;
+    padding: 13px 10px;
+}
+
+
+.VXGArchieveShareLink,
+.VXGArchieveInfoDesc {
+    height: calc(100% - 30px);
+    resize: none;
+    background-color: #fafafa;
+}
+
+.VXGArchieveDeleteDialog.visible {
+    display: block;
+}
+
+.VXGArchieveDeleteDialog {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 5;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgb(0 0 0 / 20%);
+    transform: translate(-50%,-50%);
+}
+
+.VXGArchiveDeleteTable {
+    padding: 5px 30px 10px 30px;
+}
+
+.VXGArchiveDeleteTable > tbody > tr { 
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+.VXGArchieveDeleteConfirm {
+    display: inline-block;
+}
+
+.VXGArchieveInfoApply,
+.VXGArchieveShareCopyLink,
+.VXGArchieveDeleteConfirm,
+.VXGArchieveDeleteCancel {
+    /*width: 100px;*/
+    text-align: center;
+}
+
+.VXGArchieveCurtain {
+    display: none;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background-color: #2222227f;
+    z-index: 3;
+}
+
+.VXGArchieveCurtain.visible {
+    display: block;
+}
+
+@media (max-width: 600px) {
+    .VXGArchieveInfo.visible {
+	display: none;
+    }
+    .VXGArchieveShare.visible {
+	display: none;
+    }
+}

@@ -1,0 +1,12 @@
+.VXGActivityMore.visible {
+    display: inline-flex;
+}
+.VXGActivityMore.spinner{
+    color: rgba(0,0,0,0);
+}
+
+@media (min-width: 1530px){
+  .feed-activity-list {
+    position: relative;
+  }
+}

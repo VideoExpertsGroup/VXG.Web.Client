@@ -1,0 +1,173 @@
+.VXGArchieveMore.visible {
+}
+
+.VXGArchieveCardInfoMain {
+    display: flex;
+}
+
+
+.feed-Archieve-list {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.arch-scrollable {
+  height: 300px;
+  overflow: auto;
+}
+
+.feed-Archieve-list.arch-scrollable {
+  /*height: 760px;*/
+}
+
+.feed-Archieve-list .feed-Archieve-element {
+  border-bottom: 1px solid #e7eaec;
+}
+
+.feed-Archieve-list .arch-image-container {
+  margin-right: .5rem!important;
+  width: 125px;
+  height: 60px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.feed-Archieve-list .arch-image-container {
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-image: url("core/modules/archieve/archieve.svg");
+  background-position: 50%;
+}
+
+.feed-Archieve-list img {
+  max-width: 100%;
+  object-fit: cover;
+}
+
+.feed-Archieve-element:first-child {
+  margin-top: 0;
+}
+
+.feed-Archieve-element:hover {
+  background-color: rgba(0,0,0,.075);
+}
+.feed-Archieve-element {
+  padding: 15px 0;
+}
+.feed-Archieve-element,
+.feed-Archieve-element .media {
+  /*margin-top: 15px;*/
+}
+.feed-Archieve-element,
+.media-body {
+  overflow: hidden;
+}
+.feed-Archieve-element > a img {
+  margin-right: 10px;
+}
+.feed-Archieve-element img.rounded-circle,
+.dropdown-messages-box img.rounded-circle {
+  width: 38px;
+  height: 38px;
+}
+.feed-Archieve-element .well {
+  border: 1px solid #e7eaec;
+  box-shadow: none;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  padding: 10px 20px;
+  font-size: 11px;
+  line-height: 16px;
+}
+.feed-Archieve-element .actions {
+  margin-top: 10px;
+}
+.feed-Archieve-element .photos {
+  margin: 10px 0;
+} 
+
+.detected-Archieve-label.empty {
+  background-color: #ffffff00;
+  color: #FFFFFFff;  
+}
+
+.detected-Archieve-label {
+  color: var(--main-color);
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  font-size: 12px;
+  padding: 1px 0;
+  text-shadow: none;
+  border-radius: 0.25em;
+  line-height: 2;
+  white-space: nowrap;
+}
+
+.Archieve-label {
+  background-color: #d1dade;
+  color: #5e5e5e;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  padding: 3px 8px;
+  text-shadow: none;
+  /*border-radius: 0.25em;*/
+  line-height: 21px;
+  white-space: nowrap;
+}
+
+.Archieve-label-primary {
+  background-color: #1ab394;
+  color: #FFFFFF;
+}
+
+.feed-Archieve-element .Archieve-label {
+  font-size: 10px;
+}
+
+.label-primary, .badge-primary {
+  background-color: var(--main-color);
+  
+}
+
+.arch-text-muted {
+  color: #888888 !important;
+}
+
+.arch-text-navy {
+  color: var(--main-color) !important;
+}
+.feed-Archieve-list .feed-element {
+padding-left: 4px;
+}
+.feed-Archieve-list .feed-element.mr-3 {
+    margin-right: 4px!important;
+}
+@media (max-width: 1530px){
+  .feed-Archieve-list {
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .feed-Archieve-list .feed-element {
+    width:100%;
+  }
+
+  .feed-element, .feed-element .media {
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+}
+
+@media (min-width: 1530px){
+  .feed-Archieve-list {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    left: 0;
+    right: 0;
+  }
+}

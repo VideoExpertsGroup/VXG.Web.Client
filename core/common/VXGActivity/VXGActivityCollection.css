@@ -1,0 +1,133 @@
+.VXGActivityMore.visible {
+    display: inline-flex;
+}
+.VXGActivityMore.spinner{
+    color: rgba(0,0,0,0);
+}
+
+.feed-activity-list.scrollable {
+  height: 100%;
+  overflow: auto;
+}
+
+.feed-activity-list .image-container {
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
+.feed-activity-list .image-stub {
+background: url(core/common/VXGActivity/activity.svg) no-repeat 50% 50%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+background-size: 32px 20px;
+}
+
+
+.feed-element {
+  padding-bottom: 8px;
+  padding-left: 4px;
+  float: left;
+  background-color: transparent;
+position: relative;
+}
+
+.feed-element,
+.feed-element .media {
+}
+.feed-element,
+.media-body {
+  overflow: hidden;
+}
+.feed-element > a img {
+  margin-right: 10px;
+}
+.feed-element img.rounded-circle,
+.dropdown-messages-box img.rounded-circle {
+  width: 38px;
+  height: 38px;
+}
+
+.event-info {
+    display: grid;
+    margin-top: 12px;
+padding: 0 8px;
+}
+.event-info small{
+    color: #B3B3B3!important;
+}
+
+.camera-name {
+    margin-bottom: 5px;
+    max-width: 160px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+font-weight: 600;
+    font-size: 12px;
+}
+
+.feed-element > .tometaview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > strong ,
+.feed-element > .toeventview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > strong {
+font-size: 12px;
+    top: 3px;
+    position: absolute;
+    right: 3px;
+    color: white;
+    border-radius: 10px;
+    background-color: var(--main-color);
+    padding: 3px 8px;
+    z-index: 1;
+    font-weight: 400;
+}
+
+.feed-element > .tometaview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > div > .label
+{
+    display: block;    
+}
+
+.feed-element > .tometaview > .VXGActivityCardInfo > .text-navy,
+.feed-element > .toeventview > .VXGActivityCardInfo > .text-navy {
+    display: none;
+}
+
+.detected-label {
+/*  background-color: #7BB247;
+  color: #FFFFFF; */
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  padding: 1px 0px;
+  text-shadow: none;
+/*  border-radius: 0.25em;*/
+  line-height: 2;
+  white-space: nowrap;
+}
+
+.image-container {
+    width: 140px;
+    height: 83px;
+    position: relative;
+}
+
+.image-container > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.toeventview > .flex-grow-1 > .d-flex ,
+.tometaview > .flex-grow-1 > .d-flex  {
+    display: block;
+}
+
+.toeventview, .tometaview {
+    display: block;
+    background-color: #ffffff; /*#f4f6fa;*/
+    color: #000000;
+}

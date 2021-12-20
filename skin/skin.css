@@ -1,0 +1,82 @@
+/************************************************************************************************* 
+	Please do not modify this file unless absolutely necessary
+*************************************************************************************************/
+
+/* the background for the pages:  sign in, sign up and forgot password    */
+.screens-wrapper.screens > .login, .screens-wrapper.screens > .signup, .screens-wrapper.screens > .forgot {
+    background-image: url(img/background.jpg);
+}
+
+/* the logo on the  pages:  sign in, sign up and forgot password    */
+.screens-wrapper.screens > .login .logo, .screens-wrapper.screens > .signup .logo, .screens-wrapper.screens > .forgot .logo {
+    cursor: pointer;
+    background-image: url("img/logo.png");
+}
+
+/* the logo in the left panel */
+.logo-container {
+    background: url(img/logo.png) center no-repeat;
+    background-size: 98px;
+    width: 100%;
+    height: 50px;
+}
+
+/* The defaul preview for the camera list item if there is not any preview for a camera */
+.reports campreview, .usercameralist campreview {
+/*    background-image: url(img/camera.svg);*/
+}
+
+/* The image for search control */
+.header-search .mainsearch:before {
+    background: url(img/search.svg) no-repeat;
+}
+
+/* The defaul preview for the event list item if there is not any preview for a event */
+.activity .feed-activity-list .image-container, .reports .feed-activity-list .image-container {
+/*    background-image: url(img/activity.svg);*/
+}
+
+/* The icon for the drop down control  */
+.menu:after {
+    content: url(img/dropdown.svg);
+}
+
+/* The icon for the drop down control in the header  */
+.header-right .gridmenu:after {
+    content: url(img/dropdown.svg) !important;
+}
+
+/* The icon for the AI statistics control  */
+.shift-right, .shift-left {
+    background: url(img/shevron.svg) center no-repeat !important;
+}
+
+/* The icon for profile in the left panel */
+.profile-img {
+    display: inline-block;
+    background: url(img/profile_dev.svg) center no-repeat;
+    background-size: contain;
+}
+
+/* The icons for the left panel : Home, Users, Cameras, Activity and Map  */
+li.reports .menu-icon {background-image: url("img/menu/reports.svg")!important;border-image-source:url("img/menu/reportsh.svg")!important;}
+li.users .menu-icon {background-image: url("img/menu/users.svg")!important;border-image-source:url("img/menu/usersh.svg")!important;}
+li.cameras .menu-icon {background-image: url("img/menu/cameras.svg")!important;border-image-source:url("img/menu/camerash.svg")!important;}
+li.activity .menu-icon {background-image: url("img/menu/activity.svg")!important;border-image-source:url("img/menu/activityh.svg")!important;}
+li.map .menu-icon {background-image: url("img/menu/map.svg")!important;border-image-source:url("img/menu/maphover.svg")!important;}
+li.archive .menu-icon {background-image: url("img/menu/archive.svg")!important;border-image-source:url("img/menu/archiveh.svg")!important;}
+
+.bottomline a, .bottomline a:hover{color:var(--main-color);}
+
+.bottom-global-menu {text-align: center;border-top: 1px solid #fff3;padding-top: 32px;margin-top: 10px;}
+
+.transparent-button.deleteclip{color:#F24949;}
+.transparent-button.deleteclip img{filter: brightness(0.498) sepia(.73) hue-rotate(-200deg) saturate(9)!important;}
+.transparent-button.deleteclip .svgbtn{filter: brightness(0.498) sepia(.73) hue-rotate(-200deg) saturate(9);}
+.svgbtn, .svgbtnbefore:before, .svgbtnafter:after, .svgbtnbeforehover:hover:before, .svgbtnhover:hover {filter: brightness(0.498) sepia(.73) hue-rotate(-200deg) saturate(9)!important;}
+
+:root {
+    --main-color: #006bff;
+    --rec-color: red;
+    --main-hover-color: #7BB247;
+}

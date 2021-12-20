@@ -1,0 +1,84 @@
+.bottom-global-menu{
+    text-align: center;
+    border-top: 1px solid #fff3;
+    padding-top: 32px;
+    margin-top: 10px;
+}
+
+.bottom-global-menu .upgrade{
+margin-bottom:20px;
+}
+
+.subscribe .item{
+cursor:pointer;
+width: 180px;
+    height: 240px;
+    float: left;
+    margin: 0 20px 20px 0;
+    border: 1px dashed #7bb247;
+    border-radius: 15px;
+    color: black;
+    font-family: Tahoma;
+    font-size: 16px;
+    line-height: 18px;
+    background-color: white;
+}
+
+.subscribe .icon{
+text-align: center;
+height:30px;
+margin:10px 0 19px 0;
+}
+.subscribe .icon img{
+height: 100%;
+}
+
+.subscribe .title{
+font-weight: bolder;
+text-align: center;
+padding-bottom: 9px;
+}
+.subscribe .cost{
+text-align: center;
+    padding-bottom: 9px;
+}
+.subscribe .desc{
+font-size: 12px;
+    padding: 0 25px;
+}
+
+.subscribe .desc ul{
+list-style: circle!important;
+line-height: 13px;
+    padding-left: 16px;
+}
+
+.subscribe .planlist{
+min-height:40px;
+}
+
+#card-element{
+width:100%;
+}
+
+.subscribe2 > div > label{
+line-height: 30px;
+width:100%;
+}
+
+.subscribe3 .invite > div{
+font-size: 14px;
+    padding: 10px 0;
+}
+
+.subscribe3 .invite > div > div{
+    width: 89px;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.subscribe3 form label{
+font-size: 14px;
+margin-top: 10px;
+    margin-bottom: 20px;
+}

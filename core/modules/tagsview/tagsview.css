@@ -1,0 +1,520 @@
+#tagsplayer{
+}
+
+
+.screens > .tagsview .cloudplayer-get-clip,
+.screens > .tagsview .cloudplayer-get-shot{
+    display: none!important;
+}
+
+.screens > .tagsview .plarea {
+    width: 100%;
+    max-height: 240px;
+    max-width: 320px;
+}
+
+.screens > .tagsview .ratio {
+max-height: 800px;
+max-width: calc(calc(100vh - 164px) * 640 / 358);
+}
+
+.screens > .tagsview .ratio-inner {
+    position: relative;
+    height: 0;
+    border: none;
+}
+
+.screens > .tagsview .ratio-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: #eee;
+max-height: calc(100vh - 164px);
+}
+
+.screens > .tagsview .ratio-4-3 {
+    padding-top: 56%;
+}
+
+.screens > .tagsview .ratio-5-1 {
+    padding-top: 20%;
+}
+
+
+.screens > .tagsview{
+width:100%;
+height:100%;
+position:relative;
+}
+.screens > .tagsview .wrapper{
+width: 100%;
+    height: 100%;
+    display: flex;
+justify-content: space-between;
+}
+
+body.tagsview .body .rightblock .screens-wrapper.screens {
+margin-right:0;
+}
+
+.screens > .tagsview .tagslistwrapper{
+flex: 10 10;
+    margin: 0;
+    min-width: 320px;
+    position: relative;
+    background: white;
+    padding: 0 20px 0;
+max-width:400px;
+}
+body.mobile .screens > .tagsview .tagslistwrapper .btnarea{
+}
+@media (max-width: 860px) {
+body:not(.landscape) .screens > .tagsview .wrapper{
+    flex-direction: column;
+}
+body:not(.landscape) .screens > .tagsview .tagslistwrapper{
+max-width:initial;
+}
+}
+
+.screens > .tagsview .btnarea{
+text-align:right;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+padding-top: 17px;
+}
+.screens > .tagsview .btnarea > div{
+    flex: 1 1;
+    border-bottom: 2px solid #E7E7E7;
+padding: 10px 8px 20px 42px;
+    text-align: left;
+font-size: 16px;
+text-transform: uppercase;
+    font-weight: 600;
+    color: #212227;
+}
+.screens > .tagsview .btnarea .showevents,.screens > .tagsview .btnarea .shownotes{
+    text-align: center;
+}
+
+.screens > .tagsview .btnarea .showevents,.screens > .tagsview .btnarea .shownotes{
+cursor:pointer;
+}
+
+.screens > .tagsview:not(.showedittag) .addnote,
+.screens > .tagsview:not(.showcreateclip) .addclip,
+.screens > .tagsview:not(.showshare) .addshare,
+.screens > .tagsview:not(.showfilterclip) .setfilter,
+.screens > .tagsview.showedittag .shownotes, .screens > .tagsview.showcreateclip .shownotes, .screens > .tagsview.showshare .shownotes, .screens > .tagsview.showfilterclip .shownotes,
+.screens > .tagsview.showedittag .showevents, .screens > .tagsview.showcreateclip .showevents, .screens > .tagsview.showshare .showevents, .screens > .tagsview.showfilterclip .showevents {
+display:none;
+}
+
+.screens > .tagsview.shownotes .shownotes,
+.screens > .tagsview.showevents .showevents{
+    border-bottom: 2px solid var(--main-color);
+}
+
+.screens > .tagsview .tagsviewfilter,
+.screens > .tagsview .tagslist,
+.screens > .tagsview .eventslist,
+.screens > .tagsview .clip,
+.screens > .tagsview .snapshot,
+.screens > .tagsview .share{
+overflow-y: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    padding: 0;
+    background: white;
+    padding: 0 0px 0;
+    margin-right: 2px;
+    margin-left: 10px;
+    top: 66px;
+}
+body:not(.mobile) .screens > .tagsview .tagsviewfilter,
+body:not(.mobile) .screens > .tagsview .tagslist,
+body:not(.mobile) .screens > .tagsview .eventslist,
+body:not(.mobile) .screens > .tagsview .clip,
+body:not(.mobile) .screens > .tagsview .snapshot,
+body:not(.mobile) .screens > .tagsview .share{
+overflow-y: auto;
+    margin-right: 20px;
+}
+body:not(.landscape) .screens > .tagsview .tagsviewfilter,
+body:not(.landscape) .screens > .tagsview .tagslist,
+body:not(.landscape) .screens > .tagsview .eventslist,
+body:not(.landscape) .screens > .tagsview .clip,
+body:not(.landscape) .screens > .tagsview .snapshot,
+body:not(.landscape) .screens > .tagsview .share{
+    margin-top: 15px;
+}
+.screens > .tagsview .clip tr:nth-child(2),.screens > .tagsview .clip tr:nth-child(4),.screens > .tagsview .clip tr:nth-child(6),.screens > .tagsview .clip tr:nth-child(8),
+.screens > .tagsview .tagsedit tr:nth-child(3){
+font-style: normal;
+font-weight: normal;
+font-size: 12px;
+color: #B3B3B3;
+}
+
+
+.screens > .tagsview .eventslist events-list{
+width:100%;
+height:100%;
+display: block;
+}
+.screens > .tagsview .tagslistwrapper .shareinfo{
+    min-height: 260px;
+display:none;
+font-size: 14px;
+position:relative;
+}
+.screens > .tagsview .tagslistwrapper .shareinfo table{
+width:100%;
+    margin-bottom: 10px;
+}
+body:not(.mobile) .screens > .tagsview .tagslistwrapper .shareinfo table td{
+padding: 10px 0;
+}
+.screens > .tagsview .tagslistwrapper .share{
+overflow-wrap: break-word;
+height:auto;
+}
+body.landscape .screens > .tagsview .tagslistwrapper .share{
+height:100%;
+}
+.screens > .tagsview .tagslistwrapper .share .sharebnts{
+text-align:center;
+margin-top:20px;
+}
+.screens > .tagsview .closebtn{
+    width: 24px;
+    height: 23px;
+    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB4PSIyLjQiIHk9IjIuNCIgd2lkdGg9IjE5LjIiIGhlaWdodD0iMTkuMiIgcng9IjkuNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiLz48cGF0aCBkPSJNMTMgOUwxMC4xNzE2IDExLjgyODRMMTMgMTQuNjU2OSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=) center center no-repeat;
+    background-size: auto;
+    position: absolute;
+    top: 23px;
+    left: 21px;
+cursor:pointer;
+}
+
+.screens > .tagsview .share .shareurl{
+    min-height: 211px;
+background-color: #fafafa;
+resize: none;
+}
+
+.screens > .tagsview .tagslist .onetag{
+    border-bottom: 1px solid #E7E7E7;
+    padding: 10px 10px;
+}
+.screens > .tagsview .tagslist .onetag:hover{
+background-color: rgba(0,0,0,.075) !important;
+cursor:pointer;
+}
+.screens > .tagsview .tagslist .datetime{
+    font-weight: normal;
+    color: var(--main-color);
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+.screens > .tagsview .tagslist .case{
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+}
+.screens > .tagsview .tagslist .desc{
+margin: 10px 0;
+    font-size: 14px;
+    word-break: break-word;
+}
+.screens > .tagsview .tagslist .tags{
+    color: gray;
+    border-top: 1px dashed lightgray;
+    padding: 5px 0 0 0;
+width:100%;
+text-align:right;
+}
+
+.screens > .tagsview .tagslist .noevents{
+font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    position: absolute;
+    top: 49%;
+    left: 0;
+    right: 0;
+}
+
+.screens > .tagsview .tagslist .noevents a{
+color: var(--main-color);
+}
+
+body .body .rightblock .screens-wrapper.screens {
+    padding: 0;
+}
+
+.screens > .tagsview:not(.showfilterclip) .tagsviewfilter:not(.vxgbutton),
+.screens > .tagsview:not(.showedittag) .tagsedit,
+.screens > .tagsview:not(.showevents) .eventslist,
+.screens > .tagsview:not(.shownotes) .tagslist,
+.screens > .tagsview:not(.showcreateclip) .clip:not(.vxgbutton),
+.screens > .tagsview:not(.showsnapshot) .snapshot:not(.vxgbutton),
+.screens > .tagsview:not(.showshare) .share:not(.vxgbutton){
+display:none;
+}
+
+.screens > .tagsview time-line-picker{
+display: block;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 62px;
+    min-width: 300px;    border: 1px solid lightgray;
+    background: rgb(244, 246, 250);
+}
+
+.screens > .tagsview .info{
+margin: 13px 0;
+    color: var(--main-color);
+    font-weight: bold;
+}
+
+.screens > .tagsview .tagsviewfilter table,
+.screens > .tagsview .clip table{
+font-size:16px;
+    width: 100%;
+margin-top: 20px;
+}
+.screens > .tagsview .tagsviewfilter table.inf,
+.screens > .tagsview .clip table.inf{
+margin-bottom:20px;
+}
+.screens > .tagsview .tagsviewfilter table td,
+.screens > .tagsview .clip table td{
+text-align:center;
+}
+.screens > .tagsview .tagsviewfilter table.inf td,
+.screens > .tagsview .clip table.inf td{
+text-align:left;
+height: 30px;
+}
+.screens > .tagsview .tagsviewfilter span,
+.screens > .tagsview .clip span{
+font-size:80%;
+}
+.screens > .tagsview .tagsviewfilter input,
+.screens > .tagsview .clip input{
+width: 100%;
+    padding: 5px;
+    text-align: left;
+    display: inline-block;
+}
+.screens > .tagsview .clip textarea{
+height:300px;
+resize:none;
+}
+.screens > .tagsview .cliptitle,.screens > .tagsview .clipcase{
+width: 100%!important;
+    text-align: left!important;
+}
+
+
+.screens > .tagsview .tagsviewfilter,
+.screens > .tagsview .tagsedit,
+.screens > .tagsview .clip,
+.screens > .tagsview .snapshot,
+.screens > .tagsview .share{
+background: white;
+flex-direction: column;
+height: auto;
+padding-bottom: 20px;
+}
+body.mobile .screens > .tagsview .share{
+padding-bottom: 0px;
+}
+
+body.mobile .screens > .tagsview .VXGActivityFilter{
+display:none;
+}
+
+.screens > .tagsview .tagsedit{
+display:flex;
+font-size:16px;
+}
+.screens > .tagsview .tagsedit table{
+margin-bottom: 15px;
+    margin-top: 10px;
+}
+.screens > .tagsview .tagsedit table tr td:first-child{
+line-height: 28px;
+}
+.screens > .tagsview .tagsedit table tr td:last-child{
+text-align:right;
+}
+.screens > .tagsview .tagsedit input{
+    height: 30px;
+}
+.screens > .tagsview .tagsedit .datetime{
+    flex: 1;
+    line-height: 1em;
+    margin-bottom: 15px;
+    color: var(--main-color);
+    font-weight: bold;
+}
+.screens > .tagsview textarea, .screens > .tagsview input{
+padding: 20px;
+}
+.screens > .tagsview .tagsedit textarea{
+flex:50;
+    margin-bottom: 15px;
+min-height: 260px;
+resize:none;
+}
+.screens > .tagsview .tagsedit textarea[disabled]{
+background: none;
+}
+.screens > .tagsview .savewrapper{
+max-height: 30px;
+    flex: 1;
+    text-align: right;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.screens > .tagsview .playerwrapper {
+    position: relative;
+    max-width: 1280px;
+    margin: 0px 20px 0 0px;
+    min-width: 320px;
+    flex: 1 5;
+text-align:center;
+    padding-left: 20px;
+}
+body.landscape .screens > .tagsview .playerwrapper {
+    min-width: 250px;
+}
+body.mobile .screens > .tagsview .playerwrapper {
+    margin: 0px 0px 0 0px;
+    padding-left: 0px;
+}
+body.tagsview.mobile .screens{
+    margin-top: 0!important;
+}
+.screens > .tagsview .playerwrapper .buttons{
+display: flex;
+    white-space: nowrap;
+    justify-content: space-evenly;
+margin-bottom: 15px;
+}
+.screens > .tagsview .playerwrapper .buttons button{
+margin-top: 20px;
+    margin-right: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 30%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+max-width: 125px;
+}
+
+.screens > .tagsview .vxgbutton{
+    max-width: 115px;
+flex:1;
+}
+.screens > .tagsview .sharebnts .vxgbutton{
+width:110px;
+}
+.screens > .tagsview div > .deltag{
+display:none;
+}
+
+.ncssbuttons{
+display:flex;
+justify-content: space-around;
+flex-flow: nowrap;
+}
+.ncssbuttons > *{
+margin-left:10px;
+    white-space: nowrap;
+}
+.ncssbuttons .vxgbutton{
+white-space: nowrap;
+    margin-left: 10px;
+padding: 5px 24px;
+}
+
+.text-primary {
+    color: var(--main-color)!important;
+}
+.datepicker table tr td.active.active, .datepicker table tr td.active:hover.active {
+    background-color: var(--main-color)!important;
+}
+.headerBlock .header-left .mainbackbtn{
+    display: block!important;
+}
+.edtag{
+    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2LjAzMTYgNC45NDk3NUwxMy4yMDMyIDIuMTIxMzJDMTIuODEyNyAxLjczMDggMTIuMTc5NSAxLjczMDggMTEuNzg5IDIuMTIxMzJMMi40MjcxOCAxMS40ODMxQzIuMjUzOTkgMTEuNjU2MyAyLjE1MDM5IDExLjg4NyAyLjEzNjAxIDEyLjEzMTVMMS44OTMxNyAxNi4yNTk4TDYuMDIxNDMgMTYuMDE2OUM2LjI2NTkyIDE2LjAwMjYgNi40OTY2NCAxNS44OTkgNi42Njk4MiAxNS43MjU4TDE2LjAzMTYgNi4zNjM5NkMxNi40MjIyIDUuOTczNDQgMTYuNDIyMiA1LjM0MDI3IDE2LjAzMTYgNC45NDk3NVpNMTMuOTEwMyAxLjQxNDIxQzEzLjEyOTMgMC42MzMxNjUgMTEuODYyOSAwLjYzMzE2NSAxMS4wODE5IDEuNDE0MjFMMS43MjAwNyAxMC43NzZDMS4zNzM3MSAxMS4xMjI0IDEuMTY2NSAxMS41ODM4IDEuMTM3NzMgMTIuMDcyOEwwLjg5NDg5NCAxNi4yMDExQzAuODU5NzM0IDE2Ljc5ODggMS4zNTQxNyAxNy4yOTMyIDEuOTUxODkgMTcuMjU4MUw2LjA4MDE1IDE3LjAxNTJDNi41NjkxNCAxNi45ODY1IDcuMDMwNTYgMTYuNzc5MiA3LjM3NjkyIDE2LjQzMjlMMTYuNzM4NyA3LjA3MTA3QzE3LjUxOTggNi4yOTAwMiAxNy41MTk4IDUuMDIzNjkgMTYuNzM4NyA0LjI0MjY0TDEzLjkxMDMgMS40MTQyMVoiIGZpbGw9IiNCM0IzQjMiLz48cGF0aCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGQ9Ik0xMCAzLjVMMTQuNSA4IiBzdHJva2U9IiNCM0IzQjMiLz48L3N2Zz4=) no-repeat center center;
+    width: 18px;
+    height: 18px;
+    float: right;
+    margin-top: 5px;
+}
+
+.VXGActivityContainer2 {
+    padding-top: 0px;
+}
+
+body.mobile .header-right .ncssbuttons > div span{
+display:none;
+}
+
+.toclipboard{
+position: absolute;
+    right: 4px;
+    bottom: 4px;
+    cursor: pointer;
+}
+
+body.mobile.tagsview #mobile-menu-btn{display:none;}
+body.mobile.tagsview .rightblock .headerBlock{padding-right:0;}
+.tagsview .tonewver{
+position: absolute;
+    right: 0px;
+    top: 5px;
+    z-index: 30000;
+cursor:pointer;
+}
+.tagsview .tonewver:before{
+content:"2";
+color:white;
+    color: #888;
+    font-size: 26px;
+    font-family: cursive;
+    padding: 0px 10px;
+z-index: 30000;
+}
+.tagsview .playerwrapper:not(.activenewver) k-player,
+.tagsview .playerwrapper.activenewver .ratio{
+display:none;
+}
+.tagsview .playerwrapper.activenewver .tonewver:before{
+content:"1";
+}
+.tagsview .playerwrapper:not(:hover) .tonewver{
+display:none;
+}
+.mainkplayer{
+position: absolute;
+    overflow: hidden;
+    user-select: none;
+    height: 240px;
+    display: block;
+    width: 100%;
+background: black;
+}

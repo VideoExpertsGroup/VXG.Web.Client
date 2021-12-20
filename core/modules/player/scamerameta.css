@@ -1,0 +1,6 @@
+.screens > .camerameta .download_image{
+background: url(showgraph.svg) right center no-repeat;
+}
+.screens > .camerameta .download_meta{
+    background: url(Download.svg) right center no-repeat;
+}

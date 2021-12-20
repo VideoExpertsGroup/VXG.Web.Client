@@ -1,0 +1,28 @@
+.plan2camera .selectplan label{
+margin-bottom:0px;
+}
+
+.plan2camera .selectplan input[name="cameraplan"]{
+float: left;
+    width: 20px;
+    margin: -11px 10px 0 0;
+}
+
+.plan2camera .selectplan.spinner{
+min-height:20px;
+}
+
+.plan2camera .selectplan .add{
+float:right;
+}
+.plan2camera .selectplan .arc{
+padding:6px 0px;
+}
+
+.plan2camera .selectplan > div{
+margin-bottom:20px;
+}
+
+body.plan2camera .headerBlock .header-left .mainbackbtn{
+    display: block!important;
+}

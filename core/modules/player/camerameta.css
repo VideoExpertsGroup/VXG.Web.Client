@@ -1,0 +1,267 @@
+.screens > .camerameta{
+    margin-bottom:20px;
+}
+
+
+
+.screens > .camerameta .table{
+background-color:white;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    border-spacing: 0;
+}
+.screens > .camerameta .table td:nth-child(2){
+width:100px;
+}
+
+
+.screens > .camerameta .table th{
+line-height: 1.42857;
+    padding: 8px;
+    vertical-align: top;
+text-align:left;
+}
+.screens > .camerameta .table tbody tr:hover {
+    background-color: rgba(0,0,0,.075);
+}
+
+.screens > .camerameta .table td {
+    border-top: 1px solid #e7eaec;
+    line-height: 1.42857;
+    padding: 10px 8px;
+    vertical-align: top;
+    cursor: pointer;
+}
+
+
+.screens > .camerameta .download_image{
+    width: 26px;
+    height: 20px;
+    display: inline-block;
+    cursor: pointer;
+    margin-left: 10px;
+}
+.screens > .camerameta .download_meta{
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.screens > .camerameta .time input {
+border: 1px solid lightgray;
+padding: 4px 10px 4px;
+    width: 168px;
+    font-size: 12px;
+    line-height: 22px;
+    color: #595959;
+margin-right:10px;
+}
+
+.screens > .camerameta .time {
+display: flex;
+}
+
+.screens > .camerameta .time button{
+    margin-top: 2px;
+}
+
+.screens > .camerameta .vxg-button{
+}
+
+.screens > .camerameta.waitrefresh button.show, .screens > .camerameta.waitmore button.show{
+    pointer-events: none;
+    background-color: lightgrey!important;
+}
+
+.screens > .camerameta.waitrefresh input, .screens > .camerameta.waitmore input{
+    color: gray;
+    pointer-events: none;
+    background-color: transparent;
+}
+
+.screens > .camerameta.waitrefresh .tablearea{
+width:0px;
+height:0;
+overflow:hidden;
+}
+
+.screens > .camerameta .waitimages {
+    clear: both;
+display:none;
+}
+
+.screens > .camerameta.waitrefresh .waitimages {
+    background: url(spinner.gif) center center no-repeat;
+    background-size: contain;
+    height: 100px;
+    display: block;
+}
+
+.screens > .camerameta.waitrefresh button.more{
+display:none;
+}
+.screens > .camerameta.waitmore button.more{
+    pointer-events: none;
+    background-color: lightgrey!important;
+}
+
+.screens > .camerameta.waitmore button.more:after {
+    content: '';
+    width: 100px;
+    height: 32px;
+    background: url(spinner.gif) 0px -36px;
+    background-size: cover;
+    margin-top: 10px;
+    position: absolute;
+}
+
+.screens > .camerameta .tablearea{
+    margin-top: 40px;
+    width: 100%;
+min-height: 40px;
+}
+
+#metaDialog .modal-dialog{
+    width: 90%;
+    max-width: 900px;
+}
+#metaDialog .modal-dialog .modal-content{
+background-color: #fafafa;
+}
+
+
+#metaDialog{
+}
+
+
+#metaDialog .metaSvg{
+width:0px;
+height:0px;
+margin-bottom: 20px;
+}
+
+
+#metaDialog .metaImg{
+width:320px;
+height:180px;
+margin-bottom: 20px;
+}
+
+#metaDialog .metaText{
+margin-bottom: 10px;
+background-color: white;
+border: none;
+border-radius: 0;
+width:100%;
+height:400px;
+}
+
+#metaDialogContent{
+text-align:center;
+padding-bottom: 0;
+}
+
+@media (min-width: 850px) {
+#metaDialogContent{
+display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+}
+
+#metaDialog .metaText{
+margin-left:10px;
+-webkit-flex: auto;
+flex: auto;
+width:auto;
+font-family: 'montserratlight', 'Montserrat', sans-serif;
+font-size: 14px;
+line-height: 16px
+}
+}
+
+#metaDialog .modal-footer{
+padding: 20px 15px 0 15px;
+}
+
+.screens > .camerameta .vxg-button {
+    background-color: #a0cf4d;
+    border-radius: 40px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 20px;
+    margin-top: 15px;
+    border: none;
+    cursor: pointer;
+    outline: none !important;
+}
+
+
+.screens > .camerameta .tablearea.spinner{
+background-position-y: bottom!important;
+padding-bottom:10px;
+margin-bottom:10px;
+}
+
+.screens > .camerametaview .metabody {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.screens > .camerametaview .image-and-tags {
+    width: 60%;
+    -webkit-flex: auto;
+    flex: auto;
+    margin-right: 20px;
+    max-width: 1228px;
+}
+
+.screens > .camerametaview .image-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+width: auto;
+    float: left;
+}
+
+.screens > .camerametaview .metaTags{
+    clear: both;
+}
+
+.screens > .camerametaview .metaSvg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.screens > .camerametaview .metaImg {
+    max-height: calc(100vh - 225px);
+    object-fit: contain;
+max-width: 100%;
+}
+
+.screens > .camerametaview .meta {
+    width: 1px;
+    overflow: hidden;
+    height: 1px;
+    position: absolute;
+}
+
+.screens > .camerametaview textarea {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+    font-family: MONOSPACE;
+    font-size: 14px;
+    line-height: 14px;
+    padding-left: 10px;
+color:black;
+}

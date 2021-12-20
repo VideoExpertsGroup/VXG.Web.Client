@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<title>VXG TEST</title>
+
+	<script type="text/javascript" src="../../../jquery-3.1.0.min.js"></script>
+	<script type="text/javascript" src="../../../vs_api.js"></script>
+
+
+	<script type="text/javascript" src="../popper/popper.min.js"></script>
+	<script type="text/javascript" src="../bootstrap/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../bootstrap/bootstrap.min.css">
+	
+	<link rel="stylesheet" type="text/css" href="VXGActivity.css">
+	<script type="text/javascript" src="VXGActivity.js"></script>
+
+	
+	<script>
+	    function callbackFunc( operation,  obj ) {
+		console.log('callbackFunc:'+ operation + ' for object:' + obj["name"]);
+	    }
+	    
+	    function somethingWrong( err ) {
+		console.warn('Something wrong' + err);
+	    }
+
+	
+	    $(document).ready(function() {
+		var targetElement = $(this).find('.activitylist')[0];
+		var controller = new VXGActivityController(targetElement);
+	    });
+	
+	    function test_refresh() {
+		var targetElement = $(this.document).find('.activitylist')[0];
+		
+		let allcamtoken	= "";
+		let rotoken0	= "";
+		
+		let apiGetActivityFunc		= vs_api.user.camera.event.list;
+		let somethingWrongFunc		= this.somethingWrong;
+		let controlCbFunc 		= callbackFunc;
+		
+		targetElement.showActivityList( rotoken0, allcamtoken, apiGetActivityFunc.bind(this) , somethingWrong.bind(this), controlCbFunc.bind(this) );
+	    }
+	</script>
+</head>
+<body>
+<header>
+	<div class="t-header__background home-page">
+	</div>
+	<div class="t-header__content">
+		<div class="t-header__left">
+			<h1 class="t-header__title">
+				VXG Activity snippet
+			</h1>
+		</div>
+	</div>
+</header>
+
+<div>
+	<div class="activitylist" style="width: 300px;"></div>
+</div>
+<button onclick="test_refresh();">Refresh</button>
+
+</body>
+</html>

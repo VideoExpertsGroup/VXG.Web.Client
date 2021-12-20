@@ -1,0 +1,125 @@
+.screens .cameras .camlist .camerablock campreview{
+    background-image: url(camera.svg);
+}
+
+.header-right .addcamera, .header-right .nogrid, .header-right .grid22, .header-right .grid33, .header-right .grid44{
+    display:none;
+}
+
+body.cameras .header-right .addcamera,
+body.cameras .header-right .nogrid,
+body.cameras .header-right .grid22,
+body.cameras .header-right .grid33,
+body.cameras .header-right .grid44 {
+    display: block;
+}
+
+/*.header-right .grid22{*/
+/*    background-image: url(mode-2x2.svg);*/
+/*}*/
+
+/*.header-right .grid33{*/
+/*    background-image: url(mode-3x3.svg);*/
+/*}*/
+
+/*.header-right .grid44{*/
+/*    background-image: url(mode-4x4.svg);*/
+/*}*/
+
+.cameras .settings{
+    background-image: url(setting.svg);
+}
+
+.cameras .mcamera:before{
+    background-image: url(mcamera.svg);
+}
+
+.cameras .msetting:before{
+    background-image: url(msetting.svg);
+}
+
+.cameras .mchart:before{
+    background-image: url(mchart.svg);
+}
+
+.cameras .mconfigure:before{
+    background-image: url(mconfigure.svg);
+}
+
+.cameras .mtrash:before{
+    background-image: url(mtrash.svg);
+}
+
+.cameras .mcamera:before, .cameras .msetting:before, .cameras .mchart:before, .cameras .mconfigure:before, .cameras .mtrash:before{
+content: ' ';
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background-position: center center;
+    background-size: contain;
+    margin-left: -27px;
+    background-repeat: no-repeat;
+}
+.locationContainer .locList input:checked+ label:after {
+    content: '';
+    margin-left: 3px;
+    margin-top: 1px;
+    position: absolute;
+    border-radius: 50%;
+    background-color: #7BB247;
+    width: 9px;
+    height: 9px;
+}
+
+.locationContainer.waiting .locList:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: block;
+    background: url(../../spinner.gif) center center  no-repeat;
+    /*background-size: 50px 50px;*/
+    background-position: 50% 50%;
+    z-index: 1;
+}
+
+.cameras2 .captured:before{
+    width:32px;
+    height:32px;
+    position:absolute;
+    content:'';    
+    background: url(captured.svg) center center no-repeat;
+}
+
+.mobheader{
+color: white;
+text-align: right;
+height: 10px;
+padding: 10px 10px;
+background: black url(../../../img/logo.svg) 7px no-repeat;
+background-size: 58px;
+}
+
+@media all and (orientation:landscape) {
+.screens > .cameras.showplayer  .mobheader {
+    color: white;
+    text-align: right;
+    height: 22px;
+    padding: 10px 10px;
+    background: #00000000 url(/img/logo.svg) 7px no-repeat;
+    background-size: 58px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    z-index: 10;
+}
+body .body .rightblock .screens-wrapper.screens{
+position:relative;
+}
+.screens .cameras .cambd {
+height: auto;
+}
+}

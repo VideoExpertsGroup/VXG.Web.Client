@@ -1,0 +1,190 @@
+
+.VXGChartContainer {
+    height: 100%;
+}
+
+.VXGChartContainer3 {
+    position: relative;
+    height: 100%;
+}
+
+.VXGChartContainer2 {
+    height: 100%;
+}
+
+.VXGChartContainer3 > div {
+}
+
+.VXGChartDropmenu {
+    margin-bottom: 10px;
+    margin-top: 0px;
+}
+
+.VXGChartWaiter.waitdata {
+    background: url(loader.gif) center center  no-repeat;
+    background-position: 50% 50%;
+    z-index: 1;
+}
+
+.VXGChart.menu + ul li, .VXGActivityFilterPersonSolution.menu + ul li, .VXGActivityFilterCarSolution.menu + ul li  {
+    cursor: pointer;
+
+}
+
+.VXGChart.menu + ul li:hover span, .VXGActivityFilterPersonSolution.menu + ul li:hover span, .VXGActivityFilterCarSolution.menu + ul li:hover span {
+    color: var(--main-color);
+}
+
+.VXGChart.menu:focus ul, .VXGActivityFilterPersonSolution.menu:focus  ul, .VXGActivityFilterCarSolution.menu:focus ul {
+    opacity: 1;
+    visibility: visible;
+}
+
+.VXGChart.menu ul {
+    width: 150px;
+}
+
+.VXGChart.menu .menu-dropdown {
+    padding: 10px 0 0;
+    width: 50px;
+    margin: 3px 0 0 0;
+    border-radius:3px;
+    pointer-events: auto;
+    position: absolute;
+    z-index: 1;
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 1s;
+    background: #ffffff;
+    list-style: none;
+}
+
+
+.VXGLinechart {
+    position: relative;
+/*    min-height: 200px!important;*/
+}
+
+
+.VXGChart.btn {
+  border: 0;
+  margin: 0 5px;
+  border-radius: 3px;
+  font-size: inherit;
+  
+}
+.VXGChart.btn-xs {
+  position: relative;
+  left: 5px;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  
+}
+
+.VXGChart.btn-group {
+    position:relative;
+    display:-ms-inline-flexbox;
+    display:inline-flex;
+    vertical-align:middle
+}
+.VXGChart.btn-white {
+  color: inherit;
+  background: white;
+  border: 1px solid #e7eaec;
+}
+
+.VXGChart.btn-white:hover,
+.VXGChart.btn-white:active,
+.VXGChart.btn-white.active,
+.VXGChart.btn-white:active:hover,
+.VXGChart.btn-white.active:hover {
+  color: inherit;
+  border: 1px solid #d2d2d2;
+}
+.VXGChart.btn-white:active,
+.VXGChart.btn-white.active {
+  outline: 0;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+
+.VXGChart.btn-white.disabled,
+.VXGChart.btn-white.disabled:hover,
+.VXGChart.btn-white.disabled:focus,
+.VXGChart.btn-white.disabled:active,
+.VXGChart.btn-white.disabled.active,
+.VXGChart.btn-white[disabled],
+.VXGChart.btn-white[disabled]:hover,
+.VXGChart.btn-white[disabled]:focus,
+.VXGChart.btn-white[disabled]:active,
+.VXGChart.btn-white.active[disabled] {
+  color: #cacaca;
+}
+
+.VXGChart.btn-white.focus,
+.VXGChart.btn-white:focus {
+}
+
+.VXGChart.btn-primary {
+  color: #ffffff;
+  background-color: #7BB247 ;
+  border-color: #7BB247 ;
+}
+
+.VXGChart.btn-primary.focus,
+.VXGChart.btn-primary:focus {
+  color: #ffffff;
+  background-color: #7BB247 ;
+  border-color: #7BB247 ;
+  outline: 0px;
+  box-shadow: 0 0 0 0;
+}
+
+.VXGChart.btn-primary:not(:disabled):not(.disabled).active:focus, 
+.VXGChart.btn-primary:not(:disabled):not(.disabled):active:focus{
+    box-shadow: 0 0 0 0;
+}
+
+.VXGChart.btn-primary.active,
+.VXGChart.btn-primary:active {
+  background-color: #7BB247 ;
+  border-color: #7BB247 ;
+  background-image: none;
+  outline: 0;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.250);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.250);
+}
+
+.VXGChart.position-static{position:static!important}
+.VXGChart.position-relative{position:relative!important}
+.VXGChart.position-absolute{position:absolute!important}
+.VXGChart.position-fixed{position:fixed!important}
+.VXGChart.position-sticky{position:-webkit-sticky!important;position:sticky!important}
+
+.VXGChartWaiter.waitdata {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.btn-group.period {
+    display: inline-flex;
+}
+
+.shift-right, .shift-left {
+    width: 25px;
+    height: 25px;
+    margin: 0 10px;
+    background: url(shevron.svg) center no-repeat;
+    cursor: pointer;
+}
+
+.shift-left {
+    transform: rotateY(180deg);
+}
+
+.VXGChartCameraName {
+    font-weight: initial;
+}

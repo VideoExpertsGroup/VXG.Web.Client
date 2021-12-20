@@ -1,0 +1,47 @@
+<div class="wrapper">
+
+    <div class="playerwrapper">
+        <div class="ratio">
+            <div class="ratio-inner ratio-4-3">
+                <video controls class="clipview-clipplayer ratio-content" style="background-color: #000;" autoplay><source class="clipview-clipsource"/></video>
+            </div>
+        </div>
+    </div>
+    <div class="cliplistwrapper">
+        <div class="btnarea">
+    	    <div class="addnote">Note</div>
+    	    <div class="addshare">Share</div>
+        </div>
+        <div class="clipedit">
+            <table border=0>
+              <tr><td>Incident time:</td><td class="inctime"></td></tr>
+              <tr><td class="smalltitle">Case:</td><td></td></tr>
+              <tr><td colspan=2 class="case"><input class="tagcase" type="text"/></td></tr>
+            </table>
+            <textarea class="tagdesc"></textarea>
+            <div class="savewrapper"><button class="vxgbutton deltag">Delete</button><button class="vxgbutton-transparent savetag">Save</button></div>
+        </div>
+        <div class="share">
+            <div class="sharebnts">
+            <button class="vxgbutton-transparent share1">30 min</button>&nbsp;&nbsp;&nbsp;<button class="vxgbutton-transparent share2">1 hour</button>&nbsp;&nbsp;&nbsp;<button class="vxgbutton-transparent share3">12 hour</button><br/><br/><br/>
+            </div>
+            <div class="shareinfo">
+                <table border="0">
+                    <tr><td>Created:</td><td class="sharecreated"></td></tr>
+                    <tr><td>Date of expire:</td><td class="shareexpire"></td></tr>
+                </table>
+                <textarea disabled class="shareurl"></textarea>
+                <div class="vxgbutton-transparent toclipboard">COPY</div>
+            </div>
+        </div>
+    </div>
+    <div class="clip-delete-dialog">
+		<div class="delete-header"><div class="delete-title">Delete clip</div></div>
+    		<table class="delete-table">
+    			<tr><td colspan=2>Deleting clip&nbsp;<span class="delete-clip-name">%clipname%</span></td></tr>
+    			<tr><td colspan=2><span>Are you sure?</span></td></tr>
+    			<tr style="height: 50px; vertical-align: bottom;"><td style="text-align: right;"><div class="delete-clip-confirm vxgbutton-transparent">Delete</div></td>
+    			<td style="text-align: left;"><div class="delete-clip-cancel vxgbutton-transparent">Cancel</div></td></tr>
+    		</table>
+    </div>
+</div>

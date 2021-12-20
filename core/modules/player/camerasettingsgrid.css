@@ -1,0 +1,40 @@
+.camerasettingsgrid{
+position:relative;
+}
+
+.camerasettingsgrid .settabbtn{
+position: absolute;
+    top: 430px;
+}
+body.mobile .screens > .camerasettingsgrid{
+padding:0px 12px 0 12px;
+height:100%;
+background:white;
+}
+
+body.camerasettingsgrid .headerBlock .header-left .mainbackbtn {
+    display: block!important;
+}
+
+body.mobile.camerasettingsgrid #mobile-menu-btn{display:none;}
+
+.camerasettingstabsbtns{
+display:flex;
+max-width:500px;
+margin-bottom:10px;
+}
+.camerasettingstabsbtns > div{
+display: inline-block;
+    border-bottom: 2px solid #E7E7E7;
+    padding: 8px 0px 20px 0px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+    color: black;
+    cursor: pointer;
+    flex: 1 1;
+    text-align: center;
+}
+.camerasettingstabsbtns > div.active{
+    border-bottom: 2px solid var(--main-color);
+}

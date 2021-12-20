@@ -1,0 +1,86 @@
+.body2{
+background-color:gray!important;
+}
+
+.block1{
+font-size:14px;
+display:flex;
+flex-wrap: wrap;
+margin: -1em 0 0 -1em;
+height: 100%;
+}
+.block1 .title{
+padding-bottom: 15px;
+font-weight: 600;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.block2{
+min-width: 500px;
+width: 66%;
+flex-grow: 2;
+margin: 1em 0 0 1em;
+}
+.block3{
+flex-grow: 1;
+min-width: 250px;
+/*border:1px solid #e7eaec;*/
+background-color:white;
+padding:15px 24px;
+margin: 1em 0 0 1em;
+}
+.block4{
+/*border:1px solid #e7eaec;*/
+background-color:white;
+padding:15px 24px;
+min-height: 300px;
+}
+.block5{
+/*border:1px solid #e7eaec;*/
+background-color:white;
+padding:15px 24px;
+position: relative;
+margin-top: 15px;
+}
+.screens > .reports:not(.showstat) .block5{
+display:none;
+}
+.block4 table{
+font-size:12px;
+width:100%;
+}
+.block4 table td:nth-child(5){
+/*text-align:center;*/
+}
+.title {
+height: 30px;
+}
+.title > .block-title {
+float: left;
+}
+.title > .block-additional-control {
+float: right;
+}
+.margin32 {
+margin-left: 32px;
+}
+.mr5 {
+    margin-right: 5px;
+}
+.linechart {
+    height: 295px;
+}
+
+@media (min-width: 1414px) {
+    .block4 {
+	height: calc(100% - 356px - 1em);
+    }
+    .screens > .reports:not(.showstat) .block4{
+        height: 100%;
+    }
+}
+
+body.reports .headerBlock .header-right .signout {
+    display: block!important;
+}
