@@ -1,1 +1,1 @@
-# VXG.Web.Client-
+# VXG.Web.Client
