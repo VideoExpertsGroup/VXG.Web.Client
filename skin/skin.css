@@ -76,7 +76,7 @@ li.archive .menu-icon {background-image: url("img/menu/archive.svg")!important;b
 .svgbtn, .svgbtnbefore:before, .svgbtnafter:after, .svgbtnbeforehover:hover:before, .svgbtnhover:hover {filter: brightness(0.498) sepia(.73) hue-rotate(-200deg) saturate(9)!important;}
 
 :root {
-    --main-color: #006bff;
+    --main-color: #7BB247;
     --rec-color: red;
     --main-hover-color: #7BB247;
 }
