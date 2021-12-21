@@ -12,8 +12,7 @@ window.screens['map'] = {
     'menu_icon': path+'map.svg',
     'menu_icon_hover': path+'maphover.svg',
     'html': path+'map.html',
-    'js':[path+'mapmarkers.js', path+'markerclusterer.js', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBIPb8K81JNuH37nFjfu-rV1Xf-rJ7wT18'],
-//    'js':[path+'mapmarkers.js', path+'markerclusterer.js', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyC0L42SfFlCgWi15F75bky6yQ6I6FPkeCA'], // debug key
+    'js':[path+'mapmarkers.js', path+'markerclusterer.js', 'https://maps.googleapis.com/maps/api/js?key=API_KEY'],
     'css':[path+'map.css'],
     'stablecss':[path+'smap.css'],
     'on_show':function(r){
