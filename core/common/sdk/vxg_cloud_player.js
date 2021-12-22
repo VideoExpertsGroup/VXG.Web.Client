@@ -1611,221 +1611,7 @@ text-align:center;
 }
 
 window.customElements.define('k-control-volume', CKControlVolume);
-class CustomVideoElement extends HTMLElement {
-  constructor() {
-    super();
-    let shadow = this.attachShadow({mode:'open'});
-    shadow.innerHTML = '<style>:host{all:initial;display:inline-block;box-sizing:border-box;position:relative;width:300px;height:150px;}video{position:absolute;width:100%;height:100%;}</style><video crossorigin></video>';
-
-    const nativeEl = this.nativeEl = this.shadowRoot.querySelector('video');
-
-    // Initialize all the attribute properties
-    Array.prototype.forEach.call(this.attributes, attrNode => {
-      this.attributeChangedCallback(attrNode.name, null, attrNode.value);
-    });
-
-    // Neither Chrome or Firefox support setting the muted attribute
-    // after using document.createElement.
-    // One way to get around this would be to build the native tag as a string.
-    // But just fixing it manually for now.
-    // Apparently this may also be an issue with <input checked> for buttons
-    if (nativeEl.defaultMuted) {
-      nativeEl.muted = true;
-    }
-
-    this.shadowRoot.appendChild(nativeEl);
-
-    this.querySelectorAll(':scope > track').forEach((track)=>{
-      this.nativeEl.appendChild(track.cloneNode());
-    });
-
-    // Watch for child adds/removes and update the native element if necessary
-    const mutationCallback = (mutationsList, observer) => {
-      for (let mutation of mutationsList) {
-        if (mutation.type === 'childList') {
-
-          // Child being removed
-          mutation.removedNodes.forEach(node => {
-            this.nativeEl.removeChild(this.nativeEl.querySelector(`track[src="${node.src}"]`));
-          });
-
-          mutation.addedNodes.forEach(node => {
-            this.nativeEl.appendChild(node.cloneNode());
-          });
-        }
-      }
-    };
-
-    const observer = new MutationObserver(mutationCallback);
-    observer.observe(this, { childList: true, subtree: true });
-  }
-
-  // observedAttributes is required to trigger attributeChangedCallback
-  // for any attributes on the custom element.
-  // Attributes need to be the lowercase word, e.g. crossorigin, not crossOrigin
-  static get observedAttributes() {
-    let attrs = [];
-
-    // Instead of manually creating a list of all observed attributes,
-    // observe any getter/setter prop name (lowercased)
-    Object.getOwnPropertyNames(this.prototype).forEach(propName => {
-      let isFunc = false;
-
-      // Non-func properties throw errors because it's not an instance
-      try {
-        if (typeof this.prototype[propName] === 'function') {
-          isFunc = true;
-        }
-      } catch (e) {}
-
-      // Exclude functions and constants
-      if (!isFunc && propName !== propName.toUpperCase()) {
-        attrs.push(propName.toLowerCase());
-      }
-    });
-
-    // Include any attributes from the super class (recursive)
-    const supAttrs = Object.getPrototypeOf(this).observedAttributes;
-
-    if (supAttrs) {
-      attrs = attrs.concat(supAttrs);
-    }
-
-    return attrs;
-  }
-
-  // We need to handle sub-class custom attributes differently from
-  // attrs meant to be passed to the internal native el.
-  attributeChangedCallback(attrName, oldValue, newValue) {
-    // Find the matching prop for custom attributes
-    const ownProps = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
-    const propName = arrayFindAnyCase(ownProps, attrName);
-
-    // Check if this is the original custom native elemnt or a subclass
-    const isBaseElement =
-      Object.getPrototypeOf(this.constructor)
-        .toString()
-        .indexOf('function HTMLElement') === 0;
-
-    // If this is a subclass custom attribute we want to set the
-    // matching property on the subclass
-    if (propName && !isBaseElement) {
-      // Boolean props should never start as null
-      if (typeof this[propName] == 'boolean') {
-        // null is returned when attributes are removed i.e. boolean attrs
-        if (newValue === null) {
-          this[propName] = false;
-        } else {
-          // The new value might be an empty string, which is still true
-          // for boolean attributes
-          this[propName] = true;
-        }
-      } else {
-        this[propName] = newValue;
-      }
-    } else {
-      // When this is the original Custom Element, or the subclass doesn't
-      // have a matching prop, pass it through.
-      if (newValue === null) {
-        this.nativeEl.removeAttribute(attrName);
-      } else {
-        // Ignore a few that don't need to be passed through just in case
-        // it creates unexpected behavior.
-        if (['id', 'class'].indexOf(attrName) === -1) {
-          this.nativeEl.setAttribute(attrName, newValue);
-        }
-      }
-    }
-  }
-  connectedCallback() {
-  }
-}
-
-// Map all native element properties to the custom element
-// so that they're applied to the native element.
-// Skipping HTMLElement because of things like "attachShadow"
-// causing issues. Most of those props still need to apply to
-// the custom element.
-// But includign EventTarget props because most events emit from
-// the native element.
-let nativeElProps = [];
-
-// Can't check typeof directly on element prototypes without
-// throwing Illegal Invocation errors, so creating an element
-// to check on instead.
-const nativeElTest = document.createElement('video');
-
-// Deprecated props throw warnings if used, so exclude them
-const deprecatedProps = [
-  'webkitDisplayingFullscreen',
-  'webkitSupportsFullscreen',
-];
-
-// Walk the prototype chain up to HTMLElement.
-// This will grab all super class props in between.
-// i.e. VideoElement and MediaElement
-for (
-  let proto = Object.getPrototypeOf(nativeElTest);
-  proto && proto !== HTMLElement.prototype;
-  proto = Object.getPrototypeOf(proto)
-) {
-  Object.keys(proto).forEach(key => {
-    if (deprecatedProps.indexOf(key) === -1) {
-      nativeElProps.push(key);
-    }
-  });
-}
-
-// For the video element we also want to pass through all event listeners
-// because all the important events happen there.
-nativeElProps = nativeElProps.concat(Object.keys(EventTarget.prototype));
-
-// Passthrough native el functions from the custom el to the native el
-nativeElProps.forEach(prop => {
-  const type = typeof nativeElTest[prop];
-
-  if (type == 'function') {
-    // Function
-    CustomVideoElement.prototype[prop] = function() {
-      return this.nativeEl[prop].apply(this.nativeEl, arguments);
-    };
-  } else {
-    // Getter
-    let config = {
-      get() {
-        return this.nativeEl[prop];
-      },
-    };
-
-    if (prop !== prop.toUpperCase()) {
-      // Setter (not a CONSTANT)
-      config.set = function(val) {
-        this.nativeEl[prop] = val;
-      };
-    }
-
-    Object.defineProperty(CustomVideoElement.prototype, prop, config);
-  }
-});
-
-function arrayFindAnyCase(arr, word) {
-  let found = null;
-
-  arr.forEach(item => {
-    if (item.toLowerCase() == word.toLowerCase()) {
-      found = item;
-    }
-  });
-
-  return found;
-}
-
-if (!window.customElements.get('custom-video')) {
-  window.customElements.define('custom-video', CustomVideoElement);
-  window.CustomVideoElement = CustomVideoElement;
-}
-
-class CKVideo extends CustomVideoElement{
+class CKVideo extends HTMLVideoElement{
     static get observedAttributes() {
         return ['src']; 
     }
@@ -1938,7 +1724,7 @@ class CKVideo extends CustomVideoElement{
     }
     attributeChangedCallback(name, oldValue, newValue) {
         if (this.do_not_attr_callback) return;
-        if (name=="src"){
+        if (name="src"){
             let utc_from_in_msec = this.getAttribute('time')===null ? undefined : parseInt(this.getAttribute('time'));
             let duration_msec = this.getAttribute('msec')===null ? undefined : parseInt(this.getAttribute('msec'));
             let off = this.getAttribute('msec')===null ? undefined : parseInt(this.getAttribute('off'));
@@ -2315,7 +2101,7 @@ class CKVideo extends CustomVideoElement{
     }
 }
 
-window.customElements.define('k-video', CKVideo);
+window.customElements.define('k-video', CKVideo, {extends: 'video'});
 class CKVideoReverse extends CKVideo{
     constructor() {
         super();
@@ -2501,7 +2287,7 @@ class CKVideoReverse extends CKVideo{
     }
 }
 
-window.customElements.define('k-video-reverse', CKVideoReverse);
+window.customElements.define('k-video-reverse', CKVideoReverse, {extends: 'video'});
 class CRedux{
     constructor(element) {
         let self=this;
@@ -2725,9 +2511,9 @@ class CKVideoSet extends HTMLElement{
             video_tag = 'k-video';
         }
 
-        let pb = '<'+video_tag+' crossorigin="anonymous" preload norepeat pos="0"></'+video_tag+'>';
-        for (let i=0; i<this.LEFT_BUFFER_SIZE; i++) pb = '<'+video_tag+' crossorigin="anonymous" preload norepeat pos="-'+(i+1)+'"></'+video_tag+'>' + pb;
-        for (let i=0; i<this.RIGHT_BUFFER_SIZE; i++) pb += '<'+video_tag+' crossorigin="anonymous" preload norepeat pos="'+(i+1)+'"></'+video_tag+'>';
+        let pb = '<video crossorigin="anonymous" preload norepeat is="'+video_tag+'" pos="0"></video>';
+        for (let i=0; i<this.LEFT_BUFFER_SIZE; i++) pb = '<video crossorigin="anonymous" preload norepeat is="'+video_tag+'" pos="-'+(i+1)+'"></video>' + pb;
+        for (let i=0; i<this.RIGHT_BUFFER_SIZE; i++) pb += '<video crossorigin="anonymous" preload norepeat is="'+video_tag+'" pos="'+(i+1)+'"></video>';
         this.shadow.innerHTML = '<style>'+this.getCss()+'</style><iframe></iframe>'+(this.getAttribute('debuginfo')!==null?'<div class="debuginfo"></div>':'')+'<div class="wplayers"><div class="players">'+pb+'</div></div>';
         this.wplayers_layer = this.shadow.querySelector('.wplayers');
         this.players_layer = this.shadow.querySelector('.players');
@@ -2884,7 +2670,7 @@ class CKVideoSet extends HTMLElement{
             },{once:false});
         }
 
-        for (let s of this.shadow.querySelectorAll('.players > *')) {
+        for (let s of this.shadow.querySelectorAll('video')) {
             s.setSourceForTimePromise = setSourceForTimePromise;
             s.setTimeWithSourcePromise = setTimeWithSourcePromise;
             s.updateState = updateState;
@@ -2926,11 +2712,10 @@ if (time<1000000) debugger;
     }
     setListiners(player){
         let self = this;
-        let pl =  player;
         this.onTimeUpdateEvent = function(){
 //            self.clearWait();
-            if (!self.shadow || !pl.isLoaded()) return;
-            if (pl.isPlaying() && pl.playbackRate<0) self.setStatus('playing');
+            if (!self.shadow || !this.isLoaded()) return;
+            if (this.isPlaying() && this.playbackRate<0) self.setStatus('playing');
             const player = self.shadow.querySelector('[pos="0"]');
             if (!player || player.isEmpty()) return;
             let time = player.currentUtcTime;
@@ -3266,7 +3051,7 @@ let a=e;
             for (let i=-self.LEFT_BUFFER_SIZE; i<=self.RIGHT_BUFFER_SIZE; i++){
                 let p = self.shadow.querySelector('[pos="'+i+'"]');
                 p.setSourcePromise().catch(function(){});
-                p.poster='';
+                p.poster=undefined;
                 p.removeAttribute('poster');
                 p.load();
             }
@@ -3467,7 +3252,7 @@ if (last_right<1000000) debugger;
 iframe{position: absolute;left: 0;right: 0;top: 0;bottom: 0;width: 100%;height: 100%;border: 0;opacity: 0;z-index: -1000;}
 .wplayers{width:100%;height:100%;position:relative;display:flex;}
 .players{max-width:100%;max-height:100%;position:relative;margin: auto auto;width: 100%;height: 100%;}
-.players>*{position:absolute;width:100%;height:100%;left:0;}
+video{position:absolute;width:100%;height:100%;left:0;}
 .posters_info{display: flex;display: flex;flex-direction: row;justify-content: space-between;align-items: baseline;}
 .posters_info div:first-child,.posters_info div:last-child{font-size:80%;color: gray;}
 .posters_info div:last-child{text-align:right;}
@@ -3481,7 +3266,7 @@ iframe{position: absolute;left: 0;right: 0;top: 0;bottom: 0;width: 100%;height: 
 .cachetable .error{background:#ff5050;}
 .cachetable .ready{background:#50ff50;}
 .cachetable .wait{background:#ffff50;}
-.players>*:not([pos="0"]),.players>*[status="error"]{visibility:hidden;}
+video:not([pos="0"]),video[status="error"]{visibility:hidden;}
 .debuginfo{font-size:12px;position:absolute;background:#ffffffc0;padding:10px;z-index:10000;font-family:monospace;display:none;}
 .cachetable > div:hover{border:1px solid blue;}
 `;
