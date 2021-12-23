@@ -11,3 +11,4 @@ window.no_check_mail_auth = window.no_check_mail_auth || false;
 window.no_check_local_addresses = window.no_check_local_addresses || false;
 window.ipworld_api_key = '8c835497858d45029599768e028939ce';
 vxg.api.cloudone.apiSrc = 'https://cloud.vxg.io';
+window.googlemap_api_key = 'YOUR GOOGLEMAP API KEY';

@@ -12,7 +12,7 @@ window.screens['map'] = {
     'menu_icon': path+'map.svg',
     'menu_icon_hover': path+'maphover.svg',
     'html': path+'map.html',
-    'js':[path+'mapmarkers.js', path+'markerclusterer.js', 'https://maps.googleapis.com/maps/api/js?key=API_KEY'],
+    'js':[path+'mapmarkers.js', path+'markerclusterer.js', 'https://maps.googleapis.com/maps/api/js?key='+(window.googlemap_api_key||'')],
     'css':[path+'map.css'],
     'stablecss':[path+'smap.css'],
     'on_show':function(r){
