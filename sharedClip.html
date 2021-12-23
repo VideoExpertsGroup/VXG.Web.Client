@@ -1,0 +1,80 @@
+<html>
+    <head>
+	<title>Shared clip</title>
+
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta http-equiv="x-ua-compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+	<script src="core/jquery-3.5.1.js"></script>
+	<script src="skin/skin.js"></script>
+	
+	<script>
+		$('head').append('<link rel="shortcut icon" href="'+window.skin.favicon+'" type="image/x-icon">')
+
+		document.addEventListener('DOMContentLoaded', function(){
+			var url_string = window.location.href; //window.location.href
+			var url = new URL(url_string);
+			var c = url.searchParams.get("id");
+			var t = url.searchParams.get("token");
+			var h = url.searchParams.get("host");
+			
+			getUrl(t,c,h?h:'https://web.skyvr.videoexpertsgroup.com');
+		});
+		
+		function getClip(share_token, clipid, host) {
+			args = {};
+			args.token = share_token;
+			
+			return $.ajax({
+				type: 'GET',
+				url: host +  '/api/v2/storage/clips/' + clipid + '/',
+				contentType: "application/json",
+				data: args
+			});
+		};
+		
+		function getUrl(token, clipid, host) {
+			if (token === undefined || clipid === undefined) {
+				return;
+			}
+		
+			getClip(token, clipid, host).then(function (data) {
+				console.log('success');	
+				var url = data['url'];
+				if (url.indexOf(location.protocol)==-1)
+					url = url.replace(/(http:)/, location.protocol).replace(/(https:)/, location.protocol);
+				playerOpen(url);
+				$("#VideoArea").show();
+				$("#ErrorArea").hide();
+			}, function (error) {
+				alert("Clip link is expired");
+				$("#VideoArea").hide();
+				$("#ErrorArea").show();
+				playerOpen('');
+				console.log('fail');
+			});
+		}
+		
+		function playerOpen(url) {
+			$('#divVideo video').attr('src', url);
+			$("#divVideo video")[0].load();
+		}
+	</script>
+    </head>
+    <body>
+	<div>
+		<div>
+			<div>
+				<div id="ErrorArea" style="display: none;" class="error"></div>
+				<div id="VideoArea" style="display: none;">
+					<div id="divVideo">
+						<video preload="auto" controls style="height:100%;width:100%;">
+						</video>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    </body>
+</html>
