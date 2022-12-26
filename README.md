@@ -10,5 +10,6 @@ You’ll need to disable CORS in the browser in order to run the package. For ex
 
 You can now open the index.html in the browser window:
 
+
 ![Open in browser](https://help.videoexpertsgroup.com/kb/2122940432/image-20211203-200629.png?inst-v=ca1f3e89-7fb7-4710-82fb-76b7611dc64e)
 
