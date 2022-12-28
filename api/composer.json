@@ -1,0 +1,9 @@
+{
+    "name": "root/api",
+    "require": {
+        "firebase/php-jwt": "^5.2",
+        "phpmailer/phpmailer": "^6.1",
+        "kreait/firebase-php": "^4.44",
+        "aws/aws-sdk-php": "^3.140"
+    }
+}

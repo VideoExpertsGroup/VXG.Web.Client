@@ -139,7 +139,7 @@ CameraEditControl = function(){
         <option value="by_event">By Event</option>
     </select>
 </div>
-<div class="form-group rete rete_time">
+<div class="form-group rete rete_time" style="display:none;">
     <label>Retention time (hours)</label>
     <input name="rete_time" value="72">
 </div>
@@ -440,7 +440,7 @@ CameraEditControl = function(){
                 if (rt){
                     if (rt.type!==undefined)
                         $(self).find('[name="rete_type"]').val(rt.type);
-                    if (self.camera.bsrc.url || rt.type!='by_event') $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
+                    if (self.camera.bsrc.url || rt.type=='on') $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
                     else $(self).find('.rete_sd input').removeAttr('disabled');
                     if (rt.type=='off') $(self).find('.rete_time').hide();
                     else $(self).find('.rete_time').show();

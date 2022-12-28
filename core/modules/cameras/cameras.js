@@ -200,9 +200,11 @@ window.screens['cameras'] = {
         let self = this;
         let p = this.wrapper.find('player');
         for (i=0; i<p.length; i++) if ($(p[i]).attr('access_token')) p[i].play();
-        return this.loadCameras(filterarray);
+        return this.loadCameras(filterarray, true);
     },
-    loadCameras: function(filterarray){
+    loadCameras: function(filterarray, firstsearch){
+        if (this.camera_list_promise) return this.camera_list_promise;
+
         let self = this;
         let el = this.wrapper.find('.camlist');
         el.find('.wmore').remove();
@@ -212,7 +214,8 @@ window.screens['cameras'] = {
             this.last_filterarray = filterarray;
             this.last_offset = 0;
         } else filterarray = this.last_filterarray;
-        return window.vxg.cameras.getCameraFilterListPromise(20,this.last_offset,filterarray,this.search_text, this.all_locations).then(function(list){
+        this.camera_list_promise = window.vxg.cameras.getCameraFilterListPromise(20,this.last_offset,filterarray,this.search_text, this.all_locations).then(function(list){
+            self.camera_list_promise=undefined;
             let h='';
             self.last_offset += list.length;
             let count = 0;
@@ -238,8 +241,10 @@ window.screens['cameras'] = {
                     });
                 });
             } else {
-                self.wrapper.addClass('nocameras');
-                el.html('There are no cameras. <a href="javascript:void(0)" ifscreen="addcamera" onclick_toscreen="addcamera">Add a camera</a>');
+                if (firstsearch){
+                    self.wrapper.addClass('nocameras');
+                    el.html('There are no cameras. <a href="javascript:void(0)" ifscreen="addcamera" onclick_toscreen="newcamera">Add a camera</a>');
+                }
             }
             for (let i in list){
                 let cid = list[i].getChannelID();
@@ -251,10 +256,12 @@ window.screens['cameras'] = {
             self.wrapper.removeClass('loader');
             el.find('.settings').simpleMenuPlugin(menu);
         },function(){
+            self.camera_list_promise=undefined;
             self.wrapper.addClass('nocameras');
             el.html('Failed to load list of cameras');
             self.wrapper.removeClass('loader');
         });
+        return this.camera_list_promise;
     },
     'on_hide':function(){
         core.elements['global-loader'].show();

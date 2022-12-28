@@ -57,26 +57,46 @@ window.screens['newcamera'] = {
              if (self.wrapper.find('newgscamera').submit())
                  core.elements['global-loader'].show();
         });
+        this.wrapper.find('.cloudapply').click(function(e){
+             if (self.wrapper.find('newcloudcamera').submit())
+                 core.elements['global-loader'].show();
+        });
         this.wrapper.find('.apply').click(function(e){
              if (self.wrapper.find('cameraedit').submit())
                  core.elements['global-loader'].show();
         });
+
+        this.wrapper.find('.pluginapply').click(function(e){
+             self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add3').addClass('add4');
+        });
+
         this.wrapper.find('newgscamera').off('submited').on('submited',function(e){
              self.wrapper.find('.gsapply').removeAttr('disabled');
+             core.elements['global-loader'].hide();
+             window.core.onclick_toscreen('back');
+        });
+        this.wrapper.find('newcloudcamera').off('submited').on('submited',function(e){
+             self.wrapper.find('.cloudapply').removeAttr('disabled');
              core.elements['global-loader'].hide();
              window.core.onclick_toscreen('back');
         });
         this.wrapper.find('newgscamera').off('error').on('error',function(e){
              core.elements['global-loader'].hide();
         });
+        this.wrapper.find('newcloudcamera').off('error').on('error',function(e){
+             core.elements['global-loader'].hide();
+        });
         this.wrapper.find('.newcamerabtns > .add1').click(function(e){
-            self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add3').addClass('add1');
+            self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add3').removeClass('add4').addClass('add1');
         });
         this.wrapper.find('.newcamerabtns > .add2').click(function(e){
-            self.wrapper.find('.newcameratabs ').removeClass('add1').removeClass('add3').addClass('add2');
+            self.wrapper.find('.newcameratabs ').removeClass('add1').removeClass('add3').removeClass('add4').addClass('add2');
         });
         this.wrapper.find('.newcamerabtns > .add3').click(function(e){
-            self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').addClass('add3');
+            self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add4').addClass('add3');
+        });
+        this.wrapper.find('.newcamerabtns > .add4').click(function(e){
+            self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add3').addClass('add4');
         });
         return defaultPromise();
     }

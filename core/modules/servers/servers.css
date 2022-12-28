@@ -1,0 +1,123 @@
+.screens > .servers {
+    width: 100%;
+    height: 100%;
+}
+.screens > .servers .serverlist {
+    width: 100%;
+    height: 100%;
+display:flex;
+flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: -10px;
+    align-content: flex-start;
+}
+
+.screens > .servers.noservers .serverlist {
+    width: 100%;
+    height: 100%;
+}
+.screens > .servers.noservers .serverlist {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.screens > .servers .serverlist > div {
+    width: calc(100% - 4px);
+    height: 216px;
+    min-height: 216px;
+    display: block;
+    margin: 0 1em 1em 0;
+    box-shadow: 0 0 6px rgb(0 0 0 / 10%);
+    max-width: 322px;
+background-color: white;
+}
+
+.screens > .servers .serverlist .serverstatus {
+    font-size: 10px;
+    background: gray;
+    right: 10px;
+    float: right;
+    width: auto;
+    margin: 10px 0px 0 0;
+    height: auto;
+    color: white;
+    padding: 5px 12px 4px;
+    border-radius: 8px;
+    position: relative;
+    font-weight: normal;
+}
+
+.screens > .servers .serverlist .serverstatus.online {
+background-color:var(--main-color);
+}
+
+.screens > .servers .serverlist .desc {
+    height: 46px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    background: white;
+    border-top: 1px solid var(--main-color);
+}
+
+.screens > .servers .serverlist .preview.active {
+cursor:pointer;
+}
+.screens > .servers .serverlist .preview {
+    width: 100%;
+    height: calc(100% - 46px);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: auto;
+    background-color: white;
+display:block;
+}
+
+.screens > .servers .serverlist .settings {
+width: 40px;
+    height: 46px;
+    float: right;
+    background-repeat: no-repeat;
+    background-position: 8px center;
+    cursor: pointer;
+}
+
+.screens > .servers .serverlist .name {
+    padding: 8px 10px 5px 16px;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: calc(100% - 66px);
+    max-height: 36px;
+}
+
+.screens > .servers .serverlist .expires {
+    font-size: 8px;
+    font-weight: 400;
+    color: #676A6C;
+    padding: 0px 0px 0px 16px;
+}
+
+
+.simplemenu {
+    position: fixed;
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0 0 3px rgb(86 96 117 / 70%);
+    font-size: 12px;
+    font-weight: 400;
+    z-index: 10;
+}
+
+.simplemenu > div:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+    color: var(--main-color);
+}
+.simplemenu > div {
+    line-height: 25px;
+    padding: 7px 10px;
+    padding-left: 41px;
+}

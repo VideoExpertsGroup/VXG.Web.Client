@@ -119,7 +119,7 @@ window.screens['camerameta'] = {
             number = self.offset+1;
             for (i in r){
                 var time = new Date(r[i]['src']['time']+'Z');
-                time.setMinutes(time.getMinutes()-time.getTimezoneOffset());
+//                time.setMinutes(time.getMinutes()-time.getTimezoneOffset());
 //                time = time.toISOString().replace('T',' ').substr(0,19);
                 time = time.toLocaleString('en-CA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }).replace(/[,|.]/g,'').replace(' 24',' 00');
 

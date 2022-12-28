@@ -1,5 +1,3 @@
-/* 2021, dev mail bigandrez@gmail.com, license type has not been selected yet */
-
 class CTimeLinePicker extends HTMLElement {
     static get observedAttributes() {
         return ['scale','centerutctime','selectutctime','utc']; 

@@ -36,7 +36,13 @@ max-width: 116px;
     max-width: 162px;
     flex: 1 1 162px;
 }
-body.mobile .newcamerabtns .add1,body.mobile .newcamerabtns .add2,body.mobile .newcamerabtns .add3{
+
+.newcamerabtns .add4{
+    max-width: 116px;
+    flex: 1 1 116px;
+}
+
+body.mobile .newcamerabtns .add1,body.mobile .newcamerabtns .add2,body.mobile .newcamerabtns .add3 .add4{
     max-width: inherit;
 }
 
@@ -62,18 +68,21 @@ display: inline-block;
 
 .newcameratabs.add1 .newcamerabtns .add1,
 .newcameratabs.add2 .newcamerabtns .add2,
-.newcameratabs.add3 .newcamerabtns .add3{
+.newcameratabs.add3 .newcamerabtns .add3,
+.newcameratabs.add4 .newcamerabtns .add4{
 border-bottom: 2px solid var(--main-color);
 }
 
 .newcameratabs:not(.add1) > .add1,
 .newcameratabs:not(.add2) > .add2,
-.newcameratabs:not(.add3) > .add3{
+.newcameratabs:not(.add3) > .add3,
+.newcameratabs:not(.add4) > .add4{
 display:none;
 }
 body.mobile .newcameratabs > .add1,
 body.mobile .newcameratabs > .add2,
-body.mobile .newcameratabs > .add3{
+body.mobile .newcameratabs > .add3,
+body.mobile .newcameratabs > .add4{
     padding-right: 8px;
 }
 

@@ -1,0 +1,66 @@
+.screens > .servercameras .camlist {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: auto!important;
+    height: 100%;
+    display: flex;
+    margin: 0 0 0 -10px;
+    min-height: 30px;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.screens > .servercameras .camlist .camerablock {
+    width: calc(100% - 4px);
+    height: 216px;
+    min-height: 216px;
+    display: block;
+    margin: 0 1em 1em 0;
+    box-shadow: 0 0 6px rgb(0 0 0 / 10%);
+    max-width: 322px;
+}
+
+.screens > .servercameras .camlist .camerablock campreview {
+    width: 100%;
+    height: calc(100% - 46px);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: auto;
+    background-color: white;
+    cursor: pointer;
+}
+
+.screens > .servercameras .camlist .camerablock > div {
+    height: 46px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    background: white;
+    border-top: 1px solid var(--main-color);
+}
+
+.screens > .servercameras .camlist .camerablock .name {
+    padding: 8px 10px 5px 16px;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: calc(100% - 66px);
+    max-height: 36px;
+}
+
+.screens > .servercameras .camlist .camerablock .loc {
+    font-size: 8px;
+    font-weight: 400;
+    color: #676A6C;
+    padding: 0px 0px 0px 16px;
+}
+
+.screens > .servercameras .camlist .camerablock .settings {
+    width: 40px;
+    height: 46px;
+    float: right;
+    background-repeat: no-repeat;
+    background-position: 16px center;
+    cursor: pointer;
+}

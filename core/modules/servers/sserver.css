@@ -1,0 +1,7 @@
+.screens > .servers .settings {
+    background-image: url(serverlink.svg);
+}
+
+body:not(.servers) .header-right .addserver{
+display:none;
+}

@@ -168,11 +168,11 @@ window.screens['reports'] = {
     ],
     'commoncss': [
 	'VXGActivity/VXGActivity.css',
-	'sdk/bootstrap.min.css'
+	'sdk/vxgwebsdk/bootstrap.min.css'
     ],
     'commonjs':[
-	'sdk/popper.min.js',
-	'sdk/bootstrap.min.js',
+	'sdk/vxgwebsdk/popper.min.js',
+	'sdk/vxgwebsdk/bootstrap.min.js',
 	'VXGActivity/VXGActivity.js'
     ],
     'js': [
@@ -192,7 +192,7 @@ window.screens['reports'] = {
 	    let listControlCbFunc 	= listControlCB;
 	    
 	    targetElement.setSparklineSettings(8, 3600); //8bars over hour    
-	    targetElement.showCameraList( apiGetCameraListFunc.bind(this) , somethingWrong.bind(this), listControlCbFunc.bind(this) );
+	    targetElement.showCameraList( apiGetCameraListFunc.bind(this) , somethingWrong.bind(this), listControlCbFunc.bind(this), true );
 
 	    targetElement = this.wrapper.find('.addfilter')[0];
 	    $(targetElement).removeClass("active");

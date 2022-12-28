@@ -46,8 +46,8 @@ window.screens['activity'] = {
 	'VXGActivity/VXGActivity.css'
     ],
     'commonjs':[
-	'sdk/popper.min.js',
-	'sdk/bootstrap.min.js',
+	'sdk/vxgwebsdk/popper.min.js',
+	'sdk/vxgwebsdk/bootstrap.min.js',
 	'VXGActivity/VXGActivity.js'
     ],
     'js': [

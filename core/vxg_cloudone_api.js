@@ -5,6 +5,7 @@ vxg.api = vxg.api || {};
 vxg.api.cloudone = vxg.api.cloudone || {};
 vxg.api.cloudone.apiSrc = vxg.api.cloudone.apiSrc || window.location.origin;
 vxg.api.cloudone.user = vxg.api.cloudone.user || {};
+vxg.api.cloudone.partner = vxg.api.cloudone.partner || {};
 
 //////////////////////////////////////////////////
 // User api
@@ -168,6 +169,111 @@ vxg.api.cloudone.user.getUsedPlans = function(){
 };
 
 
+//////////////////////////////////////////////////
+// Storage api
+vxg.api.cloudone.storage = vxg.api.cloudone.storage || {};
+//storage-list
+vxg.api.cloudone.storage.getStorages = function(){
+    var data = {};
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/storage/get/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+}
+
+//create-storage
+vxg.api.cloudone.storage.postStorage = function( obj ){
+    var data = obj || {};
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/storage/post/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+}
+
+//modify-storage by obj.id
+vxg.api.cloudone.storage.putStorage = function( obj ){
+    var data = obj || {};
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/storage/put/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+}
+
+//////////////////////////////////////////////////
+// VXG Server api
+
+vxg.api.cloudone.server = vxg.api.cloudone.server || {}
+
+vxg.api.cloudone.server.list = function(obj){
+    var data = obj || {};
+//    data.uid = vs_api.uid;
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/server/list/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+};
+
+vxg.api.cloudone.server.add = function(uuid){
+    var data = {uuid:uuid};
+//    data.uid = vs_api.uid;
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/server/add/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+};
+
+vxg.api.cloudone.server.del = function(id){
+    var data = {serverid:id};
+//    data.uid = vs_api.uid;
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/server/del/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+};
+
+vxg.api.cloudone.server.cameraslist = function(obj){
+    var data = obj || {};
+//    data.uid = vs_api.uid;
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/server/cameraslist/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+};
 
 //////////////////////////////////////////////////
 // Camera api
@@ -396,3 +502,61 @@ vxg.api.cloudone.camera.add = function(obj){
         });
     });
 };
+
+vxg.api.cloudone.license = function(obj){
+    var data = obj || {};
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/key/',
+            contentType: "application/json",
+			data: JSON.stringify(data)
+        });
+    });
+};
+
+vxg.api.cloudone.partner.list = function (obj) {
+    return $.ajax({
+        type: 'POST',
+        url: vxg.api.cloudone.apiSrc + '/api/v1/partner/list/',
+        contentType: "application/json",
+    });
+};
+
+vxg.api.cloudone.partner.update = function (obj) {
+    var data = obj || {};
+    return $.ajax({
+        type: 'POST',
+        url: vxg.api.cloudone.apiSrc + '/api/v1/partner/update/',
+        contentType: "application/json",
+        data: JSON.stringify(data)
+    });
+};
+
+vxg.api.cloudone.partner.del = function (obj) {
+    var data = obj || {};
+    return vxg.user.getToken().then(function(r){
+		data.token = r;
+		return $.ajax({
+			type: 'POST',
+			url: vxg.api.cloudone.apiSrc + '/api/v1/partner/del/',
+			contentType: "application/json",
+			data: JSON.stringify(data)
+		});
+	});
+};
+
+vxg.api.cloudone.partner.del_camera = function (obj) {
+    var data = obj || {};
+    return vxg.user.getToken().then(function(r){
+		data.token = r;
+		return $.ajax({
+			type: 'POST',
+			url: vxg.api.cloudone.apiSrc + '/api/v1/partner/del_camera/',
+			contentType: "application/json",
+			data: JSON.stringify(data)
+		});
+	});
+};
+

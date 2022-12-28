@@ -236,3 +236,9 @@ padding-bottom:14px;
 body.mobile.landscape .loginbottomline > div:last-child{
 margin-left:30px;
 }
+
+.version{
+color: lightgray;
+flex: unset;
+padding-bottom: 10px;
+}

@@ -1,0 +1,27 @@
+{
+    "providers": [{
+	"name": "aws",
+	"showableName": "AWS",
+	"end_point": "s3.test.com",
+	"controls": {
+	    "endpoint_visible": true,
+	    "name_visible": true,
+	    "access_key_visible": true,
+	    "secret_key_visible": true,
+	    "upload_sqs_name_visible": true,
+	    "upload_sqs_region_visible": true
+	}
+    }, {
+	"name": "seagate",
+	"showableName": "Seagate",
+	"end_point": "s3.test.com",
+	"controls": {
+	    "endpoint_visible": true,
+	    "name_visible": true,
+	    "access_key_visible": true,
+	    "secret_key_visible": true,
+	    "upload_sqs_name_visible": false,
+	    "upload_sqs_region_visible": false
+	}
+    }]
+}

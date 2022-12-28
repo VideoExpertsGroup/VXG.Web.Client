@@ -7,8 +7,8 @@ window.screens['player'] = {
     'html': path+'player.html',
     'css': [],
     'stablecss':[path+'player.css'],
-    'commoncss':['sdk/video-js.min.css', 'sdk/CloudSDK.min.css'],
-    'commonjs':[/*'sdk/moment.min.js','sdk/moment-timezone-with-data-2012-2022.min.js',*/'sdk/popper.min.js','sdk/video.min.js'/*,'sdk/videojs-http-streaming.js','sdk/videojs-contrib-hls.js'*/,'sdk/webrtc-adapter-latest.js','sdk/CloudSDK.debug.js','sdk/vxg_cloud_player.js'],
+    'commoncss':['sdk/vxgwebsdk/video-js.min.css', 'sdk/vxgwebsdk/CloudSDK.min.css'],
+    'commonjs':[/*'sdk/moment.min.js','sdk/moment-timezone-with-data-2012-2022.min.js',*/'sdk/vxgwebsdk/popper.min.js','sdk/vxgwebsdk/video.min.js'/*,'sdk/videojs-http-streaming.js','sdk/videojs-contrib-hls.js'*/,'sdk/vxgwebsdk/webrtc-adapter-latest.js','sdk/vxgwebsdk/CloudSDK.debug.js','sdk/vxgwebsdk/vxg_cloud_player.js'],
 /*
     'get_args':function(){
         if (this.start_camtoken){
@@ -34,6 +34,9 @@ window.screens['player'] = {
                 });
             else return defaultPromise();
         }
+
+        let camname = $(this.src).getNearParentAtribute('camera_name');
+
         return getCameraFromElement(this.src).then(function(camera){
             if (!camera){
                 delete self.camera;
@@ -41,6 +44,10 @@ window.screens['player'] = {
                 return;
             }
             self.camera = camera;
+            if (camname) {
+                self.camera.src = self.camera.src || {};
+                self.camera.src.name = camname;
+            }
             return camera.getToken().then(function(token){
                 self.start_camtoken = token;
             });
@@ -51,12 +58,16 @@ window.screens['player'] = {
         let self = this;
         if (camtoken && isNaN(parseInt(camtoken))){
             if (this.camera && this.camera.src && this.camera.src.name) {
-		core.elements['header-center'].text('Camera: '+ this.camera.src.name);
+                core.elements['header-center'].text('Camera: '+ this.camera.src.name);
             }
             this.player.setSource(camtoken);
             if (timestamp>0) setTimeout(function(){self.player.setPosition(self.start_timestamp)},100);
             else setTimeout(function(){self.player.setPosition(-1)},100);
             return defaultPromise();
+        } else if (this.camera){
+            this.camera.getName().then(function(name){
+                core.elements['header-center'].text('Camera: '+ name);
+            });
         }
 
         if (this.start_camtoken)
@@ -89,7 +100,7 @@ window.screens['player'] = {
          playerOptions.livePoster = true;
          
          this.player  = new CloudPlayerSDK('mainplayer', playerOptions);
-         player.addCallback('maincallback', function(evnt, args){ 
+         this.player.addCallback('maincallback', function(evnt, args){ 
              //CloudPlayerEvent.CONNECTING
 //             if (!f) core.elements['global-loader'].hide();
 //             f = true;
@@ -166,7 +177,7 @@ window.controls['campreview'] = {
 
 
             el.channelID = camera.camera_id;
-            el.channeltoken = camera.token;
+            el.channeltoken = camera.src&&camera.src.roToken ? camera.src.roToken : camera.token;
             return camera.getPreview().then(function(url){
 //if (camera.camera_id==248528) url = '/skins/Hanva.png';
                 if (url){

@@ -1,0 +1,123 @@
+newcloudcamera input, newcloudcamera select, newcloudcamera textarea {
+    background-color: #FFFFFF;
+    background-image: none;
+    border: 1px solid #ced4da;
+    border-radius: 1px;
+    color: inherit;
+    display: block;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    width: 100%;
+    box-sizing: border-box;
+outline: none;
+}
+newcloudcamera input:focus, newcloudcamera select:focus, newcloudcamera textarea:focus {
+border-color: #1779B3 !important;
+}
+
+newcloudcamera{
+    font-size: 12px;
+    font-weight: bold;
+font-family: 'Montserrat', sans-serif;
+    display: block;
+}
+newcloudcamera:not(.newcamera) .type a{
+display:none;
+}
+
+newcloudcamera:not(.ready) form{
+display:none;
+}
+
+newcloudcamera.onvif .rtspOnly{
+display:none;
+}
+newcloudcamera.cloud .notincloud{
+display:none;
+}
+newcloudcamera.rtsp .onvifOnly{
+display:none;
+}
+newcloudcamera.rtsp:not(.options) .options{
+display:none;
+}
+newcloudcamera .anccsUrlOptions{
+cursor: pointer;
+color: var(--main-color);
+}
+newcloudcamera .anccsUrlOptions:hover{
+font-weight:bold;
+}
+newcloudcamera .anccsUrlOptions:after{
+content:' >';
+}
+newcloudcamera.options .anccsUrlOptions:after{
+content:' <';
+}
+
+newcloudcamera:not(.wait) .wait, newcloudcamera.wait .apply, newcloudcamera.nodata form{
+display:none;
+}
+newcloudcamera.wait{
+}
+newcloudcamera.wait input, newcloudcamera.wait button, newcloudcamera.wait select, newcloudcamera.wait label.en{
+pointer-events: none;
+background:none;
+}
+newcloudcamera.wait label.en{
+margin-bottom:0;
+}
+
+newcloudcamera .wait a{
+color:blue;
+}
+
+newcloudcamera .wait{
+    color: black;
+    display: inline-block;
+}
+
+newcloudcamera.wait input{
+    pointer-events:none;
+}
+newcloudcamera .wait .spinner{
+width: 25px;
+    height: 13px;
+    display: inline-block;
+}
+
+newcloudcamera .spinner{
+background: url(spinner.gif) center center no-repeat!important;
+}
+newcloudcamera a, newcloudcamera a:hover{
+    color: var(--main-color);
+}
+
+.newcamera input:before {
+    cursor: pointer;
+    content: '';
+    width: 20px;
+    height: 20px;
+    align-items: center;
+    margin-left: -26px;
+    margin-top: 3px;
+    display: inline-block;
+background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIj48cmVjdCB4PSIwLjQiIHk9IjAuNCIgd2lkdGg9IjE5LjIiIGhlaWdodD0iMTkuMiIgcng9IjUuNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiLz48L3N2Zz4=) bottom no-repeat;
+background-size: cover!important;
+}
+.newcamera input:checked:before {
+background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMiAyIDIwIDIwIiBmaWxsPSJub25lIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDJDNC42ODYyOSAyIDIgNC42ODYyOSAyIDhWMTZDMiAxOS4zMTM3IDQuNjg2MjkgMjIgOCAyMkgxNkMxOS4zMTM3IDIyIDIyIDE5LjMxMzcgMjIgMTZWOEMyMiA0LjY4NjI5IDE5LjMxMzcgMiAxNiAySDhaTTcuNzE3MTYgMTIuMjgzTDEwLjU0NTYgMTUuMTExNEMxMC43MDE4IDE1LjI2NzYgMTAuOTU1MSAxNS4yNjc2IDExLjExMTMgMTUuMTExNEwxNi43NjgxIDkuNDU0NTNMMTYuMjAyNCA4Ljg4ODg1TDEwLjgyODQgMTQuMjYyOUw4LjI4Mjg1IDExLjcxNzNMNy43MTcxNiAxMi4yODNaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=) bottom no-repeat;
+}
+
+.newcamera input[disabled]:before{
+    cursor: default;
+}
+
+
+.newcamera input.svgbtnbefore {
+    margin-top: 3px;
+    margin-left: 26px;
+    position: relative;
+    height: 0;
+    width: 0;
+}

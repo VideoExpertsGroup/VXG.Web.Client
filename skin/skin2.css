@@ -27,9 +27,3 @@ body.activity .header-search{display:none!important;}
 .leftblock .reports:after{content:"Home";font-size:12px;}
 body.reports .rightblock .headerBlock .header-center{font-size: 0px;}
 body.reports .header-center:after{content:"Home";font-size: 16px;}
-
-.prifiletabs .tab1{display:none!important;}
-.prifiletabs .tab2{border-bottom: 2px solid var(--main-color)!important;}
-.profile .wtab1{display:none!important;}
-.profile .wtab2{display:block!important;}
-.edituser .week_shedule{display:none!important;}

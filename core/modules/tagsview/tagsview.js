@@ -17,14 +17,14 @@ window.screens['tagsview'] = {
     ],
     'stablecss':[path+'stagsview.css'],
     'commoncss':[
-	'sdk/bootstrap.min.css',
+	'sdk/vxgwebsdk/bootstrap.min.css',
 	'inspinia/css/plugins/clockpicker/clockpicker.css',
 	'inspinia/css/plugins/datepicker/datepicker3.css',
 	'VXGActivity/VXGActivity.css'
     ],
     'commonjs':[
-	'sdk/popper.min.js',
-	'sdk/bootstrap.min.js',
+	'sdk/vxgwebsdk/popper.min.js',
+	'sdk/vxgwebsdk/bootstrap.min.js',
 	'inspinia/js/plugins/clockpicker/clockpicker.js',
 	'inspinia/js/plugins/datepicker/bootstrap-datepicker.js',
 	'VXGActivity/VXGActivity.js'
@@ -52,7 +52,9 @@ window.screens['tagsview'] = {
 
         $('.headerBlock .header-center').text('Camera');
         if (this.access_token) return vxg.cameras.getCameraFrom(this.access_token).then(function(camera){
-            $('.headerBlock .header-center').text(camera.src.name);
+            camera.getName().then(function(name){
+                $('.headerBlock .header-center').text(name);
+            });
             self.camera = camera;
             $(self.wrapper).find('events-list').attr('access_token',camera.token);
 
@@ -184,9 +186,7 @@ window.screens['tagsview'] = {
         }
         playerOptions.livePoster = true;
         
-	window.ppp=this.player  = new CloudPlayerSDK('tagsplayer', playerOptions);
-        player.addCallback('maincallback', function(evnt, args){ 
-        });
+	this.player  = new CloudPlayerSDK('tagsplayer', playerOptions);
         $('.tonewver').click(function(){
             $('.mainkplayer')[0].pause();
             self.player.pause();

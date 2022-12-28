@@ -18,7 +18,7 @@ window.fillTitle = () => {
 $( document ).ready(function() {
 //    $('title').text(window.skin.pageTitle);
 //    $('.logo-container').attr('href', window.skin.logourl);
-//    $('.bottom-global-menu').prepend('<a class="vxgbutton-rounded upgrade" target="_blank" href="https://www.videoexpertsgroup.com">Contact us</a>');
+    $('.bottom-global-menu').prepend('<a class="vxgbutton-rounded upgrade" target="_blank" href="https://www.videoexpertsgroup.com">Contact us</a><span style="color: lightgray;"><br><br>Please contact us to enable recording control and integration tools.</span>');
 });
 
 let images = [];

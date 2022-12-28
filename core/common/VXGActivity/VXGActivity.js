@@ -485,7 +485,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	    +	'	<div class="'+ dclass + '" '+ addon + ' eventid="' + this.id +'">' 
 	    +	'		<div class="image-container d-flex align-items-center">' 
 	    +	'			<div class="image-stub"></div>'
-	    +	'			<img ' + ( (this.thumb && this.thumb.url) ? ('src="' + this.thumb.url + '"' ) : '') + ' alt="">' 
+	    +	'			<img crossorigin="anonymous" ' + ( (this.thumb && this.thumb.url) ? ('src="' + this.thumb.url + '"' ) : '') + ' alt="">' 
 	    +	'		</div>' 
 	    +	'		<div class="VXGActivityCardInfo flex-grow-1">'
 	    +	'			<small class="VXGActivityCardInfoTimeback float-right text-navy"><b>' + self.timeDifference(currentTime, new Date(this.time +"Z")) + '</b></small>' 

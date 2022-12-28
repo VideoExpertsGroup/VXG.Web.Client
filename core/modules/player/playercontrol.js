@@ -34,8 +34,8 @@ function getCameraFromElement(element){
 window.controls['player'] = {
     'js':[],
     'css':[],
-    'commoncss':['sdk/video-js.min.css', 'sdk/CloudSDK.min.css'],
-    'commonjs':[/*'sdk/moment.min.js','sdk/moment-timezone-with-data-2012-2022.min.js',*/'sdk/popper.min.js','sdk/video.min.js'/*,'sdk/videojs-http-streaming.js'*,'sdk/videojs-contrib-hls.js'*/,'sdk/webrtc-adapter-latest.js','sdk/CloudSDK.debug.js'],
+    'commoncss':['sdk/vxgwebsdk/video-js.min.css', 'sdk/vxgwebsdk/CloudSDK.min.css'],
+    'commonjs':[/*'sdk/moment.min.js','sdk/moment-timezone-with-data-2012-2022.min.js',*/'sdk/vxgwebsdk/popper.min.js','sdk/vxgwebsdk/video.min.js'/*,'sdk/videojs-http-streaming.js'*,'sdk/videojs-contrib-hls.js'*/,'sdk/vxgwebsdk/webrtc-adapter-latest.js','sdk/vxgwebsdk/CloudSDK.debug.js','sdk/vxgwebsdk/LocalPlayer.js'],
     'observedAttributes':function(){
         return ['access_token'];
     },
@@ -78,7 +78,7 @@ window.controls['player'] = {
 	playerOptions.livePoster = true;
 
         window.controls['player'].players['player'+this.newid]  = new CloudPlayerSDK('player'+this.newid, playerOptions);
-        player.addCallback('callback'+this.newid, function(evnt, args){
+        window.controls['player'].players['player'+this.newid].addCallback('callback'+this.newid, function(evnt, args){
             if (evnt.name=='SOURCE_CHANGED')
                 setTimeout(function(){
                     window.controls['player'].players['player'+self.newid].play();

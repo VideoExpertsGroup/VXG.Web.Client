@@ -11,6 +11,7 @@
 .screens-wrapper.screens > .login .logo, .screens-wrapper.screens > .signup .logo, .screens-wrapper.screens > .forgot .logo {
     cursor: pointer;
     background-image: url("img/logo.png");
+    background-size: contain!important;
 }
 
 /* the logo in the left panel */
@@ -65,18 +66,21 @@ li.cameras .menu-icon {background-image: url("img/menu/cameras.svg")!important;b
 li.activity .menu-icon {background-image: url("img/menu/activity.svg")!important;border-image-source:url("img/menu/activityh.svg")!important;}
 li.map .menu-icon {background-image: url("img/menu/map.svg")!important;border-image-source:url("img/menu/maphover.svg")!important;}
 li.archive .menu-icon {background-image: url("img/menu/archive.svg")!important;border-image-source:url("img/menu/archiveh.svg")!important;}
+li.integration .menu-icon {background-image: url("img/menu/reports.svg")!important;border-image-source:url("img/menu/reportsh.svg")!important;}
 
 .bottomline a, .bottomline a:hover{color:var(--main-color);}
 
 .bottom-global-menu {text-align: center;border-top: 1px solid #fff3;padding-top: 32px;margin-top: 10px;}
 
 .transparent-button.deleteclip{color:#F24949;}
-.transparent-button.deleteclip img{filter: brightness(0.498) sepia(.73) hue-rotate(-200deg) saturate(9)!important;}
-.transparent-button.deleteclip .svgbtn{filter: brightness(0.498) sepia(.73) hue-rotate(-200deg) saturate(9);}
-.svgbtn, .svgbtnbefore:before, .svgbtnafter:after, .svgbtnbeforehover:hover:before, .svgbtnhover:hover {filter: brightness(0.498) sepia(.73) hue-rotate(-200deg) saturate(9)!important;}
+.transparent-button.deleteclip img{filter: brightness(0.498) sepia(.73) hue-rotate(346deg) saturate(9)!important;}
+.transparent-button.deleteclip .svgbtn{filter: brightness(0.498) sepia(.73) hue-rotate(346deg) saturate(9);}
+.newcamera .newcamerabtns .add2{display:none;}
 
-:root {
-    --main-color: #7BB247;
-    --rec-color: red;
-    --main-hover-color: #7BB247;
-}
+.prifiletabs .tab1{display:none!important;}
+.prifiletabs .tab2{border-bottom: 2px solid var(--main-color)!important;}
+.prifiletabs .tab3{display:none!important;}
+.profile .wtab1{display:none!important;}
+.profile .wtab2{display:block!important;}
+.edituser .week_shedule{display:none!important;}
+.cameras .simplemenu > div:nth-child(5) {display:none!important;}

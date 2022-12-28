@@ -5,6 +5,10 @@ vxg.user = vxg.user || {};
 vxg.users = vxg.users || {};
 vxg.users.objects = vxg.users.objects || {};
 
+vxg.partners = vxg.partners || {};
+vxg.partners.objects = vxg.partners.objects || {};
+
+
 //////////////////////////////////////////////////
 // Errors
 vxg.links = vxg.links || {
@@ -91,6 +95,27 @@ vxg.users.getUserByID = function(userid){
     return this.list[userid];
 }
 
+vxg.partners.getList = function (limit, offset) {
+    let self = this;
+    let args = {};
+    this.list = this.list || [];
+    if (limit !== undefined) args.limit = limit;
+    if (offset !== undefined) args.offset = offset;
+    return vxg.api.cloudone.partner.list(args).then(function (r) {
+        self.total_count = r.total;
+        self.expired = Date.now() + self.update_delay * 1000;
+        let ret = [];
+        for (let i in r.data) {
+            self.list[r.data[i].id] = new vxg.users.objects.User(r.data[i]);
+            ret.push(self.list[r.data[i].id]);
+        }
+        return ret;
+    }, function (r) {
+
+    });
+}
+
+
 ////////////////////////////////////////////////
 // Camera object extent
 
@@ -152,7 +177,7 @@ CloudOneCamera.getBsrc = function(){
     CloudOneCamera.getBsrc.promise = vxg.api.cloudone.camera.list({channelID:ch, limit:100, offset:0}).then(function(r){
         delete CloudOneCamera.getBsrc.promise;
         for (let i=0;i<r.data.length;i++)
-            vxg.cameras.random_list[r.data[i].channelID].bsrc = r.data[i];
+            if (vxg.cameras.random_list[r.data[i].channelID]) vxg.cameras.random_list[r.data[i].channelID].bsrc = r.data[i];
         if (self.bsrc)
             return self.bsrc;
     });
@@ -226,4 +251,28 @@ vxg.cameras.createCameraPromise = function(camera_struct/* = {name: "no name", m
         vxg.cameras.invalidate();
         return r;
     });
+}
+
+vxg.cameras.getServersListPromise = function(limit, offset){
+    let req = {limit:limit||1000, offset:offset||0};
+    return vxg.api.cloudone.server.list(req);
+}
+
+vxg.cameras.getServerCamerasListPromise = function(server_id, limit, offset){
+    let req = {server_id:server_id, limit:limit||1000, offset:offset||0};
+    return vxg.api.cloudone.server.cameraslist(req).then(function(r){
+        let ret=[];
+        for (let i=0;i<r['data'].length;i++){
+            ret[i] = new vxg.cameras.objects.Camera(r['data'][i].token ? r['data'][i].token : r['data'][i].id);
+            ret[i].src = r['data'][i];
+        }
+        return ret;
+    });
+}
+
+vxg.cameras.addServerPromise = function(uuid){
+    return vxg.api.cloudone.server.add(uuid);
+}
+vxg.cameras.deleteServerPromise = function(id){
+    return vxg.api.cloudone.server.del(id);
 }

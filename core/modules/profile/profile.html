@@ -1,7 +1,8 @@
 <div class="prifiletabs">
 <div class="tab1">Notification</div>
 <div class="tab2">Password</div>
-<div ifscreen="subscribe" class="tab3">Subsriptions</div>
+<div class="tab3">Storage</div>
+<div ifscreen="subscribe" class="tab4">Subsriptions</div>
 </div>
 <div class="wtab1 maxwidth"  style="position:relative">
 <label>Phone</label><br>
@@ -23,9 +24,47 @@
 <input type="password" class="pwd" name="reenter_new_password"><i class="showhidepass"></i>
 
 <br/><br/><button class="submit vxgbutton">Change password</button>
+</div>
+
+<div class="wtab3 maxwidth">
+
+<div class="strg_type">
+<label>Storage *</label>
+<select name="storage_type" class="storage_type">
+</select>
+<br><br>
+</div>
+
+<div class="strg_ep">
+<label>End-point *</label><br>
+<input type="text" class="pwd" name="endpoint"><br><br>
+</div>
+<div class="strg_nm">
+<label>Name *</label><br>
+<input type="text" class="pwd" name="name"><br><br>
+</div>
+<div class="strg_ak">
+<label>Access key *</label><br>
+<input type="text" class="pwd" name="access_key"><br/><br/>
+</div>
+<div class="strg_sk">
+<label>Secret key *</label><br>
+<input type="text" class="pwd" name="secret_key"><br><br>
+</div>
+<div class="strg_usn">
+<label">Upload SQS-name *</label><br>
+<input type="text" class="pwd" name="upload_sqs_name"><br><br>
+</div>
+<div class="strg_usr">
+<label>Upload SQS-region *</label><br>
+<input type="text" class="pwd" name="upload_sqs_region"><br/><br/>
+</div>
+
+<button class="submit_storage vxgbutton">Apply</button>
 
 </div>
-<div ifscreen="subscribe" class="wtab3">
+
+<div ifscreen="subscribe" class="wtab4">
 <div class="planlist"></div>
 <br/><br/>
 <button class="vxgbutton upgrade" ifscreen="subscribe" onclick_toscreen="subscribe">Upgrade</button>

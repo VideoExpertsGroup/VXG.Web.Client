@@ -123,24 +123,31 @@ display: inline-block;
     max-width: 103px;
     flex: 1 1 103px;
 }
-.screens > .profile .prifiletabs > div.tab3 {
+
+.screens > .profile .prifiletabs > div.tab4 {
     max-width: 132px;
     flex: 1 1 132px;
 }
 
 .screens > .profile.tab1 .prifiletabs > div.tab1,
 .screens > .profile.tab2 .prifiletabs > div.tab2,
-.screens > .profile.tab3 .prifiletabs > div.tab3 {
+.screens > .profile.tab3 .prifiletabs > div.tab3,
+.screens > .profile.tab4 .prifiletabs > div.tab4 {
     border-bottom: 2px solid var(--main-color);
 }
+
+
 .screens > .profile:not(.tab1) .wtab1,
 .screens > .profile:not(.tab2) .wtab2,
-.screens > .profile:not(.tab3) .wtab3{
-display:none;
+.screens > .profile:not(.tab3) .wtab3,
+.screens > .profile:not(.tab4) .wtab4 {
+    display:none!important;
 }
+
 .screens > .profile .wtab1,
 .screens > .profile .wtab2,
-.screens > .profile .wtab3{
+.screens > .profile .wtab3,
+.screens > .profile .wtab4 {
     position: relative;
 }
 
@@ -151,6 +158,10 @@ display:none;
     width: 24px;
     height: 24px;
     cursor: pointer;
+}
+
+.screens > .profile input,textarea,select {
+    margin-top: 4px;
 }
 
 .screens > .profile input.pwd[type="password"] + i{
@@ -174,4 +185,13 @@ position: absolute;
 
 .header-right > .signout{
     display: block;
+}
+
+.screens > .profile .strg_en.hidden,
+.screens > .profile .strg_nm.hidden,
+.screens > .profile .strg_sk.hidden,
+.screens > .profile .strg_ak.hidden,
+.screens > .profile .strg_usn.hidden,
+.screens > .profile .strg_usr.hidden {
+    display: none;
 }

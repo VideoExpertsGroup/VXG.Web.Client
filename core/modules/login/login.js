@@ -90,7 +90,7 @@ window.screens['login'] = {
                     $('body').removeClass('loginprocess');
 // TODO: check email verification
                     if (no_check_mail_auth!==true && user && user.user && !user.user.emailVerified) {
-                        alert('Email '+user.user.email+' has not been verified. Use the "forgot password" link to send a verification email.');
+//                        alert('Email '+user.user.email+' has not been verified. Use the link from the verification email or use the "forgot password" link to send a verification email.');
                         firebase.auth().signOut();
                     }
                 },onError);
@@ -111,11 +111,15 @@ window.screens['login'] = {
                     return;
                 }
 // TODO: check email verification
-                if (no_check_mail_auth!==true && !user.emailVerified) {
+                if (!window.is_new_user && no_check_mail_auth!==true && !user.emailVerified) {
                     $('body').removeClass('loginprocess');
                     self.wrapper.find('.bod').show();
 //                    if (user && !user.emailVerified) firebase.auth().signOut();
                     alert('Email '+user.email+' has not been verified. Use the "forgot password" link to send a verification email.');
+                    return;
+                }
+                if (window.is_new_user){
+                    delete window.is_new_user;
                     return;
                 }
                 $('body').addClass('loginprocess');
@@ -224,6 +228,7 @@ window.screens['signup'] = {
             core.elements['global-loader'].show();
 
             if (window.firebase){
+                window.is_new_user = true;
                 firebase.auth().createUserWithEmailAndPassword(username, password)
                 .then(function(authData){
                     var actionCodeSettings = {

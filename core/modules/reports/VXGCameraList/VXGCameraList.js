@@ -381,7 +381,7 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 	if (!offset) $(tbody).empty();
         
 
-        if ( vxgcameralistdata.length <= 0) {
+        if ( !offset && vxgcameralistdata.length <= 0) {
     	    $(this.container).addClass('nocameras');
 	    $(this.cameras).addClass('invisible');
 	    $(this.nocameras).removeClass('invisible');
@@ -590,8 +590,9 @@ var VXGCameraListController = function VXGCameraListController( element ) {
     this.clView.initDraw(this);
 };
 
-VXGCameraListController.prototype.showCameraList = function showCameraList (cameraListApiFunc, cameraListWrongFunc, listControllCallbackFunc) {
+VXGCameraListController.prototype.showCameraList = function showCameraList (cameraListApiFunc, cameraListWrongFunc, listControllCallbackFunc, first) {
     let self = this;
+    if (first) this.offset=0;
     this.clView.callbackFunc 	= listControllCallbackFunc;
     this.clModel.getData(this.updateDataCB.bind(this), this.showWait.bind(this), cameraListApiFunc, cameraListWrongFunc, this.offset===undefined?0:this.offset , 20).then(function(r){
         if (!r) $(self.clView.element).find('.more').show();

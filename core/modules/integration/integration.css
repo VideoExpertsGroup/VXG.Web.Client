@@ -1,0 +1,17 @@
+.code{
+font-family: monospace;
+    color: black;
+    border-left: 5px dashed #7BB247;
+    padding: 10px 10px 0 10px;
+margin: 10px 0;
+}
+
+.sample campreview{
+cursor:pointer;
+}
+
+.acc_token {
+	user-select: text;
+    background-color: white;
+    word-break: break-all;
+}
