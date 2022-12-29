@@ -1,0 +1,153 @@
+<html>
+	<head>
+		<title>VXGCloudSDK-Web 3.2.1</title>
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+		
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta http-equiv="x-ua-compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<link rel="stylesheet" id="font-style-css" href="https://fonts.googleapis.com/css?family=Montserrat%3A400%2C700&amp;ver=4.7.6" type="text/css" media="all">
+		<link rel="stylesheet" type="text/css" href="css/index.css">
+
+		<script type="text/javascript" src="js/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="js/popper.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+		
+    <!-- automaticly include: begin -->
+    <link rel="stylesheet" type="text/css" href="vxgwebsdk/video-js.min.css">
+    <link rel="stylesheet" type="text/css" href="vxgwebsdk/CloudSDK.min.css">
+    <script type="text/javascript" src="vxgwebsdk/video.min.js"></script>
+    <script type="text/javascript" src="vxgwebsdk/webrtc-adapter-latest.js"></script>
+    <script type="text/javascript" src="vxgwebsdk/vxg_cloud_player.js"></script>
+    <script type="text/javascript" src="vxgwebsdk/CloudSDK.min.js"></script>
+    <script type="text/javascript">
+	       CloudSDK.flashswf = "vxgwebsdk/video-js-by-vxg-buff200.swf";
+    </script>
+    <!-- automaticly include: end -->
+
+
+    <script>
+	window.sessNameCh = 'example_cloudplayersdk2_ch';
+	$(document).ready(function () {
+		var player_cnt = 0;
+		var players = [];
+		$('#add_player').unbind().bind('click', function(){
+			var player_container = document.getElementsByClassName('players-container')[0];
+			var player_div = document.createElement("div");
+			var player_id = "player_" + player_cnt;
+			var play_channel_id = "play_channel_" + player_cnt;
+			var channel_id = "channel_player_"  + player_cnt;
+			
+			player_div.classList.add("player_div_" + player_cnt);
+			player_div.innerHTML += '' 
+			+ '<div class="row">' 
+			+ '	<div class="col-md-1"></div>'
+			+ '	<div class="col-md-10 col-md-offset-1">'
+			+ '		<div class="form-group">'
+			+ '			<label for="at_player_' + player_cnt  +' ">Access token</label>'
+			+ '			<div class="input-group">'
+			+ '				<input id="'+channel_id+'" type="text" class="form-control" placeholder="Enter access token" value="">'
+			+ '				<span class="input-group-btn">'
+			+ '					<button id="'+ play_channel_id +'" class="btn btn-default btn-vxg">Play</button>'
+			+ '				</span>'
+			+ '			</div>'
+			+ '		</div>'
+			+ '	</div>'
+			+ '</div>'
+			+ '<div class="row">'
+			+ '	<div class="col-md-1"></div>'
+			+ '	<div class="col-md-10 col-md-offset-1" style="height: 520px">'
+			+ '		<div id="' + player_id + '" class="'+ player_id +'"></div>'
+			+ '	</div>'
+			+ '</div>'
+			+ '<div class="row">'
+			+ '	<div class="col-md-1"></div>'
+			+ '	<div class="col-md-10 col-md-offset-1" style="height: 50px">'
+			+ '	</div>'
+			+ '</div>';
+			
+			player_container.appendChild(player_div);
+
+			var player = new CloudPlayerSDK( player_id , {
+				autohide: 3000,
+				timeline: true,
+				calendar: true,
+				disableZoomControl: false,
+				disableAudioControl: false,
+				disableGetShot: false,
+				disableGetClip: false,
+				//model3d: <custompathformodel.json>
+			});
+			
+			$('#'+play_channel_id).unbind().bind('click', function(){
+				var channelElem = $('#'+channel_id);
+				var channel = channelElem.val();
+				if (!channel || channel === '') {
+					channelElem.css('background-color', 'red').focus();
+					setTimeout(function () {channelElem.css('background-color', '');},200);
+					return;
+				}
+				player.setSource(channel);
+				try { window.sessionStorage.setItem(window.sessNameCh, channel) } catch(e) { }
+			});
+			players.push(player);
+			player_cnt += 1;
+		});
+		$('#rm_player').unbind().bind('click', function(){
+			if (player_cnt == 0) {
+			    return;
+			}
+			var player_container = document.getElementsByClassName('players-container')[0];
+			var player_div_idx = player_cnt-1;
+			var player_div = player_container.getElementsByClassName('player_div_' + player_div_idx)[0];
+			var player = players.pop();
+			player.destroy();
+
+			player_container.removeChild(player_div);
+
+			player_cnt -= 1;
+		});
+	});
+    </script>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-light navbar-black navbar-toggleable-md  fixed-top">
+		<div class="container">
+		  <a class="navbar-brand" href="#"></a>
+		  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navigation-menu" aria-controls="navigation-menu" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		  </button>
+		  <div class="navbar-collapse collapse" id="navigation-menu">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item"><a class="nav-link" href="index.html#sdk">VXGCloud SDK (3.2.1)</a></li>
+				<li class="nav-item"><a class="nav-link" href="index.html#examples">Examples</a></li>
+			</ul>
+		  </div>
+		</div>
+	</nav>
+	<div class="container main-container">
+		<div class="row">
+			<div class="col-md-1"></div>
+			<div class="col-md-10 col-md-offset-1">
+				<h2>Dynamically created players</h2>
+				<p>
+					<a href="example_cloudplayersdk8.html" id="prev_example" class="btn btn-link ">Previous example</a>
+					<a href="example_ios_fullscreen.html" id="next_example" class="btn btn-link ">Next example</a>
+				</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-1"></div>
+			<div class="col-md-10 col-md-offset-1">
+				<button id="add_player" class="btn btn-default btn-vxg">Add player</button>
+				<button id="rm_player" class="btn btn-default btn-vxg">Remove player</button>
+			</div>
+		</div>
+		<div class="players-container">
+		</div>
+	</div>
+</body>
+</html>
