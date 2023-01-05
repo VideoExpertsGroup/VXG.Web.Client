@@ -3,7 +3,6 @@ window.controls = window.controls || {};
 window.dialogs = window.dialogs || {};
 var path = window.core.getPath('tagsview.js');
 
-
 window.screens['tagsview'] = {
     'header_name': 'Notes',
     'html': path+'tagsview.html',
@@ -57,7 +56,29 @@ window.screens['tagsview'] = {
             });
             self.camera = camera;
             $(self.wrapper).find('events-list').attr('access_token',camera.token);
-
+            try {
+                //vxg.api.cloudone.license({"type": "response"}).then(function(r) {console.log(r)})
+                // TAKE THIS OUT SHOULDN'T BE ALLOWED
+                var inc = new Date().getTime() / 1000;
+                self.camera.createClip(inc - 10000, inc + 10000, "testingClip").then(function(clip){
+                    clip.setMeta("testingMeta", "", "", inc).then(function(readyclip){
+                        console.log("meta is working, delete clip and camera just made");
+                        self.metaEnabled = true;
+                    },function(){
+                        self.metaEnabled = false;
+                        $(".clipcase").addClass("disabled clipdis");
+                        $(".edittag").addClass("disabled")
+                        $(".clip textarea").addClass("disabled clipdis")
+                        $(".shownotes").addClass("disabled");
+                    });
+                    vxg.api.cloud.deleteClipV2(clip.token, clip.src.id).then(function(r){ /* testing clip deleted */}, function(err) {console.log(err)})
+                },function(){
+                    console.log("Test clip isn't working, something bad has happened");
+                });
+            } catch(err) {
+                console.log(err);
+                self.metaEnabled = false;
+            }
             function tryStart( position) {
                 if (self.player.camera != null) {
                         self.player.setPosition(position);
@@ -368,20 +389,27 @@ window.screens['tagsview'] = {
 
             $(self.wrapper).find('.clip').addClass('spinner').find('button').attr('disabled','');
             self.camera.createClip(time - before*1000,time + after*1000, title).then(function(clip){
-                return clip.setMeta(title, notes, clipcase, time).then(function(readyclip){
+                if (self.metaEnabled) {
+                    return clip.setMeta(title, notes, clipcase, time).then(function(readyclip){
+                        dialogs['idialog'].activate('The clip<br/>successfully created',3000);
+    
+                        $(self.wrapper).find('.clip').removeClass('spinner').find('button').removeAttr('disabled');
+                        $(self.wrapper).find('.clip .cancel:visible').click();
+    /*
+                        let downloadLink = document.createElement('a');
+                        downloadLink.setAttribute('href', readyclip.src.url);
+                        downloadLink.click();
+    */
+                    },function(){
+                        $(self.wrapper).find('.clip').removeClass('spinner').find('button').removeAttr('disabled');
+                        alert('Error on set clip meta');
+                    });
+                } else {
                     dialogs['idialog'].activate('The clip<br/>successfully created',3000);
-
                     $(self.wrapper).find('.clip').removeClass('spinner').find('button').removeAttr('disabled');
                     $(self.wrapper).find('.clip .cancel:visible').click();
-/*
-                    let downloadLink = document.createElement('a');
-                    downloadLink.setAttribute('href', readyclip.src.url);
-                    downloadLink.click();
-*/
-                },function(){
-                    $(self.wrapper).find('.clip').removeClass('spinner').find('button').removeAttr('disabled');
-                    alert('Error on set clip meta');
-                });
+                }
+
             },function(){
                 $(self.wrapper).find('.clip').removeClass('spinner').find('button').removeAttr('disabled');
                 alert('Error on create clip');

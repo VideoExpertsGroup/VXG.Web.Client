@@ -518,3 +518,16 @@ position: absolute;
     width: 100%;
 background: black;
 }
+
+.disabled {
+    color: #888 !important;
+    pointer-events: none;
+}
+
+.disabled > .svgbtn {
+    filter: brightness(0.6) grayscale(100%) !important;
+}
+
+.clipdis {
+    background-color: #fbfbfb;
+}

@@ -12,7 +12,7 @@ var path = window.core.getPath('integration.js');
 
 window.screens['integration'] = {
     'menu_weight': 1000,
-    'menu_name':'integration',
+    'menu_name':'Integration',
     'menu_icon': path+'reports.svg',
     'menu_icon_hover': path+'reportsh.svg',
 

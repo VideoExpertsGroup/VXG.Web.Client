@@ -325,7 +325,7 @@ window.screens['usercameras'] = {
     'on_show':function(r){
         let self = this;
         $(self.wrapper).find('.usercameralist').empty().addClass('spinner');
-        return window.vxg.cameras.getCameraListPromise(100,0).then(function(list){
+        return window.vxg.cameras.getCameraListPromise(100,0, null, "isstorage").then(function(list){
             if (!list.length){
                 $(self.wrapper).find('.usercameralist').empty().removeClass('spinner').append('No cameras available');
                 return;
@@ -333,8 +333,6 @@ window.screens['usercameras'] = {
 
             let html='';
             for (let i in list){
-                if (list[i].src.name.substr(0,11)=="#StorageFor" && !isNaN(parseInt(list[i].src.name.substr(11)))) continue;
-                if (list[i].src.meta && list[i].src.meta.isstorage=='isstorage') continue;
                 let checked = self.user.src.cameras.indexOf(list[i].camera_id)>=0;
                 html += '<div class="camerablock"><campreview access_token="'+list[i].camera_id+'"></campreview><div><div class="checkbox svgbtn'+(checked?' active':'')+'" channel_id="'+list[i].camera_id+'"></div><div class="name">'+list[i].src.name+'</div><div class="loc">'+list[i].getLocation()+'</div></div></div>';
             }

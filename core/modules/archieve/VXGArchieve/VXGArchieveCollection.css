@@ -159,6 +159,33 @@
     border-bottom-right-radius: 11px;
 }
 
+.error-info {
+    position: absolute;
+    z-index: 4;
+    width: 100%;
+    padding: 8px 0px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: normal;
+    background-color: #d9534f !important;
+    color: #ffffff;
+    top: 80px;
+}
+
+.clip-error {
+    pointer-events: none;
+}
+
+.clip-error:not(.VXGArchievePlayButton) {
+    background-color: #d9534f !important;
+}
+
+.disabled {
+    color: rgb(197, 197, 197) !important;
+    pointer-events: none;
+}
+
 .VXGArchievePlayButton {
 position: absolute;
     top: 0;

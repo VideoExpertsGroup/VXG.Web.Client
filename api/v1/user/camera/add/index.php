@@ -12,6 +12,10 @@ list($name) = MCore::checkAndGetInputParameters(['name']);
 list($location, $recording, $tz, $lat, $lon, $url, $username, $password, $onvif_rtsp_port_fwd, $serialnumber, $gspassword) = 
     MCore::getInputParameters(['location'=>'','recording','tz'=>'UTC','lat'=>0,'lon'=>0,'url','username','password', 'onvif_rtsp_port_fwd'=>0,'serialnumber'=>'','gspassword'=>'']);
 
+$password = strval($password);
+$username = strval($username);
+$name = strval($name);
+
 if (MCore::$core->current_user->getUserCamerasCount()>=MConstants::MAX_CAMERAS_PER_USER)
     error(401, 'Camera limit exceeded for current user');
 

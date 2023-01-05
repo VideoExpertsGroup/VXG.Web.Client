@@ -431,7 +431,7 @@ VXGArchieveView.prototype.render = function render(controller, params, VXGArchie
 
 
     $.each(VXGArchievedata, function () {
-	    if (this.status !== 'done') {
+	    if (this.status !== 'done' && this.status !== 'error') {
 		return; //continue-analog
 	    }
 	    let clip = this;
@@ -471,6 +471,18 @@ VXGArchieveView.prototype.render = function render(controller, params, VXGArchie
 		storagetoken = ' storagetoken="' + params.roToken + '"';
 	    }
 
+		let clipError = "";
+		let errorInfo = "";
+		let clipLength = new Date(this.duration * 1000).toISOString().substr(11, 8);
+		let disable = "";
+
+		if(this.status == "error") {
+			clipError = "clip-error";
+			clipLength = "ERROR";
+			errorInfo = '<div class="error-info">The selected time contains no recorded data</div>';
+			disable = "disabled";
+		}
+
 	    let size = this.size || 0;
 	    let sizekb = size/1024;
 	    var sizeString = 0 + ' MB';
@@ -480,17 +492,17 @@ VXGArchieveView.prototype.render = function render(controller, params, VXGArchie
 		sizeString = Number(size/(1024)).toFixed(2) + ' KB';
 	    }
 
-	    let clipLength = new Date(this.duration * 1000).toISOString().substr(11, 8);
 
             let feedEl =
 		'<div class="feed-Archieve-element mr-3">'
 	    +	'	<div class="VXGArchieveClipInfo" clipurl="' + this.url + '" clipid="' + this.id +'" cliptitle="'+ this.title+'" camid="'+this.camid +'"' + camtoken + camname + allcamtoken + storagetoken + '>'
 	    +	'		<div class="clip-info-container">'
-	    +   '			<div class="clip-size">'+sizeString+'</div><div class="clip-length">'+clipLength+'</div>'
+	    +   '			<div class="clip-size '+clipError+'">'+sizeString+'</div><div class="clip-length '+clipError+'">'+clipLength+'</div>'
+		+   			errorInfo
 	    +   '		</div>'
 	    +	'		<div class="arch-image-container">'
 	    +	'			<img ' + ( (this.thumb && this.thumb.url) ? ('src="' + this.thumb.url + '"' ) : '') + ' alt="">'
-	    +	'			<div class="VXGArchievePlayButton"></div>'
+	    +	'			<div class="VXGArchievePlayButton '+clipError+'"></div>'
 	    +	'		</div>'
 	    +	'		<div class="VXGArchieveCardInfo">'
 	    +	'			<div class="VXGArchieveCardInfoMain">'
@@ -502,10 +514,10 @@ VXGArchieveView.prototype.render = function render(controller, params, VXGArchie
 	    +	'			</div>'
 	    +	'			<div class="VXGArchieveSettings"></div>'
 	    +	'		</div>'
-	    +	'		<div class="VXGArchieveMenu">'
-	    +	'			<div class="VXGArchieveClipMeta">Notes</div>'
-	    +	'			<div class="VXGArchieveClipDownload">Download</div>'
-	    +	'			<div class="VXGArchieveClipShare">Share</div>'	    
+	    +	'		<div class="VXGArchieveMenu" style="pointer-events: all !important;">'
+	    +	'			<div class="VXGArchieveClipMeta '+disable+'">Notes</div>'
+	    +	'			<div class="VXGArchieveClipDownload '+disable+'">Download</div>'
+	    +	'			<div class="VXGArchieveClipShare '+disable+'">Share</div>'	    
 	    +	'			<div class="VXGArchieveClipDelete">Delete</div>'
 	    +	'		</div>'
 	    +	'	</div>'

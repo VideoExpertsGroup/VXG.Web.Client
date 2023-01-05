@@ -28,11 +28,11 @@ class MConstants{
     const MAX_CAMERAS_PER_USER = 500;
 
     const DEFAULT_PLAN = [
-        'storage_size' => 3, // GB
-        'download_size' => 3, // GB 
-        'live_size' => 3, // GB
-        'records_max_age' => 24, // hours , retention time
-        'meta_max_age' => 24, // hours , retention time
+        'storage_size' => null, // GB
+        'download_size' => null, // GB 
+        'live_size' => null, // GB
+        'records_max_age' => 720, // hours , retention time
+        'meta_max_age' => 720, // hours , retention time
         'gen_images_size' => null, // GB 
         'gen_images_amount' => null,   // We do not generate images from storage  
         'gen_liveimages_size' => null, // GB

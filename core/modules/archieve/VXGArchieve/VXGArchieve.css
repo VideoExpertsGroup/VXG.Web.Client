@@ -90,7 +90,7 @@ display: flex;
     bottom: 5px;
     left: auto ;
     right: 5px ;
-    z-index: 1;
+    z-index: 10;
 }
 .VXGArchieveMenu > div{
     line-height:25px;
