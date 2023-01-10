@@ -50,7 +50,7 @@ window.screens['admin'] = {
             c = 1;
             for (let i in partners) {
                 table += '<tr userid="' + partners[i].src.id + '"><td>' + c + '</td><td>' + partners[i].src.id + '</td><td class="name">' + partners[i].src.name + '</td><td class="action-icons">'
-						+ '<button class="userbtn item-arch svgbtnhover userarchive setting_rec '+ ((partners[i].src.allow_rec == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
+						+ '<button class="userbtn item-rec svgbtnhover userrec setting_rec '+ ((partners[i].src.allow_rec == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
 						+ '<button class="userbtn item-arch svgbtnhover userarchive setting_int '+ ((partners[i].src.allow_int == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
 						+ '<button onclick_toscreen="admincams" class="userbtn item-delete usercameras svgbtnhover" userid="'+ partners[i].src.id +'"></button>'
 						+ '<button class="userbtn item-delete deleteuser svgbtnhover" userid="'+ partners[i].src.id +'"></button>'

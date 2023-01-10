@@ -57,8 +57,6 @@ window.screens['tagsview'] = {
             self.camera = camera;
             $(self.wrapper).find('events-list').attr('access_token',camera.token);
             try {
-                //vxg.api.cloudone.license({"type": "response"}).then(function(r) {console.log(r)})
-                // TAKE THIS OUT SHOULDN'T BE ALLOWED
                 var inc = new Date().getTime() / 1000;
                 self.camera.createClip(inc - 10000, inc + 10000, "testingClip").then(function(clip){
                     clip.setMeta("testingMeta", "", "", inc).then(function(readyclip){
