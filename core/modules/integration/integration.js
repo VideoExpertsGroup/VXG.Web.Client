@@ -12,7 +12,7 @@ var path = window.core.getPath('integration.js');
 
 window.screens['integration'] = {
     'menu_weight': 1000,
-    'menu_name':'Integration',
+    'menu_name':'Integrations',
     'menu_icon': path+'reports.svg',
     'menu_icon_hover': path+'reportsh.svg',
 
@@ -133,7 +133,7 @@ function myFunction()
 			alert("An e-mail was sent to your registered e-mail address!");
 		else		
 			dialogs['mdialog'].activate('<h7>Your LKey is</h7><p><br/>\
-						' +obj+'\
+						' +obj.data+'\
 						</p><p style="padding-top: 15px;">\
 						<button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;\
 						</p>').then(function(r){});

@@ -24,4 +24,4 @@ if (!MCore::$core->current_user->isPartner())
 if (StaticLibMail::isConfigured())
 	StaticLibMail::send(MCore::$core->current_user->email, "cloud key", "123456", MCore::$core->current_user->serverLkey);
 else
-	MCore::$core->response = MCore::$core->current_user->serverLkey;
+	MCore::$core->response[data] = MCore::$core->current_user->serverLkey;

@@ -525,7 +525,7 @@ class MUser{
     public function getOwnerID(){
         if (!$this->initSecrets()) return false;
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->adminurl.'api/v2/admin/users/?suid='.$this->email);
+        curl_setopt($ch, CURLOPT_URL, $this->adminurl.'api/v2/admin/users/?license_key='.$this->serverLkey);
 //        curl_setopt($ch, CURLOPT_PORT , 9000);
         curl_setopt($ch, CURLOPT_SSLCERT, $this->certfilepath);
         curl_setopt($ch, CURLOPT_SSLCERTPASSWD, $this->certpass);
