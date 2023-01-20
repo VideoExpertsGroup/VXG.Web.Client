@@ -1,5 +1,8 @@
 # Web SDK for VXG Cloud & Server
 
+### Web SDK for VXG Cloud & Server 3.2.4_230117
+-   Restarting use of the changelog
+
 ### Web SDK for VXG Cloud & Server 3.1.10_211202
 -   Record player changed from custom to vxgcloudplayer
 

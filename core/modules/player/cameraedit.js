@@ -174,8 +174,8 @@ CameraEditControl = function(){
         $(this).find('.rete_type').change(function(){
             let type = $(this).val();
             let url = ($(self).find('.anccsUrl').val()||'').trim();
-            if (!self.camera || self.camera.bsrc.url || type=='on' && !url) $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
-            else $(self).find('.rete_sd input').removeAttr('disabled');
+            //if (!self.camera || self.camera.bsrc.url || type=='on' && !url) $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
+            //else $(self).find('.rete_sd input').removeAttr('disabled');
             if (type=='off') $(self).find('.rete_time').hide();
             else $(self).find('.rete_time').show();
 
@@ -365,6 +365,7 @@ CameraEditControl = function(){
                     self.reset();
                     self.dispatchEvent(self.submited_event);
                     self.hidewait();
+                    location.reload();
                 });
             },function(r){
                 if (r && r.responseJSON && r.responseJSON.errorDetail)
@@ -397,8 +398,8 @@ CameraEditControl = function(){
                 return;
             }
             if (!bsrc.url) {bsrc.url='';$(self).find('.url_protocol').attr('disabled','disabled');}
-            else
-                $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
+            //else
+                //$(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
 
             $(self).removeClass('rtsp').removeClass('onvif').removeClass('cloud');
 
@@ -440,8 +441,8 @@ CameraEditControl = function(){
                 if (rt){
                     if (rt.type!==undefined)
                         $(self).find('[name="rete_type"]').val(rt.type);
-                    if (self.camera.bsrc.url || rt.type=='on') $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
-                    else $(self).find('.rete_sd input').removeAttr('disabled');
+                    //if (self.camera.bsrc.url || rt.type=='on') $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
+                    //else $(self).find('.rete_sd input').removeAttr('disabled');
                     if (rt.type=='off') $(self).find('.rete_time').hide();
                     else $(self).find('.rete_time').show();
     
@@ -471,7 +472,7 @@ CameraEditControl = function(){
         $(this).find('[name="name"], [name="location"], [name="lat"], [name="lon"], [name="desc"], [name="url"], [name="username"], [name="password"], .url_ip, .url_http_port, .url_rtsp_port').val('');
         $(this).find('.url_path').val('onvif/device_service');
         $(this).find('.url_protocol').val('onvif');
-        $(this).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
+        //$(this).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
         $(this).find('.url_protocol').removeAttr('disabled');
         $(this).removeClass('options').removeClass('location').removeClass('rtsp').removeClass('cloud').addClass('onvif');
         this.createTimezonesList($(this).find('[name="tz"]'),moment.tz.guess());

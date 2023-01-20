@@ -1,6 +1,6 @@
 // CloudSDK.debug.js
-// version: 3.2.1
-// date-of-build: 221220
+// version: 3.2.4
+// date-of-build: 230118
 // copyright (c) VXG Inc
 // Includes gl-matrix  <https://github.com/toji/gl-matrix>
 // ver: 3.3.0 // Available under MIT License 
@@ -15505,8 +15505,8 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 window.CloudSDK = window.CloudSDK || {};
 
 // Automaticlly generated
-CloudSDK.version = '3.2.1';
-CloudSDK.datebuild = '221220';
+CloudSDK.version = '3.2.4';
+CloudSDK.datebuild = '230118';
 console.log('CloudSDK.version='+CloudSDK.version + '_' + CloudSDK.datebuild);
 
 // Wrapper for VXGCloudPlayer & CloudSDK
