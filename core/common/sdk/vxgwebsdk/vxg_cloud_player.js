@@ -1,4 +1,4 @@
-// VXG cloud player ver. 1.1.1.31 02/10/2022
+// VXG cloud player ver. 1.1.1.34 01/23/2023
 // @language_out ES6
 VXG_API_V2 = {
       post_v2_cameras_notifications_push_devices(channel_id,param)     {return this.r('POST',  'api/v2/cameras/'+channel_id+'/notifications/push/devices/',{}, params?params:{});},
@@ -508,7 +508,8 @@ class CTimeLinePicker extends HTMLElement {
         this.shadow.innerHTML = CTimeLinePicker.css;
 //        $(this).css('position','relative').css('overflow','hidden');
         let databar = this.getAttribute('databar')!==null ? ' databar':'';
-        this.shadow.innerHTML += '<div class="body"'+databar+'><div class="centerpos" style="display:none"></div><div class="wrap"><div class="twrap"><div class="range"></div><div class="databar"></div><table><tr><td>123</td></tr><tr></tr></table></div></div></div>';
+        let multiplayer = document.getElementById("single-timeline") !== null? 'joined-timeline' : '';
+        this.shadow.innerHTML += '<div class="body"'+databar+'><div class="centerpos" style="display:none"></div><div class="wrap"><div class="twrap"><div class="range"></div><div class="databar '+ multiplayer +'"></div><table><tr><td>123</td></tr><tr></tr></table></div></div></div>';
         this.centerpos= this.shadow.querySelector('.centerpos');
         this.wrap= this.shadow.querySelector('.wrap');
         this.twrap= this.shadow.querySelector('.twrap');
@@ -1004,6 +1005,7 @@ table td sup{vertical-align:baseline;}
 .wrap{position:absolute;left:-50%;height:100%;right:-50%;}
 .twrap{position:absolute;height:100%;}
 .databar > [e]{background-color:black;}
+.databar.joined-timeline > [e]{background-color:white;}
 .databar > :not([e]){box-shadow:-1px 0 1px #00000080;}
 .databar > div{height:5px;height:4px;background-color:white;margin-top:1px;display:inline-block;}
 .databar > div.e{background-color:white;}

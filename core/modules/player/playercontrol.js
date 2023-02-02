@@ -78,6 +78,7 @@ window.controls['player'] = {
 	playerOptions.livePoster = true;
 
         window.controls['player'].players['player'+this.newid]  = new CloudPlayerSDK('player'+this.newid, playerOptions);
+        if (window.screens['cameras'].playerList) window.screens['cameras'].playerList.addPlayerToList(window.controls['player'].players['player'+this.newid]);
         window.controls['player'].players['player'+this.newid].addCallback('callback'+this.newid, function(evnt, args){
             if (evnt.name=='SOURCE_CHANGED')
                 setTimeout(function(){
@@ -122,6 +123,7 @@ window.controls['player'] = {
             }
             return camera.getToken().then(function(token){
                 window.controls['player'].players['player'+id].setSource(token);
+                if (window.screens['cameras'].playerList) window.screens['cameras'].playerList.addPlayerToList(window.controls['player'].players['player'+id]);
             },function(){
                 window.controls['player'].players['player'+id].stop();
             });

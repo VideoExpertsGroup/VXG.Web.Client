@@ -8,27 +8,35 @@ function camGrid(size /* 2,3,4 */){
     if (size==4) el.addClass('grid4');
     let td = $('.screens .cameras .camgrid2 > div');
     let state = window.screens['cameras'].getState();
+    if (!window.screens['cameras'].playerList) {
+        try {
+            window.screens['cameras'].playerList = new CloudPlayerList("single-timeline", {timeline: true, calendar: true});
+        } catch(e) {
+            window.screens['cameras'].playerList = null;
+        }
+    }
     var preferredPlayerFormat = (window.skin.grid && window.skin.grid.preferredPlayerFormat)?(' preferredPlayerFormat="' + window.skin.grid.preferredPlayerFormat + '" ' ):('') ;
     
     for (let i=0; i<td.length; i++){
         let access_token = state.cams['player'+i] ? ' access_token="'+state.cams['player'+i]+'"' : '';
         if ($(td[i]).hasClass('grid3')){
             if (size>=3 && td[i].innerHTML=='')
-                $(td[i]).html('<player class="" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
+                $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
             if (size<=2)
                 $(td[i]).empty();
         } else if ($(td[i]).hasClass('grid4')){
             if (size>=4 && td[i].innerHTML=='')
-                $(td[i]).html('<player class="" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
+                $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
             if (size<=3)
                 $(td[i]).empty();
         } else {
             if (size<2)
                 $(td[i]).empty();
             else if (td[i].innerHTML=='')
-                $(td[i]).html('<player class="" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
+               $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
         }
     }
+
     let p = $('.screens .cameras .camgrid2 player').off('dblclick').on('dblclick',function(){
         if (!$(this).attr('access_token')) return;
         let the = this;
@@ -52,6 +60,21 @@ function camGrid(size /* 2,3,4 */){
             state.cams = state.cams || {};
             state.cams[id]=access_token;
             window.screens['cameras'].setState(state);
+
+            if (window.screens['cameras'].playerList) {
+                let cloudPlayerId = this.newid;
+                var cloudPlayerObj = window.controls['player'].players['player'+cloudPlayerId];
+                if (access_token == '') {
+                    window.screens['cameras'].playerList.removePlayerFromList(cloudPlayerObj)
+                }
+                window.screens['cameras'].playerList.killSyncPromise(true).then(() => {
+                    window.screens['cameras'].playerList.killSyncPromise(false).then(() => {
+                        setTimeout(() => {    
+                            window.screens['cameras'].playerList.synchronize([], true)
+                        }, 1500)
+                    });
+                })
+            }           
         };        
     });
     onCameraScreenResize();
@@ -180,6 +203,7 @@ window.screens['cameras'] = {
     'css':[path+'cameras.css'],
     'js':[path.substr(0,path.length-16)+'webcontrols/camera_map.js'],
     'stablecss':[path+'scameras.css'],
+    'playerList': null,
     'on_search':function(text){
         if (!text)
             delete this.search_text;
@@ -189,6 +213,7 @@ window.screens['cameras'] = {
     },
     'on_show':function(filterarray){
         setTimeout(function(){onCameraScreenResize();},100);
+
         if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
         if (!filterarray) {
             if (!sessionStorage.checkedLocations) {
@@ -197,10 +222,26 @@ window.screens['cameras'] = {
                 filterarray = JSON.parse(sessionStorage.checkedLocations);
             }
         }
+
         let self = this;
         let p = this.wrapper.find('player');
-        for (i=0; i<p.length; i++) if ($(p[i]).attr('access_token')) p[i].play();
-        return this.loadCameras(filterarray, true);
+        for (i=0; i<p.length; i++) {
+            if ($(p[i]).attr('access_token')) {
+                p[i].play();
+            }
+        }
+
+        setTimeout(() => {
+            if (self.playerList && self.playerList.getPlayerList()) {
+                self.playerList.synchronize();
+            }
+        }, 1500)
+
+        return this.loadCameras(filterarray, true)
+    },
+    playChannels: function(resolve) {
+        if (this.camera_list_promise) return this.camera_list_promise;
+        return this.camera_list_promise;
     },
     loadCameras: function(filterarray, firstsearch){
         if (this.camera_list_promise) return this.camera_list_promise;
@@ -261,6 +302,7 @@ window.screens['cameras'] = {
             el.html('Failed to load list of cameras');
             self.wrapper.removeClass('loader');
         });
+
         return this.camera_list_promise;
     },
     'on_hide':function(){
@@ -278,7 +320,20 @@ window.screens['cameras'] = {
             else
                 self.wrapper.find('.camlist').removeClass('nobloor');
         });
-
+       
+        if (this.getState().grid>0){
+            camGrid(this.getState().grid);
+            self.wrapper.addClass('grid');
+            setTimeout(function(){onCameraScreenResize();},100);
+            self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
+        }
+        if (this.getState().grid==0){
+            self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
+        }
+        if (this.getState().grid<0){
+            self.wrapper.find('.cambd').hide();self.wrapper.find('.cammap').show();
+        }
+        
         core.elements['header-right'].prepend('<div class="camerafilterContainer"><div class="transparent-button svgbtnafter camerafilter"><span>Filter&nbsp;</span></div></div>');
         core.elements['header-right'].find('.camerafilterContainer').append('<div class="locationContainer" style="display:none;"><div class="locHeader">Select Locations</div><div class="locList"><ul><li class="no-locations">No locations</li></ul></div><div class="locFooter"><button id="setLocations" class="vxgbutton">Set</button></div></div>');
         core.elements['header-right'].find('.camerafilterContainer').on('mouseleave', function (){
@@ -286,8 +341,6 @@ window.screens['cameras'] = {
         });
         self.fillLocations();
         core.elements['header-right'].find('.camerafilter').click(function(e){
-
-
             core.elements['global-loader'].show();
             self.fillLocations().then(function(locs){
                 core.elements['global-loader'].hide();
@@ -348,7 +401,7 @@ window.screens['cameras'] = {
         statesArray[3] = '3&nbspx&nbsp3';
         statesArray[4] = '4&nbspx&nbsp4';
         statesArray[-1] = 'Map';
-        
+
         let curState = self.getState();
         core.elements['header-right'].prepend('<div tabindex="0" class="svgbtnafter gridmenu hide transparent-button"><span>'+statesArray[curState.grid]+'</span>' +
             '    <ul class="menu-dropdown">' +
@@ -359,10 +412,11 @@ window.screens['cameras'] = {
             '        <li class="gridmap"><a href="javascript:;">Map</a></li>' +
             '    </ul>' +
             '</div><div class="transparent-button svgbtnafter active addcamera" ifscreen="newcamera" onclick_toscreen="newcamera"><span style="font-size:200%">+&nbsp;&nbsp;</span><span>Add&nbsp;camera</span></div>');
+
         core.elements['header-right'].find('.nogrid').click(function(){
             self.wrapper.removeClass('grid');
             self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
-            let state = self.getState(); state.grid=0; self.setState(state);
+            let state = self.getState(); state.grid=0; state.list=true; self.setState(state);
             camGrid(0);
             core.elements['header-right'].find('.gridmenu span').text($(this).text());
         });
@@ -370,22 +424,37 @@ window.screens['cameras'] = {
             self.wrapper.addClass('grid');
             self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=2; self.setState(state);
-            camGrid(2);
-            core.elements['header-right'].find('.gridmenu span').text($(this).text());
+            if (state.list && self.playerList) {
+                state.list = false; self.setState(state)
+                location.reload();
+            } else {
+                camGrid(2);
+                core.elements['header-right'].find('.gridmenu span').text($(this).text());
+            }
         });
         core.elements['header-right'].find('.grid33').click(function(){
             self.wrapper.addClass('grid');
             self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=3; self.setState(state);
-            camGrid(3);
-            core.elements['header-right'].find('.gridmenu span').text($(this).text());
+            if (state.list && self.playerList) {
+                state.list = false; self.setState(state)
+                location.reload();
+            } else {
+                camGrid(3);
+                core.elements['header-right'].find('.gridmenu span').text($(this).text());
+            }
         });
         core.elements['header-right'].find('.grid44').click(function(){
             self.wrapper.addClass('grid');
             self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=4; self.setState(state);
-            camGrid(4);
-            core.elements['header-right'].find('.gridmenu span').text($(this).text());
+            if (state.list && self.playerList) {
+                state.list = false; self.setState(state)
+                location.reload();
+            } else {
+                camGrid(4);
+                core.elements['header-right'].find('.gridmenu span').text($(this).text());
+            }
         });
         core.elements['header-right'].find('.gridmap').click(function(){
             camGrid(0);
@@ -394,19 +463,6 @@ window.screens['cameras'] = {
             let state = self.getState(); state.grid=-1; self.setState(state);
             core.elements['header-right'].find('.gridmenu span').text($(this).text());
         });
-
-        if (this.getState().grid>0){
-            camGrid(this.getState().grid);
-            self.wrapper.addClass('grid');
-            setTimeout(function(){onCameraScreenResize();},100);
-            self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
-        }
-        if (this.getState().grid==0){
-            self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
-        }
-        if (this.getState().grid<0){
-            self.wrapper.find('.cambd').hide();self.wrapper.find('.cammap').show();
-        }
 
         $( window ).resize(onCameraScreenResize);
 
