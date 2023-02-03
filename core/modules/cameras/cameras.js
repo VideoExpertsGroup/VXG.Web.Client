@@ -68,11 +68,11 @@ function camGrid(size /* 2,3,4 */){
                     window.screens['cameras'].playerList.removePlayerFromList(cloudPlayerObj)
                 }
                 window.screens['cameras'].playerList.killSyncPromise(true).then(() => {
-                    window.screens['cameras'].playerList.killSyncPromise(false).then(() => {
-                        setTimeout(() => {    
+                    setTimeout(() => {
+                        window.screens['cameras'].playerList.killSyncPromise(false).then(() => {
                             window.screens['cameras'].playerList.synchronize([], true)
-                        }, 1500)
-                    });
+                        })
+                    }, 1500);
                 })
             }           
         };        
