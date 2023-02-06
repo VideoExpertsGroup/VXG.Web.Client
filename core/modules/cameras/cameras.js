@@ -421,37 +421,37 @@ window.screens['cameras'] = {
             core.elements['header-right'].find('.gridmenu span').text($(this).text());
         });
         core.elements['header-right'].find('.grid22').click(function(){
-            self.wrapper.addClass('grid');
-            self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=2; self.setState(state);
             if (state.list && self.playerList) {
                 state.list = false; self.setState(state)
                 location.reload();
             } else {
+                self.wrapper.addClass('grid');
+                self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
                 camGrid(2);
                 core.elements['header-right'].find('.gridmenu span').text($(this).text());
             }
         });
         core.elements['header-right'].find('.grid33').click(function(){
-            self.wrapper.addClass('grid');
-            self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=3; self.setState(state);
             if (state.list && self.playerList) {
                 state.list = false; self.setState(state)
                 location.reload();
             } else {
+                self.wrapper.addClass('grid');
+                self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
                 camGrid(3);
                 core.elements['header-right'].find('.gridmenu span').text($(this).text());
             }
         });
         core.elements['header-right'].find('.grid44').click(function(){
-            self.wrapper.addClass('grid');
-            self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=4; self.setState(state);
             if (state.list && self.playerList) {
                 state.list = false; self.setState(state)
                 location.reload();
             } else {
+                self.wrapper.addClass('grid');
+                self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
                 camGrid(4);
                 core.elements['header-right'].find('.gridmenu span').text($(this).text());
             }

@@ -76,6 +76,7 @@ position: relative;
 
 .screens > .cameras.grid{
 height:100%;
+overflow-y: scroll;
 }
 
 .screens > .cameras .gridmenu:focus:after {
@@ -184,7 +185,7 @@ height: auto;
     flex-direction: row;
     flex-wrap: wrap;
     width: auto!important;
-    height: 100%;
+    min-height: 100%;
     margin-left: -10px;
 }
 body.mobile .screens > .cameras.gridtop .camlist{
