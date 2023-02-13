@@ -59,8 +59,7 @@ if (is_array($s) && count($s)>0 && $s[0])
 else
     MCore::$core->response['scripts'] = $skin['scripts'][MCore::$core->current_user->role];
 
-if (!isset($meta['storage_channel_id']) || !(0+$meta['storage_channel_id'])){
-
+if ((!isset($meta['storage_channel_id']) || !(0+$meta['storage_channel_id'])) && !MCore::$core->current_user->isUser()){
     $camera = MCamera::createCamera(MCore::$core->current_user, '#StorageFor'.MCore::$core->current_user->id, false, false, 'Canada/Eastern', '', '', '', 0, 0, 0, true);
     MCore::$core->current_user->updateAllCamsToken();
     $meta['storage_channel_id'] = $camera instanceof MCamera ? $camera->camera['channelID'] : $camera;
