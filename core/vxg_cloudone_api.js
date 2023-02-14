@@ -214,6 +214,20 @@ vxg.api.cloudone.storage.putStorage = function( obj ){
     });
 }
 
+// remove storage object by id
+vxg.api.cloudone.storage.removeStorage = function( obj ){
+    var data = obj || {};
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/storage/del/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+}
+
 //////////////////////////////////////////////////
 // VXG Server api
 

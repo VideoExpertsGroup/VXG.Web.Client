@@ -1101,6 +1101,21 @@ body .vxgbutton-rounded {
     color: #ffffff;
 }
 
+.storage_buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.remove_storage {
+    background: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.remove_storage:hover {
+    background: #ffffff !important;
+    color: #dc3545 !important;
+}
+
 .chart-tools {
     align-items: center;
     font-size: 12px;

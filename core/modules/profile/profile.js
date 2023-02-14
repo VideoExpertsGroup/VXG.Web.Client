@@ -26,6 +26,7 @@ window.screens['profile'] = {
 
                 $(self.wrapper).find('[name="storage_type"]').val( current_bucket.type );
                 $(self.wrapper).find('[name="storage_type"]').change();
+                $(self.wrapper).find('.remove_storage').css('display', 'block');
 
                 $(self.wrapper).find('[name="endpoint"]').val( current_bucket.endpoint );
                 $(self.wrapper).find('[name="name"]').val( current_bucket.name );
@@ -235,12 +236,22 @@ window.screens['profile'] = {
                 vxg.api.cloudone.storage.postStorage(obj).then(function(data){
                   core.elements['global-loader'].hide();
                   self.bucket = data.data;
+                  $(self.wrapper).find('.remove_storage').css('display', 'block');
                 },function(r){
                   core.elements['global-loader'].hide();
                   alert('Cant change storage settings')
                 });
             }
-	});
+        });
+        this.wrapper.find('button.remove_storage').click(function(){
+            core.elements['global-loader'].show();
+            vxg.api.cloudone.storage.removeStorage({"id": self.bucket.id}).then(function(){
+                location.reload();
+            }, function(r) {
+                core.elements['global-loader'].hide();
+                alert('Error removing storage')
+            });
+        });
         return defaultPromise();
     }
 };
