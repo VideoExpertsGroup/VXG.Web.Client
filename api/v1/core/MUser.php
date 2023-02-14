@@ -689,6 +689,26 @@ class MUser{
         return fetchOne('SELECT count(*) AS "amountCameras" FROM "userCamera" WHERE "userID"=?',[$this->id]);
     }
 
+    public function getNonStorageCameraCount() {
+        if ($this->isPartner())
+            return fetchOne('SELECT count(*) AS "amountCameras" FROM "camera" WHERE "userID"=? AND "name" NOT LIKE ?',[$this->id, '%#StorageFor%']);
+        return fetchOne('SELECT count(*) AS "amountCameras" FROM "userCamera" WHERE "userID"=? AND "name" NOT LIKE ?',[$this->id, '%#StorageFor%']);
+    }
+
+    public function getStorageCameraIds() {
+        $ret = [];
+        if ($this->isPartner())
+            $camIds = fetchAll('SELECT "channelID" FROM "camera" WHERE "userID"=? AND "name" LIKE ?',[$this->id, '%#StorageFor%']);
+        else
+            $camIds = fetchAll('SELECT "channelID" FROM "camera" WHERE "userID"=? AND "name" LIKE ?',[$this->id, '%#StorageFor%']);
+        
+        foreach($camIds as $c) {
+            array_push($ret, $c['channelID']);
+        }
+
+        return $ret;
+    }
+
     public static function deleteFirebaseUser($email){
         $a = dirname(dirname(dirname(__FILE__)));
         include_once($a.'/vendor/autoload.php');

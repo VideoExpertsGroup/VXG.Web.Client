@@ -14,8 +14,15 @@ $user = MUser::getUserById(0+$user_id);
 if (!$user)
     error(401,'User not found');
 
-if ($user->getUserCamerasCount()>0)
+if ($user->getNonStorageCameraCount()>0)
     error(577,'It is allowed to delete only users without related cameras.');
+
+$storageCamIds = $user->getStorageCameraIds();
+foreach($storageCamIds as $camid) {
+    MCamera::removeByChannelID($camid, $user);
+}
+
+$user->updateAllCamsToken();
 
 MUser::deleteFirebaseUser($user->email);
 $user->deleteUser();    

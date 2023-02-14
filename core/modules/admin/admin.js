@@ -255,23 +255,25 @@ window.screens['admincams'] = {
 		vxg.api.cloud.setAllCamsToken(self.user.allcamstoken);
 		
 		vxg.api.cloud.getCamerasList().then(function(cameras){
+            var cams = [];
+            cameras.objects.forEach(c => { if (!c.meta.isstorage) {cams.push(c)} });
 
             let table='<table><thead><tr class="header"><th scope="col">#</th><th scope="col">Name</th><th scope="col">Id</th><th scope="col" style="width:60%">Access token</th><th scope="col">Action</th></tr></thead><tbody>';
             c = 1;
-            for (let i in cameras.objects) {
-                table += '<tr camid="' + cameras.objects[i].id + '"><td>' + c + '</td>'
-						+'<td class="name">' + cameras.objects[i].name + '</td>'
-						+'<td class="acc_token">' + cameras.objects[i].id + '</td>'
-						+'<td class="acc_token">' + cameras.objects[i].token + '</td>'
+            for (let i in cams) {
+                table += '<tr camid="' + cams[i].id + '"><td>' + c + '</td>'
+						+'<td class="name">' + cams[i].name + '</td>'
+						+'<td class="acc_token">' + cams[i].id + '</td>'
+						+'<td class="acc_token">' + cams[i].token + '</td>'
 						+'<td class="action-icons">'
-						+ '<button class="userbtn item-delete usercameras svgbtnhover" chnlid="'+ cameras.objects[i].id +'"></button>'
-						+ '<button class="userbtn item-delete deleteuser svgbtnhover" chnlid="'+ cameras.objects[i].id +'"></button>'
+						+ '<button class="userbtn item-delete usercameras svgbtnhover" chnlid="'+ cams[i].id +'"></button>'
+						+ '<button class="userbtn item-delete deleteuser svgbtnhover" chnlid="'+ cams[i].id +'"></button>'
 						+ '</td></tr>';
                 c++;
             }
             table += '</tbody></table>'
 
-            if (cameras.objects.length>0)
+            if (cams.length>0)
                 $(self.wrapper).find('.cameralist').empty().append(table);
             else {
                 self.wrapper.addClass('nopartner');
