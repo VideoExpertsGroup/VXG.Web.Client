@@ -67,6 +67,9 @@ window.screens['login'] = {
 		});
 	}
 
+
+    displayVersion();
+
         if (location.hash.substr(0,6)=='#login'){
             this.wrapper.find('[name="username"]').val(location.hash.substr(7));
             setTimeout(function(){self.wrapper.find('[name="password"]').focus();},1000);
@@ -157,6 +160,24 @@ TODO: add auth without firebase
             } else
                 self.wrapper.find('.bod').show();
 */
+        }
+
+        function displayVersion() {
+            var file = "../../../version";
+            var rawFile = new XMLHttpRequest();
+            rawFile.open("GET", file, false);
+            rawFile.onreadystatechange = function ()
+            {
+                if(rawFile.readyState === 4)
+                {
+                    if(rawFile.status === 200 || rawFile.status == 0)
+                    {
+                        var versionText = rawFile.responseText;
+                        $('#cloudone-version').html(versionText.trim());
+                    }
+                }
+            }
+            rawFile.send(null);
         }
 
         function onLogin(r){
