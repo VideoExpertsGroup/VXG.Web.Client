@@ -1,6 +1,6 @@
 // CloudSDK.debug.js
 // version: 3.2.4
-// date-of-build: 230126
+// date-of-build: 230227
 // copyright (c) VXG Inc
 // Includes gl-matrix  <https://github.com/toji/gl-matrix>
 // ver: 3.3.0 // Available under MIT License 
@@ -7930,6 +7930,8 @@ window.CloudPlayer = function(elid, options){
 			&& self.mSrc._origJson()['status'] != 'setsource'
 			){
 				self._showerror(CloudReturnCode.ERROR_CAMERA_OFFLINE);
+				self.player.querySelector(".cloudplayer-calendar-container").classList.add("offline");
+				self.player.querySelector(".cloudplayer-controls-container").classList.add("offline");
 				mCallbacks.executeCallbacks(CloudPlayerEvent.CHANNEL_STATUS, {status: "offline"});
 			}
 			_startPolingCameraStatus(_uniqPlay);
@@ -9834,6 +9836,8 @@ window.CloudPlayer = function(elid, options){
 			if(new_status !== 'active'
 				&& self.m.waitSourceActivation != 0
 				&& mWaitSourceActivationCounter > self.m.waitSourceActivation) {
+				self.player.querySelector(".cloudplayer-calendar-container").classList.add("offline");
+				self.player.querySelector(".cloudplayer-controls-container").classList.add("offline");	
 				self._showerror(CloudReturnCode.ERROR_CAMERA_OFFLINE);
 				mWaitSourceActivationCounter = 0;
 			}
@@ -9843,9 +9847,13 @@ window.CloudPlayer = function(elid, options){
 				self.mSrc._origJson()['status'] = new_status;
 				if(mLiveModeAutoStart){
 					if(new_status == 'active'){
+						self.player.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
+						self.player.querySelector(".cloudplayer-controls-container").classList.remove("offline");
 						self.play();
 					} else {
 						self.stop("by_poling_camera_status");
+						self.player.querySelector(".cloudplayer-calendar-container").classList.add("offline");
+						self.player.querySelector(".cloudplayer-controls-container").classList.add("offline");
 						self._showerror(CloudReturnCode.ERROR_CAMERA_OFFLINE);
 						_startPolingCameraStatus(_uniqPlay);
 					}
@@ -15506,7 +15514,7 @@ window.CloudSDK = window.CloudSDK || {};
 
 // Automaticlly generated
 CloudSDK.version = '3.2.4';
-CloudSDK.datebuild = '230126';
+CloudSDK.datebuild = '230227';
 console.log('CloudSDK.version='+CloudSDK.version + '_' + CloudSDK.datebuild);
 
 // Wrapper for VXGCloudPlayer & CloudSDK
