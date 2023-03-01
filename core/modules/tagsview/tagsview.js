@@ -39,6 +39,8 @@ window.screens['tagsview'] = {
     },
     'on_show':function(access_token, timestamp){
         let self =this;
+        self.player.element.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
+        self.player.element.querySelector(".cloudplayer-controls-container").classList.remove("offline");
         self.timestamp = undefined;
 	self.set_mode('showevents'); 
         if ($('body').hasClass('mobile')) $(self.wrapper).find('.tagslistwrapper .sharebnts').hide();
