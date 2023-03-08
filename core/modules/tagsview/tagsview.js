@@ -131,6 +131,8 @@ window.screens['tagsview'] = {
 	console.warn('<DEBUG> operation:' + operation);
 
 	if (operation === "event") {
+        self.player.element.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
+        self.player.element.querySelector(".cloudplayer-controls-container").classList.remove("offline");
 		self.player.setPosition(timestamp);
 	} else if (operation === "meta") {
 		self.player.setPosition(timestamp);
