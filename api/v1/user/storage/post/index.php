@@ -37,6 +37,10 @@ curl_setopt_array($curl, [CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOS
 $answer = json_decode(curl_exec($curl),TRUE);
 curl_close($curl);    
 
+if ($answer == null) {
+    error(550, 'Error adding storage bucket');
+}
+
 MCore::$core->response['data'] = $answer;
 MCore::$core->response['result'] = 'OK';
 return;

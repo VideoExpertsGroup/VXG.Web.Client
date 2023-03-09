@@ -239,7 +239,7 @@ window.screens['profile'] = {
                   $(self.wrapper).find('.remove_storage').css('display', 'block');
                 },function(r){
                   core.elements['global-loader'].hide();
-                  alert('Cant change storage settings')
+                  alert(r.responseJSON.errorDetail);
                 });
             }
         });
