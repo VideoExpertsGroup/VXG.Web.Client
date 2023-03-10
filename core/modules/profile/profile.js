@@ -66,6 +66,8 @@ window.screens['profile'] = {
     },
     'on_init':function(){
         let self = this;
+	 if (vxg.user.src.role == "user") $(".prifiletabs > .tab3").hide();
+	 $(self.wrapper).addClass('tab2');
         core.elements['header-center'].text('User '+vxg.user.src.email+' profile');
         this.wrapper.find('.prifiletabs > div').click(function(){
             if ($(this).hasClass('tab1')) $(self.wrapper).addClass('tab1').removeClass('tab2').removeClass('tab3').removeClass('tab4');
