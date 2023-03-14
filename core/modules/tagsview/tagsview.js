@@ -39,8 +39,13 @@ window.screens['tagsview'] = {
     },
     'on_show':function(access_token, timestamp){
         let self =this;
-        self.player.element.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
-        self.player.element.querySelector(".cloudplayer-controls-container").classList.remove("offline");
+        if (self.player.element) {
+            self.player.element.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
+            self.player.element.querySelector(".cloudplayer-controls-container").classList.remove("offline");
+        } else {
+            self.player.player.player.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
+            self.player.player.player.querySelector(".cloudplayer-controls-container").classList.remove("offline");
+        }
         self.timestamp = undefined;
 	self.set_mode('showevents'); 
         if ($('body').hasClass('mobile')) $(self.wrapper).find('.tagslistwrapper .sharebnts').hide();
@@ -131,8 +136,13 @@ window.screens['tagsview'] = {
 	console.warn('<DEBUG> operation:' + operation);
 
 	if (operation === "event") {
-        self.player.element.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
-        self.player.element.querySelector(".cloudplayer-controls-container").classList.remove("offline");
+        if (self.player.element) {
+            self.player.element.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
+            self.player.element.querySelector(".cloudplayer-controls-container").classList.remove("offline");
+        } else {
+            self.player.player.player.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
+            self.player.player.player.querySelector(".cloudplayer-controls-container").classList.remove("offline");
+        }
 		self.player.setPosition(timestamp);
 	} else if (operation === "meta") {
 		self.player.setPosition(timestamp);
