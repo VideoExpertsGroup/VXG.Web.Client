@@ -3,7 +3,8 @@
 
 
 .screens > .tagsview .cloudplayer-get-clip,
-.screens > .tagsview .cloudplayer-get-shot{
+.screens > .tagsview .cloudplayer-get-shot,
+.screens > .tagsview .cloudplayer-sd-backup{
     display: none!important;
 }
 

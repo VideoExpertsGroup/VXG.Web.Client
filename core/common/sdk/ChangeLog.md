@@ -1,4 +1,9 @@
 # Web SDK for VXG Cloud & Server
+### Web SDK for VXG Cloud & Server 3.2.6_230329
+-   Added manual synchronization call for SD card backup in the UI
+
+### Web SDK for VXG Cloud & Server 3.2.5_230319
+-   Removing button disabling until more time can be spent making it work with the correct logic
 
 ### Web SDK for VXG Cloud & Server 3.2.4_230117
 -   Restarting use of the changelog

@@ -1,6 +1,6 @@
 // CloudSDK.debug.js
-// version: 3.2.4
-// date-of-build: 230227
+// version: 3.2.6
+// date-of-build: 230404
 // copyright (c) VXG Inc
 // Includes gl-matrix  <https://github.com/toji/gl-matrix>
 // ver: 3.3.0 // Available under MIT License 
@@ -6412,6 +6412,14 @@ window.CloudPlayer = function(elid, options){
                 + '    <tr><td><input class="clipbefore" type="number" min=1 max=3600 value="10"></td><td class="clipdt"></td><td><input class="clipafter" type="number" min=1 max=3600 value="10"></td></tr>'
                 + '    <tr><td colspan="3"><div class="clipcreatebtn">Create clip &gt;</div></td></tr></table>'
                 + '</div>'
+		+ '<div class="cloudplayer-selectbackuptime">'
+		+ '    <table class="mem_rec_hide"><tr><td>Duration<br/><span>(sec.)</span></td><td>Date/Time</td></tr>'
+		+ '    <tr><td style="width: 50%"><input class="backupduration" type="number" min=1 max=3600 value="900" style="width: 100%"></td><td class="syncdt" style="width: 50%"></td></tr>'
+		+ '    <tr><td colspan="2"><div class="sdcardbackupbtn">Start SD Card Backup &gt;</div></td></tr>'
+		+ '    <tr><td colspan="2"><progress id="backup-progress" value="0" max="100" style="display: none; width: 100%; height: 15px;" ></progress></td></tr></table>'
+		+ '	   <div class="sd-divider mem_rec_hide"></div> '
+		+ '    <div class="enable-disable-sdcard"></div>'
+		+ '</div>'
 		+ '<div class="cloudplayer-info' + ((self.isMobile)?' mobile ':'') + '">'
 		+ '<div class="cloudplayer-info-main">'
 		+ '		<div class="cloudplayer-info-title">Settings</div>'
@@ -6504,6 +6512,7 @@ window.CloudPlayer = function(elid, options){
 		+ '	<div class="cloudplayer-microphone disabled"></div>'
 		+ '	<div class="cloudplayer-get-clip" style="display: none"></div>'
 		+ '	<div class="cloudplayer-get-shot" style="display: none"></div>'
+		+ '	<div class="cloudplayer-sd-backup" style="display: none"></div>'
 		+ '	<div class="cloudplayer-record-mode mode-records" style="display: none"></div>'
 		+ '	<div class="cloudplayer-single-element-divider"></div>'
 		+ '	<div class="cloudplayer-settings"></div>'
@@ -6625,10 +6634,13 @@ window.CloudPlayer = function(elid, options){
 	var el_controls_microphone = self.player.getElementsByClassName('cloudplayer-microphone')[0];
 	var el_controls_get_shot = self.player.getElementsByClassName('cloudplayer-get-shot')[0];
 	var el_controls_get_clip = self.player.getElementsByClassName('cloudplayer-get-clip')[0];
+	var el_controls_sd_backup = self.player.getElementsByClassName('cloudplayer-sd-backup')[0];
+	var el_toggle_sd_sync = self.player.getElementsByClassName('enable-disable-sdcard')[0];
 	var el_controls_ptz_container = self.player.getElementsByClassName('cloudplayer-ptz')[0];
 	var mElementPlay = self.player.getElementsByClassName('cloudplayer-play')[0];
 	var el_info = self.player.getElementsByClassName('cloudplayer-info')[0];
 	var el_clipcreatebtn = self.player.getElementsByClassName('clipcreatebtn')[0];
+	var el_sdcardbackupbtn = self.player.getElementsByClassName('sdcardbackupbtn')[0];
 	var el_stop = self.player.getElementsByClassName('cloudplayer-stop')[0];
 	var el_pause = self.player.getElementsByClassName('cloudplayer-pause')[0];
 	var el_loader = self.player.getElementsByClassName('cloudplayer-loader')[0];
@@ -6636,6 +6648,7 @@ window.CloudPlayer = function(elid, options){
 	var mElErrorText = self.player.getElementsByClassName('cloudplayer-error-text')[0];
 	var el_player_time = self.player.getElementsByClassName('cloudplayer-time')[0];
 	var el_player_cliptime = self.player.getElementsByClassName('clipdt')[0];
+	var el_player_synctime = self.player.getElementsByClassName('syncdt')[0];
 	var mElBigPlayButton = self.player.getElementsByClassName('cloudplayer-big-play-button')[0];
 	var mWebRTC_el = self.player.getElementsByClassName('cloudplayer-webrtc')[0];
 	var mNativeHLS_el = self.player.getElementsByClassName('cloudplayer-native-hls')[0];
@@ -6826,7 +6839,7 @@ window.CloudPlayer = function(elid, options){
 	self.onDocumentClick = function(event) {
 		var isClickInside = el_info.contains(event.target) || mElSettingsOpen == event.target || mElSettingsOpen.contains(event.target) ||
 			mElementCalendar == event.target || mElementCalendar.contains(event.target) || 
-			el_controls_get_shot == event.target || el_controls_get_clip == event.target || el_controls_microphone == event.target ||
+			el_controls_get_shot == event.target || el_controls_get_clip == event.target || el_controls_sd_backup == event.target || el_controls_microphone == event.target ||
 			el_controls_zoom_switcher == event.target || el_controls_zoom_switcher.contains(event.target) ||
 			el_controls_zoom_container == event.target || el_controls_zoom_container.contains(event.target) ||
                         mElementCalendarButton == event.target || mElementCalendarButton.contains(event.target);
@@ -6847,6 +6860,7 @@ window.CloudPlayer = function(elid, options){
 		self.player.classList.toggle('showing-settings');
 		self.player.classList.remove('showing-zoom');
 		self.player.getElementsByClassName('cloudplayer-selectcliptime')[0].style.display = "none";
+		self.player.getElementsByClassName('cloudplayer-selectbackuptime')[0].style.display = "none";
 
 		if(self.calendar){
 			self.calendar.hideCalendar();
@@ -7021,6 +7035,7 @@ window.CloudPlayer = function(elid, options){
 		self.player.classList.toggle('showing-zoom');
 		self.player.classList.remove('showing-settings');
 		self.player.getElementsByClassName('cloudplayer-selectcliptime')[0].style.display = "none";
+		self.player.getElementsByClassName('cloudplayer-selectbackuptime')[0].style.display = "none";
 		if(self.calendar){
 			self.calendar.hideCalendar();
 			var el_timelineCalendar = self.player
@@ -7093,6 +7108,45 @@ window.CloudPlayer = function(elid, options){
 //		var cld = el_selectcliptime.getElementsByClassName('clipdt')[0];
 //		cld.innerText = _formatTimeCameraRecords(mPosition);
 	};
+
+	el_controls_sd_backup.onclick = function(){
+		var el_selectcliptime = self.player.getElementsByClassName('cloudplayer-selectbackuptime')[0];
+		if (el_selectcliptime.style.display == "block")
+			el_selectcliptime.style.display = "none";
+		else {
+			el_selectcliptime.style.display = "block";
+			if (mPosition == -1) el_player_synctime.innerHTML = new Date().toLocaleString();
+			else el_player_synctime.innerHTML = new Date(mPosition).toLocaleString();
+			self.player.classList.remove('showing-zoom', 'showing-settings');
+		}
+	};
+
+	el_sdcardbackupbtn.onclick = function(){
+		var el_selectbackuptime = self.player.getElementsByClassName('cloudplayer-selectbackuptime')[0];
+		el_selectbackuptime.style.display = "none";
+		var dur = el_selectbackuptime.getElementsByClassName('backupduration')[0];
+		if (isNaN(dur.value)){
+			alert('"Duration" field must contain a number');
+			return;
+		}
+		dur = parseInt(dur.value);
+		if (dur<0){
+			alert('"Duration" field must be above or equal 0');
+			return;
+		}
+		if (dur>3600){
+			alert('Max backup length is 1 hour (3600 seconds)');
+			return;
+		}
+
+		dur = dur>3600 ? 3600 : dur;
+		self._getSdBackup(dur);
+	}
+
+	el_toggle_sd_sync.onclick = function() {
+		var curVal = this.getAttribute("enabled") == "true" ? true : false; 
+		self._toggleSync(!curVal);
+	}
 	
 	function showTimelapseControls (isShow) {
 		mTimelapseControlsContainer_el.style.display = (isShow)?"flex":"none";
@@ -7930,8 +7984,8 @@ window.CloudPlayer = function(elid, options){
 			&& self.mSrc._origJson()['status'] != 'setsource'
 			){
 				self._showerror(CloudReturnCode.ERROR_CAMERA_OFFLINE);
-				self.player.querySelector(".cloudplayer-calendar-container").classList.add("offline");
-				self.player.querySelector(".cloudplayer-controls-container").classList.add("offline");
+				//self.player.querySelector(".cloudplayer-calendar-container").classList.add("offline");
+				//self.player.querySelector(".cloudplayer-controls-container").classList.add("offline");
 				mCallbacks.executeCallbacks(CloudPlayerEvent.CHANNEL_STATUS, {status: "offline"});
 			}
 			_startPolingCameraStatus(_uniqPlay);
@@ -8029,6 +8083,8 @@ window.CloudPlayer = function(elid, options){
 		
 		var el_controls_ptz_switcher	= self.player.getElementsByClassName('cloudplayer-show-ptz')[0];
 		var el_controls_get_clip	= self.player.getElementsByClassName('cloudplayer-get-clip')[0];
+		var el_controls_sd_backup	= self.player.getElementsByClassName('cloudplayer-sd-backup')[0];
+		var el_sdcardtogglebtn = self.player.getElementsByClassName('enable-disable-sdcard')[0];
 		var el_controls_get_shot	= self.player.getElementsByClassName('cloudplayer-get-shot')[0];
 		var el_controls_microphone	= self.player.getElementsByClassName('cloudplayer-microphone')[0];
 		
@@ -8048,8 +8104,28 @@ window.CloudPlayer = function(elid, options){
 				el_controls_get_shot.style.display = 'block';
 			}
 		}
-		
+
+		if (!self.options.disableSdCard || self.options.disableSdCard == false) { 
+			if (!CloudHelpers.isIE()) {
+				el_controls_sd_backup.style.display = 'block';
+			}
+		}
+			
 		if (mConn) {
+			var camid = self.mSrc.getID();
+			/*mConn._getAPI().getCamera2(camid).done(function(camInfo) {
+				var toggleSync = self.player.getElementsByClassName('mem_rec_hide');
+				if (camInfo.memorycard_recording) {
+					for (var i = 0; i < toggleSync.length; i ++) { toggleSync[i].style.display = "block" }
+					el_sdcardtogglebtn.innerHTML = "Disable SD Card Synchronization";
+					el_sdcardtogglebtn.setAttribute("enabled", true);
+				} else {
+					for (var i = 0; i < toggleSync.length; i ++) { toggleSync[i].style.display = "none" }
+					el_sdcardtogglebtn.innerHTML = "Enable SD Card Synchronization";
+					el_sdcardtogglebtn.setAttribute("enabled", false);
+				}
+			});*/
+
 		    mTimelapsePlayer.setApi(mConn._getAPI());
 		
 		    var el_controls_ptz_top = self.player.getElementsByClassName('ptz-top')[0];
@@ -8330,6 +8406,87 @@ window.CloudPlayer = function(elid, options){
 			}
 		}, 500);
 	    }
+	}
+
+	self._getSdBackup = function(dur) {
+	    var cloudcamera = self.mSrc;
+	    var position = mPosition;
+		var start, end;
+	    if (position == -1) {
+			// if it's live, it should start at live - dur 
+			end = new Date().getTime();
+			start = end - (dur * 1000);
+	    } else {
+			start = position;
+			end = position + (dur * 1000);
+		}
+
+		var start_dt = CloudHelpers.formatUTCTime(start);
+		var end_dt = CloudHelpers.formatUTCTime(end);
+        	    
+	    if ((cloudcamera !== undefined) && (mAccessToken && (mAccessToken !== undefined))) { 
+			var vcp = self.player.getElementsByTagName('vxg-cloud-player')[0];
+			vcp.player.camera.get_v4_storage_records({start: start_dt, end: end_dt}).then(function(records) {
+				var syncCalls = vcp.player.storage.overlapArray(start_dt, end_dt, records.objects);
+				if (syncCalls.length == 0) syncCalls.push({start: start_dt, end: end_dt});
+				var chunkedCalls = vcp.player.storage.chunkSyncCalls(syncCalls);
+
+				var startBackup_el = self.player.getElementsByClassName("sdcardbackupbtn")[0];
+				var toggleSync_el = self.player.getElementsByClassName("enable-disable-sdcard")[0];
+				startBackup_el.classList.add("sd-backup-disable");
+				toggleSync_el.classList.add("sd-backup-disable");
+				var progress_el_id = "#backup-progress";
+				$(progress_el_id).show();
+				var progress_incr = 100 / chunkedCalls.length;
+
+				const allCalls = chunkedCalls.reduce(
+					(p, range) => 
+						p.then(() => vcp.player.storage.syncAndCheck(range.start, range.end, progress_el_id, progress_incr)),
+					Promise.resolve()
+				);
+
+				var sd_loading = self.player.getElementsByClassName("cloudplayer-sd-backup")[0];
+				var rot = 0;
+				var loading = setInterval(function() {
+					rot = rot + 45 == 360 ? 0 : rot + 45;
+					sd_loading.style.transform = `rotate(${rot}deg)`
+				}, 500)
+
+				const final = Promise.resolve(allCalls).then(function() { 
+					startBackup_el.classList.remove("sd-backup-disable");
+					toggleSync_el.classList.remove("sd-backup-disable");
+					sd_loading.style.transform = `rotate(0deg)`
+					clearInterval(loading);
+					setTimeout(function() {
+						$(progress_el_id).hide();
+						$(progress_el_id).val(0);
+					}, 15000)
+				}, function(err) {
+					sd_loading.style.transform = `rotate(0deg)`
+					clearInterval(loading);
+					console.log(err.responseText)
+				})
+			})
+	    }
+	}
+
+	self._toggleSync = function(mem_rec) {
+		/*var cloudcamera = self.mSrc;
+		if ((cloudcamera !== undefined) && (mAccessToken && (mAccessToken !== undefined))) { 
+			cloudcamera.toggleMemRec(mem_rec, mAccessToken);
+			var toggleSync = self.player.getElementsByClassName('mem_rec_hide');
+			var el_sdcardtogglebtn = self.player.getElementsByClassName('enable-disable-sdcard')[0];
+			if (mem_rec) {
+				for (var i = 0; i < toggleSync.length; i ++) { toggleSync[i].style.display = "block" }
+				el_sdcardtogglebtn.innerHTML = "Disable SD Card Synchronization";
+				el_sdcardtogglebtn.setAttribute("enabled", true);
+			} 
+			else {
+				for (var i = 0; i < toggleSync.length; i ++) { toggleSync[i].style.display = "none" }
+				el_sdcardtogglebtn.innerHTML = "Enable SD Card Synchronization";
+				el_sdcardtogglebtn.setAttribute("enabled", false);
+			} 
+	    }*/
 	}
 
 	self._onResize  = function() {
@@ -9836,8 +9993,8 @@ window.CloudPlayer = function(elid, options){
 			if(new_status !== 'active'
 				&& self.m.waitSourceActivation != 0
 				&& mWaitSourceActivationCounter > self.m.waitSourceActivation) {
-				self.player.querySelector(".cloudplayer-calendar-container").classList.add("offline");
-				self.player.querySelector(".cloudplayer-controls-container").classList.add("offline");	
+				//self.player.querySelector(".cloudplayer-calendar-container").classList.add("offline");
+				//self.player.querySelector(".cloudplayer-controls-container").classList.add("offline");	
 				self._showerror(CloudReturnCode.ERROR_CAMERA_OFFLINE);
 				mWaitSourceActivationCounter = 0;
 			}
@@ -9847,13 +10004,13 @@ window.CloudPlayer = function(elid, options){
 				self.mSrc._origJson()['status'] = new_status;
 				if(mLiveModeAutoStart){
 					if(new_status == 'active'){
-						self.player.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
-						self.player.querySelector(".cloudplayer-controls-container").classList.remove("offline");
+						//self.player.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
+						//self.player.querySelector(".cloudplayer-controls-container").classList.remove("offline");
 						self.play();
 					} else {
 						self.stop("by_poling_camera_status");
-						self.player.querySelector(".cloudplayer-calendar-container").classList.add("offline");
-						self.player.querySelector(".cloudplayer-controls-container").classList.add("offline");
+						//self.player.querySelector(".cloudplayer-calendar-container").classList.add("offline");
+						//self.player.querySelector(".cloudplayer-controls-container").classList.add("offline");
 						self._showerror(CloudReturnCode.ERROR_CAMERA_OFFLINE);
 						_startPolingCameraStatus(_uniqPlay);
 					}
@@ -10285,7 +10442,6 @@ window.CloudPlayer = function(elid, options){
 }
 
 CloudPlayer.POSITION_LIVE = -1;
-
 /*-------MODEL-------*/
 
 var CloudShareClipModel = function CloudShareClipModel( controller) {
@@ -15513,8 +15669,8 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 window.CloudSDK = window.CloudSDK || {};
 
 // Automaticlly generated
-CloudSDK.version = '3.2.4';
-CloudSDK.datebuild = '230227';
+CloudSDK.version = '3.2.6';
+CloudSDK.datebuild = '230404';
 console.log('CloudSDK.version='+CloudSDK.version + '_' + CloudSDK.datebuild);
 
 // Wrapper for VXGCloudPlayer & CloudSDK
