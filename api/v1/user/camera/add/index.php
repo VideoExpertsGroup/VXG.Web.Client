@@ -32,9 +32,9 @@ if ($camera && $serialnumber && $gspassword) {
 MCore::$core->current_user->updateAllCamsToken();
 
 if ($camera && strpos(MCore::$core->current_user->js,'retention')!==false){
-    list($type, $recording, $time) = MCore::getInputParameters(['rete_type', 'rete_sd', 'rete_time']);
-    if ($type || $recording || $time)
-        MCore::$core->response = MCamera::setRetention($camera->camera['channelID'], MCore::$core->current_user, $type, $recording, $time); 
+    list($rec_mode, $recording, $time) = MCore::getInputParameters(['rete_recmode', 'rete_sd', 'rete_time']);
+    if ($rec_mode || $recording || $time)
+        MCore::$core->response = MCamera::setRetention($camera->camera['channelID'], MCore::$core->current_user, $rec_mode, $recording, $time); 
 }
 
 

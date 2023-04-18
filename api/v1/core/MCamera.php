@@ -280,6 +280,12 @@ class MCamera{
         return $camera;
     }
 
+    public static function getCameraType($channel_id) {
+        if (!$channel_id) return false;
+        $type = MCore::$core->pdo->fetchOne('SELECT "type" FROM "camera" WHERE "channelID"=?', [$channel_id]);
+        return $type;
+    }
+
     public static function getRetention($channel_id, $user_from){
         $server = $user_from->getServerData();
         if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
@@ -291,23 +297,25 @@ class MCamera{
             error(556, 'Failed to get channel: '. $channel['errorDetail']);
 
         $response_cloud = StreamLandAPI::getChannelV2($channel_id);
+        $cameraType = MCamera::getCameraType($channel_id);
+        $sdCardEnabled = $cameraType == 1? true : false;
         if (isset($response_cloud['errorDetail'])) 
             error(556, 'Failed to get channel: '. $response_cloud['errorDetail']);
         $limits = StreamLandAPI::getLimits($channel_id);
         if (isset($limits['errorDetail'])) 
             error(556, 'Failed to get limits: '. $limits['errorDetail']);
         if ($channel['rec_mode']=='server_by_event') $channel['rec_mode']='by_event';
-        return ['type'=>$channel['rec_mode'], 'recording'=> (isset($response_cloud['memorycard_recording']) && $response_cloud['memorycard_recording']?1:0), 'time'=>$limits['records_max_age']];
+        return ['type'=>$channel['rec_mode'], 'recording'=> (isset($response_cloud['memorycard_recording']) && $response_cloud['memorycard_recording']?1:0), 'sdCardEnabled'=> $sdCardEnabled, 'time'=>$limits['records_max_age']];
     }
 
-    public static function setRetention($channel_id, $user_from, $type, $recording, $time){
+    public static function setRetention($channel_id, $user_from, $rec_mode, $recording, $time){
         $server = $user_from->getServerData();
         if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
             error(555, 'Failed generateServicesURLs');
 
-        $data = ['rec_mode'=>$type];
+        $data = ['rec_mode'=>$rec_mode];
 
-        if ($type=='by_event'){
+        if ($rec_mode=='by_event'){
             $channel = StreamLandAPI::getChannel($channel_id);
             if (isset($channel['errorDetail'])) 
                 error(556, 'Failed to get channel: '. $channel['errorDetail']);
@@ -320,6 +328,9 @@ class MCamera{
             error(556, 'Failed to update channel: '. $channel['errorDetail']);
 
         $data = ['memorycard_recording'=>($recording?true:false)];
+        // types 1 -> sd 0 -> cloud
+        $type = $recording?1:0;
+        query('UPDATE camera SET "type"=? WHERE "channelID"=?', [$type, $channel_id]);
 
         $response_cloud = StreamLandAPI::updateChannelV2($channel_id, $data);
         if (isset($response_cloud['errorDetail'])) 

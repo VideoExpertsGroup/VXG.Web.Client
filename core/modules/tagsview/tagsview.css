@@ -1,7 +1,6 @@
 #tagsplayer{
 }
 
-
 .screens > .tagsview .cloudplayer-get-clip,
 .screens > .tagsview .cloudplayer-get-shot,
 .screens > .tagsview .cloudplayer-sd-backup{
@@ -527,6 +526,10 @@ background: black;
 
 .disabled > .svgbtn {
     filter: brightness(0.6) grayscale(100%) !important;
+}
+
+#sd-enabled {
+    display: block !important;
 }
 
 .clipdis {

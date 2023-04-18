@@ -133,7 +133,7 @@ CameraEditControl = function(){
 </div>
 <div class="form-group rete">
     <label>Cloud recording</label>&nbsp;&nbsp;&nbsp;<label class="rectypeinfo" style="display:none;font-weight: lighter;">(recording type "By Event" is not supported for RTSP cameras)</label>
-    <select name="rete_type" class="rete_type">
+    <select name="rete_recmode" class="rete_recmode">
         <option value="off" selected>Off</option>
         <option value="on">Continuous</option>
         <option value="by_event">By Event</option>
@@ -171,7 +171,7 @@ CameraEditControl = function(){
         $(this).find('.anccsUrlRetentiontime').click(function(){
             $(self).toggleClass('retention');
         });
-        $(this).find('.rete_type').change(function(){
+        $(this).find('.rete_recmode').change(function(){
             let type = $(this).val();
             let url = ($(self).find('.anccsUrl').val()||'').trim();
             //if (!self.camera || self.camera.bsrc.url || type=='on' && !url) $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
@@ -184,10 +184,10 @@ CameraEditControl = function(){
             else
                 $(self).find('.rectypeinfo').hide();
 
-            if (self.camera) {
+            /*if (self.camera) {
                 if (!self.camera.bsrc.url) $(self).find('.sdrecinfo').text(type=='on'?'(supported only at "Off" and "By Event" cloud recording types)':'');
                 else $(self).find('.sdrecinfo').text('(supported only for Cloud cameras)');
-            }
+            }*/
 
         });
         $(this).find('.type select').change(function(){
@@ -239,7 +239,7 @@ CameraEditControl = function(){
             this.showwait('Loading');
             return window.vxg.cameras.getCameraByTokenPromise(access_token).then(function(camera){self.onCameraLoaded(camera);}, function(){self.onCameraLoadedFail();});
         }
-        $(this).find('.sdrecinfo').text('(supported only for Cloud cameras)');
+        //$(this).find('.sdrecinfo').text('(supported only for Cloud cameras)');
         $(this).removeClass('nodata');
         $(this).addClass('ready').addClass('newcamera');
         $(this).find('.camera_finder_link').show();
@@ -354,10 +354,10 @@ CameraEditControl = function(){
             data.lat = r.lat ? r.lat : null;
             data.lon = r.lon ? r.lon : null;
             self.camera.updateCameraPromise(data).then(function(r){
-                if (!self.camera.bsrc.url && data.rete_type=='off')
+                if (!self.camera.bsrc.url && data.rete_recmode=='off')
                     data.rete_time = -1;
                 let p =  self.camera.setRetention ? 
-                    self.camera.setRetention({recording: data.rete_sd=='on', time: data.rete_time, type: data.rete_type}) :
+                    self.camera.setRetention({recording: data.rete_sd=='on', time: data.rete_time, type: data.rete_recmode}) :
                     new Promise(function(resolve, reject){resolve();}); 
 
                 return p.then(function(){
@@ -440,7 +440,7 @@ CameraEditControl = function(){
             return p.then(function(rt){
                 if (rt){
                     if (rt.type!==undefined)
-                        $(self).find('[name="rete_type"]').val(rt.type);
+                        $(self).find('[name="rete_recmode"]').val(rt.type);
                     //if (self.camera.bsrc.url || rt.type=='on') $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
                     //else $(self).find('.rete_sd input').removeAttr('disabled');
                     if (rt.type=='off') $(self).find('.rete_time').hide();
@@ -449,11 +449,11 @@ CameraEditControl = function(){
                     if (rt.time!==undefined)
                         $(self).find('[name="rete_time"]').val(rt.time);
                     if (rt.recording!==undefined)
-                        $(self).find('[name="rete_sd"]').prop('checked', rt.recording);
-                    if (self.camera.bsrc.url) 
+                        $(self).find('[name="rete_sd"]').prop('checked', rt.sdCardEnabled);
+                    /*if (self.camera.bsrc.url) 
                         $(self).find('.sdrecinfo').text('(supported only for Cloud cameras)');
                     else if (rt.type=='on')
-                        $(self).find('.sdrecinfo').text('(supported only at "Off" and "By Event" cloud recording types)');
+                        $(self).find('.sdrecinfo').text('(supported only at "Off" and "By Event" cloud recording types)');*/
                 }
                 $(self).addClass('ready');
                 self.hidewait();
@@ -586,7 +586,7 @@ CameraEditControl = function(){
         $(this).find('.url_password').val(purl.password);
         $(this).find('.url_path').val(purl.path);
         if (purl.protocol!='onvif') $(this).find('.url_prot').val(purl.protocol);
-        if (url.substr(0,5)=='rtsp:' && $(this).find('.rete_type').val()=='by_event')
+        if (url.substr(0,5)=='rtsp:' && $(this).find('.rete_recmode').val()=='by_event')
             $(this).find('.rectypeinfo').show();
         else
             $(this).find('.rectypeinfo').hide();

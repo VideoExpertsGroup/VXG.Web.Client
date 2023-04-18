@@ -33,7 +33,8 @@ window.screens['tagsview'] = {
         if (!access_token) access_token = $(this.src).getNearParentAtribute('access_token');
         this.access_token = access_token;
         let self=this;
-        return vxg.cameras.getCameraFrom(this.access_token).then(function(camera){
+        $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
+        return vxg.cameras.getCameraFrom(self.access_token).then(function(camera){
             self.access_token = camera.token;
         });
     },
@@ -46,6 +47,7 @@ window.screens['tagsview'] = {
             self.player.player.player.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
             self.player.player.player.querySelector(".cloudplayer-controls-container").classList.remove("offline");
         }
+
         self.timestamp = undefined;
 	self.set_mode('showevents'); 
         if ($('body').hasClass('mobile')) $(self.wrapper).find('.tagslistwrapper .sharebnts').hide();
@@ -62,6 +64,15 @@ window.screens['tagsview'] = {
                 $('.headerBlock .header-center').text(name);
             });
             self.camera = camera;
+            if (self.player.player.sdCardCompatible) {
+                self.camera.getCameraType().then(function(type) {
+                    // 1 - SD Card, 0 - Cloud
+                    if (type == 1) $('.cloudplayer-sd-backup').attr('id', 'sd-enabled');
+                    else $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
+                }, function(err) {
+                    console.log(err.responseText);
+                })
+            }
             $(self.wrapper).find('events-list').attr('access_token',camera.token);
             try {
                 var inc = new Date().getTime() / 1000;
@@ -209,7 +220,8 @@ window.screens['tagsview'] = {
             $(self.wrapper).addClass('showevents');
         let d = $.Deferred();
         let f = false;
-        core.elements['global-loader'].show();
+        core.elements['global-loader'].show();        
+        
         var playerOptions = {timeline: true, timelineampm: true, mute: true, alt_protocol_names:true, calendar: true/*, cloud_domain: vs_api.options['cloud_domain'], useOnlyPlayerFormat: 'html5'*/};
         if (window.core.isMobile()){
             playerOptions.disableAudioControl = true;
@@ -218,8 +230,19 @@ window.screens['tagsview'] = {
             playerOptions.disableGetClip = true;
         }
         playerOptions.livePoster = true;
+        playerOptions.disableSdCard = false;
+        self.player = new CloudPlayerSDK('tagsplayer', playerOptions);
+
+        if (self.player.player.sdCardCompatible) {
+            self.camera.getCameraType().then(function(type) {
+                // 1 - SD Card, 0 - Cloud
+                if (type == 1) $('.cloudplayer-sd-backup').attr('id', 'sd-enabled');
+                else $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
+            }, function(err) {
+                console.log(err.responseText);
+            })
+        }
         
-	this.player  = new CloudPlayerSDK('tagsplayer', playerOptions);
         $('.tonewver').click(function(){
             $('.mainkplayer')[0].pause();
             self.player.pause();

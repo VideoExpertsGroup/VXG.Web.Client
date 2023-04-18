@@ -4,6 +4,9 @@ CloudOneCamera.setRetention = function(data){
 CloudOneCamera.getRetention = function(){
     return vxg.api.cloudone.camera.getRetention(this.camera_id);
 }
+CloudOneCamera.getCameraType = function(){
+    return vxg.api.cloudone.camera.getCameraType(this.camera_id);
+}
 vxg.api.cloudone.camera.setRetention = function(channel_id, data){
     return vxg.user.getToken().then(function(r){
         data.token = r;
@@ -23,6 +26,18 @@ vxg.api.cloudone.camera.getRetention = function(channel_id){
         return $.ajax({
             type: 'POST',
             url: vxg.api.cloudone.apiSrc+'/api/v1/user/camera/get_retention/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+}
+
+vxg.api.cloudone.camera.getCameraType = function(channel_id){
+    return vxg.user.getToken().then(function(r){
+        let data={token:r,channel_id:channel_id};
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/camera/get_type/',
             contentType: "application/json",
             data: JSON.stringify(data)
         });

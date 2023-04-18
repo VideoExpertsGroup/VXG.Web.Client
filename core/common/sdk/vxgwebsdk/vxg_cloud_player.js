@@ -513,7 +513,7 @@ class CTimeLinePicker extends HTMLElement {
         this.shadow.innerHTML = CTimeLinePicker.css;
 //        $(this).css('position','relative').css('overflow','hidden');
         let databar = this.getAttribute('databar')!==null ? ' databar':'';
-        let multiplayer = document.getElementById("single-timeline") !== null? 'joined-timeline' : '';
+        let multiplayer = this.getAttribute('multiplayer') !== null? 'joined-timeline' : '';
         this.shadow.innerHTML += '<div class="body"'+databar+'><div class="centerpos" style="display:none"></div><div class="wrap"><div class="twrap"><div class="range"></div><div class="databar '+ multiplayer +'"></div><table><tr><td>123</td></tr><tr></tr></table></div></div></div>';
         this.centerpos= this.shadow.querySelector('.centerpos');
         this.wrap= this.shadow.querySelector('.wrap');
@@ -1350,11 +1350,12 @@ class CKControlTimepicker extends CKControl {
         setTimeout(function(){
             let tls = self.player.getAttribute('timelineselector');
             let el = tls? document.querySelector(tls) : null;
+            var multiplayer = tls.includes('single-timeline') ? 'multiplayer' : '';
             if (el){
-                el.innerHTML = '<k-timeline-picker databar frames="25" scale="600" maxscale="2660" minscale="12" maxtime="+600000"></k-timeline-picker>';
+                el.innerHTML = '<k-timeline-picker databar '+multiplayer+' frames="25" scale="600" maxscale="2660" minscale="12" maxtime="+600000"></k-timeline-picker>';
                 self.picker = el.querySelector('k-timeline-picker');
             } else {
-                self.shadow.innerHTML += '<k-timeline-picker databar frames="25" scale="600" maxscale="2660" minscale="12" maxtime="+600000"></k-timeline-picker>';
+                self.shadow.innerHTML += '<k-timeline-picker databar '+multiplayer+' frames="25" scale="600" maxscale="2660" minscale="12" maxtime="+600000"></k-timeline-picker>';
                 self.picker = self.shadow.querySelector('k-timeline-picker');
             }
 
