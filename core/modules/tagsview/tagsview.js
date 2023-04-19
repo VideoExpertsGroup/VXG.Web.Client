@@ -36,6 +36,7 @@ window.screens['tagsview'] = {
         $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
         return vxg.cameras.getCameraFrom(self.access_token).then(function(camera){
             self.access_token = camera.token;
+            if (!self.camera) self.camera = camera;
         });
     },
     'on_show':function(access_token, timestamp){
