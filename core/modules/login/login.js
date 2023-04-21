@@ -194,8 +194,18 @@ TODO: add auth without firebase
               return vxg.user.getAllCamsTokenMeta().then(function(){
                   return window.core.loadControls(r['scripts']).then(function(){
                       let p;
+                      var token = null;
                       if (!core.isMobile()) p = 'reports'; else p='cameras';
-                      return window.core.activateFirstScreen(p).then(function(){
+
+                      var localStorage_fromtagsview = localStorage.getItem("from_tagsview");
+                      var from_tagsview = (typeof localStorage_fromtagsview === "string");
+                      if (from_tagsview) {
+                            p = "tagsview";
+                            token = localStorage_fromtagsview;
+                            localStorage.removeItem('from_tagsview');
+                      }
+                      
+                      return window.core.activateFirstScreen(p, token).then(function(){
                           for (let i in window.core.screen_order)
                               if (window.core.screen_order[i]=="login" || window.core.screen_order[i]=="signup" || window.core.screen_order[i]=="forgot") 
                                    delete window.core.screen_order[i];

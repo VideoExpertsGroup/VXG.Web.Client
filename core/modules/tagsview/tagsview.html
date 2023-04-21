@@ -3,9 +3,16 @@
 <!--        <div class="tonewver" title="To other player version"></div>-->
         <k-player class="mainkplayer" autoprop thumbnails controls="k-control-zoom k-control-play k-control-speed k-control-timeinfo k-control-timepicker k-control-fullscreen k-control-volume" videomodule="k-video-vxg" options="{&quot;left_prefetch&quot;:1,&quot;right_prefetch&quot;:1,&quot;video_limit&quot;:100,&quot;max_buffer_size&quot;:1000}"></k-player>
         <div class="ratio">
-            <div class="ratio-inner ratio-4-3">
+            <div class="ratio-inner ratio-4-3" id="tagsplayer-wrapper">
                 <div id="tagsplayer" class="ratio-content" style="background-color: #000;"></div>
             </div>
+        </div>
+        <div class="sd-wrapper">
+            <label class="enable-sd-label"> 
+                <span class="sd-label-text">Enable SD Card controls for this camera </span>
+                <input id="enable-sd-input" type="checkbox" name="sdcard"/>
+                <span class="checkmark"></span>
+            </label>
         </div>
     </div>
     <div class="tagslistwrapper">

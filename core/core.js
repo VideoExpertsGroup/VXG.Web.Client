@@ -74,7 +74,7 @@ window.core.globalmenu = {
     }
 };
 
-window.core.activateFirstScreen = function(screen_name){
+window.core.activateFirstScreen = function(screen_name, token = null){
     let weight = Number.MAX_VALUE;
     let pos='';
     let hash_pos='';
@@ -100,8 +100,16 @@ window.core.activateFirstScreen = function(screen_name){
             }
             ar[i] = ar[i].substr(1);
         }
+
+        if (screen_name == "tagsview" && token) 
+            return window.screens[screen_name].activate(token);
+
         return window.screens[hash_pos].activate.apply(window.screens[hash_pos],ar);
     }
+
+    if (screen_name == "tagsview" && token) 
+        return window.screens[screen_name].activate(token);
+
     if (window.screens[screen_name])
         return window.screens[screen_name].activate();
     if (window.screens[pos])
@@ -134,6 +142,12 @@ window.core.onclick_toscreen = function(e){
     }
     if (screen=='back') {
         window.core.screen_order.pop();
+        var t = window.core.screen_order;
+        if (window.core.screen_order.filter(Boolean).length == 0) {
+            if (!core.isMobile()) window.screens['reports'].activate()
+            else window.screens['cameras'].activate()
+        }
+
         let s = window.screens[window.core.screen_order.pop()]
         if (s){
             s.from_back = true;

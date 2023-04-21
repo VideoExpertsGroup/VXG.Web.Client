@@ -66,13 +66,23 @@ window.screens['tagsview'] = {
             });
             self.camera = camera;
             if (self.player.player.sdCardCompatible) {
-                self.camera.getCameraType().then(function(type) {
+                var localStorage_sdCard = localStorage.getItem(self.camera.camera_id);
+                var sdCardEnabled = (typeof localStorage_sdCard === "string" && localStorage_sdCard.toLowerCase() === "true");        
+                if (sdCardEnabled) {
+                    $('.cloudplayer-sd-backup').attr('id', 'sd-enabled');
+                    $("#enable-sd-input").prop('checked', true);
+                } 
+                else {
+                    $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
+                    $("#enable-sd-input").prop('checked', false);
+                }
+                /*self.camera.getCameraType().then(function(type) {
                     // 1 - SD Card, 0 - Cloud
                     if (type == 1) $('.cloudplayer-sd-backup').attr('id', 'sd-enabled');
                     else $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
                 }, function(err) {
                     console.log(err.responseText);
-                })
+                })*/
             }
             $(self.wrapper).find('events-list').attr('access_token',camera.token);
             try {
@@ -231,18 +241,31 @@ window.screens['tagsview'] = {
             playerOptions.disableGetClip = true;
         }
         playerOptions.livePoster = true;
-        playerOptions.disableSdCard = false;
+        var localStorage_sdCard = localStorage.getItem(self.camera.camera_id);
+        var sdCardEnabled = (typeof localStorage_sdCard === "string" && localStorage_sdCard.toLowerCase() === "true");
+        playerOptions.disableSdCard = sdCardEnabled ? false : true;
+
         self.player = new CloudPlayerSDK('tagsplayer', playerOptions);
 
         if (self.player.player.sdCardCompatible) {
-            self.camera.getCameraType().then(function(type) {
-                // 1 - SD Card, 0 - Cloud
-                if (type == 1) $('.cloudplayer-sd-backup').attr('id', 'sd-enabled');
-                else $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
-            }, function(err) {
-                console.log(err.responseText);
-            })
+            if (sdCardEnabled) {
+                $('.cloudplayer-sd-backup').attr('id', 'sd-enabled');
+                $("#enable-sd-input").prop('checked', true);
+            } 
+            else $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
+        } else {
+            $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
+            $('.sd-wrapper').remove();
         }
+
+
+        $('.enable-sd-label').change(function() { 
+            var sdEnabled = $("#enable-sd-input").is(':checked') ? true : false;
+            localStorage.setItem(self.camera.camera_id, sdEnabled);
+            localStorage.setItem("from_tagsview", self.access_token);
+            //if (!sdEnabled) self.player.player._toggleSync(true);
+            location.reload();
+        });
         
         $('.tonewver').click(function(){
             $('.mainkplayer')[0].pause();

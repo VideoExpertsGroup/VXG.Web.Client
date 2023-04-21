@@ -535,3 +535,70 @@ background: black;
 .clipdis {
     background-color: #fbfbfb;
 }
+
+.sd-wrapper {
+    margin-top: 20px;
+}
+
+#enable-sd-input {
+    width: unset;
+}
+
+.sd-label-text {
+    padding-top: 3px;
+}
+
+.enable-sd-label {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 200;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.enable-sd-label input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    border: thin solid #a7a7a7;
+    border-radius: 4px;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.enable-sd-label input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.enable-sd-label .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}

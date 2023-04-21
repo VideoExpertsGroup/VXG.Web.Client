@@ -335,6 +335,7 @@ CameraEditControl = function(){
                 data.lat = r.lat ? r.lat : null;
                 data.lon = r.lon ? r.lon : null;
                 vxg.cameras.createCameraPromise(data).then(function(r){
+                    localStorage.setItem(r.id, "true");
                     self.hidewait();
                     $(self).attr('access_token','');
                     self.reset();
@@ -364,6 +365,8 @@ CameraEditControl = function(){
                     $(self).attr('access_token','');
                     self.reset();
                     self.dispatchEvent(self.submited_event);
+                    if (data.rete_sd == 'on') localStorage.setItem(self.camera.camera_id, 'true')
+                    else localStorage.setItem(self.camera.camera_id, 'false')
                     self.hidewait();
                     location.reload();
                 });
@@ -439,6 +442,9 @@ CameraEditControl = function(){
             let p =  self.camera.getRetention ? self.camera.getRetention() : new Promise(function(resolve, reject){resolve();}); 
             return p.then(function(rt){
                 if (rt){
+                    var localStorage_sdCard = localStorage.getItem(self.camera.camera_id);
+                    var sdCardEnabled = (typeof localStorage_sdCard === "string" && localStorage_sdCard.toLowerCase() === "true");
+                    
                     if (rt.type!==undefined)
                         $(self).find('[name="rete_recmode"]').val(rt.type);
                     //if (self.camera.bsrc.url || rt.type=='on') $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
@@ -449,7 +455,7 @@ CameraEditControl = function(){
                     if (rt.time!==undefined)
                         $(self).find('[name="rete_time"]').val(rt.time);
                     if (rt.recording!==undefined)
-                        $(self).find('[name="rete_sd"]').prop('checked', rt.sdCardEnabled);
+                        $(self).find('[name="rete_sd"]').prop('checked', sdCardEnabled);
                     /*if (self.camera.bsrc.url) 
                         $(self).find('.sdrecinfo').text('(supported only for Cloud cameras)');
                     else if (rt.type=='on')

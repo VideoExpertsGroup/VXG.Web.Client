@@ -165,6 +165,7 @@ function onCameraDelete(e){
             if (r.button!='delete') return;
             core.elements['global-loader'].show();
             if (camera) camera.deleteCameraPromise().then(function(){
+                localStorage.removeItem(camera.camera_id);
                 core.elements['global-loader'].hide();
                 return screens['cameras'].on_show();
             }, function(r){
