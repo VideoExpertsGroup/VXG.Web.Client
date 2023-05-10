@@ -47,9 +47,6 @@ window.screens['admin'] = {
         let self=this;
         return vxg.partners.getList(100).then(function(partners){
 			
-			let new_partner = '<button class="userbtn item-delete deleteuser svgbtnhover"></button>'
-			$(self.wrapper).find('.addparner').empty().append(new_partner);
-			
             let table='<table><thead><tr class="header"><th scope="col">#</th><th scope="col">ID</th><th scope="col">Name</th><th scope="col">Action</th></tr></thead><tbody>';
             c = 1;
             for (let i in partners) {
@@ -214,11 +211,7 @@ function add_user()
 												<button name="apply" class="vxgbutton">Apply</button></p>').then(function(r){
 					
 						if (r.button!='apply') return;
-						
-						
-						let uuu = vxg.api.cloudone.apiSrc + '/api/v1/distrib/create_partner/?email=' + r.form.newuser;
-						
-						
+												
 						$.ajax({
 						type: 'GET',
 						url: vxg.api.cloudone.apiSrc + '/api/v1/distrib/create_partner/?email=' + r.form.newuser,
