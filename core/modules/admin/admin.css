@@ -85,7 +85,7 @@ cursor:pointer;
 body .header-right .adduser{
 }
 body:not(.users) .header-right .adduser{
-display:none;
+ /*display:none; */
 }
 
 .usercameras {

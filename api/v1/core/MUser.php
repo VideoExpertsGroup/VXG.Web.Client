@@ -761,6 +761,28 @@ class MUser{
         return $createdUser;
     }
 
+    public static function verifyFirebaseUser($uid){
+        $a = dirname(dirname(dirname(__FILE__)));
+        include_once($a.'/vendor/autoload.php');
+        $fj = str_replace('<?php','',file_get_contents($a.'/conf.d/firebase.php'));
+        $factory = (new Factory)->withServiceAccount($fj);
+        $auth = $factory->createAuth();
+
+        $userProperties = [
+            'emailVerified' => true
+        ];
+        
+        $user = null;
+        try {
+            $user = $auth->updateUser($uid, $userProperties);
+        } catch (Exception $e) {
+            $msg = $e->getMessage();
+            error(400,$e->getMessage());
+        }
+        return $user;
+    }	
+
+
     /**
      * Get user by firebase token. Create user, if no exist
      * 
