@@ -196,6 +196,7 @@ window.screens['admin'] = {
     'on_ready':function(){
     },
     'on_init':function(){
+        core.elements['header-right'].prepend('<div class="transparent-button adduser" onclick="make_admin()"><img class="svgbtn" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDEzLjVDNy43MjM4NiAxMy41IDcuNSAxMy4yNzYxIDcuNSAxM1YzQzcuNSAyLjcyMzg2IDcuNzIzODYgMi41IDggMi41QzguMjc2MTQgMi41IDguNSAyLjcyMzg2IDguNSAzVjEzQzguNSAxMy4yNzYxIDguMjc2MTQgMTMuNSA4IDEzLjVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTIuNSA4QzIuNSA3LjcyMzg2IDIuNzIzODYgNy41IDMgNy41TDEzIDcuNUMxMy4yNzYxIDcuNSAxMy41IDcuNzIzODYgMTMuNSA4QzEzLjUgOC4yNzYxNCAxMy4yNzYxIDguNSAxMyA4LjVMMyA4LjVDMi43MjM4NiA4LjUgMi41IDguMjc2MTQgMi41IDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">&nbsp;&nbsp;Make&nbsp;admin</div>');
         core.elements['header-right'].prepend('<div class="transparent-button adduser" onclick="add_user()"><img class="svgbtn" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDEzLjVDNy43MjM4NiAxMy41IDcuNSAxMy4yNzYxIDcuNSAxM1YzQzcuNSAyLjcyMzg2IDcuNzIzODYgMi41IDggMi41QzguMjc2MTQgMi41IDguNSAyLjcyMzg2IDguNSAzVjEzQzguNSAxMy4yNzYxIDguMjc2MTQgMTMuNSA4IDEzLjVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTIuNSA4QzIuNSA3LjcyMzg2IDIuNzIzODYgNy41IDMgNy41TDEzIDcuNUMxMy4yNzYxIDcuNSAxMy41IDcuNzIzODYgMTMuNSA4QzEzLjUgOC4yNzYxNCAxMy4yNzYxIDguNSAxMyA4LjVMMyA4LjVDMi43MjM4NiA4LjUgMi41IDguMjc2MTQgMi41IDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">&nbsp;&nbsp;Add&nbsp;user</div>');
 
         return defaultPromise();
@@ -226,6 +227,36 @@ function add_user()
 												});
 
 }
+
+function make_admin()
+{
+
+					dialogs['mdialog'].activate('<h7>Type existing e-mail address</h7><p><br/>\
+												<label><input type="text" class="" name="newuser"></label></p><p style="padding-top: 15px;">\
+												<label><input type="checkbox" class="userarchive" name="enable">Enable/disable</label></p><p style="padding-top: 15px;">\
+												<button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;\
+												<button name="apply" class="vxgbutton">Apply</button></p>').then(function(r){
+					
+						if (r.button!='apply') return;
+						
+						let adm_enable = "off"; 	
+						if (r.form.enable == "on") adm_enable = "on";
+						
+						$.ajax({
+						type: 'GET',
+						url: vxg.api.cloudone.apiSrc + '/api/v1/distrib/update/?email=' + r.form.newuser +'&enable='+adm_enable,
+						contentType: "application/json"
+//						data: data
+						}).then(function(d){
+							return ;//self.on_show();
+						}).catch(function(d){						
+							return ;
+						});
+						
+												});
+
+}
+
 
 window.screens['admincams'] = {
 	'header_name': 'Cameras for the selected user',
