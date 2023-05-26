@@ -1,6 +1,7 @@
 <?php
 include_once ('../../core/MCoreJson.php');
 include_once ('../../core/MUser.php');
+include_once ('../../core/MCamera.php');
 
 MCoreJson::init();
 MCore::checkOnlyForAuthorized();
