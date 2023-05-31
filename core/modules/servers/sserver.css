@@ -5,3 +5,8 @@
 body:not(.servers) .header-right .addserver{
 display:none;
 }
+
+.server-download {
+place-items: center; 
+display: inline-flex;
+}

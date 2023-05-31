@@ -138,6 +138,8 @@ window.screens['servers'] = {
         let self = this;
         core.elements['header-right'].prepend('' +
             '<div class="transparent-button svgbtnafter active addserver" ><span style="font-size:200%">+&nbsp;&nbsp;</span><span>Add&nbsp;server</span></div>');
+        core.elements['header-right'].prepend('' +
+            '<a class="server-download" href="https://dashboard.videoexpertsgroup.com/downloads/gateway/" target="_blank">Download&nbsp;package</a>');
         core.elements['header-right'].find('.addserver').click(function(){
             dialogs['mdialog'].activate('<h7>Enter the server UUID</h7><p></p><p><input name="uuid"/><br/><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="add" class="vxgbutton">Add server</button></p>').then(function(r){
                 if (r.button!='add') return;
