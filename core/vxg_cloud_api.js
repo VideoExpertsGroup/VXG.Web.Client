@@ -394,6 +394,7 @@ vxg.api.cloud.getCamerasList = function(obj){
     }).then(function(r){
         let ret = r;
         if (!ret.objects || ret.objects.length<1) return ret;
+        ret.objects.sort((a, b) => parseInt(a.id) - parseInt(b.id));
         if (ret.objects[0]['name']) return ret;
         return $.ajax({
             type: 'GET',
@@ -410,6 +411,7 @@ vxg.api.cloud.getCamerasList = function(obj){
                     break;
                 }
             }
+            ret.objects.sort((a, b) => parseInt(a.id) - parseInt(b.id));
             return new Promise(function(resolve, reject){setTimeout(function(){resolve(ret);}, 0);});
         });
     });
