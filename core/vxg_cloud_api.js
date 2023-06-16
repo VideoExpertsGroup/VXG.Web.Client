@@ -192,6 +192,18 @@ vxg.api.cloud.getUserMeta = function (channel_access_token, data) {
     });
 };
 
+vxg.api.cloud.getAIEnabledCameras = function (channel_ids) {
+    return vxg.user.getToken().then(function(r){
+        let data={token:r,camera_list:channel_ids};
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/camera/ai/get_config/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+}
+
 /** Get channel preview image
  *
  * @return Promise
@@ -425,7 +437,7 @@ vxg.api.cloud.getCameraInfo = function(channel_id, access_token, obj){
         url: vxg.api.cloud.apiSrc + '/api/v5/channels/'+channel_id+'/',
         headers: headers,
         contentType: "application/json",
-        data: []
+        data: [{"include_meta": true}]
     });
     if (!headers)
         return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});

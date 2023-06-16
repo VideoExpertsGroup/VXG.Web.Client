@@ -1215,6 +1215,59 @@ class MUser{
             $this->updateAllCamsToken();
     }
 
+    public function getAIChannelGroupTokens($type = null, $channel_id = null) {
+        $server = $this->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed creating camera channel. reason: generateServicesURLs');
+
+        if ($type == "continuous") {
+            $params = ['ai_targeted' => 'true', 'meta'=> 'ai_period,ai_type', 'include_meta' => 'true'];
+        } else {
+            // not sure what by_event meta will be yet
+            $params = ['ai_targeted' => 'true', 'include_meta' => 'true'];
+        }
+
+        $aiTargetedTokens = StreamLandAPI::getGroupTokensList($params);
+        
+        if ($type == 'continuous') {
+            foreach($aiTargetedTokens['objects'] as $gt) {
+                if($gt['meta']['ai_type'] == "object_and_scene_detection" && $gt['meta']['ai_period'] == '180') {
+                    // this is the correct groupToken
+                    return $gt;
+                }
+            }
+        } else if ($type == 'off') {
+            foreach($aiTargetedTokens['objects'] as $gt) {
+                if(in_array($channel_id, $gt['channels'])) {
+                    // this is the correct groupToken
+                    return $gt;
+                }
+            }
+        } else {
+            return $aiTargetedTokens;
+        }
+    }
+
+    public function getListOfAIEnabledCameras($channel_ids) {
+        $server = $this->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed creating camera channel. reason: generateServicesURLs');
+        
+        $aiTargetedTokens = StreamLandAPI::getGroupTokensList(['ai_targeted' => 'true']);
+
+        $aiEnabledCameraIds = [];
+        foreach($channel_ids as $c_id) {
+            foreach($aiTargetedTokens['objects'] as $aiToken) {
+                if (in_array($c_id, $aiToken['channels'])) {
+                    array_push($aiEnabledCameraIds, $c_id);
+                    break;
+                }
+            }
+        }
+
+        return $aiEnabledCameraIds;
+    }
+
     public function getLocations($limit, $offset){
         $ret=[];
         if ($this->isDealer()){

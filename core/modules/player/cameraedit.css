@@ -45,24 +45,53 @@ cameraedit.onvif:not(.location) .loca,
 cameraedit:not(.retention) .rete{
 display:none!important;
 }
+
+.setting-dropdown {
+    padding-top: 17px;
+    padding-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.setting-dropdown:hover {
+    cursor: pointer;
+}
+
+.bottom-options {
+    border-bottom: thin solid #9ad067;
+}
+
 cameraedit .anccsUrlOptions,
 cameraedit .anccsUrlLocation,
-cameraedit .anccsUrlRetentiontime{
+cameraedit .anccsUrlRetentiontime,
+cameraedit .anccsUrlAIConfig{
 cursor: pointer;
 color: var(--main-color);
 }
 cameraedit .anccsUrlOptions:hover{
 font-weight:bold;
 }
-cameraedit .anccsUrlOptions:after,
+/*cameraedit .anccsUrlOptions:after,
 cameraedit .anccsUrlLocation:after,
-cameraedit .anccsUrlRetentiontime:after{
+cameraedit .anccsUrlRetentiontime,
+cameraedit .anccsUrlAIConfig:after{
 content:' >';
 }
 cameraedit.options .anccsUrlOptions:after,
 cameraedit.location .anccsUrlLocation:after,
-cameraedit.retention .anccsUrlRetentiontime:after{
+cameraedit.retention .anccsUrlRetentiontime,
+cameraedit.aiConfig .anccsUrlAIConfig:after{
 content:' <';
+}*/
+
+.carrot-icon {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--main-color);
+}
+
+.select-disabled {
+    background-color: #ced4da;
 }
 
 cameraedit:not(.wait) .wait, cameraedit.wait .apply, cameraedit.nodata form{

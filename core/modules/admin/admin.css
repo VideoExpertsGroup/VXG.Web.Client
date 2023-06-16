@@ -187,6 +187,16 @@ filter: invert(1) brightness(0.598) !important;
 background: url(/core/modules/cameras/rec-button.png) no-repeat center/80%;
 filter: invert(1) brightness(0.498) sepia(.73) hue-rotate(-328deg) saturate(9)!important}
 
+.screens .admin .userai{
+    width:24px;
+    height:20px;
+    background: url(/core/modules/admin/admin.svg) no-repeat center/85%;
+}
+.screens .admin .userai.active{
+    background: url(/core/modules/admin/admin.svg) no-repeat center/85%;
+    filter: brightness(0.498) sepia(.73) hue-rotate(-328deg) saturate(9)!important;
+}
+
 .screens .usercameras{
 width:24px;
 height:20px;

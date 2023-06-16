@@ -13,7 +13,7 @@ $response = StaticLib::startPage();
 if (1){
 
 //    list($partner_id, $setting_rec, $setting_int) = MCore::checkAndGetInputParameters(['id','setting_rec','setting_int']);
-    list($partner_id, $setting_rec, $setting_int) = MCore::getInputParameters(['id','setting_rec','setting_int']);
+    list($partner_id, $setting_rec, $setting_int, $setting_ai) = MCore::getInputParameters(['id','setting_rec','setting_int', 'setting_ai']);
 	
     $stmt = $conn->prepare('SELECT "js" FROM "user" WHERE "id"='.$partner_id);
 	if (!$stmt->execute())
@@ -50,6 +50,21 @@ if (1){
 		if ($setting_int == "off"){
 			$js_var = str_replace('core/modules/integration/integration.js','',$js_var);	
 		}			
+	}
+
+	if ($setting_ai) {
+		if ($setting_ai == "on"){
+			$pos = strpos($js_var, "core/vxg_ai_access.js");
+			if ($pos === false) {
+				if ($js_var == "")
+					$js_var = "core/vxg_ai_access.js";
+				else
+					$js_var .= "\ncore/vxg_ai_access.js";				
+			}			
+		}		
+		if ($setting_ai == "off"){
+			$js_var = str_replace('core/vxg_ai_access.js','',$js_var);
+		}
 	}
 	
 	$js_var = str_replace('\n\n','\n',$js_var);			

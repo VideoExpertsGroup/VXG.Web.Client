@@ -53,7 +53,8 @@ window.screens['admin'] = {
                 table += '<tr userid="' + partners[i].src.id + '"><td>' + c + '</td><td>' + partners[i].src.id + '</td><td class="name">' + partners[i].src.name + '</td><td class="action-icons">'
 						+ '<button class="userbtn item-rec svgbtnhover userrec setting_rec '+ ((partners[i].src.allow_rec == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
 						+ '<button class="userbtn item-arch svgbtnhover userarchive setting_int '+ ((partners[i].src.allow_int == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
-						+ '<button onclick_toscreen="admincams" class="userbtn item-delete usercameras svgbtnhover" userid="'+ partners[i].src.id +'"></button>'
+                        + '<button class="userbtn item-ai svgbtnhover userai setting_ai '+ ((partners[i].src.allow_ai == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
+                        + '<button onclick_toscreen="admincams" class="userbtn item-delete usercameras svgbtnhover" userid="'+ partners[i].src.id +'"></button>'
 						+ '<button class="userbtn item-delete deleteuser svgbtnhover" userid="'+ partners[i].src.id +'"></button>'
 						+ '</td></tr>';
                 c++;
@@ -183,6 +184,38 @@ window.screens['admin'] = {
                 });
             });
 
+            self.wrapper.find('.setting_ai').click(function(){
+				
+                let userid = this.getAttribute('userid');
+                let username = this.getAttribute('username');
+                let ai_enable = this.classList.contains('active');
+                dialogs['mdialog'].activate('<h7>Do you want to allow AI control?</h7><p><br/>\
+											<label><input type="checkbox" class="userarchive" '+(ai_enable?'checked="checked"':'')+
+											' name="enable">Enable AI?</label></p><p style="padding-top: 15px;">\
+											<button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;\
+											<button name="apply" class="vxgbutton">Apply</button></p>').then(function(r){
+                    if (r.button!='apply') return;
+					
+					var obj = {};
+					let checked = r.form.enable=="on";
+					
+					obj.id = userid;
+					obj.setting_ai = (checked)? "on":"off";
+					
+					core.elements['global-loader'].show();
+					
+					vxg.api.cloudone.partner.update(obj).then(function (ret) {
+                        core.elements['global-loader'].hide();
+                        return self.on_show();
+                    },function(r){
+                        if (r && r.responseJSON && r.responseJSON.errorDetail)
+                            alert(r.responseJSON.errorDetail);
+                        else
+                            alert('Falied to update setting');
+                        core.elements['global-loader'].hide();
+                    });                    
+                });
+            });
 			
 			
         }, function(){

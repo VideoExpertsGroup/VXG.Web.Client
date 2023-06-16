@@ -182,7 +182,7 @@ class StreamLandAPI {
     }
 
 		//https://web.skyvr.videoexpertsgroup.com/api/v3/channel_groups/
-		static function GreateGroupToken($params) {
+		static function CreateGroupToken($params) {
 			return StreamLandAPI::requestPost(array(
 				'path' => 'api/v3/channel_groups/',
 				'lkey' => StreamLandAPI::$streamland_key,
@@ -197,11 +197,13 @@ class StreamLandAPI {
 				'json_data' => $params,
 			));
 		}
-		static function getGroupTokensList() {
+		static function getGroupTokensList($params = null) {
+			//$params = ['include_all_channels'=>'true', 'ai_targeted'=>$ai_targeted];
+			if (!$params) $params = ['include_all_channels'=>'true'];
 			return StreamLandAPI::requestGet(array(
 				'path' => 'api/v3/channel_groups/',
 				'lkey' => StreamLandAPI::$streamland_key,
-				'get_params' =>['include_all_channels'=>'true']
+				'get_params' =>$params
 			));
 		}
 

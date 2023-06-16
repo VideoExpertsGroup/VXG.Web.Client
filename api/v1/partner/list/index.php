@@ -17,7 +17,8 @@ if (1){
 			'allcamstoken' => $row['allCamsToken'],
 			'lkey' => $row['serverLkey'],
             'allow_rec' => (strpos($row['js'],"retention")) ? true: false,
-            'allow_int' => (strpos($row['js'],"integration")) ? true: false		
+            'allow_int' => (strpos($row['js'],"integration")) ? true: false,
+            'allow_ai'	=> (strpos($row['js'],"ai_access")) ? true: false
         );
     }
     $response['httpcode'] = 200;

@@ -68,7 +68,7 @@ CameraEditControl = function(){
     <input name="url" class="anccsUrl">
 </div>
 
-<div class="form-group rtspOnly notincloud">
+<div class="form-group rtspOnly notincloud setting-dropdown opt-dropdown">
     <div class="anccsUrlOptions">OPTIONS</div>
 </div>
 
@@ -110,8 +110,9 @@ CameraEditControl = function(){
     </select>
 </div>
 
-<div class="form-group">
+<div class="form-group setting-dropdown loc-dropdown bottom-options">
     <div class="anccsUrlLocation">GEOLOCATION</div>
+    <span class="carrot-icon closed"><</span>
 </div>
 
 <div class="form-group loca">
@@ -128,8 +129,9 @@ CameraEditControl = function(){
     <textarea name="desc" rows="5"></textarea>
 </div>
 ` + (vxg.api.cloudone.camera.setRetention!==undefined ? `
-<div class="form-group">
+<div class="form-group setting-dropdown rete-dropdown bottom-options">
     <div class="anccsUrlRetentiontime">RECORDING</div>
+    <span class="carrot-icon closed"><</span>
 </div>
 <div class="form-group rete">
     <label>Cloud recording</label>&nbsp;&nbsp;&nbsp;<label class="rectypeinfo" style="display:none;font-weight: lighter;">(recording type "By Event" is not supported for RTSP cameras)</label>
@@ -147,6 +149,19 @@ CameraEditControl = function(){
     <label><input type="checkbox" class="svgbtnbefore" name="rete_sd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SD recording</label>&nbsp;&nbsp;&nbsp;<label class="sdrecinfo" style="font-weight: lighter;">(supported only at "Off" and "By Event" cloud recording types)</label>
 </div>
 `:'') + `
+` + (vxg.api.cloudone.camera.setAIConfig!==undefined ? `
+<div class="form-group setting-dropdown ai-dropdown bottom-options">
+    <div class="anccsUrlAIConfig">OBJECT DETECTION (AI)</div>
+    <span class="carrot-icon closed"><</span>
+</div>
+<div class="form-group ai_type" style="display: none;">
+    <label>AI Object Detection</label>
+    <select name="ai_type" class="ai_type_select">
+        <option value="off">Off</option>
+        <option value="continuous">Continuous</option>
+        <option value="by_event" class="select-disabled" disabled>By Event</option>
+    </select>
+</div>`:"") + `
 </form>
 <div class="sbt"><br/><br/>
 <div class="wait"><span>Wait</span>&nbsp;&nbsp;<div class="spinner"></div></div>
@@ -162,15 +177,23 @@ CameraEditControl = function(){
 
         $(this).addClass('onvif');
         $(this).find('.iperror').hide();
-        $(this).find('.anccsUrlOptions').click(function(){
-            $(self).toggleClass('options');
+
+        $(".setting-dropdown").click(function() {
+            if ($(this).find(".carrot-icon").hasClass("closed")) {
+                $(this).find(".carrot-icon").css("transform", "rotate(-90deg)");
+                $(this).find(".carrot-icon").removeClass("closed");
+            } else {
+                $(this).find(".carrot-icon").css("transform", "rotate(0deg)");
+                $(this).find(".carrot-icon").addClass("closed");
+            }
+
+            if ($(this).hasClass("opt-dropdown")) $(self).toggleClass('options');
+            if ($(this).hasClass("loc-dropdown")) $(self).toggleClass('location');
+            if ($(this).hasClass("rete-dropdown")) $(self).toggleClass('retention');
+            if ($(this).hasClass("ai-dropdown")) $('.ai_type').toggle();
+
         });
-        $(this).find('.anccsUrlLocation').click(function(){
-            $(self).toggleClass('location');
-        });
-        $(this).find('.anccsUrlRetentiontime').click(function(){
-            $(self).toggleClass('retention');
-        });
+
         $(this).find('.rete_recmode').change(function(){
             let type = $(this).val();
             let url = ($(self).find('.anccsUrl').val()||'').trim();
@@ -335,7 +358,22 @@ CameraEditControl = function(){
                 data.lat = r.lat ? r.lat : null;
                 data.lon = r.lon ? r.lon : null;
                 vxg.cameras.createCameraPromise(data).then(function(r){
-                    localStorage.setItem(r.id, "true");
+                    var aiCams_string = sessionStorage.getItem("aiCams");
+                    if (aiCams_string) {
+                        var aiCams_array = aiCams_string.split(",").filter(e => e);
+                        if (data.ai_type != "off") {
+                            if (!aiCams_array.includes(r.id.toString())) {
+                                aiCams_string += "," + r.id;
+                                sessionStorage.setItem("aiCams", aiCams_string); 
+                            }
+                        } else {
+                            if (aiCams_array.includes(r.id.toString())) {
+                                var newAiCams = aiCams_string.replace("," + r.id, "");
+                                sessionStorage.setItem("aiCams", newAiCams); 
+                            }
+                        }
+                    }
+                    sessionStorage.setItem(r.id, "true");
                     self.hidewait();
                     $(self).attr('access_token','');
                     self.reset();
@@ -361,14 +399,37 @@ CameraEditControl = function(){
                     self.camera.setRetention({recording: data.rete_sd=='on', time: data.rete_time, type: data.rete_recmode}) :
                     new Promise(function(resolve, reject){resolve();}); 
 
-                return p.then(function(){
-                    $(self).attr('access_token','');
-                    self.reset();
-                    self.dispatchEvent(self.submited_event);
-                    if (data.rete_sd == 'on') localStorage.setItem(self.camera.camera_id, 'true')
-                    else localStorage.setItem(self.camera.camera_id, 'false')
-                    self.hidewait();
-                    location.reload();
+                p.then(function(){
+
+                    let p = self.camera.setAIConfig ? self.camera.setAIConfig({'channel_id': self.camera.camera_id, 'type': data.ai_type }) :
+                                new Promise(function(resolve, reject){resolve();});                    
+                    
+                    return p.then(function () {
+                        var aiCams_string = sessionStorage.getItem("aiCams");
+                        if (aiCams_string) {
+                            var aiCams_array = aiCams_string.split(",").filter(e => e);
+                            if (data.ai_type != "off") {
+                                if (!aiCams_array.includes(self.camera.camera_id.toString())) {
+                                    aiCams_string += "," + self.camera.camera_id;
+                                    sessionStorage.setItem("aiCams", aiCams_string); 
+                                }
+                            } else {
+                                if (aiCams_array.includes(self.camera.camera_id.toString())) {
+                                    var newAiCams = aiCams_string.replace("," + self.camera.camera_id, "");
+                                    sessionStorage.setItem("aiCams", newAiCams); 
+                                }
+                            }
+                        }
+                        
+                        $(self).attr('access_token','');
+                        self.reset();
+                        self.dispatchEvent(self.submited_event);
+                        if (data.rete_sd == 'on') localStorage.setItem(self.camera.camera_id, 'true')
+                        else localStorage.setItem(self.camera.camera_id, 'false');
+                        self.hidewait();
+                        location.reload();
+                    })
+
                 });
             },function(r){
                 if (r && r.responseJSON && r.responseJSON.errorDetail)
@@ -440,7 +501,7 @@ CameraEditControl = function(){
             $(self).find('[name="recording"]').val(bsrc.isRecording ? 1 : 0);
 
             let p =  self.camera.getRetention ? self.camera.getRetention() : new Promise(function(resolve, reject){resolve();}); 
-            return p.then(function(rt){
+            p.then(function(rt){
                 if (rt){
                     var localStorage_sdCard = localStorage.getItem(self.camera.camera_id);
                     var sdCardEnabled = (typeof localStorage_sdCard === "string" && localStorage_sdCard.toLowerCase() === "true");
@@ -461,9 +522,19 @@ CameraEditControl = function(){
                     else if (rt.type=='on')
                         $(self).find('.sdrecinfo').text('(supported only at "Off" and "By Event" cloud recording types)');*/
                 }
-                $(self).addClass('ready');
-                self.hidewait();
-                self.defferedDispatchEvent(self.loaded_event);
+
+                let p = self.camera.getAIConfig ? self.camera.getAIConfig(self.camera.camera_id) : new Promise(function(resolve, reject){ resolve() });
+                return p.then(function(aiInfo) {
+                    if (aiInfo) $(self).find('[name="ai_type"]').val(aiInfo.ai_type)
+
+                    $(self).addClass('ready');
+                    self.hidewait();
+                    self.defferedDispatchEvent(self.loaded_event);
+                }, function(err) {
+                    var t = err;
+                    self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
+                    self.defferedDispatchEvent(self.error_event);
+                });
             });
         }, function(){
             self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');

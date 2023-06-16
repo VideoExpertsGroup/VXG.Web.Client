@@ -36,8 +36,8 @@ if ($cameras) foreach($cameras as $cam){
     if (!isset($cam->camera)) continue;
     $ret = $cam->camera;
 
-    unset($ret['aiGroupToken']);
-    unset($ret['aiGroupTokenID']);
+    //unset($ret['aiGroupToken']);
+    //unset($ret['aiGroupTokenID']);
     unset($ret['roToken']);
     unset($ret['rwToken']);
     MCore::$core->response['data'][] = $ret;

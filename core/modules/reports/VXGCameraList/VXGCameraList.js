@@ -333,7 +333,15 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
                             if (r.button!='delete') return;
                             core.elements['global-loader'].show();
                             if (camera) camera.deleteCameraPromise().then(function(){
-                                localStorage.removeItem(camera.camera_id);
+                                var aiCams_string = sessionStorage.getItem("aiCams");
+                                if (aiCams_string) {
+                                    var aiCams_array = aiCams_string.split(",").filter(e => e);
+                                    if (aiCams_array.includes(camera.camera_id.toString())) {
+                                        var newAiCams = aiCams_string.replace("," + camera.camera_id, "");
+                                        sessionStorage.setItem("aiCams", newAiCams); 
+                                    }
+                                }
+                                sessionStorage.removeItem(camera.camera_id);
                                 core.elements['global-loader'].hide();
                                 return screens['reports'].on_show();
                             }, function(r){
@@ -397,6 +405,31 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 		self.callbackFunc("add", null);
 	    }
 	});
+    
+    // new showai
+    var aiCameras_local = sessionStorage.getItem('aiCams');
+
+    if (vxgcameralistdata.length > 0) {
+        if (!aiCameras_local) {
+            var camera_ids = vxgcameralistdata.map(c => c.camera_id );
+            vxg.api.cloud.getAIEnabledCameras(camera_ids).then(function(aiEnabledCameras) {
+                var aiCamString_local = "";
+                aiEnabledCameras.ai_cameras.forEach(camid => {
+                    aiCamString_local += "," + camid;
+                    $("#ai_" + camid).html('<button class="vxgbutton-transparent" access_token="'+camid+'">Show AI</button>');
+                    //Clicks on any column of row except camera preview and actions -> update chart
+                    $("#ai_" + camid).find('button').off('click').on('click',function(){
+                        let index = $("#ai_" + camid).parent().data('index');	    
+                        let obj = controller.objByIndex(index);
+        
+                        if (self.callbackFunc !== undefined) 
+                        self.callbackFunc("statistics", obj);
+                    });
+                });
+                sessionStorage.setItem("aiCams", aiCamString_local);
+            })
+        }
+    }
         
 	$.each(vxgcameralistdata, function (index) {
             if (vxgcameralistdata[index].src.name.substr(0,11)=="#StorageFor" && !isNaN(parseInt(vxgcameralistdata[index].src.name.substr(11)))) return;
@@ -418,7 +451,7 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
     +	'	<td class="sname"></td>' 
     +	'	<td class="sloc"></td>' 
 //    +	'	<td class="sparkline-container"><span class="sparkline" data-token="' + vxgcameralistdata[index].token + '" data-dataset="'+sparkline+'" style="display:none"></span></td>' 
-    +	'	<td class="showai" data-token="' + vxgcameralistdata[index].camera_id + '"></td>' 
+    +	'	<td class="showai" id="ai_'+ vxgcameralistdata[index].camera_id +'" data-token="' + vxgcameralistdata[index].camera_id + '"></td>' 
     +	'	<td ifscreen="plan2camera"><div class="splan vxgbutton-transparent hide" onclick_toscreen="plan2camera"></div></td>'
     +	'	<td class="VXGCameraListActions">'
     +	'	<div class="VXGCameraListSettings"><svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg></div>'
@@ -426,6 +459,23 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
     +	'</tr>';
 
 	    $(tbody).append( $(tr) );
+
+        if (aiCameras_local) {
+            var aiCameras_array = aiCameras_local.split(",").filter(e => e);
+            if (aiCameras_array.includes(vxgcameralistdata[index].camera_id.toString())) {
+                var camid = vxgcameralistdata[index].camera_id;
+                $("#ai_" + camid).html('<button class="vxgbutton-transparent" access_token="'+camid+'">Show AI</button>');
+                //Clicks on any column of row except camera preview and actions -> update chart
+                $("#ai_" + camid).find('button').off('click').on('click',function(){
+                    let index = $("#ai_" + camid).parent().data('index');	    
+                    let obj = controller.objByIndex(index);
+    
+                    if (self.callbackFunc !== undefined) 
+                    self.callbackFunc("statistics", obj);
+                });
+            }
+        }
+
             {
                 let chid = vxgcameralistdata[index].camera_id;
                 $(tbody).find('.sl'+chid+' .sloc').html( vxgcameralistdata[index].getLocation());
@@ -521,26 +571,37 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 		self.sparklineLoad( this, roToken, controller);
 	    }
 	});
-	$('.showai').each(function () {
-	    let s = this;
-	    let camid = $(this).data('token');
-            window.vxg.cameras.getCameraByIDPromise(parseInt(camid)).then(function(camera){
-                return camera.events.getList(1, 0, undefined, undefined, 'object_and_scene_detection,yolov4_detection', 'Person,Car').then(function(r){
+
+	/*$('.showai').each(function () {
+        /*vxg.cameras.random_list[camid].getBsrc().then(function(bsrc) {
+            if(bsrc && bsrc.aiGroupTokenID && bsrc.aiGroupToken) {
+                $(s).html('<button class="vxgbutton-transparent" access_token="'+camid+'">Show AI</button>');
+                //Clicks on any column of row except camera preview and actions -> update chart
+                $(s).find('button').off('click').on('click',function(){
+                    let index = $(this).parent().parent().data('index');	    
+                    let obj = controller.objByIndex(index);
+    
+                    if (self.callbackFunc !== undefined) 
+                    self.callbackFunc("statistics", obj);
+                }); 
+            } else {
+                vxg.cameras.random_list[camid].events.getList(1, 0, undefined, undefined, 'object_and_scene_detection,yolov4_detection', 'Person,Car').then(function(r){
                     if (!r.length) return;
                     $(s).html('<button class="vxgbutton-transparent" access_token="'+camid+'">Show AI</button>');
-		    //Clicks on any column of row except camera preview and actions -> update chart
-		    $(s).find('button').off('click').on('click',function(){
-			let index = $(this).parent().parent().data('index');	    
-			let obj = controller.objByIndex(index);
-
-			if (self.callbackFunc !== undefined) 
-			    self.callbackFunc("statistics", obj);
-		    });
-
+                    //Clicks on any column of row except camera preview and actions -> update chart
+                    $(s).find('button').off('click').on('click',function(){
+                        let index = $(this).parent().parent().data('index');	    
+                        let obj = controller.objByIndex(index);
+    
+                        if (self.callbackFunc !== undefined) 
+                            self.callbackFunc("statistics", obj);
+    
+                    });
                 });
-            });
+            }
+        })*/
 
-        });
+        //});
 }
 
 VXGCameraListView.prototype.showWait = function showWait(isWait) {

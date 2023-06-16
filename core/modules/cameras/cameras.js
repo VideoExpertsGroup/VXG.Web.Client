@@ -165,6 +165,14 @@ function onCameraDelete(e){
             if (r.button!='delete') return;
             core.elements['global-loader'].show();
             if (camera) camera.deleteCameraPromise().then(function(){
+                var aiCams_string = sessionStorage.getItem("aiCams");
+                if (aiCams_string) {
+                    var aiCams_array = aiCams_string.split(",").filter(e => e);
+                    if (aiCams_array.includes(camera.camera_id.toString())) {
+                        var newAiCams = aiCams_string.replace("," + camera.camera_id, "");
+                        sessionStorage.setItem("aiCams", newAiCams); 
+                    }
+                }
                 localStorage.removeItem(camera.camera_id);
                 core.elements['global-loader'].hide();
                 return screens['cameras'].on_show();

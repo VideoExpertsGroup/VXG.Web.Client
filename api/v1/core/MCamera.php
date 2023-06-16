@@ -519,48 +519,30 @@ class MCamera{
         query('UPDATE "camera" set "aiGroupToken"=?,"aiGroupTokenID"=? WHERE "channelID"=?', ['', 0 , $this->camera['channelID']]);
     }
 
-    public function createAIToken($limits = MConstants::DEFAULT_PLAN){
-
-        // Make Group token
-        
-        /*
-        ai_targeted: true
-        max_channels_amount: "1"
-        name: "test"
-        channels: [111]
-        meta: 
-            ai_engine: "aws"
-            ai_params: "{↵ "access_key": "", ↵ "secret_key": "", ↵ "det_threshold": 0.7 ↵}↵"
-            ai_period: "180"
-            ai_type: "object_and_scene_detection"
-        */            
-
-        //
-        
+    public function createAIToken($limits = null, $type = null){
+        if (!$limits) $limits = MConstants::DEFAULT_PLAN['ai_process_period'];
+        // not sure what different params for by_event will be
+        $name = $type ? $type . "_ai" : (string) $this->camera['channelID'];
         $GroupToken = array(
-            'name' => (string) $this->camera['channelID'],
-            'max_channels_amount' => 1,
+            'name' => $name,
+            'max_channels_amount' => null,
             'channels' => array($this->camera['channelID']),
             'ai_targeted' => true,
             'meta'=>
             array(
                 'ai_engine' => 'aws',
-                'ai_period' => $limits['ai_process_period'], 
+                'ai_period' => $limits, 
                 'ai_type'   => 'object_and_scene_detection',   
-                'ai_params' => '{"access_key":"","secret_key":"","det_threshold":0.5}',
-                //array (
-                //    'access_key' => '',  
-                //    'secret_key' => '', 
-                //    'det_threshold' => 0.5,
-                //),
+                'ai_params' => '{"access_key":"AKIAWEOIJQJ5U6F247HN","secret_key":"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","det_threshold":0.7}',
             ),
         );
+        // TODO: find out where we get the AI params from
 
         if (isset(MCore::$core->config['ai_adapter']['dev']) && MCore::$core->config['ai_adapter']['dev'] === true)
             $GroupToken['meta']['ai_development'] = true;
 	
 	
-        $ret = StreamLandAPI::GreateGroupToken($GroupToken);
+        $ret = StreamLandAPI::CreateGroupToken($GroupToken);
         if (isset($ret['status']) && $ret['status']!=200)
             error(550, $ret['errorDetail']);
 
@@ -574,6 +556,45 @@ class MCamera{
         query('UPDATE "camera" set "aiGroupToken"=?,"aiGroupTokenID"=? WHERE "channelID"=?', [$group_token, $group_token_id , $this->camera['channelID']]);
         // TODO , we do not handle this error 
 
+        return true;
+    }
+
+    public function createAITokenByChannelId($channel_id, $user_from, $limits = null, $type = null) {
+        $server = $user_from->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed to creating camera channel. reason: generateServicesURLs');
+            
+        if (!$limits) $limits = MConstants::DEFAULT_PLAN['ai_process_period'];
+        // not sure what different params for by_event will be
+        $name = $type ? $type . "_ai" : (string) $channel_id;
+        $GroupToken = array(
+            'name' => $name,
+            'max_channels_amount' => null,
+            'channels' => array($channel_id),
+            'ai_targeted' => true,
+            'meta'=>
+            array(
+                'ai_engine' => 'aws',
+                'ai_period' => $limits, 
+                'ai_type'   => 'object_and_scene_detection',   
+                'ai_params' => '{"access_key":"AKIAWEOIJQJ5U6F247HN","secret_key":"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","det_threshold":0.7}',
+            ),
+        );
+        // TODO: find out where we get the AI params from
+
+        if (isset(MCore::$core->config['ai_adapter']['dev']) && MCore::$core->config['ai_adapter']['dev'] === true)
+            $GroupToken['meta']['ai_development'] = true;
+	
+	
+        $ret = StreamLandAPI::CreateGroupToken($GroupToken);
+        if (isset($ret['status']) && $ret['status']!=200)
+            error(550, $ret['errorDetail']);
+        
+        $group_token = $ret['token'];
+        $group_token_id = $ret['id'];
+        query('UPDATE "camera" set "aiGroupToken"=?,"aiGroupTokenID"=? WHERE "channelID"=?', [$group_token, $group_token_id , $channel_id]);
+ 
+        return true;
     }
 
     
@@ -657,6 +678,122 @@ class MCamera{
             error(550, $ret['errorDetail']);
     }
 
+    public function setAIConfig($channel_id, $type, $aiGroupToken) {
+        if (!$aiGroupToken) {
+            if ($type != 'off') {
+                if(!$this->createAIToken(180, $type))
+                    error(500, 'Error creating AI token for this camera');
+            }
+        } else {
+            if ($type == 'continuous') {
+                $tokenChannels = $aiGroupToken['channels'];
+                if (!in_array($channel_id, $tokenChannels)) {
+                    array_push($tokenChannels, $channel_id);
+                    $params = ['channels' => $tokenChannels];
+                    if(!$this->addChannelToGroupToken($aiGroupToken['id'], $params, $type))
+                        error(500, 'Error adding this camera to AI token');
+                }
+            } else if ($type == 'off') {
+                $tokenChannels = $aiGroupToken['channels'];
+                if (($key = array_search($channel_id, $tokenChannels)) !== false) {
+                    unset($tokenChannels[$key]);
+                    $params = ['channels' => $tokenChannels];
+                    if(!$this->addChannelToGroupToken($aiGroupToken['id'], $params, $type))
+                        error(500, 'Error removing this camera from AI token');
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public function setAIConfigByChannelID($channel_id, $type, $aiGroupToken) {
+        if (!$aiGroupToken) {
+            if ($type != 'off') {
+                if(!MCamera::createAITokenByChannelId($channel_id, MCore::$core->current_user, 180, $type))
+                    error(500, 'Error creating AI token for this camera');
+            }
+        } else {
+            if ($type == 'continuous') {
+                $tokenChannels = $aiGroupToken['channels'];
+                if (!in_array($channel_id, $tokenChannels)) {
+                    array_push($tokenChannels, $channel_id);
+                    $params = ['channels' => $tokenChannels];
+                    if(!MCamera::addChannelToGroupTokenByID($aiGroupToken['id'], $channel_id, MCore::$core->current_user, $params, $type))
+                        error(500, 'Error adding this camera to AI token');
+                }
+            } else if ($type == 'off') {
+                $tokenChannels = $aiGroupToken['channels'];
+                if (($key = array_search($channel_id, $tokenChannels)) !== false) {
+                    unset($tokenChannels[$key]);
+                    $params = ['channels' => $tokenChannels];
+                    if(!MCamera::addChannelToGroupTokenByID($aiGroupToken['id'], $channel_id, MCore::$core->current_user, $params, $type))
+                        error(500, 'Error removing this camera from AI token');
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public function addChannelToGroupTokenByID($tokenid, $channel_id, $user_from, $params, $type) {
+        $server = $user_from->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed to creating camera channel. reason: generateServicesURLs');
+        
+        $imagePeriod = $type == 'off' ? null : 180;
+        $imageGenParam = array(
+            'image_generation_period' => $imagePeriod
+        );
+
+        $channel = StreamLandAPI::getChannel($channel_id);
+        $access_token = $channel['access_tokens']['all'];
+
+        $ret = StreamLandAPI::SetChannelParams($imageGenParam,$access_token);
+        if (isset($ret['image_generation_period']) && $ret['image_generation_period'] != $imagePeriod)
+            error(550, $ret['errorDetail']);
+
+        $ret = StreamLandAPI::UpdateGroupToken($tokenid, $params);
+        if (count(array_diff($ret['channels'],$params['channels'])) != 0) {
+            error(550, "Error updating group token");
+        }
+
+        $group_token = $type == 'off' ? null : $ret['token'];
+        $group_token_id = $type == 'off' ? null : $ret['id'];
+
+        query('UPDATE "camera" set "aiGroupToken"=?,"aiGroupTokenID"=? WHERE "channelID"=?', [$group_token, $group_token_id , $channel_id]);
+
+        return true;
+    }
+    
+    public function addChannelToGroupToken($tokenid, $params, $type) {
+        $server = $this->owner->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed generateServicesURLs');
+
+        $imagePeriod = $type == 'off' ? null : 180;
+        $imageGenParam = array(
+            'image_generation_period' => $imagePeriod
+        );
+
+        $ret = StreamLandAPI::SetChannelParams($imageGenParam,$this->camera['rwToken']);
+        if (isset($ret['image_generation_period']) && $ret['image_generation_period'] != $imagePeriod)
+            error(550, $ret['errorDetail']);
+
+        $ret = StreamLandAPI::UpdateGroupToken($tokenid, $params);
+        if (count(array_diff($ret['channels'],$params['channels'])) != 0) {
+            error(550, "Error updating group token");
+        }
+    
+        $group_token = $type == 'off' ? null : $ret['token'];
+        $group_token_id = $type == 'off' ? null : $ret['id'];
+        $this->camera['aiGroupToken'] = $group_token;
+        // TODO Story aiGroupTokenID to data base
+        $this->camera['aiGroupTokenID'] = $group_token_id;
+        query('UPDATE "camera" set "aiGroupToken"=?,"aiGroupTokenID"=? WHERE "channelID"=?', [$group_token, $group_token_id , $this->camera['channelID']]);
+
+        return true;
+    }
 
     public function setPlanID($plan_id, $plan_name, $from_subscribtion_cancel=false){
         $metadata=MConstants::DEFAULT_PLAN;
@@ -724,6 +861,9 @@ class MCamera{
      * Remove this camera
      */
     public function remove(){
+        $server = $this->owner->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed to delete camera channel. reason: generateServicesURLs');
 
         $response_cloud = StreamLandAPI::getChannel($this->camera['channelID']);
         if (isset($response_cloud,$response_cloud['meta'],$response_cloud['meta']['rsid'])){
@@ -738,15 +878,23 @@ class MCamera{
             curl_close($ch);
         }
 
-        $server = $this->owner->getServerData();
-        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
-            error(555, 'Failed to delete camera channel. reason: generateServicesURLs');
+        //$this->removeAIToken();
+        // don't remove token because there could be other cameras attached to it
+        if (isset($this->camera['aiGroupTokenID']) || $this->camera['aiGroupTokenID']) {
+            // have to remove it from the 
+            $channelGroupToken = StreamLandAPI::getAllCamsToken($this->camera['aiGroupTokenID']);
+            $tokenChannels = $channelGroupToken['channels'];
+            $key = array_search($this->camera['channelID'], $tokenChannels);
+            unset($tokenChannels[$key]);
+            $ret = StreamLandAPI::UpdateGroupToken($this->camera['aiGroupTokenID'],["channels" => $tokenChannels]);
+            if (isset($ret['status']) && $ret['status']!=200)
+                error(550, $ret['errorDetail']);
+        }
 
         $rc = StreamLandAPI::deleteChannel($this->camera['channelID']);
         if (!($rc == 200 || $rc == 204 || $rc == 404))
             error(554, 'Failed to delete channel with id '.$this->camera['channelID'].', rc='.$rc);
 
-        $this->removeAIToken();
 /*        
         if ($this->camera['aiGroupTokenID']){
             $rc = StreamLandAPI::deleteGroupToken($this->camera['aiGroupTokenID']);
