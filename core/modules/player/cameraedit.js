@@ -178,7 +178,7 @@ CameraEditControl = function(){
         $(this).addClass('onvif');
         $(this).find('.iperror').hide();
 
-        $(".setting-dropdown").click(function() {
+        $(".setting-dropdown").off().on('click',function() {
             if ($(this).find(".carrot-icon").hasClass("closed")) {
                 $(this).find(".carrot-icon").css("transform", "rotate(-90deg)");
                 $(this).find(".carrot-icon").removeClass("closed");
