@@ -880,7 +880,7 @@ class MCamera{
 
         //$this->removeAIToken();
         // don't remove token because there could be other cameras attached to it
-        if (isset($this->camera['aiGroupTokenID']) || $this->camera['aiGroupTokenID']) {
+        if (isset($this->camera['aiGroupTokenID']) && $this->camera['aiGroupTokenID'] != 0) {
             // have to remove it from the 
             $channelGroupToken = StreamLandAPI::getAllCamsToken($this->camera['aiGroupTokenID']);
             $tokenChannels = $channelGroupToken['channels'];
