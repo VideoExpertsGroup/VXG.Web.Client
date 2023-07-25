@@ -523,6 +523,14 @@ class MCamera{
         if (!$limits) $limits = MConstants::DEFAULT_PLAN['ai_process_period'];
         // not sure what different params for by_event will be
         $name = $type ? $type . "_ai" : (string) $this->camera['channelID'];
+        $aiAccessKey = MCore::$core->config['ai_access_key'];
+        $aiSecretKey = MCore::$core->config['ai_secret_key'];
+        $aiDetThresh = MCore::$core->config['ai_det_threshold'];
+
+        if (!$aiAccessKey || !$aiSecretKey || !$aiDetThresh) {
+            error(550, "Ai params not set.");
+        }
+
         $GroupToken = array(
             'name' => $name,
             'max_channels_amount' => null,
@@ -533,7 +541,7 @@ class MCamera{
                 'ai_engine' => 'aws',
                 'ai_period' => $limits, 
                 'ai_type'   => 'object_and_scene_detection',   
-                'ai_params' => '{"access_key":"AKIAWEOIJQJ5U6F247HN","secret_key":"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","det_threshold":0.7}',
+                'ai_params' => '{"access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'","det_threshold":'.$aiDetThresh.'}',
             ),
         );
         // TODO: find out where we get the AI params from
