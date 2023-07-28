@@ -31,7 +31,7 @@ if ($camera && $serialnumber && $gspassword) {
 
 if ($camera && strpos(MCore::$core->current_user->js,'ai_access')!==false) {
     list($ai_type) = MCore::getInputParameters(['ai_type']);
-    $aiGroupToken = MCore::$core->current_user->getAIChannelGroupTokens($ai_type, $camera->camera['channelID']);
+    $aiGroupToken = MCore::$core->current_user->getAIChannelGroupToken($ai_type, $camera->camera['channelID']);
     if(!$camera->setAIConfig($camera->camera['channelID'], $ai_type, $aiGroupToken)) {
         $camera->remove();
         error(401, "Fail to set AI configuration");

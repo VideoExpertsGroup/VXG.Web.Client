@@ -38,11 +38,20 @@ display:none;
 cameraedit.rtsp .onvifOnly{
 display:none;
 }
-cameraedit.rtsp:not(.options) .options,
+
+.hidesett {
+    display: none;
+}
+
+.rete_off {
+    display: none !important;
+}
+/*,
 cameraedit.rtsp:not(.location) .loca,
 cameraedit.cloud:not(.location) .loca,
 cameraedit.onvif:not(.location) .loca,
-cameraedit:not(.retention) .rete{
+cameraedit:not(.retention) .rete */
+cameraedit.rtsp:not(.options) .options {
 display:none!important;
 }
 

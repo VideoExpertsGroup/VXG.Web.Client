@@ -11,8 +11,8 @@ if (strpos(MCore::$core->current_user->js,'ai_access')===false)
 
 list($channel_id, $type) = MCore::getInputParameters(['channel_id', 'type']);
 
-$aiGroupToken = MCore::$core->current_user->getAIChannelGroupTokens($type, $channel_id);
 $camera = MCamera::getCameraByChannelIdAndUser($channel_id, MCore::$core->current_user);
+$aiGroupToken = $camera && $camera->camera['aiGroupTokenID'] ? $camera->getCameraGroupToken() : MCore::$core->current_user->getAIChannelGroupToken($type, $channel_id);
 
 $ret = $camera ? $camera->setAIConfig($channel_id, $type, $aiGroupToken) : MCamera::setAIConfigByChannelID($channel_id, $type, $aiGroupToken);
 

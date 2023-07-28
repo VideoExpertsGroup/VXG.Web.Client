@@ -74,7 +74,7 @@ window.screens['camerameta'] = {
         return ''+date.getHours()+':'+(date.getMinutes()>9?'':'0')+date.getMinutes()+':'+(date.getSeconds()>9?'':'0')+date.getSeconds()+'.'+Math.floor(date.getMilliseconds()/100);
     },
     setCurTime: function(){
-        let et = this.end_time_utc ? new Date(this.end_time_utc*1000) : new Date();
+        let et = this.end_time_utc ? new Date(this.end_time_utc*1000) : new Date(new Date().getTime() + 60000);
         let st = this.start_time_utc ? new Date(this.start_time_utc*1000) : new Date(et.getTime() - 60 * 60 * 1000); // - 1 hour
         st = this.dateToUserTimeString(st);
         et = this.dateToUserTimeString(et);

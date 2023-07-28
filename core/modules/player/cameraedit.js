@@ -115,11 +115,11 @@ CameraEditControl = function(){
     <span class="carrot-icon closed"><</span>
 </div>
 
-<div class="form-group loca">
+<div class="form-group loca hidesett">
     <label>Latitude</label>
     <input name="lat" value="">
 </div>
-<div class="form-group loca">
+<div class="form-group loca hidesett">
     <label>Longitude</label>
     <input name="lon" value="">
 </div>
@@ -133,7 +133,7 @@ CameraEditControl = function(){
     <div class="anccsUrlRetentiontime">RECORDING</div>
     <span class="carrot-icon closed"><</span>
 </div>
-<div class="form-group rete">
+<div class="form-group rete hidesett">
     <label>Cloud recording</label>&nbsp;&nbsp;&nbsp;<label class="rectypeinfo" style="display:none;font-weight: lighter;">(recording type "By Event" is not supported for RTSP cameras)</label>
     <select name="rete_recmode" class="rete_recmode">
         <option value="off" selected>Off</option>
@@ -141,11 +141,11 @@ CameraEditControl = function(){
         <option value="by_event">By Event</option>
     </select>
 </div>
-<div class="form-group rete rete_time" style="display:none;">
+<div class="form-group rete_time rete rete_off hidesett">
     <label>Retention time (hours)</label>
     <input name="rete_time" value="72">
 </div>
-<div class="form-group rete reten rete_sd">
+<div class="form-group rete reten rete_sd hidesett">
     <label><input type="checkbox" class="svgbtnbefore" name="rete_sd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SD recording</label>&nbsp;&nbsp;&nbsp;<label class="sdrecinfo" style="font-weight: lighter;">(supported only at "Off" and "By Event" cloud recording types)</label>
 </div>
 `:'') + `
@@ -154,12 +154,12 @@ CameraEditControl = function(){
     <div class="anccsUrlAIConfig">OBJECT DETECTION (AI)</div>
     <span class="carrot-icon closed"><</span>
 </div>
-<div class="form-group ai_type" style="display: none;">
+<div class="form-group ai_type hidesett">
     <label>AI Object Detection</label>
     <select name="ai_type" class="ai_type_select">
         <option value="off">Off</option>
         <option value="continuous">Continuous</option>
-        <option value="by_event" class="select-disabled" disabled>By Event</option>
+        <option value="by_event">By Event</option>
     </select>
 </div>`:"") + `
 </form>
@@ -188,8 +188,8 @@ CameraEditControl = function(){
             }
 
             if ($(this).hasClass("opt-dropdown")) $(self).toggleClass('options');
-            if ($(this).hasClass("loc-dropdown")) $(self).toggleClass('location');
-            if ($(this).hasClass("rete-dropdown")) $(self).toggleClass('retention');
+            if ($(this).hasClass("loc-dropdown")) $(".loca").toggle();
+            if ($(this).hasClass("rete-dropdown")) $(".rete").toggle();
             if ($(this).hasClass("ai-dropdown")) $('.ai_type').toggle();
 
         });
@@ -199,8 +199,8 @@ CameraEditControl = function(){
             let url = ($(self).find('.anccsUrl').val()||'').trim();
             //if (!self.camera || self.camera.bsrc.url || type=='on' && !url) $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
             //else $(self).find('.rete_sd input').removeAttr('disabled');
-            if (type=='off') $(self).find('.rete_time').hide();
-            else $(self).find('.rete_time').show();
+            if (type=='off') $(self).find('.rete_time').addClass("rete_off");
+            else $(self).find('.rete_time').removeClass("rete_off").show();
 
             if (url.substr(0,5)=='rtsp:' && type=='by_event')
                 $(self).find('.rectypeinfo').show();
@@ -510,8 +510,9 @@ CameraEditControl = function(){
                         $(self).find('[name="rete_recmode"]').val(rt.type);
                     //if (self.camera.bsrc.url || rt.type=='on') $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
                     //else $(self).find('.rete_sd input').removeAttr('disabled');
-                    if (rt.type=='off') $(self).find('.rete_time').hide();
-                    else $(self).find('.rete_time').show();
+
+                    if (rt.type=='off') $(self).find('.rete_time').addClass("rete_off");
+                    else $(self).find('.rete_time').removeClass("rete_off");
     
                     if (rt.time!==undefined)
                         $(self).find('[name="rete_time"]').val(rt.time);

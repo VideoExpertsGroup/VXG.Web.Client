@@ -521,7 +521,7 @@ class MCamera{
 
     public function createAIToken($limits = null, $type = null){
         if (!$limits) $limits = MConstants::DEFAULT_PLAN['ai_process_period'];
-        // not sure what different params for by_event will be
+
         $name = $type ? $type . "_ai" : (string) $this->camera['channelID'];
         $aiAccessKey = MCore::$core->config['ai_access_key'];
         $aiSecretKey = MCore::$core->config['ai_secret_key'];
@@ -530,6 +530,10 @@ class MCamera{
         if (!$aiAccessKey || !$aiSecretKey || !$aiDetThresh) {
             error(550, "Ai params not set.");
         }
+
+        $ai_params = $type == "by_event" ? 
+        '{"poll_method": "one_token_many_cam", "filter": "undefined", "access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'","det_threshold":'.$aiDetThresh.'}' :
+        '{"access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'","det_threshold":'.$aiDetThresh.'}';
 
         $GroupToken = array(
             'name' => $name,
@@ -541,14 +545,24 @@ class MCamera{
                 'ai_engine' => 'aws',
                 'ai_period' => $limits, 
                 'ai_type'   => 'object_and_scene_detection',   
-                'ai_params' => '{"access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'","det_threshold":'.$aiDetThresh.'}',
+                'ai_params' => $ai_params,
             ),
         );
-        // TODO: find out where we get the AI params from
+
+        $imagePeriod = $type != 'continuous' ? null : 180;
+        $imageGenParam = array(
+            'image_generation_period' => $imagePeriod
+        );
+
+        $channel = StreamLandAPI::getChannel($channel_id);
+        $access_token = $channel['access_tokens']['all'];
+
+        $ret = StreamLandAPI::SetChannelParams($imageGenParam,$access_token);
+        if (isset($ret['image_generation_period']) && $ret['image_generation_period'] != $imagePeriod)
+            error(550, $ret['errorDetail']);
 
         if (isset(MCore::$core->config['ai_adapter']['dev']) && MCore::$core->config['ai_adapter']['dev'] === true)
             $GroupToken['meta']['ai_development'] = true;
-	
 	
         $ret = StreamLandAPI::CreateGroupToken($GroupToken);
         if (isset($ret['status']) && $ret['status']!=200)
@@ -573,8 +587,20 @@ class MCamera{
             error(555, 'Failed to creating camera channel. reason: generateServicesURLs');
             
         if (!$limits) $limits = MConstants::DEFAULT_PLAN['ai_process_period'];
-        // not sure what different params for by_event will be
+
         $name = $type ? $type . "_ai" : (string) $channel_id;
+        $aiAccessKey = MCore::$core->config['ai_access_key'];
+        $aiSecretKey = MCore::$core->config['ai_secret_key'];
+        $aiDetThresh = MCore::$core->config['ai_det_threshold'];
+
+        if (!$aiAccessKey || !$aiSecretKey || !$aiDetThresh) {
+            error(550, "Ai params not set.");
+        }
+
+        $ai_params = $type == "by_event" ? 
+        '{"poll_method": "one_token_many_cam", "filter": "undefined", "access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'","det_threshold":'.$aiDetThresh.'}' :
+        '{"access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'","det_threshold":'.$aiDetThresh.'}';
+
         $GroupToken = array(
             'name' => $name,
             'max_channels_amount' => null,
@@ -585,9 +611,22 @@ class MCamera{
                 'ai_engine' => 'aws',
                 'ai_period' => $limits, 
                 'ai_type'   => 'object_and_scene_detection',   
-                'ai_params' => '{"access_key":"AKIAWEOIJQJ5U6F247HN","secret_key":"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","det_threshold":0.7}',
+                'ai_params' => $ai_params,
             ),
         );
+
+        $imagePeriod = $type != 'continuous' ? null : 180;
+        $imageGenParam = array(
+            'image_generation_period' => $imagePeriod
+        );
+
+        $channel = StreamLandAPI::getChannel($channel_id);
+        $access_token = $channel['access_tokens']['all'];
+
+        $ret = StreamLandAPI::SetChannelParams($imageGenParam,$access_token);
+        if (isset($ret['image_generation_period']) && $ret['image_generation_period'] != $imagePeriod)
+            error(550, $ret['errorDetail']);
+
         // TODO: find out where we get the AI params from
 
         if (isset(MCore::$core->config['ai_adapter']['dev']) && MCore::$core->config['ai_adapter']['dev'] === true)
@@ -689,11 +728,12 @@ class MCamera{
     public function setAIConfig($channel_id, $type, $aiGroupToken) {
         if (!$aiGroupToken) {
             if ($type != 'off') {
-                if(!$this->createAIToken(180, $type))
+                $aiPeriod = $type == 'continuous' ? 180 : 10;
+                if(!$this->createAIToken($aiPeriod, $type))
                     error(500, 'Error creating AI token for this camera');
             }
         } else {
-            if ($type == 'continuous') {
+            if ($type != 'off' ) {
                 $tokenChannels = $aiGroupToken['channels'];
                 if (!in_array($channel_id, $tokenChannels)) {
                     array_push($tokenChannels, $channel_id);
@@ -701,7 +741,7 @@ class MCamera{
                     if(!$this->addChannelToGroupToken($aiGroupToken['id'], $params, $type))
                         error(500, 'Error adding this camera to AI token');
                 }
-            } else if ($type == 'off') {
+            } else {
                 $tokenChannels = $aiGroupToken['channels'];
                 if (($key = array_search($channel_id, $tokenChannels)) !== false) {
                     unset($tokenChannels[$key]);
@@ -718,7 +758,8 @@ class MCamera{
     public function setAIConfigByChannelID($channel_id, $type, $aiGroupToken) {
         if (!$aiGroupToken) {
             if ($type != 'off') {
-                if(!MCamera::createAITokenByChannelId($channel_id, MCore::$core->current_user, 180, $type))
+                $aiPeriod = $type == 'continuous' ? 180 : 10;
+                if(!MCamera::createAITokenByChannelId($channel_id, MCore::$core->current_user, $aiPeriod, $type))
                     error(500, 'Error creating AI token for this camera');
             }
         } else {
@@ -780,6 +821,7 @@ class MCamera{
             error(555, 'Failed generateServicesURLs');
 
         $imagePeriod = $type == 'off' ? null : 180;
+        // not sure if you should have this on by_event
         $imageGenParam = array(
             'image_generation_period' => $imagePeriod
         );
@@ -801,6 +843,17 @@ class MCamera{
         query('UPDATE "camera" set "aiGroupToken"=?,"aiGroupTokenID"=? WHERE "channelID"=?', [$group_token, $group_token_id , $this->camera['channelID']]);
 
         return true;
+    }
+
+    public function getCameraGroupToken() {
+        $server = $this->owner->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed generateServicesURLs');
+
+        $token = $this->camera['aiGroupTokenID'];
+        $ret = StreamLandAPI::getAllCamsToken($token);
+        if (!$ret) error(500, "Error getting group token");
+        return $ret;
     }
 
     public function setPlanID($plan_id, $plan_name, $from_subscribtion_cancel=false){

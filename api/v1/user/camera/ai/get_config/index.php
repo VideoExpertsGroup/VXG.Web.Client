@@ -17,18 +17,21 @@ if ($camera_list) {
     return;
 } 
 
-$groupTokens = MCore::$core->current_user->getAIChannelGroupTokens();
+$groupTokens = MCore::$core->current_user->getAllAIGroupTokens();
 
 foreach ($groupTokens['objects'] as $gt) {
+
+    $ai_params = json_decode($gt['meta']['ai_params']);
+    $ai_filter = $ai_params->{'filter'};
+
     if (in_array($channel_id, $gt['channels'])) {
-        if ($gt['meta']['ai_type'] == "object_and_scene_detection" && $gt['meta']['ai_period'] == '180') {
-            // continuous
+        if (!$ai_filter && $gt['meta']['ai_type'] == "object_and_scene_detection") {
             MCore::$core->response['ai_type'] = "continuous";
             return;
-        } /*else if (// by_event params) {
-            // by_event for now
+        } else if ($ai_filter == "undefined" && $gt['meta']['ai_type'] == "object_and_scene_detection") {
             MCore::$core->response['ai_type'] = "by_event";
-        }*/
+            return;
+        }
     } 
 }
 
