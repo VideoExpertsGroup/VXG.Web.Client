@@ -131,7 +131,7 @@ CameraCloudEditControl = function(){
     <input type="password" autofocus="autofocus" class="gspassword" name="gspassword">
 </div>
 </form>
-<div class="sbt"><br/><br/>
+<div class="sbt">
 <div class="wait"><span>Wait</span>&nbsp;&nbsp;<div class="spinner"></div></div>
             `+
             '</div>');
@@ -210,9 +210,18 @@ CameraCloudEditControl = function(){
         let isOptions = $(this).hasClass('options');
         let isCloud = $(this).hasClass('cloud');
         let isOnvif = $(this).hasClass('onvif');
+        let serverSerial = $(".serial-number-input").val();
+        let macAddress = $(".mac-address-input").val();
+        var pass = $(".password-input").val();
+        var username = $(".username-input").val();
         let data = $(this).find('form').serializeObject();
         for (let i in data) data[i]=data[i].trim();
         if ($(this).hasClass('rtsp')) delete data['onvif_rtsp_port_fwd'];
+        if (pass && username) {
+            data.password = pass;
+            data.username = username;
+            data.uplink = true;
+        }
         if (!data.name){
             core.flashInputBackgroundColor($(this).find('.name'));
             this.defferedDispatchEvent(this.error_event);
@@ -257,8 +266,19 @@ CameraCloudEditControl = function(){
             }
 
         }
+
+        if (macAddress && serverSerial) {
+            data.serialnumber = serverSerial;
+            data.macAddress = macAddress;
+        }
+
         if (isCloud) data.url='';
-        this.showwait('Saving');
+        if (!serverSerial) this.showwait('Saving');
+        else {
+            $(".server-status").html('Saving')
+            $(".server-status").show();
+        }
+
         let res;
         if (!this.camera)
             res = vxg.cameras.createCameraPromise(data);
@@ -268,21 +288,35 @@ CameraCloudEditControl = function(){
             if (r['allCamsToken']) 
                 vxg.user.src.allCamsToken = r['allCamsToken'];
 
-			//$("[name='acc_token']").html(r.access_tokens.all);
-			dialogs['mdialog'].activate('<h7>Access token</h7><p>Copy and save the access token before closing the window</p><textarea rows="5" style="min-width:200px">'+r.access_tokens.all+'</textarea><p><button name="cancel" class="vxgbutton">Ok</button></p>');
+            if (macAddress && serverSerial) dialogs['mdialog'].activate('<h7>Success!</h7><p>Install the plug-in on your camera and it will automatically connect this camera to your account.</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
+            else dialogs['mdialog'].activate('<h7>Access token</h7><p>Copy and save the access token before closing the window</p><textarea rows="5" style="min-width:200px">'+r.access_tokens.all+'</textarea><p><button name="cancel" class="vxgbutton">Ok</button></p>');    
+            
+            $(".serial-number-input").val("");
+            $(".mac-address-input").val("");
+            $(".password-input").val("");
+            $(".username-input").val("");
 
             $(self).attr('access_token','');
             self.hidewait();
+            $(".server-status").hide()
             self.dispatchEvent(self.submited_event);
             self.reset();
         },function(r){
-            if (r && r.responseJSON && r.responseJSON.errorDetail)
-                self.showerror(r.responseJSON.errorDetail);
-            else
-                self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #2</a>');
-            setTimeout(function(){self.hidewait();},2000);
+            if (r && r.responseJSON && r.responseJSON.errorDetail) {
+                if (macAddress && serverSerial) $('.server-status').html(r.responseJSON.errorDetail);
+                else self.showerror(r.responseJSON.errorDetail);
+            }
+
+            else {
+                if (macAddress && serverSerial) $('.server-status').html('<a target="_blank" href="'+vxg.links.error+'">Error #2</a>');
+                else self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #2</a>');
+            }
+            
+            setTimeout(function(){self.hidewait();},10000);
+            setTimeout(function() {$('.server-status').hide();}, 10000)
             self.defferedDispatchEvent(self.error_event);
         });
+
         return true;
     },
     this.onCameraLoadedFail = function(r){

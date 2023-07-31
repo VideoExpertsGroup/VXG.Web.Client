@@ -76,6 +76,7 @@ li.integration .menu-icon {background-image: url("img/menu/reports.svg")!importa
 .transparent-button.deleteclip img{filter: brightness(0.498) sepia(.73) hue-rotate(346deg) saturate(9)!important;}
 .transparent-button.deleteclip .svgbtn{filter: brightness(0.498) sepia(.73) hue-rotate(346deg) saturate(9);}
 .newcamera .newcamerabtns .add2{display:none;}
+.newcamera .newcamerabtns .add5{display:none;}
 
 .prifiletabs .tab1{display:none!important;}
 .prifiletabs .tab3{display:none!important;}

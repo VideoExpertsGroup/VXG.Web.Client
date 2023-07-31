@@ -4,6 +4,7 @@
 <div class="add3">ONVIF</div>
 <div class="add2">Grandstream</div>
 <div class="add4">Plug-in</div>
+<div class="add5">Uplink</div>
 </div>
 <div class="add1 maxwidth">
 <h6>AXIS, Vivotek , Grandstream, Dahua and Hikvision cameras</h6>
@@ -30,13 +31,40 @@ Connect any generic ONVIF camera using its public IP address. This usually requi
 <div class="add4 maxwidth">
 <h6>Plug-in cameras</h6>
 Connect cameras that support plug-ins.
-<newcloudcamera access_token="" class="maxwidth"></newcloudcamera>
+<newcloudcamera access_token="" id="plugin-camera" class="maxwidth"></newcloudcamera>
 <button type="button" class="vxgbutton cloudapply">Apply</button>
+<div class="plugin-link">
+    <a href="https://dashboard.videoexpertsgroup.com/downloads/cameras/" target="_blank">See the list of plug-ins and firmware for manual installation.</a>
+</div>
 <br/><br/>&nbsp;
-
-<a href="https://dashboard.videoexpertsgroup.com/downloads/cameras/" target="_blank">See the list of plug-ins and firmware for manual installation.</a>
 </div>
-
+<div class="add5 maxwidth">
+<h6>Uplink cameras</h6>
+Connect cameras that support plug-ins.
+<newcloudcamera access_token="" id="uplink-camera" class="maxwidth"></newcloudcamera>
+<div class="form-group maxwidth">
+<label>Username</label>
+<input autofocus="autofocus" class="username-input" name="uplinkUser">
 </div>
-
+<div class="form-group wrapper-last maxwidth" >
+<label>Password</label>
+<input type="password" autofocus="autofocus" class="password-input" name="uplinkPass">
+</div>
+<label class="prov-server-label custom-checkbox">
+<span class="prov-server-text">Use Provisioning Server</span>
+<input id="prov-server-input" type="checkbox">
+<span class="checkmark"></span>
+</label>
+<div class="uplink-wrapper form-group maxwidth" style="display: none;">
+<label>Serial Number</label>
+<input autofocus="autofocus" class="serial-number-input" name="serialNum">
+</div>
+<div class="uplink-wrapper wrapper-last form-group maxwidth" style="display: none;">
+<label>MAC Address</label>
+<input autofocus="autofocus" class="mac-address-input" name="serialNum">
+</div>
+<div class="server-status wait" style="display: none"><span></span></div>
+<button type="button" class="vxgbutton uplinkapply">Apply</button>
+<br/><br/>&nbsp;
+</div>
 

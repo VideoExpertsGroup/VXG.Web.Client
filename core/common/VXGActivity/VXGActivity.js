@@ -430,7 +430,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
     let additional_search  = ((this.filter !== undefined && this.filter !== null )&& this.filter['label'] !== undefined)? this.filter.label : undefined;
     
     $.each(VXGActivitydata, function () {
-            if (!this.thumb || !this.thumb.url) return;
+            //if (!this.thumb || !this.thumb.url) return;
             if (self.ActivitiesList_filter !== undefined 
             && self.ActivitiesList_filter(self, this) == false) {
                 return;
@@ -479,13 +479,14 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	    if (camera != null) {
 		cameraInfo = '<span class="camera-name"><camfield field="name" access_token="'+camera.camera_id+'"></camfield></span>';
 	    }
+
+		var thumb_src = !this.thumb || !this.thumb.url ? "" : this.thumb.url;
 	    
             let feedEl = 
         	'<div class="feed-element mr-1">'
 	    +	'	<div class="'+ dclass + '" '+ addon + ' eventid="' + this.id +'">' 
-	    +	'		<div class="image-container d-flex align-items-center">' 
-	    +	'			<div class="image-stub"></div>'
-	    +	'			<img crossorigin="anonymous" ' + ( (this.thumb && this.thumb.url) ? ('src="' + this.thumb.url + '"' ) : '') + ' alt="">' 
+	    +	'		<div class="image-container d-flex align-items-center">' 		
+	    +	'			<div class="image-stub"></div><img crossorigin="anonymous" id="event_'+ this.id +'_thumbnail" src="' + thumb_src + '" alt="">'
 	    +	'		</div>' 
 	    +	'		<div class="VXGActivityCardInfo flex-grow-1">'
 	    +	'			<small class="VXGActivityCardInfoTimeback float-right text-navy"><b>' + self.timeDifference(currentTime, new Date(this.time +"Z")) + '</b></small>' 
@@ -504,6 +505,15 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	    //if (this.thumb) {
 		$(activitiesContainer).append($(feedEl));
 
+		var eventid = this.id;
+		if (!this.thumb || !this.thumb.url) {
+			window.vxg.cameras.getCameraByIDPromise(parseInt(this.camid)).then(function(camera) {
+				camera.getPreview().then(function(url) {
+					var thumb_id = "event_"+eventid+"_thumbnail";
+					document.getElementById(thumb_id).src = url;
+				});
+			});
+		}
 
 	    //}
 	});

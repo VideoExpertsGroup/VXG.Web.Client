@@ -42,7 +42,12 @@ max-width: 116px;
     flex: 1 1 116px;
 }
 
-body.mobile .newcamerabtns .add1,body.mobile .newcamerabtns .add2,body.mobile .newcamerabtns .add3 .add4{
+.newcamerabtns .add5{
+    max-width: 116px;
+    flex: 1 1 116px;
+}
+
+body.mobile .newcamerabtns .add1,body.mobile .newcamerabtns .add2,body.mobile .newcamerabtns .add3 .add4 .add5{
     max-width: inherit;
 }
 
@@ -69,7 +74,8 @@ display: inline-block;
 .newcameratabs.add1 .newcamerabtns .add1,
 .newcameratabs.add2 .newcamerabtns .add2,
 .newcameratabs.add3 .newcamerabtns .add3,
-.newcameratabs.add4 .newcamerabtns .add4{
+.newcameratabs.add4 .newcamerabtns .add4,
+.newcameratabs.add5 .newcamerabtns .add5{
 border-bottom: 2px solid var(--main-color);
 }
 
@@ -89,6 +95,10 @@ body.mobile .newcameratabs > .add4{
 .newcameratabs h6{
 color: var(--main-color);
 margin-bottom:10px;
+}
+
+.plugin-link {
+    margin-top: 15px;
 }
 
 .vxgbutton.vvv{

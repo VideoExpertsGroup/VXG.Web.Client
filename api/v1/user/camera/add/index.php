@@ -9,8 +9,8 @@ if (!MCore::$core->current_user->isPartner())
     error(401, 'Access denied');
 
 list($name) = MCore::checkAndGetInputParameters(['name']);
-list($location, $recording, $tz, $lat, $lon, $url, $username, $password, $onvif_rtsp_port_fwd, $serialnumber, $gspassword) = 
-    MCore::getInputParameters(['location'=>'','recording','tz'=>'UTC','lat'=>0,'lon'=>0,'url','username','password', 'onvif_rtsp_port_fwd'=>0,'serialnumber'=>'','gspassword'=>'']);
+list($location, $recording, $tz, $lat, $lon, $url, $username, $password, $onvif_rtsp_port_fwd, $serialnumber, $macAddress, $uplink) = 
+    MCore::getInputParameters(['location'=>'','recording','tz'=>'UTC','lat'=>0,'lon'=>0,'url','username','password', 'onvif_rtsp_port_fwd'=>0,'serialnumber'=>'','macAddress'=>'', 'uplink'=>'']);
 
 $password = strval($password);
 $username = strval($username);
@@ -19,11 +19,25 @@ $name = strval($name);
 if (MCore::$core->current_user->getUserCamerasCount()>=MConstants::MAX_CAMERAS_PER_USER)
     error(401, 'Camera limit exceeded for current user');
 
+if ($uplink) {
+    $url = MCore::$core->config['camera_proxy_service'];
+    if (!$url)
+        error(500, 'Camera proxy service url not set.');
+}
+
 $onvif_rtsp_port_fwd = $onvif_rtsp_port_fwd ? 0+ $onvif_rtsp_port_fwd : 0;
 $camera = MCamera::createCamera(MCore::$core->current_user, $name, $location, $recording, $tz, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd, false, $serialnumber);
 
-if ($camera && $serialnumber && $gspassword) {
-    if (!$camera->addToResolverService($serialnumber, $gspassword)){
+if ($camera && $serialnumber && $macAddress) {
+    $newSerialNumber = $camera->checkResolverServiceSerial($serialnumber);
+    if($newSerialNumber==false) {
+        $camera->remove();
+        error(500, 'Serial number already in use');
+    } else if ($newSerialNumber!==true) {
+        $camera->remove();
+        error(500, strval($newSerialNumber) . ': Error getting serial numbers from server');
+    }
+    if (!$camera->addToResolverService($serialnumber, $macAddress)){
         $camera->remove();
         error(401, 'Fail to call camera resolver service');
     }

@@ -901,12 +901,32 @@ class MCamera{
         return true;
     }
 
-    public function addToResolverService($serialnumber, $gspassword){
+    public function checkResolverServiceSerial($serialnumber) {
+        $url = MCore::$core->config['camera_resolver_service'] ? MCore::$core->config['camera_resolver_service'] . 's' : 'https://camera.vxg.io/v1/tokens';
+        $username = MCore::$core->config['camera_resolver_service_username'];
+        $password = MCore::$core->config['camera_resolver_service_password'];
+
+        $ch=curl_init($url);
+        curl_setopt_array($ch, [CURLOPT_POST => false, CURLOPT_CUSTOMREQUEST=>'GET', CURLOPT_RETURNTRANSFER => true, CURLOPT_VERBOSE => true,
+            CURLOPT_HTTPHEADER => ['Content-Type:application/json', 'Authorization: Basic '. base64_encode($username.':'.$password)]]);
+
+        $result = curl_exec($ch);
+        $r = json_decode($result, JSON_OBJECT_AS_ARRAY);
+        $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
+
+        if ($code != 200 && $code != 201) return $code;
+
+        $allSerials = array_map(function($s) { return $s['serial_id']; }, $r['tokens']);
+        if (in_array($serialnumber, $allSerials)) return false;
+        return true;
+    }
+
+    public function addToResolverService($serialnumber, $uplinkpassword){
         $url = MCore::$core->config['camera_resolver_service'] ? MCore::$core->config['camera_resolver_service'] : 'https://camera.vxg.io/v1/token';
         $username = MCore::$core->config['camera_resolver_service_username'];
         $password = MCore::$core->config['camera_resolver_service_password'];
 
-        $params =  json_encode(['serial_id'=>$serialnumber, 'password'=>$gspassword, 'access_token'=>$this->camera['rwToken']]);
+        $params =  json_encode(['serial_id'=>$serialnumber, 'password'=>$uplinkpassword, 'access_token'=>$this->camera['rwToken']]);
         $ch=curl_init($url);
         curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $params, /*CURLOPT_CUSTOMREQUEST=>'PUT',*/ CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => ['Content-Type:application/json', 'Authorization: Basic '. base64_encode($username.':'.$password), 'Content-Length: ' . strlen($params)]]);
@@ -925,7 +945,7 @@ class MCamera{
         $server = $this->owner->getServerData();
         if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
             error(555, 'Failed to delete camera channel. reason: generateServicesURLs');
-
+        
         $response_cloud = StreamLandAPI::getChannel($this->camera['channelID']);
         if (isset($response_cloud,$response_cloud['meta'],$response_cloud['meta']['rsid'])){
             $url = MCore::$core->config['camera_resolver_service'] ? MCore::$core->config['camera_resolver_service'] : 'https://camera.vxg.io/v1/token';
@@ -936,6 +956,8 @@ class MCamera{
             curl_setopt_array($ch, [CURLOPT_CUSTOMREQUEST=>'DELETE', CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true,
                 CURLOPT_HTTPHEADER => ['Content-Type:application/json', 'Authorization: Basic '. base64_encode($username.':'.$password)]]);
             $result = curl_exec($ch);
+            $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
+            if ($code != 204) error(554, $code . ": Error removing camera serial number");
             curl_close($ch);
         }
 
@@ -980,6 +1002,21 @@ class MCamera{
         $server = $user_from->getServerData();
         if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
             error(555, 'Failed to creating camera channel. reason: generateServicesURLs');
+        
+        $response_cloud = StreamLandAPI::getChannel($channel_id);
+        if (isset($response_cloud,$response_cloud['meta'],$response_cloud['meta']['rsid'])){
+            $url = MCore::$core->config['camera_resolver_service'] ? MCore::$core->config['camera_resolver_service'] : 'https://camera.vxg.io/v1/token';
+            $username = MCore::$core->config['camera_resolver_service_username'];
+            $password = MCore::$core->config['camera_resolver_service_password'];
+    
+            $ch=curl_init($url.'?serial_id='.$response_cloud['meta']['rsid']);
+            curl_setopt_array($ch, [CURLOPT_CUSTOMREQUEST=>'DELETE', CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true,
+                CURLOPT_HTTPHEADER => ['Content-Type:application/json', 'Authorization: Basic '. base64_encode($username.':'.$password)]]);
+            $result = curl_exec($ch);
+            $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
+            if ($code != 204) error(554, $code . ": Error removing camera serial number");
+            curl_close($ch);
+        }
 
         $rc = StreamLandAPI::deleteChannel($channel_id);
         if (!($rc == 200 || $rc == 204 || $rc == 404))

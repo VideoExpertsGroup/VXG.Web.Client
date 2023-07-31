@@ -220,8 +220,8 @@ CloudCamera.updateCameraPromise = function(camera_struct){
     };
     if (parseInt(camera_struct['onvif_rtsp_port_fwd'])>0) config.onvif_rtsp_port_fwd = parseInt(camera_struct['onvif_rtsp_port_fwd']);
     if (camera_struct['username'].trim()) {
-        config.login = camera_struct['username'].trim();
-        config.password = camera_struct['password'] ? camera_struct['password'].trim() : '';
+        config.login = String(camera_struct['username']).trim();
+        config.password = camera_struct['password'] ? String(camera_struct['password']).trim() : '';
     }
     if (camera_struct['url'].trim()) 
         config.url = camera_struct['url'].trim();
