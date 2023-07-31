@@ -45,15 +45,16 @@ window.screens['admin'] = {
     },
     'show_partners':function(){
         let self=this;
-        return vxg.partners.getList(100).then(function(partners){
-			
+        return vxg.partners.getList(100).then(function(ret){
+			var partners = ret.partners;
             let table='<table><thead><tr class="header"><th scope="col">#</th><th scope="col">ID</th><th scope="col">Name</th><th scope="col">Action</th></tr></thead><tbody>';
             c = 1;
+            var hide_ai_class = ret.aiEnabled ? "" : "hide-ai";
             for (let i in partners) {
                 table += '<tr userid="' + partners[i].src.id + '"><td>' + c + '</td><td>' + partners[i].src.id + '</td><td class="name">' + partners[i].src.name + '</td><td class="action-icons">'
 						+ '<button class="userbtn item-rec svgbtnhover userrec setting_rec '+ ((partners[i].src.allow_rec == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
 						+ '<button class="userbtn item-arch svgbtnhover userarchive setting_int '+ ((partners[i].src.allow_int == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
-                        + '<button class="userbtn item-ai svgbtnhover userai setting_ai '+ ((partners[i].src.allow_ai == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
+                        + '<button class="userbtn item-ai svgbtnhover userai setting_ai ' + hide_ai_class + " " + ((partners[i].src.allow_ai == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
                         + '<button onclick_toscreen="admincams" class="userbtn item-delete usercameras svgbtnhover" userid="'+ partners[i].src.id +'"></button>'
 						+ '<button class="userbtn item-delete deleteuser svgbtnhover" userid="'+ partners[i].src.id +'"></button>'
 						+ '</td></tr>';

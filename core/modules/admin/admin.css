@@ -363,6 +363,10 @@ position: absolute;
     word-break: break-all;
 }
 
+.hide-ai {
+    display: none;
+}
+
 
 
 

@@ -104,11 +104,14 @@ vxg.partners.getList = function (limit, offset) {
     return vxg.api.cloudone.partner.list(args).then(function (r) {
         self.total_count = r.total;
         self.expired = Date.now() + self.update_delay * 1000;
-        let ret = [];
+        let ret = {};
+        ret.aiEnabled = r.aiEnabled;
+        let partners = [];
         for (let i in r.data) {
             self.list[r.data[i].id] = new vxg.users.objects.User(r.data[i]);
-            ret.push(self.list[r.data[i].id]);
+            partners.push(self.list[r.data[i].id]);
         }
+        ret.partners = partners;
         return ret;
     }, function (r) {
 
