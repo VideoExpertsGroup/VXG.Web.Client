@@ -136,7 +136,7 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
     align-items: center;
     position: relative;
     padding-left: 30px;
-    margin-bottom: 17px;
+    margin-bottom: 10px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 200;
@@ -193,4 +193,8 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 .server-status {
     font-weight: 600;
     margin-bottom: 10px;
+}
+
+#dropdown-options {
+    margin-bottom: 15px;
 }

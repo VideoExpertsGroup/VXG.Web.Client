@@ -135,6 +135,54 @@ CameraCloudEditControl = function(){
 <div class="wait"><span>Wait</span>&nbsp;&nbsp;<div class="spinner"></div></div>
             `+
             '</div>');
+        var dropdownOpts = `<div class="form-group setting-dropdown loc-dropdown bottom-options">
+        <div class="anccsUrlLocation">GEOLOCATION</div>
+        <span class="carrot-icon closed"><</span>
+    </div>
+    
+    <div class="form-group loca hidesett">
+        <label>Latitude</label>
+        <input name="lat" value="">
+    </div>
+    <div class="form-group loca hidesett">
+        <label>Longitude</label>
+        <input name="lon" value="">
+    </div>`;
+        dropdownOpts += vxg.api.cloudone.camera.setRetention!==undefined ?
+            `<div class="form-group setting-dropdown rete-dropdown bottom-options">
+            <div class="anccsUrlRetentiontime">RECORDING</div>
+            <span class="carrot-icon closed"><</span>
+        </div>
+        <div class="form-group rete hidesett">
+            <label>Cloud recording</label>&nbsp;&nbsp;&nbsp;<label class="rectypeinfo" style="display:none;font-weight: lighter;">(recording type "By Event" is not supported for RTSP cameras)</label>
+            <select name="rete_recmode" class="rete_recmode" id="recmode_cloud">
+                <option value="off" selected>Off</option>
+                <option value="on">Continuous</option>
+                <option value="by_event">By Event</option>
+            </select>
+        </div>
+        <div class="form-group rete_time rete rete_off hidesett" id="retetime_cloud">
+            <label>Retention time (hours)</label>
+            <input name="rete_time" value="72">
+        </div>
+        <div class="form-group rete reten rete_sd hidesett">
+            <label><input type="checkbox" class="svgbtnbefore" name="rete_sd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SD recording</label>
+        </div>` : '';
+        dropdownOpts += vxg.api.cloudone.camera.setAIConfig!==undefined ?
+        `<div class="form-group setting-dropdown ai-dropdown bottom-options">
+        <div class="anccsUrlAIConfig">OBJECT DETECTION (AI)</div>
+        <span class="carrot-icon closed"><</span>
+    </div>
+    <div class="form-group ai_type hidesett">
+        <label>AI Object Detection</label>
+        <select name="ai_type" class="ai_type_select">
+            <option value="off">Off</option>
+            <option value="continuous">Continuous</option>
+            <option value="by_event">By Event</option>
+        </select>
+    </div>`:"";
+
+        $('#dropdown-options').html(dropdownOpts);
 
         $(this).find('.cloudapply').click(function(){
             self.submit_event = new Event('submit',{cancelable: true, bubbles: true});
@@ -147,6 +195,19 @@ CameraCloudEditControl = function(){
         $(this).find('.anccsUrlOptions').click(function(){
             $(self).toggleClass('options');
         });
+        
+        $('#recmode_cloud').change(function(){
+            let type = $(this).val();
+            let url = ($('.anccsUrl').val()||'').trim();
+            if (type=='off') $('#retetime_cloud').addClass("rete_off");
+            else $('#retetime_cloud').removeClass("rete_off").show();
+
+            if (url.substr(0,5)=='rtsp:' && type=='by_event')
+                $('.rectypeinfo').show();
+            else
+                $('.rectypeinfo').hide();
+        });
+        
         $(this).find('.type select').change(function(){
             let type = $(this).val();
             if (type=='onvif') $(self).removeClass('options');
@@ -215,7 +276,9 @@ CameraCloudEditControl = function(){
         var pass = $(".password-input").val();
         var username = $(".username-input").val();
         let data = $(this).find('form').serializeObject();
-        for (let i in data) data[i]=data[i].trim();
+        let hiddenOpts = $('#dropdown-options').serializeObject();
+        data = {...data, ...hiddenOpts};
+        for (let i in data) if (typeof data[i] === 'string') data[i]=data[i].trim();
         if ($(this).hasClass('rtsp')) delete data['onvif_rtsp_port_fwd'];
         if (pass && username) {
             data.password = pass;

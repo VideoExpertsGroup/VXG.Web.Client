@@ -146,7 +146,7 @@ CameraEditControl = function(){
     <input name="rete_time" value="72">
 </div>
 <div class="form-group rete reten rete_sd hidesett">
-    <label><input type="checkbox" class="svgbtnbefore" name="rete_sd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SD recording</label>&nbsp;&nbsp;&nbsp;<label class="sdrecinfo" style="font-weight: lighter;">(supported only at "Off" and "By Event" cloud recording types)</label>
+    <label><input type="checkbox" class="svgbtnbefore" name="rete_sd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SD recording</label>
 </div>
 `:'') + `
 ` + (vxg.api.cloudone.camera.setAIConfig!==undefined ? `
@@ -177,6 +177,7 @@ CameraEditControl = function(){
 
         $(this).addClass('onvif');
         $(this).find('.iperror').hide();
+        $(this).find('.anccsUrlOptions').click(function(){ $(self).toggleClass('options'); });
 
         $(".setting-dropdown").off().on('click',function() {
             if ($(this).find(".carrot-icon").hasClass("closed")) {
@@ -187,7 +188,6 @@ CameraEditControl = function(){
                 $(this).find(".carrot-icon").addClass("closed");
             }
 
-            if ($(this).hasClass("opt-dropdown")) $(self).toggleClass('options');
             if ($(this).hasClass("loc-dropdown")) $(".loca").toggle();
             if ($(this).hasClass("rete-dropdown")) $(".rete").toggle();
             if ($(this).hasClass("ai-dropdown")) $('.ai_type').toggle();
@@ -197,8 +197,6 @@ CameraEditControl = function(){
         $(this).find('.rete_recmode').change(function(){
             let type = $(this).val();
             let url = ($(self).find('.anccsUrl').val()||'').trim();
-            //if (!self.camera || self.camera.bsrc.url || type=='on' && !url) $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
-            //else $(self).find('.rete_sd input').removeAttr('disabled');
             if (type=='off') $(self).find('.rete_time').addClass("rete_off");
             else $(self).find('.rete_time').removeClass("rete_off").show();
 
@@ -206,13 +204,8 @@ CameraEditControl = function(){
                 $(self).find('.rectypeinfo').show();
             else
                 $(self).find('.rectypeinfo').hide();
-
-            /*if (self.camera) {
-                if (!self.camera.bsrc.url) $(self).find('.sdrecinfo').text(type=='on'?'(supported only at "Off" and "By Event" cloud recording types)':'');
-                else $(self).find('.sdrecinfo').text('(supported only for Cloud cameras)');
-            }*/
-
         });
+        
         $(this).find('.type select').change(function(){
             let type = $(this).val();
             if (type=='onvif') $(self).removeClass('options');

@@ -52,17 +52,18 @@ Connect cameras that support plug-ins.
 </div>
 <label class="prov-server-label custom-checkbox">
 <span class="prov-server-text">Use Provisioning Server</span>
-<input id="prov-server-input" type="checkbox">
+<input id="prov-server-input" type="checkbox" checked>
 <span class="checkmark"></span>
 </label>
-<div class="uplink-wrapper form-group maxwidth" style="display: none;">
+<div class="uplink-wrapper form-group maxwidth">
 <label>Serial Number</label>
 <input autofocus="autofocus" class="serial-number-input" name="serialNum">
 </div>
-<div class="uplink-wrapper wrapper-last form-group maxwidth" style="display: none;">
+<div class="uplink-wrapper wrapper-last form-group maxwidth" >
 <label>MAC Address</label>
 <input autofocus="autofocus" class="mac-address-input" name="serialNum">
 </div>
+<form class="maxwidth" id="dropdown-options"></form>
 <div class="server-status wait" style="display: none"><span></span></div>
 <button type="button" class="vxgbutton uplinkapply">Apply</button>
 <br/><br/>&nbsp;

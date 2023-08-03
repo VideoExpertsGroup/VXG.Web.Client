@@ -60,6 +60,7 @@ display:none!important;
     padding-bottom: 5px;
     display: flex;
     justify-content: space-between;
+    color: var(--main-color);
 }
 
 .setting-dropdown:hover {
