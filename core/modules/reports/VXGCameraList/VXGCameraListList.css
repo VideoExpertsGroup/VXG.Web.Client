@@ -10,7 +10,6 @@
     padding: .75rem;
     max-width: 100px;
     white-space: nowrap;
-    width: 100px;
     text-align: center;
 }
 .cameras-list td:not(.showai) {

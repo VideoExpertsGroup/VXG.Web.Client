@@ -204,6 +204,21 @@ vxg.api.cloud.getAIEnabledCameras = function (channel_ids) {
     });
 }
 
+
+vxg.api.cloud.getUplinkUrl = function(camid, camurl) {
+    var data = {"camid": camid, "url": camurl.replace("/uplink_camera/", "/api/device/" + camid)}
+    
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/uplink_config/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+}
+
 /** Get channel preview image
  *
  * @return Promise

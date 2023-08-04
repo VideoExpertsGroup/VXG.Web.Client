@@ -162,6 +162,10 @@ content: ' ';
     position: relative;
 }
 
+.webui-link{
+    font-size: 26px;
+    color: #878787;
+}
 
 @media (min-width: 1420px) {
     .VXGCameraList {

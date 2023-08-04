@@ -217,7 +217,7 @@ VXGCameraListView.prototype.initDraw = function initDraw(controller, cameraName,
     this.element.innerHTML = 
     	'<div class= "VXGCameraListContainer">'
     +	'	<div class="VXGCameraList">'
-    +	'		<table class="table-hover no-margins with-images cameras-list" style="border-collapse: collapse;">'
+    +	'		<table class="table-hover no-margins with-images cameras-list" style="border-collapse: collapse; width:100%;">'
     +	'		<thead>'
     +	'			<tr>'
     +	'				<th>Preview</th>'
@@ -342,6 +342,7 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
                                     }
                                 }
                                 sessionStorage.removeItem(camera.camera_id);
+                                sessionStorage.removeItem(camera.camera_id + "-url");
                                 core.elements['global-loader'].hide();
                                 return screens['reports'].on_show();
                             }, function(r){
@@ -444,21 +445,24 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 	    }
 	    
 //	    let dataraw = JSON.stringify(bsrc)
+
+        var urlEle = sessionStorage.getItem(vxgcameralistdata[index].src.id + "-url");
 	        
 	    let tr = 
 	'<tr class="sl'+vxgcameralistdata[index].camera_id+'" data-index="' + index + '" access_token="'+ vxgcameralistdata[index].token  +'">' 
-    +	'	<td><div ><campreview></campreview></div></td>' 
-    +	'	<td class="sname"></td>' 
-    +	'	<td class="sloc"></td>' 
+    +	'	<td width="25%"><div ><campreview></campreview></div></td>' 
+    +	'	<td width="20%" class="sname"></td>' 
+    +   '   <td width="5%" class="uilink" id="'+ vxgcameralistdata[index].camera_id+'-ui">' + ((urlEle) ? urlEle : '') + '</td>'
+    +	'	<td width="18%" class="sloc"></td>' 
 //    +	'	<td class="sparkline-container"><span class="sparkline" data-token="' + vxgcameralistdata[index].token + '" data-dataset="'+sparkline+'" style="display:none"></span></td>' 
-    +	'	<td class="showai" id="ai_'+ vxgcameralistdata[index].camera_id +'" data-token="' + vxgcameralistdata[index].camera_id + '"></td>' 
+    +	'	<td width="17%" class="showai" id="ai_'+ vxgcameralistdata[index].camera_id +'" data-token="' + vxgcameralistdata[index].camera_id + '"></td>' 
     +	'	<td ifscreen="plan2camera"><div class="splan vxgbutton-transparent hide" onclick_toscreen="plan2camera"></div></td>'
-    +	'	<td class="VXGCameraListActions">'
+    +	'	<td  width="15%" class="VXGCameraListActions">'
     +	'	<div class="VXGCameraListSettings"><svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg></div>'
     +	'	</td>'
     +	'</tr>';
 
-	    $(tbody).append( $(tr) );
+        $(tbody).append( $(tr) );
 
         if (aiCameras_local) {
             var aiCameras_array = aiCameras_local.split(",").filter(e => e);
@@ -501,59 +505,30 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 	    $(tbody).find('.VXGCameraListSettings').unbind().bind('click', function(event){
 		self.showMenu(event, this, $(this).parent().parent(), controller, self );
 	    });
+        
+        if (!urlEle) {
+            vxg.api.cloud.getCameraConfig(vxgcameralistdata[index].src.id, vxgcameralistdata[index].token).then(function(config) {
+                var link;
+                if (config.url.includes("onvif")) {
+                    var s = config.url.replace("onvif://", "");
+                    link = s.replace("/onvif/device_service", "");
+                } else if (config.url.includes('/uplink_camera/')) {
+                    return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
+                        var linkEle = '<a href="' + urlinfo.url + '" target="_blank" ><i class="fa fa-cog webui-link" aria-hidden="true"></i></a>';
+                        $("#" + urlinfo.id + "-ui").append($(linkEle));
+                        sessionStorage.setItem(urlinfo.id + "-url", linkEle);
+                    });
+                }
 
+                if (link) {
+                    var linkEle = '<a href="http://' + link + '" target="_blank" ><i class="fa fa-cog webui-link" aria-hidden="true"></i></a>';
+                    $("#" + config.id + "-ui").append($(linkEle));
+                    sessionStorage.setItem(config.id + "-url", linkEle);
+                }
 
-
-
-
-
-
-
-/*
-            this.getBsrc().then(function(bsrc){
-	        let sparkline = [];
-	        let sparklineBars = controller.sparklineBars;
-	        for(let i=0; i < sparklineBars; i++){
-	            sparkline.push(self.getRandomInt(0, 10))
-	        }
-	    
-	        let dataraw = JSON.stringify(bsrc)
-	        
-	        let tr = 
-	'<tr cameraod="" data-index="' + index + '" access_token="'+ bsrc.roToken  +'">' 
-    +	'	<td><div ><campreview></campreview></div></td>' 
-    +	'	<td>'+bsrc.name+'</td>' 
-    +	'	<td>' + ((bsrc.location==null) ? "" : bsrc.location) + '</td>' 
-    +	'	<td class="sparkline-container"><span class="sparkline" data-token="' + bsrc['roToken'] + '" data-dataset="'+sparkline+'"></span></td>' 
-    +	'	<td ifscreen="plan2camera"><span class="vxgbutton-transparent" onclick_toscreen="plan2camera">'+(bsrc['planName'] ? bsrc['planName'] : 'UPGRADE')+'</span></td>'
-    +	'	<td class="VXGCameraListActions">'
-    +	'	<div class="VXGCameraListSettings"><svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg></div>'
-    +	'	</td>'
-    +	'</tr>';
-
-	        $(tbody).append( $(tr) );
-		//Clicks on 1st column of row -> play camera
-	        $(tbody).find('td:nth-child(1)').off('click').on('click',function(){
-	    	    let index = $(this).parent().data('index');	    
-	    	    let obj = controller.objByIndex(index);
-		
-		    if (self.callbackFunc !== undefined) 
-		        self.callbackFunc("play", obj);
-	        });
-		//Clicks on any column of row except camera preview and actions -> update chart
-	        $(tbody).find('td:nth-child(2),td:nth-child(3),td:nth-child(4)').off('click').on('click',function(){
-		    let index = $(this).parent().data('index');	    
-		    let obj = controller.objByIndex(index);
-
-		    if (self.callbackFunc !== undefined) 
-		        self.callbackFunc("statistics", obj);
-	        });
-	    //Clicks on columt with actions -> show menu with some actions
-	        $(tbody).find('.VXGCameraListSettings').unbind().bind('click', function(event){
-		    self.showMenu(event, this, $(this).parent().parent(), controller, self );
-	        });
             });
-*/
+        }
+
 	});
 	$('.sparkline').each(function () {
 	    let dataset = $(this).data('dataset').split(',').map(x=>+x);
@@ -571,37 +546,6 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 		self.sparklineLoad( this, roToken, controller);
 	    }
 	});
-
-	/*$('.showai').each(function () {
-        /*vxg.cameras.random_list[camid].getBsrc().then(function(bsrc) {
-            if(bsrc && bsrc.aiGroupTokenID && bsrc.aiGroupToken) {
-                $(s).html('<button class="vxgbutton-transparent" access_token="'+camid+'">Show AI</button>');
-                //Clicks on any column of row except camera preview and actions -> update chart
-                $(s).find('button').off('click').on('click',function(){
-                    let index = $(this).parent().parent().data('index');	    
-                    let obj = controller.objByIndex(index);
-    
-                    if (self.callbackFunc !== undefined) 
-                    self.callbackFunc("statistics", obj);
-                }); 
-            } else {
-                vxg.cameras.random_list[camid].events.getList(1, 0, undefined, undefined, 'object_and_scene_detection,yolov4_detection', 'Person,Car').then(function(r){
-                    if (!r.length) return;
-                    $(s).html('<button class="vxgbutton-transparent" access_token="'+camid+'">Show AI</button>');
-                    //Clicks on any column of row except camera preview and actions -> update chart
-                    $(s).find('button').off('click').on('click',function(){
-                        let index = $(this).parent().parent().data('index');	    
-                        let obj = controller.objByIndex(index);
-    
-                        if (self.callbackFunc !== undefined) 
-                            self.callbackFunc("statistics", obj);
-    
-                    });
-                });
-            }
-        })*/
-
-        //});
 }
 
 VXGCameraListView.prototype.showWait = function showWait(isWait) {
