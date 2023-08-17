@@ -346,7 +346,7 @@ window.screens['admincams'] = {
 		
 		vxg.api.cloud.getCamerasList().then(function(cameras){
             var cams = [];
-            cameras.objects.forEach(c => { if (!c.meta.isstorage) {cams.push(c)} });
+            cameras.objects.forEach(c => { if (c.meta && !c.meta.isstorage) {cams.push(c)} });
 
             let table='<table><thead><tr class="header"><th scope="col">#</th><th scope="col">Name</th><th scope="col">Id</th><th scope="col" style="width:60%">Access token</th><th scope="col">Action</th></tr></thead><tbody>';
             c = 1;
@@ -482,7 +482,10 @@ window.screens['admincams'] = {
 			
 			
 			
-		});
+		}, function(err) {
+            self.wrapper.removeClass('loader');
+            $(self.wrapper).find('.cameralist').empty().append('Error finding cameras: ' + err.responseJSON.errorDetail);
+        });
 		
 
 
