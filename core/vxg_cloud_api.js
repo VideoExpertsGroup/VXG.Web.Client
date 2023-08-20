@@ -174,6 +174,31 @@ vxg.api.cloud.getVideoStreamSettings = function(channel_id, vsid, channel_access
     });
 }
 
+vxg.api.cloud.getNonJpegStreams = function(channel_id, channel_access_token) {
+    channel_id = parseInt(channel_id);
+    if (channel_id<=0)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('Invalid channel id');}, 0);});
+    let baseurl = vxg.api.cloud.getBaseURLFromToken(channel_access_token);
+    let headers = vxg.api.cloud.getHeader(channel_access_token);
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+
+    return $.ajax({
+        type: 'GET',
+        url: baseurl + '/api/v2/cameras/'+channel_id+'/video/streams/',
+        contentType: "application/json",
+        headers: headers
+    }).then(function(vs) {
+        var validStreamIds = [];
+        vs.objects.forEach(stream => {
+            if (stream.format.toLowerCase() != "jpeg" && stream.format.toLowerCase() != "mjpeg") {
+                validStreamIds.push(stream.id);
+            }
+        })
+        return validStreamIds;
+    });
+}
+
 /** Set media streams for camera - live_ms_id, rec_ms_id
  *
  * @param channel_id integer Channel ID

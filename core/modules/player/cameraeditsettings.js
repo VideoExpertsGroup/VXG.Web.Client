@@ -156,58 +156,70 @@ CameraeditsettingsControl = function(){
                     self.dispatchEvent(self.nosubmit_event);
                     return;
                 }
-                $(this).removeClass('nodata');
 
-                if (data.live_ms_id && data.rec_ms_id && data.mstreams_supported) {
-                    self.live_profile = data.live_ms_id;
-                    self.rec_profile = data.rec_ms_id;
+                return vxg.api.cloud.getNonJpegStreams(self.camera.camera_id, token).then(function(validStreams) {
+                    $(this).removeClass('nodata');
 
-                    var topForm = '';
-                    var live_ele = '';
-                    var rec_ele = '';
-                    data.mstreams_supported.forEach(stream => {
-                        live_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.live_ms_id? 'selected' : ''}>${stream.id}</option>`;
-                        rec_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.rec_ms_id? 'selected' : ''}>${stream.id}</option>`;
-                    });
-        
-                    topForm += `
-                        <div class="form-container">
-                            <div class="form-group profile-form" style="padding-right: 10px;">
-                                <label>Live Stream</label>
-                                <select class="form-control" name="live_profile" id="live_profile_select" value="${data.live_ms_id}">
+                    if (data.live_ms_id && data.rec_ms_id && data.mstreams_supported) {
+                        self.live_profile = data.live_ms_id;
+                        self.rec_profile = data.rec_ms_id;
+    
+                        var topForm = '';
+                        var live_ele = '';
+                        var rec_ele = '';
+
+                        var streamCount = 1;
+                        data.mstreams_supported.forEach(stream => {
+                            if (validStreams.includes(stream.vs_id)) {
+                                live_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.live_ms_id? 'selected' : ''}>Profile #${streamCount}</option>`;
+                                rec_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.rec_ms_id? 'selected' : ''}>Profile #${streamCount}</option>`;
+                                streamCount++;
+                            }
+                        });
+            
+                        topForm += `
+                            <div class="form-container">
+                                <div class="form-group profile-form" style="padding-right: 10px;">
+                                    <label>Live Stream</label>
+                                    <select class="form-control" name="live_profile" id="live_profile_select" value="${data.live_ms_id}">
+                                        ${live_ele}
+                                    </select>
+                                </div>
+                                <div class="form-group profile-form">
+                                    <label>Record Stream</label>
+                                    <select class="form-control" name="rec_profile" id="rec_profile_select" value="${data.rec_ms_id}">
+                                        ${rec_ele}
+                                    </select>
+                                </div>
+                            </div>
+            
+                            <div class="form-group header-form">
+                                <label>Edit Stream: </label>
+                                <select class="form-control" name="editing_profile" id="editing_profile_select" value="${data.live_ms_id}">
                                     ${live_ele}
                                 </select>
                             </div>
-                            <div class="form-group profile-form">
-                                <label>Record Stream</label>
-                                <select class="form-control" name="rec_profile" id="rec_profile_select" value="${data.rec_ms_id}">
-                                    ${rec_ele}
-                                </select>
-                            </div>
-                        </div>
-        
-                        <div class="form-group header-form">
-                            <label>Edit Stream: </label>
-                            <select class="form-control" name="editing_profile" id="editing_profile_select" value="${data.live_ms_id}">
-                                ${live_ele}
-                            </select>
-                        </div>
-                    `;
-        
-                    $("#profileeditingform").html(topForm);
-        
-                    $("#editing_profile_select").on("change", function() {
-                        var channel_id = self.camera.camera_id;
-                        var vs_id = $(this).find(':selected').data('vsid');
-                        return vxg.api.cloud.getVideoStreamSettings(channel_id, vs_id, token).then(function(newdata) {
-                            self.source_data = newdata;
-                            return self.onDataLoaded(newdata);
+                        `;
+            
+                        $("#profileeditingform").html(topForm);
+            
+                        $("#editing_profile_select").on("change", function() {
+                            var channel_id = self.camera.camera_id;
+                            var vs_id = $(this).find(':selected').data('vsid');
+                            return vxg.api.cloud.getVideoStreamSettings(channel_id, vs_id, token).then(function(newdata) {
+                                self.source_data = newdata;
+                                return self.onDataLoaded(newdata);
+                            });
                         });
-                    });
-                }
-
-                self.source_data = data;
-                return self.onDataLoaded(data);
+                    }
+    
+                    self.source_data = data;
+                    return self.onDataLoaded(data);
+                }, function(err) {
+                    self.dispatchEvent(self.nosubmit_event);
+                    self.showerror('Error getting video streams: ' + err.responseJSON.errorDetail);
+                })
+       
             },function(){
                 self.showerror('Video settings are not available for this camera');
                 self.dispatchEvent(self.nosubmit_event);
