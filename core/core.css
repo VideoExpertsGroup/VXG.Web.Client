@@ -587,10 +587,24 @@ display:none;
 }
 
 .form-group{
+    width: 100%;
 }
 .form-group label{
 line-height:29px;
 margin-bottom:8px;
+}
+
+.form-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-form {
+    margin: 13px 0px;
+}
+
+.header-form label {
+    color:#1d1d1d; 
 }
 
 .headerBlock {

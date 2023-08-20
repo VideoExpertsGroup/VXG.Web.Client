@@ -266,6 +266,12 @@ CloudCamera.setCameraSettings = function(data){
         return vxg.api.cloud.setCameraSettings(self.camera_id, token, d);
     });
 }
+CloudCamera.setCameraStreams = function(data){
+    let d = data; let self = this;
+    return this.getToken().then(function(token){
+        return vxg.api.cloud.setCameraStreams(self.camera_id, token, d);
+    });
+}
 
 CloudCamera.saveUserMeta = function(data){
     return this.getToken().then(function(token){

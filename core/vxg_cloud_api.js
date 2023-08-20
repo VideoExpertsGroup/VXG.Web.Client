@@ -115,6 +115,13 @@ vxg.api.cloud.getCameraSettings = function (channel_id, channel_access_token) {
             url: baseurl + '/api/v2/cameras/'+channel_id+'/video/streams/'+vsid+'/',
             contentType: "application/json",
             headers: headers
+        }).then(function (vs) {
+            var ret = {
+                ...r,
+                ...vs
+            };
+
+            return ret;
         });
     });
 };
@@ -142,6 +149,54 @@ vxg.api.cloud.setCameraSettings = function (channel_id, channel_access_token, da
         data: JSON.stringify(data)
     });
 };
+
+/** Get video stream settings for specified stream - resolution, framerate etc. 
+ *
+ * @param channel_id integer Channel ID
+ * @param vsid string video stream id
+ * @param channel_access_token string Channel access token or undefined
+ * @return Promise
+ */
+vxg.api.cloud.getVideoStreamSettings = function(channel_id, vsid, channel_access_token) {
+    channel_id = parseInt(channel_id);
+    if (channel_id<=0)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('Invalid channel id');}, 0);});
+    let baseurl = vxg.api.cloud.getBaseURLFromToken(channel_access_token);
+    let headers = vxg.api.cloud.getHeader(channel_access_token);
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+
+    return $.ajax({
+        type: 'GET',
+        url: baseurl + '/api/v2/cameras/'+channel_id+'/video/streams/'+vsid+'/',
+        contentType: "application/json",
+        headers: headers
+    });
+}
+
+/** Set media streams for camera - live_ms_id, rec_ms_id
+ *
+ * @param channel_id integer Channel ID
+ * @param channel_access_token string Channel access token or undefined
+ * @param data object Channel settings
+ * @return Promise
+ */
+vxg.api.cloud.setCameraStreams = function(channel_id, channel_access_token, data) {
+    channel_id = parseInt(channel_id);
+    if (channel_id<=0)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('Invalid channel id');}, 0);});
+    let headers = vxg.api.cloud.getHeader(channel_access_token);
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+
+    return $.ajax({
+        type: 'PUT',
+        url: vxg.api.cloud.getBaseURLFromToken(channel_access_token) + '/api/v2/cameras/'+channel_id+'/media_streams/',
+        contentType: "application/json",
+        headers: headers,
+        data: JSON.stringify(data)
+    });
+}
 
 /** Set camera meta
  *

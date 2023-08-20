@@ -30,7 +30,7 @@ CameraeditsettingsControl = function(){
         this.submitenable_event = new Event('submitenable',{cancelable: false, bubbles: true});
         let self = this;
         access_token = $(this).getNearParentAtribute('access_token');
-        $(this).html('<form></form><div class="wait"><span></span>&nbsp;&nbsp;<div class="spinner"></div></div>'+
+        $(this).html('<div id="profileeditingform"></div><form></form><div class="wait"><span></span>&nbsp;&nbsp;<div class="spinner"></div></div>'+
             ($(self).attr('hidesubmit')!==undefined ? '' : '<button class="apply vxgbutton">Apply</button>') );
 
         $(this).find('.apply').click(function(){
@@ -76,6 +76,14 @@ CameraeditsettingsControl = function(){
 
         let data = {};
         $(this).find('form').serializeArray().forEach(function(v,i){data[v.name] = v.value;});
+
+        let profiles = {};
+        var live_profile = $("#live_profile_select").val();
+        var rec_profile = $("#rec_profile_select").val();
+
+        if (self.live_profile != live_profile) profiles.live_ms_id = live_profile;
+        if (self.rec_profile != rec_profile) profiles.rec_ms_id = rec_profile;
+
         if (data.resolution){
             data.resolution = data.resolution.split('x');
             data.resolution[0] = parseInt(data.resolution[0]);
@@ -100,9 +108,26 @@ CameraeditsettingsControl = function(){
         if (data['gop']!==undefined) data['gop'] = parseInt(data['gop']);
         if (data['vbr_quality']!==undefined) data['vbr_quality'] = parseInt(data['vbr_quality']);
 
+        data.id = $('#editing_profile_select').find(':selected').data('vsid');
+
         this.camera.setCameraSettings(data).then(function(){
-            self.dispatchEvent(self.submited_event);
-            self.hidewait();
+            if (JSON.stringify(profiles) != "{}") {
+                self.camera.setCameraStreams(profiles).then(function() {
+                    self.dispatchEvent(self.submited_event);
+                    self.hidewait();
+                }, function(err) {
+                    if (r && r.responseJSON && r.responseJSON.errorDetail)
+                    self.showerror(r.responseJSON.errorDetail);
+                    else
+                        self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #2</a>');
+                    setTimeout(function(){self.hidewait();},2000);
+                    self.dispatchEvent(self.error_event);
+                });
+            } else {
+                self.dispatchEvent(self.submited_event);
+                self.hidewait();
+            }
+
         },function(r){
             if (r && r.responseJSON && r.responseJSON.errorDetail)
                 self.showerror(r.responseJSON.errorDetail);
@@ -111,7 +136,7 @@ CameraeditsettingsControl = function(){
             setTimeout(function(){self.hidewait();},2000);
             self.dispatchEvent(self.error_event);
         });
-    },
+    }
     this.onCameraLoadedFail = function(r){
         $(this).addClass('nodata');
         this.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
@@ -132,6 +157,55 @@ CameraeditsettingsControl = function(){
                     return;
                 }
                 $(this).removeClass('nodata');
+
+                if (data.live_ms_id && data.rec_ms_id && data.mstreams_supported) {
+                    self.live_profile = data.live_ms_id;
+                    self.rec_profile = data.rec_ms_id;
+
+                    var topForm = '';
+                    var live_ele = '';
+                    var rec_ele = '';
+                    data.mstreams_supported.forEach(stream => {
+                        live_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.live_ms_id? 'selected' : ''}>${stream.id}</option>`;
+                        rec_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.rec_ms_id? 'selected' : ''}>${stream.id}</option>`;
+                    });
+        
+                    topForm += `
+                        <div class="form-container">
+                            <div class="form-group profile-form" style="padding-right: 10px;">
+                                <label>Live Stream</label>
+                                <select class="form-control" name="live_profile" id="live_profile_select" value="${data.live_ms_id}">
+                                    ${live_ele}
+                                </select>
+                            </div>
+                            <div class="form-group profile-form">
+                                <label>Record Stream</label>
+                                <select class="form-control" name="rec_profile" id="rec_profile_select" value="${data.rec_ms_id}">
+                                    ${rec_ele}
+                                </select>
+                            </div>
+                        </div>
+        
+                        <div class="form-group header-form">
+                            <label>Edit Stream: </label>
+                            <select class="form-control" name="editing_profile" id="editing_profile_select" value="${data.live_ms_id}">
+                                ${live_ele}
+                            </select>
+                        </div>
+                    `;
+        
+                    $("#profileeditingform").html(topForm);
+        
+                    $("#editing_profile_select").on("change", function() {
+                        var channel_id = self.camera.camera_id;
+                        var vs_id = $(this).find(':selected').data('vsid');
+                        return vxg.api.cloud.getVideoStreamSettings(channel_id, vs_id, token).then(function(newdata) {
+                            self.source_data = newdata;
+                            return self.onDataLoaded(newdata);
+                        });
+                    });
+                }
+
                 self.source_data = data;
                 return self.onDataLoaded(data);
             },function(){
