@@ -192,9 +192,13 @@ CameraeditsettingsControl = function(){
                                     </select>
                                 </div>
                             </div>
+
+                            <div class="form-label">
+                                <p class="streamedit-title">Edit Stream Settings</p>
+                            </div>
             
                             <div class="form-group header-form">
-                                <label>Edit Stream: </label>
+                                <label>Stream</label>
                                 <select class="form-control" name="editing_profile" id="editing_profile_select" value="${data.live_ms_id}">
                                     ${live_ele}
                                 </select>

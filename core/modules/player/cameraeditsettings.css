@@ -32,3 +32,10 @@ cameraeditsettings .wait{
 cameraeditsettings .spinner{
 background: url(spinner.gif) center center no-repeat!important;
 }
+
+.streamedit-title {
+    margin: 3px 0 5px 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #676a6c;
+}

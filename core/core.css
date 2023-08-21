@@ -600,11 +600,13 @@ margin-bottom:8px;
 }
 
 .header-form {
-    margin: 13px 0px;
+    margin-bottom: 13px;
 }
 
-.header-form label {
-    color:#1d1d1d; 
+.form-label {
+    margin: 21px 0 10px 0;
+    width: 100%;
+    border-bottom: thin solid #979a9c;
 }
 
 .headerBlock {
