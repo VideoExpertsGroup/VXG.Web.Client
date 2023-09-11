@@ -1229,7 +1229,7 @@ class MUser{
             $ai_filter = $ai_params->{'filter'};
 
             if ($type == 'continuous') {
-                if(!$ai_filter && $gt['meta']['ai_type'] == "object_and_scene_detection") {
+                if($ai_filter == 'recording_thumbnail' && $gt['meta']['ai_type'] == "object_and_scene_detection") {
                     return $gt;
                 }
             } else if ($type == 'by_event') {
