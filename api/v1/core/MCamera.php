@@ -599,7 +599,7 @@ class MCamera{
 
         $ai_params = $type == "by_event" ? 
         '{"poll_method": "one_token_many_cam", "filter": "undefined", "access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'","det_threshold":'.$aiDetThresh.'}' :
-        '{"access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'","det_threshold":'.$aiDetThresh.'}';
+        '{"access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'", "det_threshold":'.$aiDetThresh.', "poll_method": "one_token_many_cam", "filter": "recording_thumbnail"}';
 
         $GroupToken = array(
             'name' => $name,
