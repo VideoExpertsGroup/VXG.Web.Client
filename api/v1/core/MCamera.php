@@ -763,20 +763,20 @@ class MCamera{
                     error(500, 'Error creating AI token for this camera');
             }
         } else {
-            if ($type == 'continuous') {
+            if ($type != 'off' ) {
                 $tokenChannels = $aiGroupToken['channels'];
                 if (!in_array($channel_id, $tokenChannels)) {
                     array_push($tokenChannels, $channel_id);
                     $params = ['channels' => $tokenChannels];
-                    if(!MCamera::addChannelToGroupTokenByID($aiGroupToken['id'], $channel_id, MCore::$core->current_user, $params, $type))
+                    if(!$this->addChannelToGroupToken($aiGroupToken['id'], $params, $type))
                         error(500, 'Error adding this camera to AI token');
                 }
-            } else if ($type == 'off') {
+            } else {
                 $tokenChannels = $aiGroupToken['channels'];
                 if (($key = array_search($channel_id, $tokenChannels)) !== false) {
                     unset($tokenChannels[$key]);
                     $params = ['channels' => $tokenChannels];
-                    if(!MCamera::addChannelToGroupTokenByID($aiGroupToken['id'], $channel_id, MCore::$core->current_user, $params, $type))
+                    if(!$this->addChannelToGroupToken($aiGroupToken['id'], $params, $type))
                         error(500, 'Error removing this camera from AI token');
                 }
             }
