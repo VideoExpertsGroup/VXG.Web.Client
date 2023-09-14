@@ -8,7 +8,9 @@
 }
 
 .header-right .activityfilter{
-width:100%;
+    width: 75px;
+    display: flex;
+    font-size: 16px;
 }
 
 .header-right .activityfilter:after {
@@ -26,7 +28,7 @@ content:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMj
     display: block;
 }
 
-ul.activitylist input:before {
+/*ul.activitylist input:before {
     cursor: pointer;
     content: '';
     width: 20px;
@@ -40,7 +42,7 @@ background-size: cover!important;
 }
 ul.activitylist input:checked:before {
 background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMiAyIDIwIDIwIiBmaWxsPSJub25lIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDJDNC42ODYyOSAyIDIgNC42ODYyOSAyIDhWMTZDMiAxOS4zMTM3IDQuNjg2MjkgMjIgOCAyMkgxNkMxOS4zMTM3IDIyIDIyIDE5LjMxMzcgMjIgMTZWOEMyMiA0LjY4NjI5IDE5LjMxMzcgMiAxNiAySDhaTTcuNzE3MTYgMTIuMjgzTDEwLjU0NTYgMTUuMTExNEMxMC43MDE4IDE1LjI2NzYgMTAuOTU1MSAxNS4yNjc2IDExLjExMTMgMTUuMTExNEwxNi43NjgxIDkuNDU0NTNMMTYuMjAyNCA4Ljg4ODg1TDEwLjgyODQgMTQuMjYyOUw4LjI4Mjg1IDExLjcxNzNMNy43MTcxNiAxMi4yODNaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=) bottom no-repeat;
-}
+}*/
 
 ul.activitylist {
 padding: 0 0 14px 0;
@@ -51,23 +53,57 @@ padding: 0 0 14px 0;
     border-bottom: 1px solid #E6E6E6;
 }
 
-ul.activitylist li {
-    list-style: none;
-    overflow: hidden;
+.filter-label {
+    display: flex;
+    align-items: center;
     position: relative;
-cursor:pointer;
-margin-top: 16px;
+    padding-left: 30px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 200;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
-ul.activitylist input {
+.filter-label input {
     position: absolute;
+    opacity: 0;
+    cursor: pointer;
     height: 0;
     width: 0;
 }
-ul.activitylist label {
-padding-left: 26px;
-    cursor: pointer;
-    font-size: 14px;
-    color: #676A6C;
-    font-weight: 400;
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    border: thin solid #a7a7a7;
+    border-radius: 4px;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.filter-label input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.filter-label .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
 }

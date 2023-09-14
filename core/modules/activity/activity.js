@@ -119,10 +119,16 @@ window.screens['activity'] = {
 
 //        alert('hide Test screen');
     },
-// Когда все скрипты и стили загружены
+// Когда все скрипты и стили загружены <i class="fa fa-filter" aria-hidden="true"></i>
+
     'on_ready':function(){
         let self = this;
-        core.elements['header-right'].prepend('<div class="activityfilterContainer"><div class="transparent-button svgbtnafter activityfilter"><span>Filter&nbsp;</span></div></div>');
+        core.elements['header-right'].prepend(`<div class="activityfilterContainer">
+													<div class="transparent-button svgbtnafter activityfilter">
+														<span><i class="fa fa-filter" aria-hidden="true"></i> Filter</span>
+													</div>
+												</div>`);
+		
         core.elements['header-right'].find('.activityfilterContainer .activityfilter').click(function(){
 
 /*
@@ -137,18 +143,47 @@ window.screens['activity'] = {
 	    name="Sound";break;
 	case "linecross":
 	    name="Line cross";break;
-*/
+*/			
 
-            dialogs['mdialog'].activate(`<h7>Select motion filter</h7><p><ul class="activitylist">
-<li><label><input type="checkbox" `+(window.skin.use_filter.split(',').indexOf('motion')!==-1?'checked':'')+` name="motion" class="svgbtnbefore"><span>Motion</span></label></li>
-<li><label><input type="checkbox" `+(window.skin.use_filter.split(',').indexOf('object_and_scene_detection')!==-1?'checked':'')+` name="object_and_scene_detection" class="svgbtnbefore"><span>Object detection</span></label></li>
-<li><label><input type="checkbox" `+(window.skin.use_filter.split(',').indexOf('post_object_and_scene_detection')!==-1?'checked':'')+` name="post_object_and_scene_detection" class="svgbtnbefore"><span>People detection</span></label></li>
-</ul></p><p><button name="apply" class="vxgbutton-transparent" style="width:192px">Set</button></p>`).then(function(r){
+			var activityFilter = localStorage.getItem("activityFilter");
+			var savedFilters = activityFilter == null ? window.skin.use_filter : activityFilter;
+
+            dialogs['mdialog'].activate(`
+				<h7>Select motion filter</h7>
+				<div>
+					<ul class="activitylist">
+						<li>
+							<label class="filter-label custom-checkbox">
+								<span>Motion</span>
+								<input type="checkbox" `+(savedFilters.split(',').indexOf('motion')!==-1?'checked':'')+` name="motion">
+								<span class="checkmark"></span>	
+							</label>
+						</li>
+						<li>
+							<label class="filter-label custom-checkbox">
+								<span>Object detection</span>
+								<input type="checkbox" `+(savedFilters.split(',').indexOf('object_and_scene_detection')!==-1?'checked':'')+` name="object_and_scene_detection">
+								<span class="checkmark"></span>	
+							</label>
+						</li>
+						<li>
+							<label class="filter-label custom-checkbox">
+								<span>People detection</span>
+								<input type="checkbox" `+(savedFilters.split(',').indexOf('post_object_and_scene_detection')!==-1?'checked':'')+` name="post_object_and_scene_detection">
+								<span class="checkmark"></span>		
+							</label>
+						</li>
+					</ul>
+				</div>
+				<div>
+					<button name="apply" class="vxgbutton-transparent" style="width:192px">Set</button>
+				</div>`).then(function(r){
                 if (!r || r.button!='apply') return;
                 let f='';
                 for (let i in r.form){
                     if (r.form[i]=='on') f += (f?',':'')+i;
                 }
+				localStorage.setItem("activityFilter", f);
                 window.skin.use_filter = f==''?'none':f;
                 self.activate();
             });
@@ -158,8 +193,8 @@ window.screens['activity'] = {
     },
 // Когда скрипт инициализируется первый раз (чтоб не выполнять лишнюю работу, возможно даже не нужную пользователю)
     'on_init':function(){
-        window.skin.use_filter='motion,object_and_scene_detection,post_object_and_scene_detection';
-
+		var activityFilter = localStorage.getItem("activityFilter");
+		window.skin.use_filter = activityFilter == null ? 'motion,object_and_scene_detection,post_object_and_scene_detection' : activityFilter;
 
 //        alert('on_init Test screen');
         return defaultPromise();
