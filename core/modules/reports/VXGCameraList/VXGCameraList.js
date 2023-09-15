@@ -217,7 +217,7 @@ VXGCameraListView.prototype.initDraw = function initDraw(controller, cameraName,
     this.element.innerHTML = 
     	'<div class= "VXGCameraListContainer">'
     +	'	<div class="VXGCameraList">'
-    +	'		<table class="table-hover no-margins with-images cameras-list" style="border-collapse: collapse; width:100%;">'
+    +	'		<table class="table-hover no-margins with-images cameras-list" id="VXGCameraListTableSuper" style="border-collapse: collapse; width:100%;">'
     +	'		<thead>'
     +	'			<tr>'
     +	'				<th>Preview</th>'
@@ -383,6 +383,7 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
 	}
 }
 
+// different render based on list/groupBylLoc
 VXGCameraListView.prototype.render = function render(controller, vxgcameralistdata, offset, total, allcamtoken) {
 	let tbody	= this.tbody;
 	let more	= this.more;
@@ -431,6 +432,42 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
             })
         }
     }
+
+    var camerasView = sessionStorage.getItem("camerasView");
+    var cameraGroups = [];
+    var locCountArr = [];
+    if (vxgcameralistdata.length > 0 && camerasView == "cameras-group") {
+        cameraGroups = this.groupByLocation(vxgcameralistdata);
+
+        cameraGroups.forEach(loc => {
+            let tr = 
+            `
+                <tr data-loc="${loc}" class="location-group-toggle droppable" id="${loc}-toggle" >
+                    <td class="quad-preview-wrapper">
+                        <div class="top-row">
+                            <img class="quad-preview" id="${loc}-qp1" data-imgIndex="0" data-imgLoc="${loc}" src="/core/modules/player/camera.svg">
+                            <img class="quad-preview" id="${loc}-qp2" data-imgIndex="1" data-imgLoc="${loc}" src="/core/modules/player/camera.svg">
+                        </div>
+                        <div class="bottom-row ${loc}-bottom">
+                            <img class="quad-preview" id="${loc}-qp3" data-imgIndex="2" data-imgLoc="${loc}" src="/core/modules/player/camera.svg">
+                            <img class="quad-preview" id="${loc}-qp4" data-imgIndex="3" data-imgLoc="${loc}" src="/core/modules/player/camera.svg">
+                        </div>                      
+                    </td>
+                    <td class="location-name">${loc}</td>
+                    <td colspan="4"></td>
+                </tr>
+            `;
+
+            $(tbody).append( $(tr) );
+
+            $(".location-group-toggle").off('click').on('click', function() {
+                var thisLoc = $(this).attr("data-loc");
+                $("." + thisLoc + "-row").toggle();
+            })
+
+            locCountArr.push({'location' : loc, 'count' : 0, "tokens": []});
+        })
+    }
         
 	$.each(vxgcameralistdata, function (index) {
             if (vxgcameralistdata[index].src.name.substr(0,11)=="#StorageFor" && !isNaN(parseInt(vxgcameralistdata[index].src.name.substr(11)))) return;
@@ -444,12 +481,26 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 	        sparkline.push(self.getRandomInt(0, 10))
 	    }
 	    
-//	    let dataraw = JSON.stringify(bsrc)
+        var hideCamera = "";
+        var locClass = "";
+        var groupCam = "";
+        var locNum = 1;
+        var camLoc = vxgcameralistdata[index].src.meta ? vxgcameralistdata[index].src.meta.location : "";         
+        if (cameraGroups.length > 0 && cameraGroups.includes(camLoc) && camerasView == "cameras-group") {
+            hideCamera = "hide";
+            locClass = camLoc + "-row";
+            groupCam = "groupCam";
+            //var locConut = locCountArr.find(l => l.location == camLoc);
+            var locIndex = locCountArr.findIndex(l => l.location == camLoc);
+            locNum = locCountArr[locIndex].count;
+        }
 
         var urlEle = sessionStorage.getItem(vxgcameralistdata[index].src.id + "-url");
+
+        var draggableClass = camerasView == "cameras-group"? "draggable" : "";
 	        
 	    let tr = 
-	'<tr class="sl'+vxgcameralistdata[index].camera_id+'" data-index="' + index + '" access_token="'+ vxgcameralistdata[index].token  +'">' 
+	'<tr class="sl'+vxgcameralistdata[index].camera_id+' ' + hideCamera + ' ' + locClass + ' ' + draggableClass + ' ' + groupCam + '" data-index="' + index + '" data-camid="'+vxgcameralistdata[index].camera_id+'" access_token="'+ vxgcameralistdata[index].token  +'">' 
     +	'	<td width="25%"><div ><campreview></campreview></div></td>' 
     +	'	<td width="20%" class="sname"></td>' 
     +   '   <td width="5%" class="uilink" id="'+ vxgcameralistdata[index].camera_id+'-ui">' + ((urlEle) ? urlEle : '') + '</td>'
@@ -462,7 +513,15 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
     +	'	</td>'
     +	'</tr>';
 
-        $(tbody).append( $(tr) );
+        if (groupCam) {
+            $("#" + camLoc + "-toggle").last().after(tr);
+            if (locNum <= 4) {                    
+                locCountArr[locIndex].count++;
+                locCountArr[locIndex].tokens.push(vxgcameralistdata[index].token);
+            }
+        } else {
+            $(tbody).append( $(tr) );
+        }
 
         if (aiCameras_local) {
             var aiCameras_array = aiCameras_local.split(",").filter(e => e);
@@ -530,6 +589,71 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
         }
 
 	});
+
+
+    let currentLocInfo;
+
+    let promiseChain = Promise.resolve();
+    for (let i = 0; i < locCountArr.length; i++) { 
+        currentLocInfo = locCountArr[i];
+
+        for(let j = 0; j < currentLocInfo.tokens.length; j++) {        
+            const makeNextPromise = (currentLocInfo) => () => {
+                return vxg.api.cloud.getPreview(currentLocInfo.tokens[j])
+                    .then((r) => {
+                        var locImage = document.querySelector('[data-imgloc="'+currentLocInfo.location+'"][data-imgindex="' + j + '"]');
+                        $(locImage).attr("src", r.url);
+                        return true;
+                    });
+            }
+            promiseChain = promiseChain.then(makeNextPromise(currentLocInfo))
+        }
+    }
+
+    if (locCountArr.length != 0) {
+        // gets rid of extra image spaces after
+        locCountArr.forEach(locInfo => {
+            if (locInfo.count == 3) $("#" + locInfo.location + "-qp4").remove();
+            else if (locInfo.count <= 2) $("." + locInfo.location + "-bottom").remove();
+            if (locInfo.count == 1) $("#" + locInfo.location + "-qp2").remove();
+        });
+    }
+    
+    $(".draggable").draggable({
+        revert : function(event, ui) {
+            $(this).data("uiDraggable").originalPosition = {
+                top : 0,
+                left : 0
+            };
+            return !event;
+        }
+    });
+    $(".droppable").droppable({
+        drop :function(event, ui) {
+            core.elements['global-loader'].show();
+            $(ui.draggable).hide();
+            var location = $(this).attr("data-loc");
+            var channel_id = $(ui.draggable).attr("data-camid");
+            vxg.api.cloudone.camera.setLocations(channel_id, location).then(function() {
+                window.location.reload();
+            }, function(err) {
+                alert(err.responseJSON.errorDetail);
+                window.location.reload();
+            })
+        }
+    });
+
+    $( ".groupCam" ).on( "dblclick", function() {
+        var channel_id = $(this).attr("data-camid");
+        core.elements['global-loader'].show();
+        vxg.api.cloudone.camera.setLocations(channel_id, "").then(function() {
+            window.location.reload();
+        }, function(err) {
+            alert(err.responseJSON.errorDetail);
+            window.location.reload();
+        })
+    });
+
 	$('.sparkline').each(function () {
 	    let dataset = $(this).data('dataset').split(',').map(x=>+x);
 	    $(this).sparkline(dataset, {
@@ -546,6 +670,12 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 		self.sparklineLoad( this, roToken, controller);
 	    }
 	});
+}
+
+VXGCameraListView.prototype.groupByLocation = function groupByLocation(cameralist) {
+    var onlyMetaCams = cameralist.filter(cam => cam.src.meta);
+    var onlyLoc = onlyMetaCams.filter(cam => cam.src.meta.location);
+    return [...new Set(onlyLoc.map(cam => cam.src.meta.location))];
 }
 
 VXGCameraListView.prototype.showWait = function showWait(isWait) {

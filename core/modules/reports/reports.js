@@ -239,6 +239,25 @@ window.screens['reports'] = {
 //	let list_controller = new VXGCameraListController(targetElement);
 //	targetElement = this.wrapper.find('.linechart')[0];
 //	var chart_controller = new VXGChartController(targetElement);
+
+		// set to list be default
+		var viewType = sessionStorage.getItem("camerasView");
+		if (viewType) $("." + viewType).addClass("active");
+		else $(".cameras-list").addClass("active");
+
+		$(".cameras-view").click(function() {
+			$(this).addClass('active');
+
+			if ($(this).hasClass('cameras-list')) { 
+				$(".cameras-group").removeClass("active");
+				sessionStorage.setItem("camerasView", "cameras-list");
+			} else {
+				$(".cameras-list").removeClass("active");
+				sessionStorage.setItem("camerasView", "cameras-group");
+			}
+
+			location.reload();
+		})
 	
         return defaultPromise();
     }

@@ -84,3 +84,20 @@ margin-left: 32px;
 body.reports .headerBlock .header-right .signout {
     display: block!important;
 }
+
+.cameras-view {
+    color: #4c4c4c;
+    width: 20px;
+    height: 20px;
+    padding: 7px;
+}
+
+.cameras-view:hover {
+    cursor: pointer;
+    color: #6b6b6b;
+}
+
+.cameras-view.active {
+    border: thin solid #8a8a8a;
+    border-radius: 2px;
+}
