@@ -25,7 +25,7 @@ class MConstants{
 
     const DEFAULT_EVENTHOOK_SECRET_KEY = "hookkey";
 
-    const MAX_CAMERAS_PER_USER = 500;
+    const MAX_CAMERAS_PER_USER = 5000;
 
     const DEFAULT_PLAN = [
         'storage_size' => null, // GB
