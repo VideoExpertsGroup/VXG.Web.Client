@@ -241,6 +241,7 @@ window.screens['reports'] = {
 //	var chart_controller = new VXGChartController(targetElement);
 
 		// set to list be default
+		sessionStorage.setItem("camerasView", "cameras-list");
 		var viewType = sessionStorage.getItem("camerasView");
 		if (viewType) $("." + viewType).addClass("active");
 		else $(".cameras-list").addClass("active");
