@@ -135,6 +135,9 @@ window.core.onclick_toscreen = function(e){
     if (window.screens[screen]) {
         window.screens[screen].src = this;
         window.screens[screen].from_screen = $('body').data('screenid');
+        if(screen == 'tagsview' && window.screens[screen].from_screen == 'cameras') {
+            sessionStorage.setItem("backToCam", this.channelID);
+        }
         window.screens[screen].activate().then(function(){
             delete this.src;
             delete this.from_screen;

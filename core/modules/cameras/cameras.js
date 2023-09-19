@@ -269,13 +269,16 @@ window.screens['cameras'] = {
             let h='';
             self.last_offset += list.length;
             let count = 0;
+            var channelIdList = []; 
             for (let i in list){
                 if (list[i].src.name.substr(0,11)=="#StorageFor" && !isNaN(parseInt(list[i].src.name.substr(11)))) continue;
                 if (list[i].src && list[i].src.meta && list[i].src.meta.isstorage) continue;
                 let captured = list[i].src && list[i].src.meta && list[i].src.meta.capture_id && vxg.user.src.capture_id == list[i].src.meta.capture_id ? ' captured' : '';
                 let info = '<div class="caminfo '+list[i].src.status+' '+(list[i].src.recording?'rec':'')+(list[i].src.status=='active'?' online':'')+'">'+(list[i].src.recording?'Online':(list[i].src.status=='active'?'Online':'Offline'))+'</div>';
                 if (!list[i].src || list[i].src.status===undefined) info='';
-                h += '<div class="camerablock'+captured+'" access_token="'+list[i].getChannelID()+'">'+info+'<campreview onclick_toscreen="tagsview"></campreview><div><div class="settings"></div><div class="name name'+list[i].getChannelID()+'"></div><div class="loc loc'+list[i].getChannelID()+'">'+list[i].getLocation()+'</div></div></div>';
+                var channelID = list[i].getChannelID();
+                channelIdList.push(channelID.toString());
+                h += '<div class="camerablock'+captured+'" access_token="'+channelID+'" id="scrollto'+channelID+'">'+info+'<campreview onclick_toscreen="tagsview"></campreview><div><div class="settings"></div><div class="name name'+channelID+'"></div><div class="loc loc'+channelID+'">'+list[i].getLocation()+'</div></div></div>';
                 count++;
             }
             if (h) {
@@ -293,7 +296,9 @@ window.screens['cameras'] = {
             } else {
                 if (firstsearch){
                     self.wrapper.addClass('nocameras');
-                    el.html('There are no cameras. <a href="javascript:void(0)" ifscreen="addcamera" onclick_toscreen="newcamera">Add a camera</a>');
+                    let savedLocations = sessionStorage.checkedLocations ? JSON.parse(sessionStorage.checkedLocations) : [];
+                    let filterSet = savedLocations.length == 0 ? "" : "for this filter";
+                    el.html('There are no cameras'+filterSet+'. <a href="javascript:void(0)" ifscreen="addcamera" onclick_toscreen="newcamera">Add a camera</a>');
                 }
             }
             for (let i in list){
@@ -301,6 +306,18 @@ window.screens['cameras'] = {
                 list[i].getName().then(function(name){
                     self.wrapper.find('.name'+cid).text(name);
                 });
+            }
+
+            var loadPrevCam = sessionStorage.getItem("backToCam");
+            if (loadPrevCam) {
+                // if camera is not in this list, load more and scroll to it
+                if (!channelIdList.includes(loadPrevCam)) {
+                    self.loadCameras();
+                } else {
+                    var cameraEle = document.getElementById("scrollto" + loadPrevCam);
+                    cameraEle.scrollIntoView({block: "start", inline: "nearest", behavior: "instant"});
+                    sessionStorage.setItem("backToCam", "");
+                }
             }
 
             self.wrapper.removeClass('loader');
@@ -343,7 +360,10 @@ window.screens['cameras'] = {
             self.wrapper.find('.cambd').hide();self.wrapper.find('.cammap').show();
         }
         
-        core.elements['header-right'].prepend('<div class="camerafilterContainer"><div class="transparent-button svgbtnafter camerafilter"><span>Filter&nbsp;</span></div></div>');
+        let savedLocations = sessionStorage.checkedLocations ? JSON.parse(sessionStorage.checkedLocations) : [];
+        let filterSetClass = savedLocations.length == 0 ? "" : "filterset";
+
+        core.elements['header-right'].prepend('<div class="camerafilterContainer"><div class="transparent-button svgbtnafter camerafilter"><span class="'+filterSetClass+'">Filter</span></div></div>');
         core.elements['header-right'].find('.camerafilterContainer').append('<div class="locationContainer" style="display:none;"><div class="locHeader">Select Locations</div><div class="locList"><ul><li class="no-locations">No locations</li></ul></div><div class="locFooter"><button id="setLocations" class="vxgbutton">Set</button></div></div>');
         core.elements['header-right'].find('.camerafilterContainer').on('mouseleave', function (){
             $(this).find('.locationContainer').hide();
@@ -353,7 +373,13 @@ window.screens['cameras'] = {
             core.elements['global-loader'].show();
             self.fillLocations().then(function(locs){
                 core.elements['global-loader'].hide();
-                dialogs['mdialog'].activate(`<h7>Select locations</h7><p><ul class="locationlist">`+locs.html+`</ul></p><p><button name="apply" class="vxgbutton-transparent" style="width:192px">Set</button></p>`).then(function(r){
+                dialogs['mdialog'].activate(`
+                    <h7>Select locations</h7>
+                    <div>
+                        <ul class="locationlist">`+locs.html+`</ul>
+                            </p><p>
+                        <button name="apply" class="vxgbutton-transparent" style="width:192px">Set</button>
+                    </div>`).then(function(r){
                 if (r.button!='apply') return;
                     let filterarray = [];
                     for (let i in r.form){
@@ -381,7 +407,15 @@ window.screens['cameras'] = {
             $.each(locations, function (name, hash) {
                 let locationShowName = name ? name :'No location';
                 let checked = (savedLocations.includes(hash) || savedLocations.length == 0)? 'checked': '';
-                let item = '<li><label><input type="checkbox" '+checked+' name="' + (hash?hash:'nolocation') + '" class="svgbtnbefore"><span>' + locationShowName + '</span></label></li>';
+                let item = `
+                <li>    
+                    <label class="filter-label custom-checkbox">
+                        <span>${locationShowName}</span>
+                        <input type="checkbox" ${checked} name="${(hash?hash:'nolocation')}">
+                        <span class="checkmark"></span>	
+                    </label>
+                </li>
+                `;
                 ret+=item;
                 counter++;
             });
