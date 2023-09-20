@@ -724,29 +724,40 @@ class MCamera{
         if (isset($ret['image_generation_period']) && $ret['image_generation_period'] != $limits['gen_liveimages_period'])
             error(550, $ret['errorDetail']);
     }
-
-    public function setAIConfig($channel_id, $type, $aiGroupToken) {
-        if (!$aiGroupToken) {
+    
+    public function setAIConfigByChannelID($channel_id, $type, $targetToken, $currentToken) {
+        if (!$targetToken) {
             if ($type != 'off') {
                 $aiPeriod = $type == 'continuous' ? 180 : 10;
-                if(!$this->createAIToken($aiPeriod, $type))
+                if(!MCamera::createAITokenByChannelId($channel_id, MCore::$core->current_user, $aiPeriod, $type))
                     error(500, 'Error creating AI token for this camera');
             }
         } else {
             if ($type != 'off' ) {
-                $tokenChannels = $aiGroupToken['channels'];
+                if ($currentToken) {
+                    if ($targetToken['id'] != $currentToken['id']) {
+                        $tokenChannels = $currentToken['channels'];
+                        $key = array_search($channel_id, $tokenChannels);
+                        unset($tokenChannels[$key]);
+                        $params = ['channels' => $tokenChannels];
+                        if(!MCamera::addChannelToGroupTokenByID($currentToken['id'], $channel_id, MCore::$core->current_user, $params, $type, true)) 
+                            error(500, 'Error removing this camera from AI token');
+                    } 
+                }
+
+                $tokenChannels = $targetToken['channels'];
                 if (!in_array($channel_id, $tokenChannels)) {
                     array_push($tokenChannels, $channel_id);
                     $params = ['channels' => $tokenChannels];
-                    if(!$this->addChannelToGroupToken($aiGroupToken['id'], $params, $type))
+                    if(!MCamera::addChannelToGroupTokenByID($targetToken['id'], $channel_id, MCore::$core->current_user, $params, $type)) 
                         error(500, 'Error adding this camera to AI token');
                 }
             } else {
-                $tokenChannels = $aiGroupToken['channels'];
+                $tokenChannels = $targetToken['channels'];
                 if (($key = array_search($channel_id, $tokenChannels)) !== false) {
                     unset($tokenChannels[$key]);
                     $params = ['channels' => $tokenChannels];
-                    if(!$this->addChannelToGroupToken($aiGroupToken['id'], $params, $type))
+                    if(!MCamera::addChannelToGroupTokenByID($targetToken['id'], $channel_id, MCore::$core->current_user, $params, $type)) 
                         error(500, 'Error removing this camera from AI token');
                 }
             }
@@ -755,90 +766,35 @@ class MCamera{
         return true;
     }
 
-    public function setAIConfigByChannelID($channel_id, $type, $aiGroupToken) {
-        if (!$aiGroupToken) {
-            if ($type != 'off') {
-                $aiPeriod = $type == 'continuous' ? 180 : 10;
-                if(!MCamera::createAITokenByChannelId($channel_id, MCore::$core->current_user, $aiPeriod, $type))
-                    error(500, 'Error creating AI token for this camera');
-            }
-        } else {
-            if ($type != 'off' ) {
-                $tokenChannels = $aiGroupToken['channels'];
-                if (!in_array($channel_id, $tokenChannels)) {
-                    array_push($tokenChannels, $channel_id);
-                    $params = ['channels' => $tokenChannels];
-                    if(!MCamera::addChannelToGroupTokenByID($aiGroupToken['id'], $channel_id, MCore::$core->current_user, $params, $type)) error(500, 'Error adding this camera to AI token');
-                }
-            } else {
-                $tokenChannels = $aiGroupToken['channels'];
-                if (($key = array_search($channel_id, $tokenChannels)) !== false) {
-                    unset($tokenChannels[$key]);
-                    $params = ['channels' => $tokenChannels];
-                    if(!MCamera::addChannelToGroupTokenByID($aiGroupToken['id'], $channel_id, MCore::$core->current_user, $params, $type)) error(500, 'Error removing this camera from AI token');
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public function addChannelToGroupTokenByID($tokenid, $channel_id, $user_from, $params, $type) {
+    public function addChannelToGroupTokenByID($tokenid, $channel_id, $user_from, $params, $type, $toggling = false) {
         $server = $user_from->getServerData();
         if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
             error(555, 'Failed to creating camera channel. reason: generateServicesURLs');
         
-        $imagePeriod = $type == 'off' ? null : 180;
-        $imageGenParam = array(
-            'image_generation_period' => $imagePeriod
-        );
-
-        $channel = StreamLandAPI::getChannel($channel_id);
-        $access_token = $channel['access_tokens']['all'];
-
-        $ret = StreamLandAPI::SetChannelParams($imageGenParam,$access_token);
-        if (isset($ret['image_generation_period']) && $ret['image_generation_period'] != $imagePeriod)
-            error(550, $ret['errorDetail']);
-
+        // if we're switching from one ai type to another, no need to reset these params
+        if (!$toggling) {
+            $imagePeriod = $type == 'off' ? null : 180;
+            $imageGenParam = array(
+                'image_generation_period' => $imagePeriod
+            );
+    
+            $channel = StreamLandAPI::getChannel($channel_id);
+            $access_token = $channel['access_tokens']['all'];
+    
+            $ret = StreamLandAPI::SetChannelParams($imageGenParam,$access_token);
+            if (isset($ret['image_generation_period']) && $ret['image_generation_period'] != $imagePeriod)
+                error(550, $ret['errorDetail']);    
+        }
+        
         $ret = StreamLandAPI::UpdateGroupToken($tokenid, $params);
         if (count(array_diff($ret['channels'],$params['channels'])) != 0) {
             error(550, "Error updating group token");
         }
 
-        $group_token = $type == 'off' ? null : $ret['token'];
-        $group_token_id = $type == 'off' ? null : $ret['id'];
+        $group_token = $type == 'off' || $toggling == true ? null : $ret['token'];
+        $group_token_id = $type == 'off' || $toggling == true ? null : $ret['id'];
 
         query('UPDATE "camera" set "aiGroupToken"=?,"aiGroupTokenID"=? WHERE "channelID"=?', [$group_token, $group_token_id , $channel_id]);
-
-        return true;
-    }
-    
-    public function addChannelToGroupToken($tokenid, $params, $type) {
-        $server = $this->owner->getServerData();
-        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
-            error(555, 'Failed generateServicesURLs');
-
-        $imagePeriod = $type == 'off' ? null : 180;
-        // not sure if you should have this on by_event
-        $imageGenParam = array(
-            'image_generation_period' => $imagePeriod
-        );
-
-        $ret = StreamLandAPI::SetChannelParams($imageGenParam,$this->camera['rwToken']);
-        if (isset($ret['image_generation_period']) && $ret['image_generation_period'] != $imagePeriod)
-            error(550, $ret['errorDetail']);
-
-        $ret = StreamLandAPI::UpdateGroupToken($tokenid, $params);
-        if (count(array_diff($ret['channels'],$params['channels'])) != 0) {
-            error(550, "Error updating group token");
-        }
-    
-        $group_token = $type == 'off' ? null : $ret['token'];
-        $group_token_id = $type == 'off' ? null : $ret['id'];
-        $this->camera['aiGroupToken'] = $group_token;
-        // TODO Story aiGroupTokenID to data base
-        $this->camera['aiGroupTokenID'] = $group_token_id;
-        query('UPDATE "camera" set "aiGroupToken"=?,"aiGroupTokenID"=? WHERE "channelID"=?', [$group_token, $group_token_id , $this->camera['channelID']]);
 
         return true;
     }

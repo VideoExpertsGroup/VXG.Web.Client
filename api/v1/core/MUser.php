@@ -1215,7 +1215,7 @@ class MUser{
             $this->updateAllCamsToken();
     }
 
-    public function getAIChannelGroupToken($type = null, $channel_id = null) {
+    public function getAIChannelGroupToken($type = null, $channel_id = null, $forCam = false) {
         $server = $this->getServerData();
         if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
             error(555, 'Failed creating camera channel. reason: generateServicesURLs');
@@ -1228,17 +1228,23 @@ class MUser{
             $ai_params = json_decode($gt['meta']['ai_params']);
             $ai_filter = $ai_params->{'filter'};
 
-            if ($type == 'continuous') {
-                if($ai_filter == 'recording_thumbnail' && $gt['meta']['ai_type'] == "object_and_scene_detection") {
-                    return $gt;
-                }
-            } else if ($type == 'by_event') {
-                if($ai_filter == 'undefined' && $gt['meta']['ai_type'] == "object_and_scene_detection") {
-                    return $gt;
-                }
-            } else if ($type == 'off') {
+            if ($forCam) {
                 if(in_array($channel_id, $gt['channels'])) {
                     return $gt;
+                }
+            } else {
+                if ($type == 'continuous') {
+                    if($ai_filter == 'recording_thumbnail' && $gt['meta']['ai_type'] == "object_and_scene_detection") {
+                        return $gt;
+                    }
+                } else if ($type == 'by_event') {
+                    if($ai_filter == 'undefined' && $gt['meta']['ai_type'] == "object_and_scene_detection") {
+                        return $gt;
+                    }
+                } else if ($type == 'off') {
+                    if(in_array($channel_id, $gt['channels'])) {
+                        return $gt;
+                    }
                 }
             }
         }
