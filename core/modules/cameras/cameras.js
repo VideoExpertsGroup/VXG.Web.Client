@@ -225,10 +225,10 @@ window.screens['cameras'] = {
 
         if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
         if (!filterarray) {
-            if (!sessionStorage.checkedLocations) {
+            if (!localStorage.checkedLocations) {
                 filterarray = []
             } else {
-                filterarray = JSON.parse(sessionStorage.checkedLocations);
+                filterarray = JSON.parse(localStorage.checkedLocations);
             }
         }
 
@@ -252,7 +252,7 @@ window.screens['cameras'] = {
         if (this.camera_list_promise) return this.camera_list_promise;
         return this.camera_list_promise;
     },
-    loadCameras: function(filterarray, firstsearch){
+    loadCameras: function(filterarray, firstsearch, loadedCams = ""){
         if (this.camera_list_promise) return this.camera_list_promise;
 
         let self = this;
@@ -266,7 +266,7 @@ window.screens['cameras'] = {
         } else filterarray = this.last_filterarray;
         this.camera_list_promise = window.vxg.cameras.getCameraFilterListPromise(20,this.last_offset,filterarray,this.search_text, this.all_locations).then(function(list){
             self.camera_list_promise=undefined;
-            let h='';
+            let h = loadedCams == "" ? "" : loadedCams;
             self.last_offset += list.length;
             let count = 0;
             var channelIdList = []; 
@@ -282,9 +282,26 @@ window.screens['cameras'] = {
                 count++;
             }
             if (h) {
-                self.wrapper.removeClass('nocameras');
-                if (count>=20) h+='<div class="wmore"><button type="button" class="vxgbutton more" data-attr="camera">More</button></div>';
-                el.append(h); 
+
+                var loadPrevCam = sessionStorage.getItem("backToCam");
+                if (loadPrevCam) {
+                    // if camera is not in this list, load more and scroll to it
+                    if (!channelIdList.includes(loadPrevCam)) {
+                        self.loadCameras(null, null, h);
+                    } else {
+                        self.wrapper.removeClass('nocameras');
+                        if (count>=20) h+='<div class="wmore"><button type="button" class="vxgbutton more" data-attr="camera">More</button></div>';        
+                        el.append(h); 
+                        var cameraEle = document.getElementById("scrollto" + loadPrevCam);
+                        cameraEle.scrollIntoView({block: "start", inline: "nearest", behavior: "instant"});
+                        sessionStorage.setItem("backToCam", "");
+                    }
+                } else {
+                    self.wrapper.removeClass('nocameras');
+                    if (count>=20) h+='<div class="wmore"><button type="button" class="vxgbutton more" data-attr="camera">More</button></div>';    
+                    el.append(h); 
+                }
+                
                 if (count>=20) self.wrapper.find('.more')[0].addEventListener('click', function() {
                     self.wrapper.find('.more').addClass('spinner').attr('disabled','disabled');
                     self.loadCameras().then(function(){
@@ -296,9 +313,9 @@ window.screens['cameras'] = {
             } else {
                 if (firstsearch){
                     self.wrapper.addClass('nocameras');
-                    let savedLocations = sessionStorage.checkedLocations ? JSON.parse(sessionStorage.checkedLocations) : [];
-                    let filterSet = savedLocations.length == 0 ? "" : "for this filter";
-                    el.html('There are no cameras'+filterSet+'. <a href="javascript:void(0)" ifscreen="addcamera" onclick_toscreen="newcamera">Add a camera</a>');
+                    let savedLocations = localStorage.checkedLocations ? JSON.parse(localStorage.checkedLocations) : [];
+                    let filterSet = savedLocations.length <= 1 && savedLocations[0] != "" ? "for this filter" : "";
+                    el.html('There are no cameras '+filterSet+'. <a href="javascript:void(0)" ifscreen="addcamera" onclick_toscreen="newcamera">Add a camera</a>');
                 }
             }
             for (let i in list){
@@ -306,18 +323,6 @@ window.screens['cameras'] = {
                 list[i].getName().then(function(name){
                     self.wrapper.find('.name'+cid).text(name);
                 });
-            }
-
-            var loadPrevCam = sessionStorage.getItem("backToCam");
-            if (loadPrevCam) {
-                // if camera is not in this list, load more and scroll to it
-                if (!channelIdList.includes(loadPrevCam)) {
-                    self.loadCameras();
-                } else {
-                    var cameraEle = document.getElementById("scrollto" + loadPrevCam);
-                    cameraEle.scrollIntoView({block: "start", inline: "nearest", behavior: "instant"});
-                    sessionStorage.setItem("backToCam", "");
-                }
             }
 
             self.wrapper.removeClass('loader');
@@ -359,16 +364,31 @@ window.screens['cameras'] = {
         if (this.getState().grid<0){
             self.wrapper.find('.cambd').hide();self.wrapper.find('.cammap').show();
         }
-        
-        let savedLocations = sessionStorage.checkedLocations ? JSON.parse(sessionStorage.checkedLocations) : [];
-        let filterSetClass = savedLocations.length == 0 ? "" : "filterset";
 
-        core.elements['header-right'].prepend('<div class="camerafilterContainer"><div class="transparent-button svgbtnafter camerafilter"><span class="'+filterSetClass+'">Filter</span></div></div>');
-        core.elements['header-right'].find('.camerafilterContainer').append('<div class="locationContainer" style="display:none;"><div class="locHeader">Select Locations</div><div class="locList"><ul><li class="no-locations">No locations</li></ul></div><div class="locFooter"><button id="setLocations" class="vxgbutton">Set</button></div></div>');
+        core.elements['header-right'].prepend('<div class="camerafilterContainer"><div class="transparent-button svgbtnafter camerafilter"><span id="filterbtn">Filter</span></div></div>');
+        core.elements['header-right'].find('.camerafilterContainer').append(
+            `<div class="locationContainer" style="display:none;">
+                <div class="locHeader">Select Locations</div>
+                <div class="locList">
+                    <label class="filter-label custom-checkbox" id="locctrl">
+                        <span>Select/deselect all</span>
+                        <input type="checkbox">
+                        <span class="checkmark"></span>	
+                    </label>
+                    <ul>
+                        <li class="no-locations">No locations</li>
+                    </ul>
+                </div>
+                <div class="locFooter">
+                    <button id="setLocations" class="vxgbutton">Set</button>
+                </div>
+            </div>`);
         core.elements['header-right'].find('.camerafilterContainer').on('mouseleave', function (){
             $(this).find('.locationContainer').hide();
         });
-        self.fillLocations();
+
+        self.fillLocations()
+
         core.elements['header-right'].find('.camerafilter').click(function(e){
             core.elements['global-loader'].show();
             self.fillLocations().then(function(locs){
@@ -376,8 +396,7 @@ window.screens['cameras'] = {
                 dialogs['mdialog'].activate(`
                     <h7>Select locations</h7>
                     <div>
-                        <ul class="locationlist">`+locs.html+`</ul>
-                            </p><p>
+                        ${locs.html}
                         <button name="apply" class="vxgbutton-transparent" style="width:192px">Set</button>
                     </div>`).then(function(r){
                 if (r.button!='apply') return;
@@ -386,9 +405,17 @@ window.screens['cameras'] = {
                         if (i=='nolocation') filterarray.push('');
                         else filterarray.push(i);
                     }
-                    if(filterarray.length!=locs.count && filterarray.length<1)
+
+                    if (filterarray.length == locs.count) {
+                        $("#filterbtn").removeClass("filterset");
+                    } else {
+                        $("#filterbtn").addClass("filterset");
+                    }
+
+                    if(filterarray.length==0)
                         filterarray.push('###########');
-                    sessionStorage.checkedLocations = JSON.stringify(filterarray);
+                    localStorage.checkedLocations = JSON.stringify(filterarray);
+
                     window.screens['cameras'].activate(filterarray);
                 });
             },function(){
@@ -398,20 +425,22 @@ window.screens['cameras'] = {
     },
     fillLocations: function(){
         let self = this;
-        let savedLocations = sessionStorage.checkedLocations ? JSON.parse(sessionStorage.checkedLocations) : [];
+        let savedLocations = localStorage.checkedLocations ? JSON.parse(localStorage.checkedLocations) : [];
 
         return vxg.cameras.getLocations(50,0).then(function(locations){
             self.all_locations = locations;
             let ret='';
             let counter = 0;
+            let checkedCount = 0;
             $.each(locations, function (name, hash) {
                 let locationShowName = name ? name :'No location';
                 let checked = (savedLocations.includes(hash) || savedLocations.length == 0)? 'checked': '';
+                if (checked) checkedCount++;
                 let item = `
                 <li>    
                     <label class="filter-label custom-checkbox">
                         <span>${locationShowName}</span>
-                        <input type="checkbox" ${checked} name="${(hash?hash:'nolocation')}">
+                        <input class="locationCheckbox" type="checkbox" ${checked} name="${(hash?hash:'nolocation')}">
                         <span class="checkmark"></span>	
                     </label>
                 </li>
@@ -419,8 +448,19 @@ window.screens['cameras'] = {
                 ret+=item;
                 counter++;
             });
+            let filterset = checkedCount == counter ? "" : "filterset";
+            $("#filterbtn").addClass(filterset);
+
+            var htmlret = `
+            <label class="filter-label custom-checkbox allloc">
+                <span>Select/deselect all</span>
+                <input type="checkbox" id="locctrl" ${(!filterset ? "checked" : "")} onchange="toggleAllLoc()">
+                <span class="checkmark"></span>	
+            </label>
+            <ul class="locationlist">${ret}</ul>`
+
 //            ret+='<li class="no-locations"><input type="checkbox" name="nolocation" class="svgbtnbefore"><span>No location</span></label></li>';
-            return new Promise(function(resolve, reject){setTimeout(function(){resolve({html:ret,count:counter});}, 0);});
+            return new Promise(function(resolve, reject){setTimeout(function(){resolve({html:htmlret,count:counter});}, 0);});
       });
     },
     setState: function(state){
@@ -512,3 +552,9 @@ window.screens['cameras'] = {
         return defaultPromise();
     }
 };
+
+function toggleAllLoc() {
+    var ele = document.getElementById("locctrl");
+    if (ele.checked) $(".locationCheckbox").prop("checked", true);
+    else $(".locationCheckbox").prop("checked", false);
+}

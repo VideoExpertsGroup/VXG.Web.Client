@@ -611,3 +611,7 @@ text-align: center;
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
 }
+
+.allloc {
+    margin-top: 5px;
+}
