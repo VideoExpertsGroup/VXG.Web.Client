@@ -725,7 +725,7 @@ class MCamera{
             error(550, $ret['errorDetail']);
     }
     
-    public function setAIConfigByChannelID($channel_id, $type, $targetToken, $currentToken) {
+    public function setAIConfigByChannelID($channel_id, $type, $targetToken, $currentToken = null) {
         if (!$targetToken) {
             if ($type != 'off') {
                 $aiPeriod = $type == 'continuous' ? 180 : 10;
