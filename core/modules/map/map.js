@@ -9,8 +9,7 @@ window.screens['map'] = {
 //  TODO:
 //    'menu_toggle':true,
 //    'menu_disabled':true,
-    'menu_icon': path+'map.svg',
-    'menu_icon_hover': path+'maphover.svg',
+    'menu_icon': '<i class="fa fa-globe" aria-hidden="true"></i>',
     'html': path+'map.html',
     'js':[path+'mapmarkers.js', path+'markerclusterer.js', 'https://maps.googleapis.com/maps/api/js?key='+(window.googlemap_api_key||'')],
     'css':[path+'map.css'],

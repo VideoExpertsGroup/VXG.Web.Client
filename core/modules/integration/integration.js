@@ -13,8 +13,7 @@ var path = window.core.getPath('integration.js');
 window.screens['integration'] = {
     'menu_weight': 1000,
     'menu_name':'Integrations',
-    'menu_icon': path+'reports.svg',
-    'menu_icon_hover': path+'reportsh.svg',
+    'menu_icon': '<i class="fa fa-cogs" aria-hidden="true"></i>',
 
     // URL link to script page
     'html': path+'integration.html',

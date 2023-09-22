@@ -26,7 +26,11 @@ window.skin.color_of_min_curve = '#7BB247';
 // motion - only motion event , motion,
 window.skin.events_filter = "motion";
 
-window.skin.bottom_line = '<div style="padding-bottom: 20px;text-align: center;"><a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/Privacy_Statement.html">Privacy Policy</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/EULA.html">Term of Use</a></div><div style="color:#808080;text-align:center;line-height: 14px;padding-bottom: 15px;">(c) 2017-2022,<br>VXG Inc. All right reserved.</div>';
-window.skin.login_bottom_line = '<div style="padding-bottom: 20px;text-align: center;"><a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/Privacy_Statement.html">Privacy Policy</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/EULA.html">Term of Use</a></div><div style="color:#808080;text-align:center;line-height: 14px;padding-bottom: 15px;">(c) 2017-2022, VXG Inc. All right reserved.</div>';
+window.skin.privacyPolicy = "https://www.videoexpertsgroup.com/legal-docs/Privacy_Statement.html";
+window.skin.termsOfUse = "https://www.videoexpertsgroup.com/legal-docs/EULA.html";
+window.skin.contactUs = "https://www.videoexpertsgroup.com";
+
+window.skin.bottom_line = '<div style="padding-bottom: 20px;text-align: center;"><a target="_blank" href="'+window.skin.privacyPolicy+'">Privacy Policy</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'+window.skin.termsOfUse+'">Terms of Use</a></div><div style="color:#808080;text-align:center;line-height: 14px;padding-bottom: 15px;">'+window.skin.copyright+'</div>';
+window.skin.login_bottom_line = '<div style="padding-bottom: 20px;text-align: center;"><a target="_blank" href="'+window.skin.privacyPolicy+'">Privacy Policy</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'+window.skin.termsOfUse+'">Term of Use</a></div><div style="color:#808080;text-align:center;line-height: 14px;padding-bottom: 15px;">'+window.skin.copyright+'</div>';
 
 window.no_check_local_addresses = true;

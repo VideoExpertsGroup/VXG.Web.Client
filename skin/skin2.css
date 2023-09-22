@@ -23,7 +23,7 @@ body.activity .header-search{display:none!important;}
 }
 
 /* Rename the first item in the left menu*/
-.leftblock .reports{font-size:0px;}
-.leftblock .reports:after{content:"Home";font-size:12px;}
+.leftblock .reports .menu-name{font-size:0px;}
+.leftblock .reports .menu-name:after{content:"Home";font-size:12px;}
 body.reports .rightblock .headerBlock .header-center{font-size: 0px;}
 body.reports .header-center:after{content:"Home";font-size: 16px;}

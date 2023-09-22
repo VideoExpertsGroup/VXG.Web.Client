@@ -58,17 +58,17 @@ window.core.globalmenu = {
             window.screens[$(this).attr('screen_id')].activate();
         });
     },
-    addMenu: function(screen_id, menu_name, menu_icon, menu_icon_active, weight){
+    addMenu: function(screen_id, menu_name, menu_icon, weight){
         let li = core.elements['global-menu'].find('li');
-        if (!li.length) core.elements['global-menu'].append('<li class="'+screen_id+'" weight="'+weight+'"><span class="menu-icon" style="background-image:url('+menu_icon+'); border-image-source: url('+menu_icon_active+');"></span> '+menu_name+'</li>');
+        if (!li.length) core.elements['global-menu'].append('<li class="menu-item '+screen_id+'" weight="'+weight+'"><span class="menu-icon">'+menu_icon+'</span> <span class="menu-name">'+menu_name+'</span></li>');
         for (let i=0; i<li.length; i++){
             let w = $(li[i]).attr('weight');
             if (w>weight) {
-                $(li[i]).before('<li class="'+screen_id+'" weight="'+weight+'"><span class="menu-icon" style="background-image:url('+menu_icon+');border-image-source: url('+menu_icon_active+');"></span> '+menu_name+'</li>');
+                $(li[i]).before('<li class="menu-item '+screen_id+'" weight="'+weight+'"><span class="menu-icon">'+menu_icon+'</span> '+menu_name+'</li>');
                 break;
             }
             if (i==li.length-1)
-                $(li[i]).after('<li class="'+screen_id+'" weight="'+weight+'"><span class="menu-icon" style="background-image:url('+menu_icon+');border-image-source: url('+menu_icon_active+');"></span> '+menu_name+'</li>');
+                $(li[i]).after('<li class="menu-item '+screen_id+'" weight="'+weight+'"><span class="menu-icon">'+menu_icon+'</span> '+menu_name+'</li>');
         }
         core.elements['global-menu'].find('.'+screen_id).attr('screen_id',screen_id);
     }
@@ -486,7 +486,7 @@ window.core.loadScreens = function(){
             window.screens[i].is_active = false;
             window.screens[i].id = i;
             if (!window.screens[i]['menu_name']) continue;
-            window.core.globalmenu.addMenu(i, window.screens[i]['menu_name'],window.screens[i]['menu_icon'],window.screens[i]['menu_icon_hover'], window.screens[i]['menu_weight']!==undefined ? window.screens[i]['menu_weight'] : 0);
+            window.core.globalmenu.addMenu(i, window.screens[i]['menu_name'],window.screens[i]['menu_icon'],window.screens[i]['menu_weight']!==undefined ? window.screens[i]['menu_weight'] : 0);
         }
 
         for (let i in window.controls){

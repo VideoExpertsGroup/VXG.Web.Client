@@ -33,8 +33,7 @@ window.screens['activity'] = {
 //  TODO:
 //    'menu_toggle':true,
 //    'menu_disabled':true,
-    'menu_icon': path+'activity.svg',
-    'menu_icon_hover': path+'activityh.svg',
+    'menu_icon': '<i class="fa fa-eye" aria-hidden="true"></i>',
     'html': path+'activity.html',
     'css':[path+'activity.css',
 /*i need unload VXGActivityList if here, and load mutually exclusive VXGActivityCollection*/
@@ -124,8 +123,10 @@ window.screens['activity'] = {
     'on_ready':function(){
         let self = this;
         core.elements['header-right'].prepend(`<div class="activityfilterContainer">
-													<div class="transparent-button svgbtnafter activityfilter">
-														<span><i class="fa fa-filter" aria-hidden="true"></i> Filter</span>
+													<div class="transparent-button activityfilter">
+														<i class="fa fa-filter" aria-hidden="true"></i> 
+														<span> Filter</span>
+														<i class="fa fa-angle-down dropdown-icon" aria-hidden="true"></i>
 													</div>
 												</div>`);
 		

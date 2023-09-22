@@ -1,4 +1,7 @@
 /* The site colors */
 :root {
+    --main-color: #7BB247;
+    --rec-color: red;
+    --main-hover-color: #7BB247;
 }
 

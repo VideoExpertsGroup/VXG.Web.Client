@@ -6,8 +6,7 @@ window.screens['users'] = {
     'menu_name':'Users',
     'get_args':function(){
     },
-    'menu_icon': path+'users.svg',
-    'menu_icon_hover': path+'usersh.svg',
+    'menu_icon': '<i class="fa fa-user-o" aria-hidden="true"></i>',
     'html': path+'userslist.html',
     'stablecss':[path+'users.css'],
     'on_search':function(text){
@@ -63,11 +62,11 @@ window.screens['users'] = {
                     '<td class="action-icons">' +
                     //'<button class="userbtn item-resend-confirm" title="Resend confirm email"></button>' +
                     //'<button class="userbtn item-report"></button>' +
-                    '<button class="userbtn item-arch svgbtnhover userarchive '+(archive_enable?'active':'')+'" userid='+users[i].src.id+' username="'+users[i].src.name+'"></button>'+
-                    '<button class="userbtn item-cams usercameras svgbtnhover" onclick_toscreen="usercameras"></button>' +
-                    '<button class="userbtn item-edit edituser svgbtnhover" onclick_toscreen="edituser"></button>' +
+                    '<button class="userbtn item-arch userarchive '+(archive_enable?'active':'')+'" userid='+users[i].src.id+' username="'+users[i].src.name+'"><i class="fa fa-bookmark-o" aria-hidden="true"></i></button>'+
+                    '<button class="userbtn item-cams usercameras" onclick_toscreen="usercameras"><i class="fa fa-video-camera" aria-hidden="true"></i></button>' +
+                    '<button class="userbtn item-edit edituser" onclick_toscreen="edituser"><i class="fa fa-pencil" aria-hidden="true"></i></button>' +
                     //'<button class="userbtn item-goto-user"></button>' +
-                    '<button class="userbtn item-delete deleteuser svgbtnhover" userid='+users[i].src.id+' username="'+users[i].src.name+'"></button></td></tr>';
+                    '<button class="userbtn item-delete deleteuser" userid='+users[i].src.id+' username="'+users[i].src.name+'"><i class="fa fa-trash-o" aria-hidden="true"></i></button></td></tr>';
                 c++;
     
             }
@@ -142,7 +141,7 @@ window.screens['users'] = {
     'on_ready':function(){
     },
     'on_init':function(){
-        core.elements['header-right'].prepend('<div class="transparent-button adduser" ifscreen="edituser" onclick_toscreen="edituser"><img class="svgbtn" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDEzLjVDNy43MjM4NiAxMy41IDcuNSAxMy4yNzYxIDcuNSAxM1YzQzcuNSAyLjcyMzg2IDcuNzIzODYgMi41IDggMi41QzguMjc2MTQgMi41IDguNSAyLjcyMzg2IDguNSAzVjEzQzguNSAxMy4yNzYxIDguMjc2MTQgMTMuNSA4IDEzLjVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTIuNSA4QzIuNSA3LjcyMzg2IDIuNzIzODYgNy41IDMgNy41TDEzIDcuNUMxMy4yNzYxIDcuNSAxMy41IDcuNzIzODYgMTMuNSA4QzEzLjUgOC4yNzYxNCAxMy4yNzYxIDguNSAxMyA4LjVMMyA4LjVDMi43MjM4NiA4LjUgMi41IDguMjc2MTQgMi41IDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">&nbsp;&nbsp;Add&nbsp;user</div>');
+        core.elements['header-right'].prepend('<div class="transparent-button adduser" ifscreen="edituser" onclick_toscreen="edituser"><span class="add-icon">+</span>Add user</div>');
 
         return defaultPromise();
     }

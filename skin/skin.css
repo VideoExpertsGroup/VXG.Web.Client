@@ -28,8 +28,8 @@
 }
 
 /* The image for search control */
-.header-search .mainsearch:before {
-    background: url(img/search.svg) no-repeat;
+.rightblock .headerBlock > .header-search .mainsearch .searchicon {
+    color: var(--main-color);
 }
 
 /* The defaul preview for the event list item if there is not any preview for a event */
@@ -40,11 +40,6 @@
 /* The icon for the drop down control  */
 .menu:after {
     content: url(img/dropdown.svg);
-}
-
-/* The icon for the drop down control in the header  */
-.header-right .gridmenu:after {
-    content: url(img/dropdown.svg) !important;
 }
 
 /* The icon for the AI statistics control  */
@@ -59,22 +54,19 @@
     background-size: contain;
 }
 
+.cloudplayer-controls-container.single-timeline {
+    border-radius: 0 !important;
+    padding: 3px !important;
+}
+
 /* The icons for the left panel : Home, Users, Cameras, Activity and Map  */
-li.reports .menu-icon {background-image: url("img/menu/reports.svg")!important;border-image-source:url("img/menu/reportsh.svg")!important;}
-li.users .menu-icon {background-image: url("img/menu/users.svg")!important;border-image-source:url("img/menu/usersh.svg")!important;}
-li.cameras .menu-icon {background-image: url("img/menu/cameras.svg")!important;border-image-source:url("img/menu/camerash.svg")!important;}
-li.activity .menu-icon {background-image: url("img/menu/activity.svg")!important;border-image-source:url("img/menu/activityh.svg")!important;}
-li.map .menu-icon {background-image: url("img/menu/map.svg")!important;border-image-source:url("img/menu/maphover.svg")!important;}
-li.archive .menu-icon {background-image: url("img/menu/archive.svg")!important;border-image-source:url("img/menu/archiveh.svg")!important;}
-li.integration .menu-icon {background-image: url("img/menu/reports.svg")!important;border-image-source:url("img/menu/reportsh.svg")!important;}
+.menu-item.active .menu-icon{color: var(--main-color);}
 
 .bottomline a, .bottomline a:hover{color:var(--main-color);}
 
 .bottom-global-menu {text-align: center;border-top: 1px solid #fff3;padding-top: 32px;margin-top: 10px;}
 
-.transparent-button.deleteclip{color:#F24949;}
-.transparent-button.deleteclip img{filter: brightness(0.498) sepia(.73) hue-rotate(346deg) saturate(9)!important;}
-.transparent-button.deleteclip .svgbtn{filter: brightness(0.498) sepia(.73) hue-rotate(346deg) saturate(9);}
+.transparent-button.deleteclip{color:#F24949;font-size: 14px;}
 .newcamera .newcamerabtns .add2{display:none;}
 .newcamera .newcamerabtns .add5{display:none;}
 
@@ -83,4 +75,4 @@ li.integration .menu-icon {background-image: url("img/menu/reports.svg")!importa
 .profile .wtab1{display:none!important;}
 .profile .wtab2{display:block!important;}
 .edituser .week_shedule{display:none!important;}
-.cameras .simplemenu > div:nth-child(5) {display:none!important;}
+/*.cameras .simplemenu > div:nth-child(5) {display:none!important;}*/

@@ -2,7 +2,8 @@
     background-image: url(serverlink.svg);
 }
 
-body:not(.servers) .header-right .addserver{
+body:not(.servers) .header-right .addserver,
+body:not(.servers) .header-right .server-download{
 display:none;
 }
 

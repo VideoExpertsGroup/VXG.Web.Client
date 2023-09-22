@@ -153,8 +153,7 @@ window.screens['reports'] = {
 //  TODO:
 //    'menu_toggle':true,
 //    'menu_disabled':true,
-    'menu_icon': path+'reports.svg',
-    'menu_icon_hover': path+'reportsh.svg',
+    'menu_icon': '<i class="fa fa-bookmark-o" aria-hidden="true"></i>',
     'html': path+'reports.html',
     'css':[
 	path+'reports.css', 

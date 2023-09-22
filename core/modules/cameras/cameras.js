@@ -80,7 +80,15 @@ function camGrid(size /* 2,3,4 */){
     onCameraScreenResize();
 }
 
-var menu = ''
+var menu =  `
+        <div class="listmenu-item mcamera" onclick_toscreen="tagsview"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>
+        <div class=" listmenu-item msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Camera </span></div>
+        <div class=" listmenu-item mchart" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>
+        <div class=" listmenu-item mconfigure" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
+        <div class=" listmenu-item mtrash" onclick="onCameraDelete(this)"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>`;
+
+
+var old_menu = ''
     + '<div class="mcamera svgbtnbeforehover" onclick_toscreen="tagsview">Timeline</div>'
     + '<div class="msetting svgbtnbeforehover" ifscreen="camerasettings" onclick_toscreen="camerasettings">Camera</div>'
     + '<div class="mchart svgbtnbeforehover" ifscreen="camerameta" onclick_toscreen="camerameta">Metadata</div>'
@@ -206,8 +214,7 @@ window.screens['cameras'] = {
 //  TODO:
 //    'menu_toggle':true,
 //    'menu_disabled':true,
-    'menu_icon': path+'cameras.svg',
-    'menu_icon_hover': path+'camerash.svg',
+    'menu_icon': '<i class="fa fa-video-camera" aria-hidden="true"></i>',
     'html': path+'cameras.html',
     'css':[path+'cameras.css'],
     'js':[path.substr(0,path.length-16)+'webcontrols/camera_map.js'],
@@ -365,7 +372,7 @@ window.screens['cameras'] = {
             self.wrapper.find('.cambd').hide();self.wrapper.find('.cammap').show();
         }
 
-        core.elements['header-right'].prepend('<div class="camerafilterContainer"><div class="transparent-button svgbtnafter camerafilter"><span id="filterbtn">Filter</span></div></div>');
+        core.elements['header-right'].prepend('<div class="camerafilterContainer"><div class="transparent-button camerafilter"><span id="filterbtn">Filter</span></div></div>');
         core.elements['header-right'].find('.camerafilterContainer').append(
             `<div class="locationContainer" style="display:none;">
                 <div class="locHeader">Select Locations</div>
@@ -486,7 +493,7 @@ window.screens['cameras'] = {
         statesArray[-1] = 'Map';
 
         let curState = self.getState();
-        core.elements['header-right'].prepend('<div tabindex="0" class="svgbtnafter gridmenu hide transparent-button"><span>'+statesArray[curState.grid]+'</span>' +
+        core.elements['header-right'].prepend('<div tabindex="0" class="gridmenu hide transparent-button"><span>'+statesArray[curState.grid]+'</span><i class="fa fa-angle-down" aria-hidden="true"></i>' +
             '    <ul class="menu-dropdown">' +
             '        <li class="nogrid"><a href="javascript:;">&nbspList&nbsp</a></li>' +
             '        <li class="grid22"><a href="javascript:;">2&nbspx&nbsp2</a></li>' +
@@ -494,7 +501,7 @@ window.screens['cameras'] = {
             '        <li class="grid44"><a href="javascript:;">4&nbspx&nbsp4</a></li>' +
             '        <li class="gridmap"><a href="javascript:;">Map</a></li>' +
             '    </ul>' +
-            '</div><div class="transparent-button svgbtnafter active addcamera" ifscreen="newcamera" onclick_toscreen="newcamera"><span style="font-size:200%">+&nbsp;&nbsp;</span><span>Add&nbsp;camera</span></div>');
+            '</div><div class="transparent-button active addcamera" ifscreen="newcamera" onclick_toscreen="newcamera"><span class="add-icon">+</span><span>Add camera</span></div>');
 
         core.elements['header-right'].find('.nogrid').click(function(){
             self.wrapper.removeClass('grid');

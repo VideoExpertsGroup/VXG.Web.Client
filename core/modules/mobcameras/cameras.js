@@ -1,7 +1,14 @@
 window.screens = window.screens || {};
 var path = window.core.getPath('cameras.js');
 
-var menu = ''
+var menu =  `
+        <div class="listmenu-item mcamera" onclick_toscreen="player"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>'
+        <div class=" listmenu-item msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Camera </span></div>'
+        <div class=" listmenu-item mchart" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>'
+        <div class=" listmenu-item mconfigure" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>'
+        <div class=" listmenu-item mtrash" ifscreen="removecamera" onclick_toscreen="removecamera"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>`
+
+var old_menu = ''
     + '<div class="mcamera" onclick_toscreen="player">Timeline</div>'
     + '<div class="msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings">Camera</div>'
     + '<div class="mchart" ifscreen="camerameta" onclick_toscreen="camerameta">Metadata</div>'
@@ -59,8 +66,7 @@ window.screens['cameras'] = {
 //  TODO:
 //    'menu_toggle':true,
 //    'menu_disabled':true,
-    'menu_icon': path+'cameras.svg',
-    'menu_icon_hover': path+'camerash.svg',
+    'menu_icon': '<i class="fa fa-video-camera" aria-hidden="true"></i>',
     'html': path+'cameras.html',
     'css':[path+'cameras.css'],
     'stablecss':[path+'scameras.css'],

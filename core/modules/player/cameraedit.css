@@ -68,7 +68,7 @@ display:none!important;
 }
 
 .bottom-options {
-    border-bottom: thin solid #9ad067;
+    border-bottom: thin solid var(--main-color);
 }
 
 cameraedit .anccsUrlOptions,

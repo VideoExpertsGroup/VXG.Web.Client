@@ -6,8 +6,7 @@ window.screens['admin'] = {
     'menu_name':'Admin',
     'get_args':function(){
     },
-    'menu_icon': path+'admin.svg',
-    'menu_icon_hover': path+'adminh.svg',
+    'menu_icon': '<i class="fa fa-lock" aria-hidden="true"></i>',
     'html': path+'partnerslist.html',
     'stablecss':[path+'admin.css'],
     'on_search':function(text){
@@ -52,11 +51,11 @@ window.screens['admin'] = {
             var hide_ai_class = ret.aiEnabled ? "" : "hide-ai";
             for (let i in partners) {
                 table += '<tr userid="' + partners[i].src.id + '"><td>' + c + '</td><td>' + partners[i].src.id + '</td><td class="name">' + partners[i].src.name + '</td><td class="action-icons">'
-						+ '<button class="userbtn item-rec svgbtnhover userrec setting_rec '+ ((partners[i].src.allow_rec == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
-						+ '<button class="userbtn item-arch svgbtnhover userarchive setting_int '+ ((partners[i].src.allow_int == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
-                        + '<button class="userbtn item-ai svgbtnhover userai setting_ai ' + hide_ai_class + " " + ((partners[i].src.allow_ai == true)?'active':'')+'" userid="'+ partners[i].src.id +'"></button>'
-                        + '<button onclick_toscreen="admincams" class="userbtn item-delete usercameras svgbtnhover" userid="'+ partners[i].src.id +'"></button>'
-						+ '<button class="userbtn item-delete deleteuser svgbtnhover" userid="'+ partners[i].src.id +'"></button>'
+						+ '<button class="userbtn item-rec userrec setting_rec '+ ((partners[i].src.allow_rec == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></button>'
+						+ '<button class="userbtn item-arch userarchive setting_int '+ ((partners[i].src.allow_int == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-bookmark-o" aria-hidden="true"></i></button>'
+                        + '<button class="userbtn item-ai userai setting_ai ' + hide_ai_class + " " + ((partners[i].src.allow_ai == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-microchip" aria-hidden="true"></i></button>'
+                        + '<button onclick_toscreen="admincams" class="userbtn item-delete usercameras" userid="'+ partners[i].src.id +'"><i class="fa fa-video-camera" aria-hidden="true"></i></button>'
+						+ '<button class="userbtn item-delete deleteuser" userid="'+ partners[i].src.id +'"><i class="fa fa-trash-o" aria-hidden="true"></i></button>'
 						+ '</td></tr>';
                 c++;
             }
@@ -230,8 +229,8 @@ window.screens['admin'] = {
     'on_ready':function(){
     },
     'on_init':function(){
-        core.elements['header-right'].prepend('<div class="transparent-button adduser" onclick="make_admin()"><img class="svgbtn" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDEzLjVDNy43MjM4NiAxMy41IDcuNSAxMy4yNzYxIDcuNSAxM1YzQzcuNSAyLjcyMzg2IDcuNzIzODYgMi41IDggMi41QzguMjc2MTQgMi41IDguNSAyLjcyMzg2IDguNSAzVjEzQzguNSAxMy4yNzYxIDguMjc2MTQgMTMuNSA4IDEzLjVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTIuNSA4QzIuNSA3LjcyMzg2IDIuNzIzODYgNy41IDMgNy41TDEzIDcuNUMxMy4yNzYxIDcuNSAxMy41IDcuNzIzODYgMTMuNSA4QzEzLjUgOC4yNzYxNCAxMy4yNzYxIDguNSAxMyA4LjVMMyA4LjVDMi43MjM4NiA4LjUgMi41IDguMjc2MTQgMi41IDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">&nbsp;&nbsp;Make&nbsp;admin</div>');
-        core.elements['header-right'].prepend('<div class="transparent-button adduser" onclick="add_user()"><img class="svgbtn" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDEzLjVDNy43MjM4NiAxMy41IDcuNSAxMy4yNzYxIDcuNSAxM1YzQzcuNSAyLjcyMzg2IDcuNzIzODYgMi41IDggMi41QzguMjc2MTQgMi41IDguNSAyLjcyMzg2IDguNSAzVjEzQzguNSAxMy4yNzYxIDguMjc2MTQgMTMuNSA4IDEzLjVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTIuNSA4QzIuNSA3LjcyMzg2IDIuNzIzODYgNy41IDMgNy41TDEzIDcuNUMxMy4yNzYxIDcuNSAxMy41IDcuNzIzODYgMTMuNSA4QzEzLjUgOC4yNzYxNCAxMy4yNzYxIDguNSAxMyA4LjVMMyA4LjVDMi43MjM4NiA4LjUgMi41IDguMjc2MTQgMi41IDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">&nbsp;&nbsp;Add&nbsp;user</div>');
+        core.elements['header-right'].prepend('<div class="transparent-button adduser" onclick="make_admin()"><span class="add-icon">+</span>&nbsp;&nbsp;Make&nbsp;admin</div>');
+        core.elements['header-right'].prepend('<div class="transparent-button adduser" onclick="add_user()"><span class="add-icon">+</span>&nbsp;&nbsp;Add&nbsp;user</div>');
 
         return defaultPromise();
     }
@@ -497,7 +496,7 @@ window.screens['admincams'] = {
     'on_ready':function(){
     },
     'on_init':function(){
-        core.elements['header-right'].prepend('<div class="transparent-button adduser" ifscreen="edituser" onclick_toscreen="edituser"><img class="svgbtn" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDEzLjVDNy43MjM4NiAxMy41IDcuNSAxMy4yNzYxIDcuNSAxM1YzQzcuNSAyLjcyMzg2IDcuNzIzODYgMi41IDggMi41QzguMjc2MTQgMi41IDguNSAyLjcyMzg2IDguNSAzVjEzQzguNSAxMy4yNzYxIDguMjc2MTQgMTMuNSA4IDEzLjVaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTIuNSA4QzIuNSA3LjcyMzg2IDIuNzIzODYgNy41IDMgNy41TDEzIDcuNUMxMy4yNzYxIDcuNSAxMy41IDcuNzIzODYgMTMuNSA4QzEzLjUgOC4yNzYxNCAxMy4yNzYxIDguNSAxMyA4LjVMMyA4LjVDMi43MjM4NiA4LjUgMi41IDguMjc2MTQgMi41IDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">&nbsp;&nbsp;Add&nbsp;user</div>');
+        core.elements['header-right'].prepend('<div class="transparent-button adduser" ifscreen="edituser" onclick_toscreen="edituser"><span class="add-icon">+</span>Add user</div>');
 
         return defaultPromise();
     }

@@ -89,7 +89,7 @@ padding-top: 17px;
 .screens > .tagsview .btnarea > div{
     flex: 1 1;
     border-bottom: 2px solid #E7E7E7;
-padding: 10px 8px 20px 42px;
+padding: 10px 8px 20px 7px;
     text-align: left;
 font-size: 16px;
 text-transform: uppercase;
@@ -192,15 +192,11 @@ height:100%;
 text-align:center;
 margin-top:20px;
 }
-.screens > .tagsview .closebtn{
-    width: 24px;
-    height: 23px;
-    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB4PSIyLjQiIHk9IjIuNCIgd2lkdGg9IjE5LjIiIGhlaWdodD0iMTkuMiIgcng9IjkuNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiLz48cGF0aCBkPSJNMTMgOUwxMC4xNzE2IDExLjgyODRMMTMgMTQuNjU2OSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=) center center no-repeat;
-    background-size: auto;
-    position: absolute;
-    top: 23px;
-    left: 21px;
+.screens > .tagsview .closebtn i{
+    margin-right: 10px;
+    color: var(--main-color);
 cursor:pointer;
+font-size: 18px;
 }
 
 .screens > .tagsview .share .shareurl{
@@ -447,6 +443,16 @@ margin-left:10px;
 white-space: nowrap;
     margin-left: 10px;
 padding: 5px 24px;
+}
+
+.ncssbuttons .transparent-button i {
+    font-size: 20px;
+    margin-right: 8px;
+}
+
+.ncssbuttons .add-icon {
+    font-size: 28px !important;
+    margin-right: 5px !important;
 }
 
 .text-primary {

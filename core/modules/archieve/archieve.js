@@ -10,8 +10,7 @@ window.screens['archive'] = {
 //  TODO:
 //    'menu_toggle':true,
 //    'menu_disabled':true,
-    'menu_icon': path+'archieve.svg',
-    'menu_icon_hover': path+'archieveh.svg',
+    'menu_icon': '<i class="fa fa-folder-o" aria-hidden="true"></i>',
     'html': path+'archieve.html',
     'css':[ path+'archieve.css',
 	path+'VXGArchieve/VXGArchieve.css',

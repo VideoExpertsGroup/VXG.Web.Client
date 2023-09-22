@@ -79,8 +79,7 @@ window.screens['servers'] = {
     'get_args':function(){
     },
     'stablecss':[path+'sserver.css'],
-    'menu_icon': path+'servers.svg',
-    'menu_icon_hover': path+'serversh.svg',
+    'menu_icon': '<i class="fa fa-server" aria-hidden="true"></i>',
     'html': path+'servers.html',
     'css':[path+'servers.css'],
     'on_search':function(text){
@@ -137,9 +136,9 @@ window.screens['servers'] = {
     'on_init':function(){
         let self = this;
         core.elements['header-right'].prepend('' +
-            '<div class="transparent-button svgbtnafter active addserver" ><span style="font-size:200%">+&nbsp;&nbsp;</span><span>Add&nbsp;server</span></div>');
+            '<div class="transparent-button active addserver" ><span class="add-icon">+</span><span>Add server</span></div>');
         core.elements['header-right'].prepend('' +
-            '<a class="server-download" href="https://dashboard.videoexpertsgroup.com/downloads/gateway/" target="_blank">Download&nbsp;package</a>');
+            '<a class="server-download" href="https://dashboard.videoexpertsgroup.com/downloads/gateway/" target="_blank">Download Package</a>');
         core.elements['header-right'].find('.addserver').click(function(){
             dialogs['mdialog'].activate('<h7>Enter the server UUID</h7><p></p><p><input name="uuid"/><br/><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="add" class="vxgbutton">Add server</button></p>').then(function(r){
                 if (r.button!='add') return;

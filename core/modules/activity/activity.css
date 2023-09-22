@@ -10,18 +10,20 @@
 .header-right .activityfilter{
     width: 75px;
     display: flex;
-    font-size: 16px;
 }
 
 .header-right .activityfilter:after {
-    content: url(/img/dropdown.svg);
     padding: 0;
     display: inline-block;
 margin-left: 6px;
 }
 
-body.mobile .header-right .activityfilter:after{
-content:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOS44MjU0IDUuMTQ5NjZDMTkuOTM2MiA1LjA1NDY3IDIwIDQuOTE2IDIwIDQuNzcwMDNWMC41QzIwIDAuMjIzODU4IDE5Ljc3NjEgMCAxOS41IDBIMC41QzAuMjIzODU3IDAgMCAwLjIyMzg1OCAwIDAuNVY0Ljc3MDAzQzAgNC45MTYgMC4wNjM3ODE0IDUuMDU0NjcgMC4xNzQ2MDQgNS4xNDk2Nkw2LjgyNTQgMTAuODUwM0M2LjkzNjIyIDEwLjk0NTMgNyAxMS4wODQgNyAxMS4yM1YxOS4yNUM3IDE5LjYwNjggNy4zNjI5NiAxOS44NDg4IDcuNjkyMzEgMTkuNzExNUwxMi42OTIzIDE3LjYyODJDMTIuODc4NiAxNy41NTA2IDEzIDE3LjM2ODUgMTMgMTcuMTY2N1YxMS4yM0MxMyAxMS4wODQgMTMuMDYzOCAxMC45NDUzIDEzLjE3NDYgMTAuODUwM0wxOS44MjU0IDUuMTQ5NjZaTTE4Ljg0IDQuNDY2NDhMMTIuNDE5NyA5Ljk2OTZDMTIuMDUxOCAxMC4yODUgMTEuODQgMTAuNzQ1NCAxMS44NCAxMS4yM1YxNi43MjY3TDguMTYgMTguMjZWMTEuMjNDOC4xNiAxMC43NDU0IDcuOTQ4MjUgMTAuMjg1IDcuNTgwMzEgOS45Njk2TDEuMTYgNC40NjY0OFYxLjE2SDE4Ljg0VjQuNDY2NDhaTTEyLjI0NjIgMTYuNTU3NEwxMi4yNDQ5IDE2LjU1OEwxMi4yNDYyIDE2LjU1NzRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=)!important;
+.activityfilter i {
+    margin-right: 7px;
+}
+
+.activityfilter .dropdown-icon {
+    margin-left: 5px;
 }
 
 .header-right .activityfilterContainer{

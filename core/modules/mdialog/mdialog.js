@@ -39,13 +39,17 @@ window.dialogs['idialog'] = {
     'no_modal':true,
     'on_show':function(html, delay){
         let self = this;
-        let body = document.querySelector('body');
-        let wrapper = document.createElement('div');
-        wrapper.className = 'infodialog';
-        wrapper.innerHTML = html;
-        body.appendChild(wrapper);
+        let ele = `
+            <div class="infodialog">
+                <div class="infowrapper">
+                    <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                    ${html}
+                </div>
+            </div>
+        `;
+        $("body").append($(ele));
         if (!delay || delay<100) delay=1000;
-        setTimeout(function(){body.removeChild(wrapper);},delay);
+        setTimeout(function(){$(".infodialog").remove();},delay);
 
         return defaultPromise();
     }

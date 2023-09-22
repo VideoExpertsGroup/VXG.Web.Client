@@ -279,11 +279,11 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
 	let el = $(whoCall).find('.VXGCameraListMenu');
 	let menu = ''
     +	'<div class="VXGCameraListMenu">'
-    +	'	<div class="svgbtnbeforehover mcamera" ifscreen="tagsview" onclick_toscreen="tagsview">Timeline</div>'
-    +	'	<div class="svgbtnbeforehover msetting" ifscreen="camerasettings">Camera</div>'
-    +	'	<div class="svgbtnbeforehover mchart" ifscreen="camerameta">Metadata</div>'
-    +	'	<div class="svgbtnbeforehover mconfigure" ifscreen="addcamera">Config</div>'
-    +	'	<div class="svgbtnbeforehover mtrash">Remove</div>'
+    +	'	<div class="svgbtnbeforehover listmenu-item mcamera" ifscreen="tagsview" onclick_toscreen="tagsview"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>'
+    +	'	<div class="svgbtnbeforehover listmenu-item msetting" ifscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Camera </span></div>'
+    +	'	<div class="svgbtnbeforehover listmenu-item mchart" ifscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>'
+    +	'	<div class="svgbtnbeforehover listmenu-item mconfigure" ifscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>'
+    +	'	<div class="svgbtnbeforehover listmenu-item mtrash"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>'
     +	'</div>';
 	if (!el.length) {
 	    $(whoCall).append(menu);

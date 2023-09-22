@@ -89,9 +89,9 @@ overflow-y: scroll;
 body.mobile .header-right .gridmenu span, body.mobile .header-right .camerafilter span, body.mobile .header-right .addcamera span{
 display:none;
 }
-body.mobile .header-right .gridmenu:after{
+/*body.mobile .header-right .gridmenu:after{
 content:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KPHBhdGggZD0iTTMwLDhIMTBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjEwQzMyLDguOSwzMS4xLDgsMzAsOHogTTI4LDI4SDEyVjEyaDE2VjI4eiBNOTAsOEg3MCAgYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMlYxMEM5Miw4LjksOTEuMSw4LDkwLDh6IE04OCwyOEg3MlYxMmgxNlYyOHogTTYwLDhINDBjLTEuMSwwLTIsMC45LTIsMnYyMCAgYzAsMS4xLDAuOSwyLDIsMmgyMGMxLjEsMCwyLTAuOSwyLTJWMTBDNjIsOC45LDYxLjEsOCw2MCw4eiBNNTgsMjhINDJWMTJoMTZWMjh6IE0zMCwzOEgxMGMtMS4xLDAtMiwwLjktMiwydjIwYzAsMS4xLDAuOSwyLDIsMmgyMCAgYzEuMSwwLDItMC45LDItMlY0MEMzMiwzOC45LDMxLjEsMzgsMzAsMzh6IE0yOCw1OEgxMlY0MmgxNlY1OHogTTkwLDM4SDcwYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMiAgVjQwQzkyLDM4LjksOTEuMSwzOCw5MCwzOHogTTg4LDU4SDcyVjQyaDE2VjU4eiBNNjAsMzhINDBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjQwICBDNjIsMzguOSw2MS4xLDM4LDYwLDM4eiBNNTgsNThINDJWNDJoMTZWNTh6IE0zMCw2OEgxMGMtMS4xLDAtMiwwLjktMiwydjIwYzAsMS4xLDAuOSwyLDIsMmgyMGMxLjEsMCwyLTAuOSwyLTJWNzAgIEMzMiw2OC45LDMxLjEsNjgsMzAsNjh6IE0yOCw4OEgxMlY3MmgxNlY4OHogTTkwLDY4SDcwYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMlY3MCAgQzkyLDY4LjksOTEuMSw2OCw5MCw2OHogTTg4LDg4SDcyVjcyaDE2Vjg4eiBNNjAsNjhINDBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjcwICBDNjIsNjguOSw2MS4xLDY4LDYwLDY4eiBNNTgsODhINDJWNzJoMTZWODh6IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=)!important;
-}
+}*/
 
 .header-right .camerafilter{
 width:100%;
@@ -349,7 +349,6 @@ color:var(--main-color);
 
 
 .header-right .gridmenu:after {
-    content: url("/img/dropdown.svg");
     padding: 0;
     display: inline-block;
 margin-left: 6px;
@@ -487,11 +486,16 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
     min-width: 25px;
     max-width: 100px;
 }
+
+.gridmenu i {
+    color: var(--main-color);
+    margin-left: 5px;
+}
+
 .header-right .addcamera {
 order: 10;
     flex: 3 3 110px;
-    max-width: 110px;
-min-width:50px;
+    width: 100px;
 }
 body.mobile .header-right .addcamera {
     flex: 1 1 30px;
