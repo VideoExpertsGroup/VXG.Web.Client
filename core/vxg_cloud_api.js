@@ -526,13 +526,15 @@ vxg.api.cloud.getCamerasList = function(obj){
 
 vxg.api.cloud.getCameraInfo = function(channel_id, access_token, obj){
     var data = obj || {};
+    data.include_meta = obj && obj.include_meta ? obj.include_meta : true;
+
     let headers = vxg.api.cloud.getHeader(access_token);
     if (!access_token) return $.ajax({
         type: 'GET',
         url: vxg.api.cloud.apiSrc + '/api/v5/channels/'+channel_id+'/',
         headers: headers,
         contentType: "application/json",
-        data: [{"include_meta": true}]
+        data: data
     });
     if (!headers)
         return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
