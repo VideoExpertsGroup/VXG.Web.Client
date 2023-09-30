@@ -2,8 +2,8 @@ window.skin = {}
 
 // Login page
 // Title
-window.skin.pageTitle = "VXG Cloud One";
-window.skin.copyright = "2022 VXG Inc. | All Rights Reserved";
+window.skin.pageTitle = "Cloud One";
+window.skin.copyright = "2022 Inc. | All Rights Reserved";
 
 // Window setting 
 // Title 
@@ -11,7 +11,7 @@ window.skin.title     = "Cloud One";
 // Page icon
 window.skin.favicon = '/skin/fav-icon.png';
 // URL that is used when an user clicks on logo
-window.skin.logourl = 'https://videoexpertsgroup.com/';
+window.skin.logourl = '#';
 
 // People and Viecle counting
 // Color of the average curve 
@@ -26,9 +26,9 @@ window.skin.color_of_min_curve = '#7BB247';
 // motion - only motion event , motion,
 window.skin.events_filter = "motion";
 
-window.skin.privacyPolicy = "https://www.videoexpertsgroup.com/legal-docs/Privacy_Statement.html";
-window.skin.termsOfUse = "https://www.videoexpertsgroup.com/legal-docs/EULA.html";
-window.skin.contactUs = "https://www.videoexpertsgroup.com";
+window.skin.privacyPolicy = "#";
+window.skin.termsOfUse = "#";
+window.skin.contactUs = "#";
 
 window.skin.bottom_line = '<div style="padding-bottom: 20px;text-align: center;"><a target="_blank" href="'+window.skin.privacyPolicy+'">Privacy Policy</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'+window.skin.termsOfUse+'">Terms of Use</a></div><div style="color:#808080;text-align:center;line-height: 14px;padding-bottom: 15px;">'+window.skin.copyright+'</div>';
 window.skin.login_bottom_line = '<div style="padding-bottom: 20px;text-align: center;"><a target="_blank" href="'+window.skin.privacyPolicy+'">Privacy Policy</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="'+window.skin.termsOfUse+'">Term of Use</a></div><div style="color:#808080;text-align:center;line-height: 14px;padding-bottom: 15px;">'+window.skin.copyright+'</div>';

@@ -10,7 +10,7 @@
 /* the logo on the  pages:  sign in, sign up and forgot password    */
 .screens-wrapper.screens > .login .logo, .screens-wrapper.screens > .signup .logo, .screens-wrapper.screens > .forgot .logo {
     cursor: pointer;
-    background-image: url("img/logo.png");
+    background-image: url("img/logo.svg");
     background-size: contain!important;
 }
 

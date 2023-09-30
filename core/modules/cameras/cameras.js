@@ -232,10 +232,11 @@ window.screens['cameras'] = {
 
         if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
         if (!filterarray) {
-            if (!localStorage.checkedLocations) {
+            var userFilters = localStorage.getItem("filter-"+vxg.user.src.email)
+            if (!userFilters) {
                 filterarray = []
             } else {
-                filterarray = JSON.parse(localStorage.checkedLocations);
+                filterarray = JSON.parse(userFilters);
             }
         }
 
@@ -320,7 +321,8 @@ window.screens['cameras'] = {
             } else {
                 if (firstsearch){
                     self.wrapper.addClass('nocameras');
-                    let savedLocations = localStorage.checkedLocations ? JSON.parse(localStorage.checkedLocations) : [];
+                    var userFilters = localStorage.getItem("filter-"+vxg.user.src.email);
+                    let savedLocations = userFilters ? JSON.parse(userFilters) : [];
                     let filterSet = savedLocations.length <= 1 && savedLocations[0] != "" ? "for this filter" : "";
                     el.html('There are no cameras '+filterSet+'. <a href="javascript:void(0)" ifscreen="addcamera" onclick_toscreen="newcamera">Add a camera</a>');
                 }
@@ -421,7 +423,9 @@ window.screens['cameras'] = {
 
                     if(filterarray.length==0)
                         filterarray.push('###########');
-                    localStorage.checkedLocations = JSON.stringify(filterarray);
+
+                    var filterKey = "filter-" + vxg.user.src.email;
+                    localStorage.setItem(filterKey, JSON.stringify(filterarray));
 
                     window.screens['cameras'].activate(filterarray);
                 });
@@ -432,7 +436,8 @@ window.screens['cameras'] = {
     },
     fillLocations: function(){
         let self = this;
-        let savedLocations = localStorage.checkedLocations ? JSON.parse(localStorage.checkedLocations) : [];
+        var userFilters = localStorage.getItem("filter-" + vxg.user.src.email);
+        let savedLocations = userFilters ? JSON.parse(userFilters) : [];
 
         return vxg.cameras.getLocations(50,0).then(function(locations){
             self.all_locations = locations;
