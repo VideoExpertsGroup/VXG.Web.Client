@@ -67,6 +67,7 @@
 .bottom-global-menu {text-align: center;border-top: 1px solid #fff3;padding-top: 32px;margin-top: 10px;}
 
 .transparent-button.deleteclip{color:#F24949;font-size: 14px;}
+.newcamera .newcamerabtns .add1{display:none;}
 .newcamera .newcamerabtns .add2{display:none;}
 .newcamera .newcamerabtns .add5{display:none;}
 

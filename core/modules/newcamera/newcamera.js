@@ -25,6 +25,9 @@ window.screens['newcamera'] = {
         });
     },
     'on_show':function(camtoken){
+
+     	this.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add4').removeClass('add5').addClass('add3');
+
         if (!this.camera) {
             this.wrapper.find('cameraedit').attr('access_token','');
             return defaultPromise();

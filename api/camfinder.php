@@ -1,6 +1,5 @@
 <?php
-$a = dirname(dirname(__FILE__));
-$directory = $a.'/download';
-$camfinder = scandir($directory,SCANDIR_SORT_DESCENDING);
-header('Location: /download/'.$camfinder[0]);
+$ep = 'https://dashboard.videoexpertsgroup.com/downloads/camera_finder/';
+$current = file_get_contents($ep.'current');
+header('Location: '.$ep.$current);
 exit;
