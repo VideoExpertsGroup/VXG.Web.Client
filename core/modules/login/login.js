@@ -182,7 +182,7 @@ TODO: add auth without firebase
 
         function onLogin(r){
             vxg.user.src = r;
-            //sessionStorage.removeItem("aiCams");
+            sessionStorage.removeItem("backToCam");
 
             if (!window.vxgstripe)
                     window.vxgstripe={};
@@ -234,6 +234,7 @@ TODO: add auth without firebase
     },
     logout: function(){
         firebase.auth().signOut().then(function(){
+        sessionStorage.removeItem("backToCam");
         sessionStorage.removeItem("aiCams");
 	    window.location.href = '/#';  
         });
