@@ -57,7 +57,7 @@ CameraEditControl = function(){
 </div>
 -->
 <div class="form-group type">
-    <label>Type</label>&nbsp;&nbsp;&nbsp;<a target="_blank" rel="noopener noreferrer" href="`+vxg.links.error+`">How to add a camera?</a> 
+    <label>Type</label> 
     <select class="url_protocol">
         <option value="onvif" selected>ONVIF camera</option>
         <option value="rtsp">Video URL</option>

@@ -12,7 +12,7 @@ vxg.partners.objects = vxg.partners.objects || {};
 //////////////////////////////////////////////////
 // Errors
 vxg.links = vxg.links || {
-error: 'https://videoexpertsgroup.atlassian.net/wiki/spaces/HELP/overview'
+error: 'https://help.videoexpertsgroup.com/'
 }
 
 //////////////////////////////////////////////////
