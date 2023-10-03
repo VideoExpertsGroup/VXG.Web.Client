@@ -12,7 +12,8 @@ vxg.partners.objects = vxg.partners.objects || {};
 //////////////////////////////////////////////////
 // Errors
 vxg.links = vxg.links || {
-error: 'https://help.videoexpertsgroup.com/'
+error: 'https://help.videoexpertsgroup.com/',
+camera_help: 'https://help.videoexpertsgroup.com/kb/sonnecting-ip-cameras'
 }
 
 //////////////////////////////////////////////////

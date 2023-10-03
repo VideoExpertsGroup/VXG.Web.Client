@@ -46,6 +46,9 @@ window.screens['newcamera'] = {
     },
     'on_init':function(){
         let self = this;
+
+        core.elements['header-right'].prepend('' + '<a class="helpurl" target="_blank" href='+vxg.links.camera_help+'>How to add cameras</a>');
+
         this.wrapper.find('cameraedit').off('loaded').on('loaded',function(e){
              core.elements['global-loader'].hide();
         });
