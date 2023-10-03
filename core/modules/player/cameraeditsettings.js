@@ -147,6 +147,7 @@ CameraeditsettingsControl = function(){
         let self = this;
         if (!camera) return this.onCameraLoadedFail();
         this.camera = camera;
+        $("#profileeditingform").html("");
 
         this.showwait('Loading');
         return this.camera.getToken().then(function(token){

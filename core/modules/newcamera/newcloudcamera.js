@@ -166,7 +166,11 @@ CameraCloudEditControl = function(){
             <input name="rete_time" value="72">
         </div>
         <div class="form-group rete reten rete_sd hidesett">
-            <label><input type="checkbox" class="svgbtnbefore" name="rete_sd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SD recording</label>
+            <label class="sd-label custom-checkbox" id="locctrl">
+                <span>This camera has SD Card Recording</span>
+                <input type="checkbox" name="rete_sd">
+                <span class="checkmark"></span>	
+            </label>
         </div>` : '';
         dropdownOpts += vxg.api.cloudone.camera.setAIConfig!==undefined ?
         `<div class="form-group setting-dropdown ai-dropdown bottom-options">
@@ -183,6 +187,7 @@ CameraCloudEditControl = function(){
     </div>`:"";
 
         $('#dropdown-options').html(dropdownOpts);
+        $('#plugin-dropdown-options').html(dropdownOpts);
 
         $(this).find('.cloudapply').click(function(){
             self.submit_event = new Event('submit',{cancelable: true, bubbles: true});
@@ -276,7 +281,7 @@ CameraCloudEditControl = function(){
         var pass = $(".password-input").val();
         var username = $(".username-input").val();
         let data = $(this).find('form').serializeObject();
-        let hiddenOpts = $('#dropdown-options').serializeObject();
+        let hiddenOpts = (self.id == "plugin-camera") ? $('#plugin-dropdown-options').serializeObject() : $('#dropdown-options').serializeObject();
         data = {...data, ...hiddenOpts};
         for (let i in data) if (typeof data[i] === 'string') data[i]=data[i].trim();
         if ($(this).hasClass('rtsp')) delete data['onvif_rtsp_port_fwd'];

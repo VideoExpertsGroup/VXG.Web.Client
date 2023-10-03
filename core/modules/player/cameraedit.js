@@ -146,7 +146,11 @@ CameraEditControl = function(){
     <input name="rete_time" value="72">
 </div>
 <div class="form-group rete reten rete_sd hidesett">
-    <label><input type="checkbox" class="svgbtnbefore" name="rete_sd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SD recording</label>
+    <label class="sd-label custom-checkbox">
+        <span>This camera has SD Card Recording</span>
+        <input type="checkbox" name="rete_sd">
+        <span class="checkmark"></span>	
+    </label>
 </div>
 `:'') + `
 ` + (vxg.api.cloudone.camera.setAIConfig!==undefined ? `
@@ -454,18 +458,31 @@ CameraEditControl = function(){
                 self.defferedDispatchEvent(self.error_event);
                 return;
             }
-            if (!bsrc.url) {bsrc.url='';$(self).find('.url_protocol').attr('disabled','disabled');}
+            if (!bsrc.url) {
+                bsrc.url='';
+                $(self).find('.url_protocol').attr('disabled','disabled');
+            }
+
+            if (bsrc.url && bsrc.url.includes("/uplink_camera/")) {
+                $(self).find('.url_protocol').attr('disabled','disabled');
+                $(self).find('.url_protocol').append('<option value="uplink">Uplink Camera'); 
+            }
             //else
                 //$(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
 
             $(self).removeClass('rtsp').removeClass('onvif').removeClass('cloud');
 
-            if (!bsrc.url && !$(self).find('.url_protocol [value="cloud"]').length)
+            if (!bsrc.url && !$(self).find('.url_protocol [value="cloud"]').length) {
                 $(self).find('.url_protocol').append('<option value="cloud">Cloud camera'); 
+            }
+                
 
             if (bsrc.url.substr(0,5)=='onvif') {
                 $(self).find('.url_protocol').val('onvif');
                 $(self).addClass('onvif');
+            } else if (bsrc.url.includes("/uplink_camera/")) {
+                $(self).find('.url_protocol').val('uplink');
+                $(self).addClass('cloud');
             } else {
                 if (bsrc.url){
                     $(self).find('.url_protocol').val('rtsp');
@@ -476,7 +493,7 @@ CameraEditControl = function(){
                 }
             }
 
-            $(self).find('[name="url"]').val(bsrc.url ? bsrc.url : '');
+            $(self).find('[name="url"]').val(bsrc.url && !bsrc.url.includes("/uplink_camera/")? bsrc.url : '');
             self.onUrlChange();
 
             self.createTimezonesList($(self).find('[name="tz"]'),bsrc.tz);

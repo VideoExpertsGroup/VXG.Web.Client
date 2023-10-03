@@ -124,11 +124,11 @@ window.screens['activity'] = {
         let self = this;
         core.elements['header-right'].prepend(`<div class="activityfilterContainer">
 													<div class="transparent-button activityfilter">
-														<i class="fa fa-filter" aria-hidden="true"></i> 
-														<span> Filter</span>
-														<i class="fa fa-angle-down dropdown-icon" aria-hidden="true"></i>
+														<span id="activityfilter-btn"> Filter</span>
 													</div>
 												</div>`);
+		
+
 		
         core.elements['header-right'].find('.activityfilterContainer .activityfilter').click(function(){
 
@@ -147,7 +147,8 @@ window.screens['activity'] = {
 */			
 
 			var activityFilter = localStorage.getItem("activityFilter");
-			var savedFilters = activityFilter == null ? window.skin.use_filter : activityFilter;
+			var savedFiltersStr = activityFilter == null ? window.skin.use_filter : activityFilter;
+			var savedFilters = savedFiltersStr.split(',');
 
             dialogs['mdialog'].activate(`
 				<h7>Select motion filter</h7>
@@ -156,21 +157,21 @@ window.screens['activity'] = {
 						<li>
 							<label class="filter-label custom-checkbox">
 								<span>Motion</span>
-								<input type="checkbox" `+(savedFilters.split(',').indexOf('motion')!==-1?'checked':'')+` name="motion">
+								<input type="checkbox" `+(savedFilters.indexOf('motion')!==-1?'checked':'')+` name="motion">
 								<span class="checkmark"></span>	
 							</label>
 						</li>
 						<li>
 							<label class="filter-label custom-checkbox">
 								<span>Object detection</span>
-								<input type="checkbox" `+(savedFilters.split(',').indexOf('object_and_scene_detection')!==-1?'checked':'')+` name="object_and_scene_detection">
+								<input type="checkbox" `+(savedFilters.indexOf('object_and_scene_detection')!==-1?'checked':'')+` name="object_and_scene_detection">
 								<span class="checkmark"></span>	
 							</label>
 						</li>
 						<li>
 							<label class="filter-label custom-checkbox">
 								<span>People detection</span>
-								<input type="checkbox" `+(savedFilters.split(',').indexOf('post_object_and_scene_detection')!==-1?'checked':'')+` name="post_object_and_scene_detection">
+								<input type="checkbox" `+(savedFilters.indexOf('post_object_and_scene_detection')!==-1?'checked':'')+` name="post_object_and_scene_detection">
 								<span class="checkmark"></span>		
 							</label>
 						</li>
@@ -180,10 +181,12 @@ window.screens['activity'] = {
 					<button name="apply" class="vxgbutton-transparent" style="width:192px">Set</button>
 				</div>`).then(function(r){
                 if (!r || r.button!='apply') return;
-                let f='';
+				let f='';
                 for (let i in r.form){
                     if (r.form[i]=='on') f += (f?',':'')+i;
                 }
+				if (f.split(",").length != 3) $('#activityfilter-btn').addClass("filterset");
+				else $('#activityfilter-btn').removeClass("filterset");
 				localStorage.setItem("activityFilter", f);
                 window.skin.use_filter = f==''?'none':f;
                 self.activate();
@@ -196,6 +199,9 @@ window.screens['activity'] = {
     'on_init':function(){
 		var activityFilter = localStorage.getItem("activityFilter");
 		window.skin.use_filter = activityFilter == null ? 'motion,object_and_scene_detection,post_object_and_scene_detection' : activityFilter;
+
+		if (window.skin.use_filter.split(",").length != 3) $('#activityfilter-btn').addClass("filterset");
+		else $('#activityfilter-btn').removeClass("filterset");
 
 //        alert('on_init Test screen');
         return defaultPromise();

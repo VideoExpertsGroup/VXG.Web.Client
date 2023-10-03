@@ -1,19 +1,19 @@
-<div class="newcameratabs add1">
+<div class="newcameratabs add3">
 <div class="newcamerabtns">
-<div class="add1">Installer</div>
+<!--<div class="add1">Installer</div>-->
 <div class="add3">ONVIF</div>
 <div class="add2">Grandstream</div>
 <div class="add4">Plug-in</div>
 <div class="add5">Uplink</div>
 </div>
-<div class="add1 maxwidth">
+<!--<div class="add1 maxwidth">
 <h6>AXIS, Vivotek , Grandstream, Dahua and Hikvision cameras</h6>
 Download and run the Camera Finder Tool for Windows. It will automatically find and setup supported IP cameras.<br/><br/><br/>
 <a class="vxgbutton" href="api/camfinder.php">Download</a><br/><br/><br/><br/> 
 Alternatively plug-ins can be installed manually using IP camera Web UI.<br/><br/><br/>
 <button type="button" class="vxgbutton-transparent pluginapply">Add manually</button>
 <br/><br/>&nbsp;
-</div>
+</div>-->
 <div class="add2 maxwidth">
 <h6>Grandstream cameras</h6>
 Connect by just typing a camera ID printed on camera.<br/><br/>
@@ -30,18 +30,15 @@ Connect any generic ONVIF camera using its public IP address. This usually requi
 </div>
 <div class="add4 maxwidth">
 <h6>Legacy plug-in cameras</h6>
-Connect cameras that support legacy plug-ins.
+<span>Connect cameras that support legacy plug-ins.</span>
 <newcloudcamera access_token="" id="plugin-camera" class="maxwidth"></newcloudcamera>
+<form class="maxwidth" id="plugin-dropdown-options"></form>
 <button type="button" class="vxgbutton cloudapply">Apply</button>
 <div class="plugin-link">
-    <a href="https://dashboard.videoexpertsgroup.com/downloads/cameras/" target="_blank">See the list of legacy plug-ins and firmware for manual installation.</a>	
+    <a href="https://dashboard.videoexpertsgroup.com/downloads/cameras/" target="_blank">See the list of plug-ins and firmware for manual installation.</a>	
+    <p> or </p>
+    <a href="api/camfinder.php">Download and run the Camera Finder Tool for Windows. It will automatically find and setup supported IP cameras.</a>
 </div>
-<br/>
-or
-<div class="plugin-link">
-    <a href="api/camfinder.php">Download Camera Finder application for Windows. It will help to find and setup supported IP cameras.</a>
-</div>
-
 </div>
 <div class="add5 maxwidth">
 <h6>Uplink cameras</h6>

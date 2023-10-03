@@ -236,6 +236,8 @@ TODO: add auth without firebase
         firebase.auth().signOut().then(function(){
         sessionStorage.removeItem("backToCam");
         sessionStorage.removeItem("aiCams");
+        sessionStorage.removeItem("cameraUrls");
+
 	    window.location.href = '/#';  
         });
     }

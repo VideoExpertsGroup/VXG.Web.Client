@@ -80,61 +80,108 @@ function camGrid(size /* 2,3,4 */){
     onCameraScreenResize();
 }
 
-var menu =  `
-        <div class="listmenu-item mcamera" onclick_toscreen="tagsview"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>
-        <div class=" listmenu-item msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Camera </span></div>
-        <div class=" listmenu-item mchart" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>
-        <div class=" listmenu-item mconfigure" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
-        <div class=" listmenu-item mtrash" onclick="onCameraDelete(this)"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>`;
-
-
-var old_menu = ''
-    + '<div class="mcamera svgbtnbeforehover" onclick_toscreen="tagsview">Timeline</div>'
-    + '<div class="msetting svgbtnbeforehover" ifscreen="camerasettings" onclick_toscreen="camerasettings">Camera</div>'
-    + '<div class="mchart svgbtnbeforehover" ifscreen="camerameta" onclick_toscreen="camerameta">Metadata</div>'
-    + '<div class="mconfigure svgbtnbeforehover" ifscreen="addcamera" onclick_toscreen="addcamera">Config</div>'
-    + '<div class="mconfigure svgbtnbeforehover" onclick="onEventsSet(this)">Events</div>'
-    + '<div class="mtrash svgbtnbeforehover" onclick="onCameraDelete(this)">Remove</div>';
-
 (function( $ ){
 
-  $.fn.simpleMenuPlugin = function(menu) {
-    let _menu = menu;
+  $.fn.simpleMenuPlugin = function() {
 
     this.click(function(e){
-        $('.simplemenu').remove();
-        let self = this;
-        let el = $(this).find('.simplemenu');
-        if (!el.length) {
-            $(this).append('<div class="simplemenu">'+menu+'</div>');
-            el = $(this).find('.simplemenu');
+        var self = this;
+        let access_token = $(this).attr("access_token");
+        let channelID = $(this).attr("cam_id");
+
+        var menu =  $(`
+        <div class="simplemenu">
+        <div class="listmenu-item mcamera" onclick_toscreen="tagsview" channelID='${channelID}'><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>
+        <div class="listmenu-item msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Stream Settings </span></div>
+        <div class="listmenu-item mchart" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>
+        <a class="listmenu-item mwebui" id="ui-link" href="" target="_blank" style="display: none"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> Camera UI </span></a>
+        <div class="listmenu-item mconfigure" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
+        <div class="listmenu-item mtrash" onclick="onCameraDelete('${channelID}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
+        </div>`);
+        
+        var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
+        var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : [];
+        var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id == channelID) : "";
+
+        if (savedCam && savedCam.url && savedCam.url != "nourl") {
+            $(menu).find("#ui-link").attr("href", savedCam.url);
+            $(menu).find(".mwebui").css("display", "block");
         }
-        el.mouseleave(function(){
-            self.remove_timer = setTimeout(function(){
-                el.remove();
-            },300);
-        });
-        el.mouseenter(function(){
-            if (self.remove_timer) clearTimeout(self.remove_timer);
-            delete self.remove_timer;
-        });
-        let w = el.width();
-        let h = el.height();
-        let ww = $(window).width();
-        let hh = $(window).height();
 
-        if (e.clientX+w<=ww)
-            el.css('left',e.clientX-10);
-        else
-            el.css('right',ww-e.clientX-10);
-        if (e.clientY+h<=hh)
-            el.css('top',e.clientY-10);
-        else
-            el.css('bottom',hh-e.clientY-10);
+        if (!savedCam) {
+            vxg.api.cloud.getCameraConfig(channelID, access_token).then(function(config) {
+                var link;
+                if (config.url && config.url.includes("onvif")) {
+                    var s = config.url.replace("onvif://", "");
+                    link = s.replace("/onvif/device_service", "");
+                    
+                    cameraUrls.push({id: config.id, url: 'http://' + link});
+                    sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
 
+                    $(menu).find("#ui-link").attr("href", link);
+                    $(menu).find(".mwebui").css("display", "block");
+                    addSimpleMenu(menu, self, e);
+                } else if (config.url && config.url.includes('/uplink_camera/')) {
+                    core.elements['global-loader'].show();
+                    return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
+                        if (!urlinfo.id && !urlinfo.url) {
+                            cameraUrls.push({id: config.id, url: "nourl"});
+                            sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
+                        } else {
+                            cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
+                            sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));  
+                            $(menu).find("#ui-link").attr("href", urlinfo.url);
+                            $(menu).find(".mwebui").css("display", "block");
+                        }
+                        core.elements['global-loader'].hide();
+                        addSimpleMenu(menu, self, e);
+                    });
+                } else {
+                    cameraUrls.push({id: config.id, url: "nourl"});
+                    sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
+
+                    addSimpleMenu(menu, self, e);
+                }
+            });
+        } else {
+            addSimpleMenu(menu, self, e);
+        }
     });
   };
 })( jQuery );
+
+function addSimpleMenu(_menu, settingsEle, e) {
+    var menu = _menu.html();
+    $('.simplemenu').remove();
+    let self = settingsEle;
+    let el = $(settingsEle).find('.simplemenu');
+    if (!el.length) {
+        $(settingsEle).append('<div class="simplemenu"> ' + menu + '</div>');
+        el = $(settingsEle).find('.simplemenu');
+    }
+    el.mouseleave(function(){
+        self.remove_timer = setTimeout(function(){
+            el.remove();
+        },300);
+    });
+    el.mouseenter(function(){
+        if (self.remove_timer) clearTimeout(self.remove_timer);
+        delete self.remove_timer;
+    });
+    let w = el.width();
+    let h = el.height();
+    let ww = $(window).width();
+    let hh = $(window).height();
+
+    if (e.clientX+w<=ww)
+        el.css('left',e.clientX-10);
+    else
+        el.css('right',ww-e.clientX-10);
+    if (e.clientY+h<=hh)
+        el.css('top',e.clientY-10);
+    else
+        el.css('bottom',hh-e.clientY-10);
+}
 
 function onEventsSet(e){
     let t = $(e).getNearParentAtribute('access_token');
@@ -163,11 +210,10 @@ function onEventsSet(e){
     });;
 }
 
-function onCameraDelete(e){
-    let t = $(e).getNearParentAtribute('access_token');
+function onCameraDelete(channel_id){
     setTimeout(function(){$('.simplemenu').remove();},10);
 
-    vxg.cameras.getCameraByIDPromise(t).then(function(camera){
+    vxg.cameras.getCameraByIDPromise(channel_id).then(function(camera){
 
         dialogs['mdialog'].activate('<h7>Do you want to delete camera '+camera.src.name+'?</h7><p>It can\'t be cancelled </p><p><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">Delete</button></p>').then(function(r){
             if (r.button!='delete') return;
@@ -181,7 +227,17 @@ function onCameraDelete(e){
                         sessionStorage.setItem("aiCams", newAiCams); 
                     }
                 }
+
                 localStorage.removeItem(camera.camera_id);
+                var backToCam = sessionStorage.getItem("backToCam");
+                if (backToCam == camera.camera_id) sessionStorage.removeItem("backToCam");
+                var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
+                var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : "";
+                if (cameraUrls) {
+                    var removeCurrent = cameraUrls.filter(cam => cam.id != camera.camera_id);
+                    sessionStorage.setItem("cameraUrls", JSON.stringify(removeCurrent));
+                }
+
                 core.elements['global-loader'].hide();
                 return screens['cameras'].on_show();
             }, function(r){
@@ -286,11 +342,18 @@ window.screens['cameras'] = {
                 if (!list[i].src || list[i].src.status===undefined) info='';
                 var channelID = list[i].getChannelID();
                 channelIdList.push(channelID.toString());
-                h += '<div class="camerablock'+captured+'" access_token="'+channelID+'" id="scrollto'+channelID+'">'+info+'<campreview onclick_toscreen="tagsview"></campreview><div><div class="settings"></div><div class="name name'+channelID+'"></div><div class="loc loc'+channelID+'">'+list[i].getLocation()+'</div></div></div>';
+                h += `<div class="camerablock${captured}" access_token="${channelID}" id="scrollto${channelID}">
+                            ${info}
+                            <campreview onclick_toscreen="tagsview"></campreview>
+                            <div>
+                                <div class="settings" access_token="${list[i].token}" cam_id="${channelID}"></div>
+                                <div class="name name${channelID}"></div>
+                                <div class="loc loc${channelID}">${list[i].getLocation()}</div>
+                            </div>
+                        </div>`;
                 count++;
             }
             if (h) {
-
                 var loadPrevCam = sessionStorage.getItem("backToCam");
                 if (loadPrevCam) {
                     // if camera is not in this list, load more and scroll to it
@@ -335,7 +398,8 @@ window.screens['cameras'] = {
             }
 
             self.wrapper.removeClass('loader');
-            el.find('.settings').simpleMenuPlugin(menu);
+            el.find('.settings').simpleMenuPlugin();
+
         },function(){
             self.camera_list_promise=undefined;
             self.wrapper.addClass('nocameras');

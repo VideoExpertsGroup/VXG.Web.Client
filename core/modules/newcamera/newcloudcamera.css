@@ -195,7 +195,7 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
     margin-bottom: 10px;
 }
 
-#dropdown-options {
+#dropdown-options, #plugin-dropdown-options {
     margin-bottom: 15px;
 }
 

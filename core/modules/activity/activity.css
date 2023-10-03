@@ -18,17 +18,15 @@
 margin-left: 6px;
 }
 
-.activityfilter i {
-    margin-right: 7px;
-}
-
-.activityfilter .dropdown-icon {
-    margin-left: 5px;
-}
-
 .header-right .activityfilterContainer{
     display: block;
 }
+
+.filterset {
+    padding: 2px 4px;
+    border-bottom: solid thin var(--main-color);
+}
+
 
 /*ul.activitylist input:before {
     cursor: pointer;

@@ -275,17 +275,61 @@ VXGCameraListView.prototype.objByCamid = function objByCamid ( camid ) {
     return ret_val;
 }
 
-VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCarrier, controller, self=this) {
+VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCarrier, controller, recall=false, self=this) {
 	let el = $(whoCall).find('.VXGCameraListMenu');
-	let menu = ''
-    +	'<div class="VXGCameraListMenu">'
-    +	'	<div class="svgbtnbeforehover listmenu-item mcamera" ifscreen="tagsview" onclick_toscreen="tagsview"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>'
-    +	'	<div class="svgbtnbeforehover listmenu-item msetting" ifscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Camera </span></div>'
-    +	'	<div class="svgbtnbeforehover listmenu-item mchart" ifscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>'
-    +	'	<div class="svgbtnbeforehover listmenu-item mconfigure" ifscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>'
-    +	'	<div class="svgbtnbeforehover listmenu-item mtrash"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>'
-    +	'</div>';
-	if (!el.length) {
+
+    let cam = controller.objByIndex($(indexCarrier).data('index'));
+    var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
+    var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : [];
+    var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id === cam.camera_id) : "";
+
+    var urlMenuItem = savedCam && savedCam.url && savedCam.url != "nourl" ? 
+        `<a class="listmenu-item mwebui" href="${savedCam.url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> Camera UI </span></a>` :
+        "";
+
+    if (!savedCam) {
+        vxg.api.cloud.getCameraConfig(cam.camera_id, cam.token).then(function(config) {
+            var link;
+            if (config.url && config.url.includes("onvif")) {
+                var s = config.url.replace("onvif://", "");
+                link = s.replace("/onvif/device_service", "");
+                cameraUrls.push({id: config.id, url: 'http://' + link});
+                sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
+            } else if (config.url && config.url.includes('/uplink_camera/')) {
+                core.elements['global-loader'].show();
+                return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
+                    if (!urlinfo.id && !urlinfo.url) {
+                        cameraUrls.push({id: config.id, url: "nourl"});
+                        sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
+                    } else {
+                        cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
+                        sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
+                    }
+
+                    core.elements['global-loader'].hide();
+                    self.showMenu(event, whoCall, indexCarrier, controller, true);
+                });
+            } else {
+                cameraUrls.push({id: config.id, url: "nourl"});
+                sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
+            }
+
+            return self.showMenu(event, whoCall, indexCarrier, controller, true);
+
+        });
+    }
+
+	let menu = `
+        <div class="VXGCameraListMenu">
+        	<div class="listmenu-item mcamera" ifscreen="tagsview" onclick_toscreen="tagsview"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>
+        	<div class="listmenu-item msetting" ifscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Stream Settings </span></div>
+        	<div class="listmenu-item mchart" ifscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>
+        	<div class="listmenu-item mconfigure" ifscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
+        	${urlMenuItem}
+        	<div class="listmenu-item mtrash"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
+        </div>
+    `;
+	if (!el.length && savedCam) {
 	    $(whoCall).append(menu);
 	    el = $(whoCall).find('.VXGCameraListMenu');
 	    
@@ -342,7 +386,17 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
                                     }
                                 }
                                 sessionStorage.removeItem(camera.camera_id);
-                                sessionStorage.removeItem(camera.camera_id + "-url");
+
+                                var backToCam = sessionStorage.getItem("backToCam");
+                                if (backToCam == camera.camera_id) sessionStorage.removeItem("backToCam");
+
+                                var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
+                                var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : "";
+                                if (cameraUrls) {
+                                    var removeCurrent = cameraUrls.filter(cam => cam.id != camera.camera_id);
+                                    sessionStorage.setItem("cameraUrls", JSON.stringify(removeCurrent));
+                                }
+
                                 core.elements['global-loader'].hide();
                                 return screens['reports'].on_show();
                             }, function(r){
@@ -495,16 +549,14 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
             locNum = locCountArr[locIndex].count;
         }
 
-        var urlEle = sessionStorage.getItem(vxgcameralistdata[index].src.id + "-url");
-
         var draggableClass = camerasView == "cameras-group"? "draggable" : "";
 	        
 	    let tr = 
 	'<tr class="sl'+vxgcameralistdata[index].camera_id+' ' + hideCamera + ' ' + locClass + ' ' + draggableClass + ' ' + groupCam + '" data-index="' + index + '" data-camid="'+vxgcameralistdata[index].camera_id+'" access_token="'+ vxgcameralistdata[index].token  +'">' 
     +	'	<td width="25%"><div ><campreview></campreview></div></td>' 
     +	'	<td width="20%" class="sname"></td>' 
-    +   '   <td width="5%" class="uilink" id="'+ vxgcameralistdata[index].camera_id+'-ui">' + ((urlEle) ? urlEle : '') + '</td>'
-    +	'	<td width="18%" class="sloc"></td>' 
+    //+   '   <td width="5%" class="uilink" id="'+ vxgcameralistdata[index].camera_id+'-ui">' + ((urlEle) ? urlEle : '') + '</td>'
+    +	'	<td width="23%" class="sloc"></td>' 
 //    +	'	<td class="sparkline-container"><span class="sparkline" data-token="' + vxgcameralistdata[index].token + '" data-dataset="'+sparkline+'" style="display:none"></span></td>' 
     +	'	<td width="17%" class="showai" id="ai_'+ vxgcameralistdata[index].camera_id +'" data-token="' + vxgcameralistdata[index].camera_id + '"></td>' 
     +	'	<td ifscreen="plan2camera"><div class="splan vxgbutton-transparent hide" onclick_toscreen="plan2camera"></div></td>'
@@ -565,29 +617,6 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 		self.showMenu(event, this, $(this).parent().parent(), controller, self );
 	    });
         
-        if (!urlEle) {
-            vxg.api.cloud.getCameraConfig(vxgcameralistdata[index].src.id, vxgcameralistdata[index].token).then(function(config) {
-                var link;
-                if (config.url.includes("onvif")) {
-                    var s = config.url.replace("onvif://", "");
-                    link = s.replace("/onvif/device_service", "");
-                } else if (config.url.includes('/uplink_camera/')) {
-                    return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
-                        var linkEle = '<a href="' + urlinfo.url + '" target="_blank" ><i class="fa fa-cog webui-link" aria-hidden="true"></i></a>';
-                        $("#" + urlinfo.id + "-ui").append($(linkEle));
-                        sessionStorage.setItem(urlinfo.id + "-url", linkEle);
-                    });
-                }
-
-                if (link) {
-                    var linkEle = '<a href="http://' + link + '" target="_blank" ><i class="fa fa-cog webui-link" aria-hidden="true"></i></a>';
-                    $("#" + config.id + "-ui").append($(linkEle));
-                    sessionStorage.setItem(config.id + "-url", linkEle);
-                }
-
-            });
-        }
-
 	});
 
 
