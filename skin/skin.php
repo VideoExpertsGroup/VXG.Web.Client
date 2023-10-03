@@ -18,7 +18,7 @@ $skin["scripts"]["user"]=[
 $skin["scripts"]["partner"]=[
     "core/modules/reports/reports.js",
     "core/modules/users/users.js",
-    "core/modules/servers/servers.js",
+//    "core/modules/servers/servers.js",
     "core/modules/cameras/cameras.js",
     "core/modules/mdialog/mdialog.js",
     "core/modules/activity/activity.js",

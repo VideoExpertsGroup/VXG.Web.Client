@@ -88,6 +88,10 @@ body:not(.users) .header-right .adduser{
  /*display:none; */
 }
 
+body:not(.admin) .header-right .adduser{
+ display:none; 
+}
+
 .usercameras {
     height: 100%;
 }

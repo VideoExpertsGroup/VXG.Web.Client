@@ -13,7 +13,7 @@ $response = StaticLib::startPage();
 if (1){
 
 //    list($partner_id, $setting_rec, $setting_int) = MCore::checkAndGetInputParameters(['id','setting_rec','setting_int']);
-    list($partner_id, $setting_rec, $setting_int, $setting_ai) = MCore::getInputParameters(['id','setting_rec','setting_int', 'setting_ai']);
+    list($partner_id, $setting_rec, $setting_int, $setting_nvr, $setting_ai) = MCore::getInputParameters(['id','setting_rec','setting_int', 'setting_nvr', 'setting_ai']);
 	
     $stmt = $conn->prepare('SELECT "js" FROM "user" WHERE "id"='.$partner_id);
 	if (!$stmt->execute())
@@ -49,6 +49,22 @@ if (1){
 		
 		if ($setting_int == "off"){
 			$js_var = str_replace('core/modules/integration/integration.js','',$js_var);	
+		}			
+	}
+
+	if ($setting_nvr){		
+		if ($setting_nvr == "on"){
+			$pos = strpos($js_var, "core/modules/servers/servers.js");
+			if ($pos === false) {
+				if ($js_var == "")
+					$js_var = "core/modules/servers/servers.js";
+				else
+					$js_var .= "\ncore/modules/servers/servers.js";
+			}
+		}
+		
+		if ($setting_nvr == "off"){
+			$js_var = str_replace('core/modules/servers/servers.js','',$js_var);	
 		}			
 	}
 
