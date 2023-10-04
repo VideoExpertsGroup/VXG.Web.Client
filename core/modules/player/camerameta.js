@@ -299,12 +299,33 @@ window.screens['camerametaview'] = {
         let access_token = camtoken;
         let event_id = eventid;
         let ai_type  = aitype;
-        if (this.src){
-            if (!access_token) access_token = $(this.src).getNearParentAtribute('access_token');
-            if (!event_id) event_id = $(this.src).getNearParentAtribute('event_id');
-            if (!ai_type) ai_type = $(this.src).getNearParentAtribute('ai_type');
-            
+		
+		let src = 0;
+
+		if (this.src) {
+			if (this.src.src)
+				src = this.src.src;
+			else
+				src = this.src;
+		}
+        if (src){
+            if (!access_token) access_token = $(src).getNearParentAtribute('access_token');
+            if (!event_id) event_id = $(src).getNearParentAtribute('event_id');
+            if (!ai_type) ai_type = $(src).getNearParentAtribute('ai_type');
+
+			if (!access_token || !event_id || !ai_type) return defaultPromise();
+
+			if (src.parentElement.previousElementSibling)
+				$(this.wrapper).find('.next_item')[0].src = src.parentElement.previousElementSibling.children[3];
+			else
+				$(this.wrapper).find('.next_item')[0].src = 0;
+			if (src.parentElement.nextElementSibling)
+				$(this.wrapper).find('.prev_item')[0].src = src.parentElement.nextElementSibling.children[3];
+			else
+				$(this.wrapper).find('.prev_item')[0].src = 0;
         }
+		
+       
         let self = this;
         self.ai_type = ai_type;
         core.elements['global-loader'].show();
