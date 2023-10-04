@@ -378,6 +378,11 @@ window.core.loadScreens = function(){
         let args = arguments;
 
         return p.then(function(){
+            var from_screen = $('body').data('screenid');
+            if (from_screen == 'tagsview' && self.id != 'cameras') {
+                sessionStorage.setItem("backToCam", "");
+            }
+
             for (let i in window.screens){
                 if (window.screens[i].is_active === true){
 //                    if (self.id==i) return defaultPromise();
