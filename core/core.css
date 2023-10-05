@@ -1269,6 +1269,7 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    display: none;
 }
 
 .sd-label input {
