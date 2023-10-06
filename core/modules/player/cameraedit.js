@@ -391,9 +391,10 @@ CameraEditControl = function(){
             data.lon = r.lon ? r.lon : null;
             self.camera.updateCameraPromise(data).then(function(r){
                 if (!self.camera.bsrc.url && data.rete_recmode=='off')
-                    data.rete_time = -1;
+                    data.rete_time = -1;				
+				/*fixme memorycard_recording should be always disabled to avoid triggering SD timeline mode in WebSDK*/
                 let p =  self.camera.setRetention ? 
-                    self.camera.setRetention({recording: data.rete_sd=='on', time: data.rete_time, type: data.rete_recmode}) :
+                    self.camera.setRetention({recording: /*data.rete_sd=='on'*/false, time: data.rete_time, type: data.rete_recmode}) :
                     new Promise(function(resolve, reject){resolve();}); 
 
                 p.then(function(){
