@@ -336,8 +336,8 @@ CameraCloudEditControl = function(){
         }
 
         if (macAddress && serverSerial) {
-            data.serialnumber = serverSerial;
-            data.macAddress = macAddress;
+            data.serialnumber = String(serverSerial).toUpperCase();
+            data.macAddress = String(macAddress).toUpperCase();
         }
 
         if (isCloud) data.url='';

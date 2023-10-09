@@ -911,7 +911,9 @@ class MCamera{
                 CURLOPT_HTTPHEADER => ['Content-Type:application/json', 'Authorization: Basic '. base64_encode($username.':'.$password)]]);
             $result = curl_exec($ch);
             $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
-            if ($code != 204) error(554, $code . ": Error removing camera serial number");
+            if ($code != 204) 
+                  error_log('Error removing camera serial number: $code');
+                  //error(554, $code . ": Error removing camera serial number");
             curl_close($ch);
         }
 
