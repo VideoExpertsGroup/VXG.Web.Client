@@ -221,8 +221,8 @@ CameraeditsettingsControl = function(){
                     self.source_data = data;
                     return self.onDataLoaded(data);
                 }, function(err) {
+                    self.showerror('Error getting video streams: ' + err.message);
                     self.dispatchEvent(self.nosubmit_event);
-                    self.showerror('Error getting video streams: ' + err.responseJSON.errorDetail);
                 })
        
             },function(){

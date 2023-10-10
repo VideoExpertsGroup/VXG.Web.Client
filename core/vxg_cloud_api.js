@@ -191,7 +191,7 @@ vxg.api.cloud.getNonJpegStreams = function(channel_id, channel_access_token) {
     }).then(function(vs) {
         var validStreamIds = [];
         vs.objects.forEach(stream => {
-            if (stream.format.toLowerCase() != "jpeg" && stream.format.toLowerCase() != "mjpeg") {
+            if (stream.format && stream.format.toLowerCase() != "jpeg" && stream.format.toLowerCase() != "mjpeg") {
                 validStreamIds.push(stream.id);
             }
         })
