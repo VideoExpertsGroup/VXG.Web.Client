@@ -35,6 +35,9 @@ display:none;
 cameraedit.cloud .notincloud{
 display:none;
 }
+cameraedit.uplink .notinuplink{
+    display:none;
+}
 cameraedit.rtsp .onvifOnly{
 display:none;
 }

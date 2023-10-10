@@ -63,30 +63,30 @@ CameraEditControl = function(){
         <option value="rtsp">Video URL</option>
     </select>
 </div>
-<div class="form-group rtspOnly notincloud">
+<div class="form-group rtspOnly notincloud notinuplink">
     <label>URL</label>
     <input name="url" class="anccsUrl">
 </div>
 
-<div class="form-group rtspOnly notincloud setting-dropdown opt-dropdown">
+<div class="form-group rtspOnly notincloud setting-dropdown opt-dropdown notinuplink">
     <div class="anccsUrlOptions">OPTIONS</div>
 </div>
 
-<div class="form-group rtspOnly options notincloud">
+<div class="form-group rtspOnly options notincloud notinuplink">
     <label for="url_prot">Protocol&nbsp;</label>
     <input type="text" class="url_prot form-control input500" value="">
 </div>
-<div class="form-group options notincloud">
+<div class="form-group options notincloud notinuplink">
     <label for="url_ip">IP address or domain name&nbsp;</label>
     <input type="text" class="url_ip form-control input500" value="">
     <div class="iperror">Invalid domain name or ip address</div>
 </div>
-<div class="form-group options notincloud">
+<div class="form-group options notincloud notinuplink">
     <label for="url_http_port" class="onvifOnly">HTTP port&nbsp;</label>
     <label for="url_http_port" class="rtspOnly">Port&nbsp;</label>
     <input type="number" class="url_http_port form-control input500" value="">
 </div>
-<div class="form-group options notincloud">
+<div class="form-group options notincloud notinuplink">
     <label class="onvifOnly" for="url_rtsp_port">RTSP port&nbsp;</label>
     <input type="number" class="onvifOnly url_rtsp_port form-control input500" name="onvif_rtsp_port_fwd">
     <i class="onvifOnly"></i>
@@ -99,7 +99,7 @@ CameraEditControl = function(){
   <label for="devicePassword">Password&nbsp;</label>
   <input type="password" class="password form-control input500 url_password" autocomplete="new-password" name="password"><i class="showhidepass show-password"></i>
 </div>
-<div class="form-group options notincloud">
+<div class="form-group options notincloud notinuplink">
     <label class="" for="url_path">Path&nbsp;</label>
     <input type="text" class="url_path form-control input500" value="">
 </div>
@@ -483,7 +483,7 @@ CameraEditControl = function(){
                 $(self).addClass('onvif');
             } else if (bsrc.url.includes("/uplink_camera/")) {
                 $(self).find('.url_protocol').val('uplink');
-                $(self).addClass('cloud');
+                $(self).addClass('uplink');
             } else {
                 if (bsrc.url){
                     $(self).find('.url_protocol').val('rtsp');

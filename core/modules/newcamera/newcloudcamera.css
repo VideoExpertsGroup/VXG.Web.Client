@@ -36,6 +36,9 @@ display:none;
 newcloudcamera.cloud .notincloud{
 display:none;
 }
+newcloudcamera.uplink .notinuplink{
+    display:none;
+}
 newcloudcamera.rtsp .onvifOnly{
 display:none;
 }
