@@ -100,10 +100,10 @@ vxg.api.cloud.getCameraSettings = function (channel_id, channel_access_token) {
         contentType: "application/json",
         headers: headers,
     }).then(function(r){
-        if (!r.live_ms_id) return;
+        if (!r.rec_ms_id) return;
         vsid='';
         for (i in r.mstreams_supported)
-            if (r.mstreams_supported[i].id==r.live_ms_id)
+            if (r.mstreams_supported[i].id==r.rec_ms_id)
                 vsid = r.mstreams_supported[i].vs_id;
         if (!vsid)
             return new Promise(function(resolve, reject){

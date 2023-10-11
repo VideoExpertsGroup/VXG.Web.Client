@@ -181,15 +181,15 @@ CameraeditsettingsControl = function(){
                         topForm += `
                             <div class="form-container">
                                 <div class="form-group profile-form" style="padding-right: 10px;">
-                                    <label>Live Stream</label>
-                                    <select class="form-control" name="live_profile" id="live_profile_select" value="${data.live_ms_id}">
-                                        ${live_ele}
+                                    <label>Main Stream</label>
+                                    <select class="form-control" name="rec_profile" id="rec_profile_select" value="${data.rec_ms_id}">
+                                        ${rec_ele}
                                     </select>
                                 </div>
                                 <div class="form-group profile-form">
-                                    <label>Record Stream</label>
-                                    <select class="form-control" name="rec_profile" id="rec_profile_select" value="${data.rec_ms_id}">
-                                        ${rec_ele}
+                                    <label>Live Stream</label>
+                                    <select class="form-control" name="live_profile" id="live_profile_select" value="${data.live_ms_id}">
+                                        ${live_ele}
                                     </select>
                                 </div>
                             </div>
@@ -200,8 +200,8 @@ CameraeditsettingsControl = function(){
             
                             <div class="form-group header-form">
                                 <label>Stream</label>
-                                <select class="form-control" name="editing_profile" id="editing_profile_select" value="${data.live_ms_id}">
-                                    ${live_ele}
+                                <select class="form-control" name="editing_profile" id="editing_profile_select" value="${data.rec_ms_id}">
+                                    ${rec_ele}
                                 </select>
                             </div>
                         `;
