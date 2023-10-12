@@ -552,6 +552,7 @@ background: black;
 
 .sd-label-text {
     padding-top: 3px;
+    font-size: 14px;
 }
 
 .enable-sd-label {
@@ -569,6 +570,7 @@ background: black;
     user-select: none;
 }
 
+
 .enable-sd-label input {
     position: absolute;
     opacity: 0;
@@ -576,6 +578,7 @@ background: black;
     height: 0;
     width: 0;
 }
+
 
 .checkmark {
     position: absolute;
