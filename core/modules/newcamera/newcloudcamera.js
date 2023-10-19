@@ -285,7 +285,8 @@ CameraCloudEditControl = function(){
         data = {...data, ...hiddenOpts};
         for (let i in data) if (typeof data[i] === 'string') data[i]=data[i].trim();
         if ($(this).hasClass('rtsp')) delete data['onvif_rtsp_port_fwd'];
-        if (pass && username) {
+        if ($(".newcameratabs").hasClass("add5")) {
+            // class for uplink tabs
             data.password = pass;
             data.username = username;
             data.uplink = true;
