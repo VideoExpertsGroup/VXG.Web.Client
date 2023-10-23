@@ -1,4 +1,5 @@
 <?php
+include_once ('../../core/MCore.php');
 include_once ('../../core/MCoreJson.php');
 include_once ('../../core/MUser.php');
 MCoreJson::init();
@@ -9,7 +10,8 @@ if (!MCore::$core->current_user->isSubuser() && !MCore::$core->current_user->isU
 
 list($url, $camid) = MCore::getInputParameters(['url', 'camid']);
 
-$authPass = "12345678"; // hardcoded for now
+$authPass = MCore::$core->config['uplink_proxies_password']; 
+if (!$authPass) return;
 
 $ch=curl_init($url);
 curl_setopt_array($ch, [CURLOPT_POST => false, CURLOPT_CUSTOMREQUEST=>'GET', CURLOPT_RETURNTRANSFER => true, CURLOPT_VERBOSE => true,
