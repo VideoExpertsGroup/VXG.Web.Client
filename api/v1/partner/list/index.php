@@ -9,13 +9,15 @@ MCoreJson::init();
 $conn = StaticLib::db_connection();
 
 if (1){
-    $stmt = $conn->prepare('SELECT "id","name","allCamsToken","serverLkey","js" FROM "user" WHERE role=\'partner\' ORDER BY id DESC');
+    $stmt = $conn->prepare('SELECT "id","name","allCamsToken","serverLkey","js","role", "plans" FROM "user" WHERE role=\'partner\' ORDER BY id DESC');
     if (!$stmt->execute())
         StaticLib::error(500, $stmt->errorInfo());
     while ($row = $stmt->fetch()) {
         MCore::$core->response['data'][] = array(
             'id' => $row['id'],
             'name' => $row['name'],
+            'role' => $row['role'],
+            'plans' => $row['plans'],
 			'allcamstoken' => $row['allCamsToken'],
 			'lkey' => $row['serverLkey'],
             'allow_rec' => (strpos($row['js'],"retention")) ? true: false,

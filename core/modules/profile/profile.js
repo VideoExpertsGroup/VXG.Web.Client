@@ -10,8 +10,35 @@ window.screens['profile'] = {
     'html': path+'profile.html',
     'stablecss':[path+'profile.css'],
     'on_show':function(){
-        if (window.controls['planlist']!==undefined)
-            $(this.wrapper).find('.planlist').html('<planlist></planlist>');
+        if (vxg.user.src.plans.length != 0) {
+            planTable = `
+                <tr class="plan-header">
+                    <th>Plan</th>
+                    <th>Count</th>
+                    <th>Used</th>
+                </tr>
+            `;
+            vxg.user.src.plans.forEach(plan => {
+                if (plan.count != 0) {
+                    planTable += `
+                    <tr class="plan ${ plan.count == plan.used ? "disabled" : ""}">
+                        <td class="plan-desc" planid="${plan.id}"> ${plan.name} </td>
+                        <td class="plan-count">${plan.count}</td>
+                        <td class="used-count" >${plan.used}</td>
+                    </tr>
+                    `;
+                }
+            });
+    
+            var planlist = `
+                <table class="plansTable">
+                    ${planTable}
+                </table>
+            `;
+            $(this.wrapper).find('.planlist').html(planlist);
+        } else {
+            $(this.wrapper).find('.planlist').html("<p>No subscriptions found for this account.</p>");
+        }
         $(this.wrapper).find('[name="phone"]').val(vxg.user.src.phone ? vxg.user.src.phone:'' );
         $(this.wrapper).find('[name="sheduler"]').val(vxg.user.src.sheduler ? vxg.user.src.sheduler:'' );
         $(this.wrapper).addClass('tab2').removeClass('tab1').removeClass('tab3').removeClass('tab4');
@@ -67,13 +94,14 @@ window.screens['profile'] = {
     'on_init':function(){
         let self = this;
 	 if (vxg.user.src.role == "user") $(".prifiletabs > .tab3").hide();
+     if (vxg.user.src.role == "distrib") $(".prifiletabs > .tab4").hide();
 	 $(self.wrapper).addClass('tab2');
         core.elements['header-center'].text('User '+vxg.user.src.email+' profile');
         this.wrapper.find('.prifiletabs > div').click(function(){
             if ($(this).hasClass('tab1')) $(self.wrapper).addClass('tab1').removeClass('tab2').removeClass('tab3').removeClass('tab4');
             if ($(this).hasClass('tab2')) $(self.wrapper).addClass('tab2').removeClass('tab1').removeClass('tab3').removeClass('tab4');
             if ($(this).hasClass('tab3')) $(self.wrapper).addClass('tab3').removeClass('tab2').removeClass('tab1').removeClass('tab4');
-	    if ($(this).hasClass('tab4')) $(self.wrapper).addClass('tab4').removeClass('tab1').removeClass('tab2').removeClass('tab3');
+	        if ($(this).hasClass('tab4')) $(self.wrapper).addClass('tab4').removeClass('tab1').removeClass('tab2').removeClass('tab3');
         });
 
         $.getJSON("core/modules/profile/storage.json", function(json) {

@@ -11,7 +11,6 @@ $conn = StaticLib::db_connection();
 $response = StaticLib::startPage();
 
 if (1){
-
 //    list($partner_id, $setting_rec, $setting_int) = MCore::checkAndGetInputParameters(['id','setting_rec','setting_int']);
     list($partner_id, $setting_rec, $setting_int, $setting_nvr, $setting_ai) = MCore::getInputParameters(['id','setting_rec','setting_int', 'setting_nvr', 'setting_ai']);
 	
@@ -82,7 +81,7 @@ if (1){
 			$js_var = str_replace('core/vxg_ai_access.js','',$js_var);
 		}
 	}
-	
+
 	$js_var = str_replace('\n\n','\n',$js_var);			
 	$query = 'UPDATE "user" SET "js"=E\'' . $js_var . '\' WHERE "id"=' .$partner_id;	
 
@@ -90,7 +89,7 @@ if (1){
 		
     if (!$stmt->execute())
         StaticLib::error(500, $stmt->errorInfo());
-	
+
 	$response['httpcode'] = 200;
     StaticLib::endPage($response);
     exit;

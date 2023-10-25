@@ -322,6 +322,7 @@ class StreamLandAPI {
 			'lkey' => StreamLandAPI::$streamland_key,
 			// TODO PARAMS should be formed on the upper level
 			'get_params' => array(
+				'include_meta' => 'true',
 				'limit' => 1000,
 			),
 		));

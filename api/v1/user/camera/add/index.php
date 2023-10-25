@@ -26,6 +26,7 @@ if ($uplink) {
 }
 
 $onvif_rtsp_port_fwd = $onvif_rtsp_port_fwd ? 0+ $onvif_rtsp_port_fwd : 0;
+
 $camera = MCamera::createCamera(MCore::$core->current_user, $name, $location, $recording, $tz, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd, false, $serialnumber);
 
 if ($camera && $serialnumber && $macAddress) {
@@ -65,5 +66,6 @@ if ($camera)
 {
     MCore::$core->response['access_tokens']['all'] = $camera->camera['rwToken'];
     MCore::$core->response['id'] = $camera->camera['channelID'];
+    MCore::$core->response['meta'] = $camera->meta;
 }
     

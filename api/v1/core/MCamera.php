@@ -273,6 +273,7 @@ class MCamera{
         $camera = MCamera::getCameraByChannelIdAndUser($response_cloud['id'], $owneruser);
 
         if (!$camera) return $camera;
+        $camera->meta = $channelData['meta'];
         $camera->setLimits(MConstants::DEFAULT_PLAN, $as_storage);
 //TODO: REMOVE IT
 //        $camera->createAIToken();
@@ -347,6 +348,38 @@ class MCamera{
         $limits = StreamLandAPI::setLimits($channel_id, $data);
         if (isset($limits['errorDetail'])) 
             error(556, 'Failed to get limits: '. $limits['errorDetail']);
+    }
+
+    public static function updateChannelPlans($channel_id, $meta) {
+        $server = MCore::$core->current_user->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed generateServicesURLs');
+        $response_cloud = StreamLandAPI::updateChannel($channel_id, ['meta'=>$meta]);
+        if (isset($response_cloud['errorDetail'])) 
+            error(556, 'Failed to update channel: '. $response_cloud['errorDetail']);
+
+        return true;
+    }
+
+    public static function updateChannelPlansAdmin($channel_id, $meta, $userKey) {
+        $response_cloud = StreamLandAPI::updateChannel($channel_id, ['meta'=>$meta], $userKey);
+        if (isset($response_cloud['errorDetail'])) 
+            error(556, 'Failed to update channel: '. $response_cloud['errorDetail']);
+
+        return true;
+    }
+
+    public static function getCameraPlanId($channel_id) {
+        $server = MCore::$core->current_user->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed generateServicesURLs');
+
+        $response_cloud = StreamLandAPI::getChannel($channel_id);
+        if (isset($response_cloud['errorDetail'])) 
+            error(556, 'Failed to update channel: '. $response_cloud['errorDetail']);
+
+        if ($response_cloud['meta']['subid']) return $response_cloud['meta']['subid'];
+        else false;
     }
 
     public static function updateLocationByChannelID($channel_id, $user_from, $location){
@@ -725,11 +758,12 @@ class MCamera{
             error(550, $ret['errorDetail']);
     }
     
-    public function setAIConfigByChannelID($channel_id, $type, $targetToken, $currentToken = null) {
+    public function setAIConfigByChannelID($channel_id, $type, $targetToken, $currentToken = null, $for_user = null) {
+        $user = $for_user ? $for_user : MCore::$core->current_user;
         if (!$targetToken) {
             if ($type != 'off') {
                 $aiPeriod = $type == 'continuous' ? 180 : 10;
-                if(!MCamera::createAITokenByChannelId($channel_id, MCore::$core->current_user, $aiPeriod, $type))
+                if(!MCamera::createAITokenByChannelId($channel_id, $user, $aiPeriod, $type))
                     error(500, 'Error creating AI token for this camera');
             }
         } else {
@@ -740,7 +774,7 @@ class MCamera{
                         $key = array_search($channel_id, $tokenChannels);
                         unset($tokenChannels[$key]);
                         $params = ['channels' => $tokenChannels];
-                        if(!MCamera::addChannelToGroupTokenByID($currentToken['id'], $channel_id, MCore::$core->current_user, $params, $type, true)) 
+                        if(!MCamera::addChannelToGroupTokenByID($currentToken['id'], $channel_id, $user, $params, $type, true)) 
                             error(500, 'Error removing this camera from AI token');
                     } 
                 }
@@ -749,7 +783,7 @@ class MCamera{
                 if (!in_array($channel_id, $tokenChannels)) {
                     array_push($tokenChannels, $channel_id);
                     $params = ['channels' => $tokenChannels];
-                    if(!MCamera::addChannelToGroupTokenByID($targetToken['id'], $channel_id, MCore::$core->current_user, $params, $type)) 
+                    if(!MCamera::addChannelToGroupTokenByID($targetToken['id'], $channel_id, $user, $params, $type)) 
                         error(500, 'Error adding this camera to AI token');
                 }
             } else {
@@ -757,7 +791,7 @@ class MCamera{
                 if (($key = array_search($channel_id, $tokenChannels)) !== false) {
                     unset($tokenChannels[$key]);
                     $params = ['channels' => $tokenChannels];
-                    if(!MCamera::addChannelToGroupTokenByID($targetToken['id'], $channel_id, MCore::$core->current_user, $params, $type)) 
+                    if(!MCamera::addChannelToGroupTokenByID($targetToken['id'], $channel_id, $user, $params, $type)) 
                         error(500, 'Error removing this camera from AI token');
                 }
             }

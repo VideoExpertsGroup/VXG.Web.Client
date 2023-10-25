@@ -1,5 +1,6 @@
 <?php
 include_once('MCore.php');
+include_once('MCamera.php');
 include_once(dirname(dirname(dirname(__FILE__))).'/streamland_api.php');
 
 use Kreait\Firebase\Factory;
@@ -54,6 +55,65 @@ class MUser{
             if ($p['stripe_plan_id']==$plan_id)
                 return $p['metadata']['name'] ? $p['metadata']['name'] : $p['metadata']['stripe_plan_description'];
         return '';
+    }
+
+    public function addPlanDefinitions() {
+        $planCheck = MCore::$core->pdo->fetchOne('SELECT * from "plan" where "uid"=?', ["CR30"]);
+        if (!$planCheck) {
+            // convert any existing plans to "LEGACY" plans
+            $updateOldPlansQuery = 'UPDATE "plan" SET "desc"=\'LEGACY\'';
+            MCore::$core->pdo->query($updateOldPlansQuery);
+
+            MUser::createPlanDescription("30 Day Continuous Recording", "CR30", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"off"}', 0);
+            MUser::createPlanDescription("30 Day Event Recording", "ER30", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"by_event","object_detection":"off"}', 0);
+            MUser::createPlanDescription("30 Day Continuous Rec with AI by Timer", "CR30_BT", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"continuous"}', 0);
+            MUser::createPlanDescription("30 Day Continuous Rec with AI by Event", "CR30_BE", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"by_event"}', 0);
+        }
+
+        return true;
+    }
+
+    public function createPlanDescription($name, $uid, $monthsAmount, $desc, $feeCents) {
+        MCore::$core->pdo->query('INSERT into "plan" ("name", "uid", "monthsAmount", "desc", "feeCents") VALUES(?,?,?,?,?)',
+        [$name, $uid, $monthsAmount, $desc, $feeCents]);
+    }
+
+    public function getPlanInfo($planId) {
+        $ret = fetchRow('SELECT "desc" FROM "plan" WHERE "uid"=?', [$planId]);
+        if ($ret) return json_decode($ret['desc']);
+        else error(400, "Error getting plan information");
+    } 
+
+    public function getPlansForUser() {
+        $ret = fetchRow('SELECT "plans" from "user" WHERE id=?', [$this->id]);
+        if ($ret) return $ret['plans'];
+        else error(400, "Error getting plans for this user");
+    }
+
+    public function updatePlanUsed($planid, $count) {
+        $ret = fetchRow('SELECT "plans" from "user" WHERE id=?', [$this->id]);
+
+        if($ret) {
+            $plans = json_decode($ret['plans']);
+            foreach($plans as $p) {
+                if($p->id == $planid) {
+                    $p->used = $p->used + $count;
+                    break;
+                }
+            }
+            $newPlans = json_encode($plans);
+            $query = 'UPDATE "user" SET "plans"=\''.$newPlans.'\' WHERE "id"=\''.$this->id.'\'';
+            MCore::$core->pdo->query($query);
+            return true;
+        } else {
+            error(400, "Error getting plans for this user");
+        }
+    }
+
+    public function setJsData($js) {
+        $query = 'UPDATE "user" SET "js"=\''.$js.'\' WHERE "id"=\''.$this->id.'\'';
+        MCore::$core->pdo->query($query);
+        return;
     }
 
 	public function getServerData(){
@@ -1186,6 +1246,74 @@ class MUser{
         return $token_changed;
     }
 
+    public function getCamerasForUser() {
+        $server = $this->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed creating camera channel. reason: generateServicesURLs');
+
+        $ret = StreamLandAPI::getCamerasList();
+        if (isset($response_cloud['errorDetail']))
+            error(500, $response_cloud['errorDetail']);
+
+        return $ret['objects'];
+    }
+    
+    public function convertCameraToPlans($channel, $recmode, $aiType, $userPlans) {
+        $server = $this->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed creating camera channel. reason: generateServicesURLs');
+
+        if ($recmode == 'on') {
+            if ($aiType == 'continuous') {
+                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BT", "30 Day Continuous Rec with AI by Timer");
+            } else if ($aiType == 'by_event') {
+                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BE", "30 Day Continuous Rec with AI by Event");
+            } else {
+                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30", "30 Day Continuous Recording");
+            }
+        } else if ($recmode == 'by_event') {
+            if ($aiType == 'off') {
+                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "ER30", "30 Day Event Recording");
+            }
+        } 
+        
+        if (($recmode == 'by_event' && $aiType != 'off') || ($recmode == 'off' && $aiType != 'off')) {
+            // switch rec to "on" (continuous) and add corresponding ai plan
+            MCamera::setRetention($channel['id'], $this, "on", false, 720);
+            if ($aiType == 'continuous') {
+                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BT", "30 Day Continuous Rec with AI by Timer");
+            } else if ($aiType == 'by_event') {
+                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BE", "30 Day Continuous Rec with AI by Event");
+            }
+        }
+
+        return $userPlans;
+    }
+
+    public function changePlansAndAssign($channel, $userPlans, $planId, $planName) {
+        $hasPlan = false;
+        for ($i = 0; $i < count($userPlans); $i++) {
+            if ($userPlans[$i]['id'] == $planId) {
+                // already has an instance of this plan
+                $hasPlan = true;
+                $userPlans[$i]['used']++;
+                // add another plan if there arent enough
+                if ($userPlans[$i]['used'] > $userPlans[$i]['count']) $userPlans[$i]['count']++;
+                break;
+            }
+        }
+        if (!$hasPlan) {
+            $userPlans[] = ['id' => $planId, 'name' => $planName, 'count' => 1, 'used' => 1];
+        }
+
+        $channelMeta = $channel['meta'];
+        $channelMeta['subid'] = $planId;
+        $channelMeta['subname'] = $planName; 
+
+        MCamera::updateChannelPlans($channel['id'], $channelMeta);
+        return $userPlans;
+    }
+
     public function syncWithCamerasOnServer(){
         $server = $this->getServerData();
         if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
@@ -1261,7 +1389,7 @@ class MUser{
 
         $aiTargetedTokens = StreamLandAPI::getGroupTokensList($params);
         if (!$aiTargetedTokens) error(500, "Error getting channel group tokens");
-        return $aiTargetedTokens;
+        return $aiTargetedTokens['objects'];
     }
 
     public function getListOfAIEnabledCameras($channel_ids) {

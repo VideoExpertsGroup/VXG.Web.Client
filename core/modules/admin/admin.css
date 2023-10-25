@@ -28,12 +28,42 @@ display:none;
     color: var(--main-color);
 }
 
+.admin-cont {
+    display: flex;
+    width: 100%;
+}
+
+.addUser {
+    width: 20%;
+    max-height: 18vh;
+    margin-left: 24px;
+    background-color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 9px 1px rgb(169 169 169 / 47%);
+}
+
+.adduser-btn {
+    width: 100%;
+    margin-top: 15px;
+}
+
 .partnerlist, .cameralist {
-min-height:40px;
+    min-height:40px;
+    max-height: 75vh;
+    overflow-y: auto;
+    background-color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 9px 1px rgb(169 169 169 / 47%);
+}
+
+.partnerlist {
+    width: 100%;
 }
 
 .partnerlist  table, .cameralist table{
-width:100%;
+    width:100%;
 }
 
 .partnerlist th, .cameralist th{
@@ -46,10 +76,9 @@ text-align:left;
     background-color: rgba(0,0,0,.075);
 }
 .partnerlist td, .cameralist td {
-    border-top: 1px solid #e7eaec;
     line-height: 1.42857;
     padding: 10px 8px;
-    vertical-align: top;
+    vertical-align: center;
     word-break: break-all;
 }
 
@@ -64,14 +93,16 @@ background-image: url(mchart.svg);
 background-image: url(muser.svg);
 }
 
+.partnerlist tr:nth-child(even), .cameralist tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
 /*******************************************/
 
 
 
 
 .userbtn{
-width:20px;
-height:20px;
 outline:none;
     background-position: center;
     background-size: contain;
@@ -172,12 +203,110 @@ input.userarchive:checked:after{
     background-image: url(check.svg);
 }
 
-.screens .admin .userbtn i{
-font-size: 18px;
-color:#979797;
-}
 .screens .admin .userbtn i:hover{
-    color:var(--main-color);
+        color:var(--main-color);
+}
+
+.userbtn i{
+    font-size: 22px;
+    color: #9e9e9e;
+}
+
+.userbtn i:hover{
+    color: var(--main-hover-color);
+}
+
+.userbtn.active i{
+    color: var(--main-color);
+}
+
+td.crit-btns {
+    display: flex;
+    justify-content: center;
+}
+
+.crit-btns button {
+    margin-left: 20px;
+}
+
+.makeadmin-btn, .sub-btn, .cams-btn {
+    /*border-radius: 11px;
+    padding: 5px 9px;
+    width: 25%;
+    height: 35px;
+    width: 35px;*/
+    border-radius: 3px;
+    font-size: 14px !important;
+    text-align: center;
+}
+
+.sub-btn {
+    padding: 5px 15px
+}
+
+.makeuser-btn {
+    color: rgb(167 115 177) !important;
+    background-color: transparent;
+    border: 2px solid rgb(167 115 177);
+}
+
+.makeuser-btn:hover {
+    cursor: pointer;
+    background-color: rgb(146, 101, 155);
+    color: white;
+}
+
+.makeadmin-btn:hover {
+    cursor: pointer;
+    background-color: rgb(146, 101, 155);
+}
+
+.makeadmin-btn {
+    background-color: rgb(167 115 177);
+    border: thin solid rgb(167 115 177);
+}
+
+.makeadmin-btn:hover {
+    cursor: pointer;
+    background-color: rgb(146, 101, 155);
+}
+
+.sub-btn {
+    background-color: #61bed1;
+    border: thin solid #61bed1;
+}
+
+.sub-btn:hover {
+    cursor: pointer;
+    background-color: #52a5b6;
+}
+
+#sub-warning {
+    max-width: 420px;
+}
+
+.cams-btn {
+    background-color: var(--main-color);
+    border: thin solid var(--main-color);
+}
+
+.cams-btn:hover {
+    background-color: var(--main-hover-color);
+    cursor: pointer;
+}
+
+.deleteuser i{
+    color: #e8626f !important;
+}
+
+.deleteuser i:hover{
+    color: #c92d3c !important;
+}
+
+/*.screens .admin .userarchive{
+width:24px;
+height:20px;
+background: url(/core/modules/integration/reports.svg) no-repeat center center;
 }
 .screens .admin .userbtn.active i{
 color: var(--main-color);}
@@ -360,11 +489,9 @@ position: absolute;
     margin-top: 9px;
 }
 
-
-
 .acc_token {
     user-select: text;
-    background-color: white;
+    /*background-color: white;*/
     word-break: break-all;
 }
 
@@ -372,6 +499,83 @@ position: absolute;
     display: none;
 }
 
+.plans-list-cont {
+    max-width: 420px;
+}
 
+.plan {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+}
 
+.plan:not(:last-child) {
+    border-bottom: thin solid #d1d1d1;
+}
 
+.plans-list {
+    border: thin solid #d1d1d1;
+}
+
+.plan-desc {
+    width: 73%;
+    text-align: left !important;
+    font-weight: 600 !important;
+    margin-top: revert !important;
+    font-size: 14px !important;
+}
+
+.admin-desc {
+    font-size: 14px !important;
+}
+
+.plan-count {
+    width: 13%;
+}
+
+.used-count {
+    width: 13%;
+}
+
+.mdialog .action-btns {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.cancelbtn, .applybtn {
+    width: 30%;
+}
+
+.cancelbtn {
+    border-color: #e8626f !important;
+    background-color: #e8626f !important;
+}
+
+.cancelbtn:hover {
+    color: white !important;
+    background-color: #d25864 !important
+}
+
+/*button.assign-plan {
+    border: none;
+    border-radius: 5px;
+    background-color: var(--main-color);
+    font-size: 16px;
+    width: 16%;
+    padding: 3px 0px;
+}
+
+.assign-plan i {
+    color: white;
+}
+
+button.assign-plan:hover {
+    cursor: pointer;
+    background-color: var(--main-hover-color);
+}*/
+
+.assign-btn {
+    width: 100%;
+    margin: 17px 0px 10px 0;
+}

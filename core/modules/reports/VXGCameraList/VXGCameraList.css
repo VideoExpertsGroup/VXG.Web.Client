@@ -141,6 +141,106 @@ a.listmenu-item.mwebui {
     color: #878787;
 }
 
+.namePrev {
+    display: flex;
+    align-items: center;
+}
+
+.sname {
+    margin-left: 30px;
+}
+
+.plan-btn {
+    padding: 1px 10px !important;
+}
+
+.plansTable {
+    text-align: left;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.plan-desc {
+    width: 60%;
+}
+
+.plansTable td {
+    padding: 14px 5px;
+}
+
+.plansTable th {
+    padding: 5px;
+}
+
+.plansTable > tbody > .plan:not(.disabled):hover {
+    background-color: #ececec;
+    cursor: pointer;
+}
+
+.plansTable > tbody > .plan.disabled {
+    background-color: #e1e1e1;
+}
+
+.plansTable > tbody > tr {
+    border-bottom: thin solid #d1d1d1;
+}
+
+.plans-check {
+    height: unset !important;
+    width: unset !important;
+    position: relative;
+    top: -4px;
+}
+
+.choose-sub > input[type='radio']:after {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 15px;
+    position: relative;
+    top: -3px;
+    left: -5px;
+    background-color: #d1d3d1;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 2px solid white;
+}
+
+.choose-sub > input[type='radio']:checked:after {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 15px;
+    position: relative;
+    top: -3px;
+    left: -5px;
+    background-color: var(--main-color);
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 2px solid white;
+}
+
+button.vxgbutton.assign-btn {
+    margin: 10px 0px;
+    width: 100%;
+}
+
+.curr-sub {
+    font-size: 14px !important;
+    font-weight: bold !important;
+}
+
+.unsub {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: white !important;
+}
+
+.unsub:hover {
+    color: #dc3545 !important;
+    background-color: transparent !important;
+}
+
 @media (min-width: 1420px) {
     .VXGCameraList {
         position: absolute;

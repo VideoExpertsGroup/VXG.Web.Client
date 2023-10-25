@@ -28,9 +28,9 @@ CameraEditControl = function(){
         setTimeout(function(){self.dispatchEvent(ev);},0);
     }
     this.connectedCallback = function(){
-        this.submited_event = new Event('submited',{cancelable: false, bubbles: true});
+        this.submited_event = new Event('submited',{cancelable: false, bubbles: false, defaultPrevented: true});
         this.error_event = new Event('error',{cancelable: false, bubbles: true});
-        this.loaded_event = new Event('loaded',{cancelable: false, bubbles: true});
+        this.loaded_event = new Event('loaded',{cancelable: false, bubbles: false, defaultPrevented: true});
         let self = this;
         access_token = $(this).getNearParentAtribute('access_token');
         let camera_finder_link = $(this).html();
@@ -110,6 +110,15 @@ CameraEditControl = function(){
     </select>
 </div>
 
+<div class="form-group subscription">
+    <label>Subscription: </label>
+    <div class="subscription-group">
+        <input type="text" disabled class="subscription-info show-name" name="showname" value="">
+        <input type="hidden" class="subscription-info" name="subname" value="">
+        <input type="hidden" class="subscription-info" name="subid" value="">
+    </div>
+</div>
+
 <div class="form-group setting-dropdown loc-dropdown bottom-options">
     <div class="anccsUrlLocation">GEOLOCATION</div>
     <span class="carrot-icon closed"><</span>
@@ -128,7 +137,7 @@ CameraEditControl = function(){
     <label>Description</label>
     <textarea name="desc" rows="5"></textarea>
 </div>
-` + (vxg.api.cloudone.camera.setRetention!==undefined ? `
+`/* + (vxg.api.cloudone.camera.setRetention!==undefined ? `
 <div class="form-group setting-dropdown rete-dropdown bottom-options">
     <div class="anccsUrlRetentiontime">RECORDING</div>
     <span class="carrot-icon closed"><</span>
@@ -165,7 +174,7 @@ CameraEditControl = function(){
         <option value="continuous">Continuous</option>
         <option value="by_event">By Event</option>
     </select>
-</div>`:"") + `
+</div>`:"")*/ + `
 </form>
 <div class="sbt"><br/><br/>
 <div class="wait"><span>Wait</span>&nbsp;&nbsp;<div class="spinner"></div></div>
@@ -173,8 +182,9 @@ CameraEditControl = function(){
             ($(self).attr('hidesubmit')!==undefined ? '' : '<button class="apply vxgbutton">Apply</button>') +
             '</div>');
 
-        $(this).find('.apply').click(function(){
-            self.submit_event = new Event('submit',{cancelable: true, bubbles: true});
+        $(this).find('.apply').click(function(e){
+            e.preventDefault();
+            self.submit_event = new Event('submit',{cancelable: true, bubbles: false, defaultPrevented: true});
             if (!self.dispatchEvent(self.submit_event)) return;
             self.submit();
         });
@@ -193,21 +203,7 @@ CameraEditControl = function(){
             }
 
             if ($(this).hasClass("loc-dropdown")) $(".loca").toggle();
-            if ($(this).hasClass("rete-dropdown")) $(".rete").toggle();
-            if ($(this).hasClass("ai-dropdown")) $('.ai_type').toggle();
 
-        });
-
-        $(this).find('.rete_recmode').change(function(){
-            let type = $(this).val();
-            let url = ($(self).find('.anccsUrl').val()||'').trim();
-            if (type=='off') $(self).find('.rete_time').addClass("rete_off");
-            else $(self).find('.rete_time').removeClass("rete_off").show();
-
-            if (url.substr(0,5)=='rtsp:' && type=='by_event')
-                $(self).find('.rectypeinfo').show();
-            else
-                $(self).find('.rectypeinfo').hide();
         });
         
         $(this).find('.type select').change(function(){
@@ -234,6 +230,12 @@ CameraEditControl = function(){
         });
 
         this.reset();
+        if (vxg.user.src.plans && vxg.user.src.plans.length > 0 && ($(this).attr("id") != "uplink-camera" || $(this).attr("id") != "cloud-camera")) {
+            this.selectPlan(this);
+        } else {
+            $('.subscription').hide();
+        }
+
         return this.attributeChangedCallback('access_token', access_token);
     }
     this.attributeChangedCallback = function(name, access_token){
@@ -355,27 +357,62 @@ CameraEditControl = function(){
                 data.lat = r.lat ? r.lat : null;
                 data.lon = r.lon ? r.lon : null;
                 vxg.cameras.createCameraPromise(data).then(function(r){
-                    var aiCams_string = sessionStorage.getItem("aiCams");
-                    if (aiCams_string) {
-                        var aiCams_array = aiCams_string.split(",").filter(e => e);
-                        if (data.ai_type != "off") {
-                            if (!aiCams_array.includes(r.id.toString())) {
-                                aiCams_string += "," + r.id;
-                                sessionStorage.setItem("aiCams", aiCams_string); 
-                            }
-                        } else {
-                            if (aiCams_array.includes(r.id.toString())) {
-                                var newAiCams = aiCams_string.replace("," + r.id, "");
-                                sessionStorage.setItem("aiCams", newAiCams); 
-                            }
+                    if(data.subid && data.subname) {
+                        var subInfo = {
+                            "subid": data.subid,
+                            "subname": data.subname
+                        };
+        
+                        var newMeta = {
+                            ...subInfo,
+                            ...r.meta
+                          };
+                        
+                        obj = {
+                            "id": r.id,
+                            "meta": newMeta
                         }
+        
+                        vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
+                            var aiType = ret['planInfo'].object_detection;
+                            var aiCams_string = sessionStorage.getItem("aiCams");
+                            if (aiCams_string) {
+                                var aiCams_array = aiCams_string.split(",").filter(e => e);
+                                if (aiType != "off") {
+                                    if (!aiCams_array.includes(r.id.toString())) {
+                                        aiCams_string += "," + r.id;
+                                        sessionStorage.setItem("aiCams", aiCams_string); 
+                                    }
+                                } else {
+                                    if (aiCams_array.includes(r.id.toString())) {
+                                        var newAiCams = aiCams_string.replace("," + r.id, "");
+                                        sessionStorage.setItem("aiCams", newAiCams); 
+                                    }
+                                }
+                            }
+                            sessionStorage.setItem(r.id, "true");
+                            //self.hidewait();
+                            $(self).attr('access_token','');
+                            self.reset();
+                            location.reload();
+                            //self.dispatchEvent(self.submited_event);
+                        },function(r){
+                            self.hidewait();
+                            if (r && r.responseJSON && r.responseJSON.errorDetail)
+                                alert(r.responseJSON.errorDetail);
+                            else
+                                alert('Falied to delete setting');
+                        });       
+                    } else {
+                        sessionStorage.setItem(r.id, "true");
+                        self.hidewait();
+                        $(self).attr('access_token','');
+                        self.reset();
+                        self.dispatchEvent(self.submited_event);
+                        location.reload();
                     }
-                    sessionStorage.setItem(r.id, "true");
-                    self.hidewait();
-                    $(self).attr('access_token','');
-                    self.reset();
-                    self.dispatchEvent(self.submited_event);
                 },function(r){
+                    self.hidewait();
                     if (r && r.responseJSON && r.responseJSON.errorDetail)
                         self.showerror(r.responseJSON.errorDetail);
                     else
@@ -390,46 +427,41 @@ CameraEditControl = function(){
             data.lat = r.lat ? r.lat : null;
             data.lon = r.lon ? r.lon : null;
             self.camera.updateCameraPromise(data).then(function(r){
-                if (!self.camera.bsrc.url && data.rete_recmode=='off')
-                    data.rete_time = -1;				
-				/*fixme memorycard_recording should be always disabled to avoid triggering SD timeline mode in WebSDK*/
-                let p =  self.camera.setRetention ? 
-                    self.camera.setRetention({recording: /*data.rete_sd=='on'*/false, time: data.rete_time, type: data.rete_recmode}) :
-                    new Promise(function(resolve, reject){resolve();}); 
-
-                p.then(function(){
-
-                    let p = self.camera.setAIConfig ? self.camera.setAIConfig({'channel_id': self.camera.camera_id, 'type': data.ai_type }) :
-                                new Promise(function(resolve, reject){resolve();});                    
+                if (data.subid && data.subname) {
+                    var subInfo = {
+                        "subid": data.subid,
+                        "subname": data.subname
+                    };
+    
+                    var newMeta = {
+                        ...subInfo,
+                        ...self.camera.src.meta
+                      };
                     
-                    return p.then(function () {
-                        var aiCams_string = sessionStorage.getItem("aiCams");
-                        if (aiCams_string) {
-                            var aiCams_array = aiCams_string.split(",").filter(e => e);
-                            if (data.ai_type != "off") {
-                                if (!aiCams_array.includes(self.camera.camera_id.toString())) {
-                                    aiCams_string += "," + self.camera.camera_id;
-                                    sessionStorage.setItem("aiCams", aiCams_string); 
-                                }
-                            } else {
-                                if (aiCams_array.includes(self.camera.camera_id.toString())) {
-                                    var newAiCams = aiCams_string.replace("," + self.camera.camera_id, "");
-                                    sessionStorage.setItem("aiCams", newAiCams); 
-                                }
-                            }
-                        }
-                        
+                    obj = {
+                        "id": self.camera.camera_id,
+                        "meta": newMeta
+                    }
+    
+                    vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
                         $(self).attr('access_token','');
                         self.reset();
-                        self.dispatchEvent(self.submited_event);
-                        if (data.rete_sd == 'on') localStorage.setItem(self.camera.camera_id, 'true')
-                        else localStorage.setItem(self.camera.camera_id, 'false');
-                        self.hidewait();
+                        //self.dispatchEvent(self.submited_event);
                         location.reload();
-                    })
-
-                });
+                    },function(r){
+                        if (r && r.responseJSON && r.responseJSON.errorDetail)
+                            alert(r.responseJSON.errorDetail);
+                        else
+                            alert('Falied to delete setting');
+                        self.hidewait();
+                    });
+                } else {
+                    $(self).attr('access_token','');
+                    self.reset();
+                    self.dispatchEvent(self.submited_event);
+                }
             },function(r){
+                self.hidewait();
                 if (r && r.responseJSON && r.responseJSON.errorDetail)
                     self.showerror(r.responseJSON.errorDetail);
                 else
@@ -454,6 +486,45 @@ CameraEditControl = function(){
 
         this.showwait('Loading');
         this.camera.getConfig().then(function(bsrc){
+            var subName = camera.src.meta ? camera.src.meta.subname : null;
+            if (subName) {
+                $(self).find('[name="showname"]').val(subName);
+                $(self).find(".subbtngen").remove();
+                $(self).find('.subscription-group').append($('<span class="vxgbutton subbtn unsub subbtngen" id="unsubbtn">Unsubscribe</span>'));
+                $(self).find("#unsubbtn").on('click',function(e) { 
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var oldsubid = camera.src.meta.subid;
+
+                    delete camera.src.meta.subid;
+                    delete camera.src.meta.subname;
+
+                    obj = {
+                        "old_sub": oldsubid,
+                        "id": camera.camera_id,
+                        "meta": camera.src.meta
+                    }
+
+                    core.elements['global-loader'].show();
+
+                   vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
+                        var planIndex = vxg.user.src.plans.findIndex(p => p.id == oldsubid);
+                        if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
+                        self.selectPlan(self, camera);
+                        core.elements['global-loader'].hide();
+                        return;
+                    },function(r){
+                        if (r && r.responseJSON && r.responseJSON.errorDetail)
+                            alert(r.responseJSON.errorDetail);
+                        else
+                            alert('Falied to remove subscription');
+                        core.elements['global-loader'].hide();
+                    });    
+                });
+
+            } else {
+                self.selectPlan(self, camera);
+            }
             if (!bsrc){
                 self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
                 self.defferedDispatchEvent(self.error_event);
@@ -477,7 +548,6 @@ CameraEditControl = function(){
                 $(self).find('.url_protocol').append('<option value="cloud">Cloud camera'); 
             }
                 
-
             if (bsrc.url.substr(0,5)=='onvif') {
                 $(self).find('.url_protocol').val('onvif');
                 $(self).addClass('onvif');
@@ -499,7 +569,6 @@ CameraEditControl = function(){
 
             self.createTimezonesList($(self).find('[name="tz"]'),bsrc.tz);
 
-
             $(self).find('[name="name"]').val(bsrc.name);
             $(self).find('[name="location"]').val('');
             $(self).find('[name="location"]').val(self.camera.getLocation());
@@ -509,50 +578,80 @@ CameraEditControl = function(){
             $(self).find('[name="username"]').val(bsrc.username ? bsrc.username : '');
             $(self).find('[name="password"]').val(bsrc.password ? bsrc.password : '');
             $(self).find('[name="onvif_rtsp_port_fwd"]').val(bsrc.onvifRtspPort ? bsrc.onvifRtspPort : '');
-            $(self).find('[name="recording"]').val(bsrc.isRecording ? 1 : 0);
 
-            let p =  self.camera.getRetention ? self.camera.getRetention() : new Promise(function(resolve, reject){resolve();}); 
-            p.then(function(rt){
-                if (rt){
-                    var localStorage_sdCard = localStorage.getItem(self.camera.camera_id);
-                    var sdCardEnabled = (typeof localStorage_sdCard === "string" && localStorage_sdCard.toLowerCase() === "true");
-                    
-                    if (rt.type!==undefined)
-                        $(self).find('[name="rete_recmode"]').val(rt.type);
-                    //if (self.camera.bsrc.url || rt.type=='on') $(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
-                    //else $(self).find('.rete_sd input').removeAttr('disabled');
-
-                    if (rt.type=='off') $(self).find('.rete_time').addClass("rete_off");
-                    else $(self).find('.rete_time').removeClass("rete_off");
-    
-                    if (rt.time!==undefined)
-                        $(self).find('[name="rete_time"]').val(rt.time);
-                    if (rt.recording!==undefined)
-                        $(self).find('[name="rete_sd"]').prop('checked', sdCardEnabled);
-                    /*if (self.camera.bsrc.url) 
-                        $(self).find('.sdrecinfo').text('(supported only for Cloud cameras)');
-                    else if (rt.type=='on')
-                        $(self).find('.sdrecinfo').text('(supported only at "Off" and "By Event" cloud recording types)');*/
-                }
-
-                let p = self.camera.getAIConfig ? self.camera.getAIConfig(self.camera.camera_id) : new Promise(function(resolve, reject){ resolve() });
-                return p.then(function(aiInfo) {
-                    if (aiInfo) $(self).find('[name="ai_type"]').val(aiInfo.ai_type)
-
-                    $(self).addClass('ready');
-                    self.hidewait();
-                    self.defferedDispatchEvent(self.loaded_event);
-                }, function(err) {
-                    var t = err;
-                    self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
-                    self.defferedDispatchEvent(self.error_event);
-                });
-            });
+            $(self).addClass('ready');
+            self.hidewait();
+            self.defferedDispatchEvent(self.loaded_event);
         }, function(){
             self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
             self.defferedDispatchEvent(self.error_event);
         });
 
+    }
+    this.selectPlan = function(self, camera) {
+        $(self).find('[name="showname"]').val("No Subscription Assigned");
+        var subbtnEle;
+        if ($(self).hasClass("wait") || $(self).hasClass("ready")) {
+            $(self).find(".subbtngen").remove();
+            $(self).find('.subscription-group').append($('<span class="vxgbutton subbtn subbtngen" id="subbtn-edit">Subscribe</span>'));
+            subbtnEle = $(self).find("#subbtn-edit");
+        } else {
+            $(".subbtngen").remove();
+            $('.subscription-group').append($('<span class="vxgbutton subbtn subbtngen" id="subbtn-new">Subscribe</span>'));
+            subbtnEle = $("#subbtn-new");
+        }
+
+        subbtnEle.on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var camName = camera ? camera.src.name : "new camera";
+            planTable = `
+                <tr class="plan-header">
+                    <th>Plan</th>
+                    <th>Count</th>
+                    <th>Used</th>
+                    <th></th>
+                </tr>
+            `;
+            vxg.user.src.plans.forEach(plan => {
+                if (plan.count != 0) {
+                    var enabled = plan.count != plan.used ? `onclick="checkPlan('${plan.id}')` : "";
+                    planTable += `
+                    <tr class="plan ${ !enabled ? "disabled" : ""}" ${enabled}">
+                        <td class="plan-desc" planid="${plan.id}"> ${plan.name} </td>
+                        <td class="plan-count">${plan.count}</td>
+                        <td class="used-count" >${plan.used}</td>
+                        <td class="checkbox choose-sub">
+                            <input id="plan_${plan.id}" class="plans-check" type="radio"  ${ !enabled ? "disabled" : ""} name="subid" value="${plan.id}">
+                            <input type="hidden" id="name_${plan.id}" value="${plan.name}">
+                        </td>
+                    </tr>
+                    `;
+                }
+            });
+
+            var plansDialog = `
+                <h1 id="plans-title">Assign Subscription to ${camName}</h1>
+                <table class="plansTable">
+                    ${planTable}
+                </table>
+                <button name="select" class="vxgbutton assign-btn">Select</button>
+            `;
+            dialogs['mdialog'].activate(plansDialog).then(function(r){
+                if (r.button!='select') return;
+                var name = $("#name_" + r.form.subid).val();
+                if ($(self).hasClass("wait")) { 
+                    $(self).find('[name="showname"]').val(name);
+                    $(self).find('[name="subname"]').val(name);
+                    $(self).find('[name="subid"]').val(r.form.subid);
+                } else {
+                    $('[name="showname"]').val(name);
+                    $('[name="subname"]').val(name);
+                    $('[name="subid"]').val(r.form.subid);
+                }
+                return;
+            });		
+        });            
     }
     this.reset = function(){
         $(this).addClass('newcamera');
@@ -564,6 +663,8 @@ CameraEditControl = function(){
         //$(this).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
         $(this).find('.url_protocol').removeAttr('disabled');
         $(this).removeClass('options').removeClass('location').removeClass('rtsp').removeClass('cloud').addClass('onvif');
+        $(this).find('.subscription-info').val('');
+        $(this).find('.show-name').val('No Subscription Assigned');
         this.createTimezonesList($(this).find('[name="tz"]'),moment.tz.guess());
         $(this).find('.sdrecinfo').text('');
     }
@@ -675,10 +776,6 @@ CameraEditControl = function(){
         $(this).find('.url_password').val(purl.password);
         $(this).find('.url_path').val(purl.path);
         if (purl.protocol!='onvif') $(this).find('.url_prot').val(purl.protocol);
-        if (url.substr(0,5)=='rtsp:' && $(this).find('.rete_recmode').val()=='by_event')
-            $(this).find('.rectypeinfo').show();
-        else
-            $(this).find('.rectypeinfo').hide();
     }
     this.onUrlProtocolChange = function(){
         $(this).find('.anccsUrlOptions').removeClass('active');

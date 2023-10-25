@@ -168,6 +168,23 @@ vxg.api.cloudone.user.getUsedPlans = function(){
     });
 };
 
+vxg.api.cloudone.user.getPlans = function(obj){
+    var data = obj || {};
+//    data.uid = vs_api.uid;
+//    if (vs_api.manage_uid)
+//        data.manage_uid = vs_api.manage_uid;
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/plans/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+};
+
+
 
 //////////////////////////////////////////////////
 // Storage api
@@ -574,3 +591,29 @@ vxg.api.cloudone.partner.del_camera = function (obj) {
 	});
 };
 
+
+vxg.api.cloudone.partner.get_plans = function (obj) {
+    var data = obj || {};
+    return vxg.user.getToken().then(function(r){
+		data.token = r;
+		return $.ajax({
+			type: 'POST',
+			url: vxg.api.cloudone.apiSrc + '/api/v1/partner/get_plans/',
+			contentType: "application/json",
+			data: JSON.stringify(data)
+		});
+	});
+};
+
+vxg.api.cloudone.partner.assign_plans = function (userid, plansStr) {
+    var data = {};
+    return vxg.user.getToken().then(function(r){
+		data.token = r;
+		return $.ajax({
+            type: 'GET',
+            url: vxg.api.cloudone.apiSrc + '/api/v1/distrib/plans/assign/?id=' + userid +'&plans='+plansStr,
+			contentType: "application/json",
+			data: JSON.stringify(data)
+		});
+	});
+};

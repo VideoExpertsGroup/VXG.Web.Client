@@ -3,7 +3,7 @@
 /*:root {
     --main-color: #7BB247;
     --rec-color: red;
-    --main-hover-color: #7BB247;
+    --main-hover-color: #6c9e3d;
 }*/
 
 body a,body a:hover {
@@ -555,6 +555,10 @@ display: inline-block;
 .vxgbutton.active {
 background-color:var(--main-color);
 color:white;
+}
+
+.subbtn {
+    font-weight: 300;
 }
 
 .spinner{
@@ -1235,6 +1239,17 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 
 .custom-checkbox input:checked ~ .checkmark {
     background-color: var(--main-color);
+}
+
+#plans-title, #admin-title {
+    width: 100%;
+    background-color: transparent;
+    padding-top: 7px;
+    font-size: 18px;
+    text-align: center;
+    border-bottom: none;
+    margin-bottom: 10px;
+    color: #5c5c5c;
 }
 
 .ncssclipbuttons .transparent-button i {

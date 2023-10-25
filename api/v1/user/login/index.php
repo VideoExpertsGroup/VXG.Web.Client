@@ -5,7 +5,6 @@ include_once ('../../core/MUser.php');
 include_once ('../../core/MCamera.php');
 MCoreJson::init();
 MCore::checkOnlyForAuthorized();
-
 if (MCore::$core->current_user->isPartner() && !MCore::$core->current_user->serverLkey)
     MCore::$core->current_user->updateLicenseKey();
 if (!MCore::$core->current_user->allCamsToken)
@@ -30,6 +29,7 @@ MCore::$core->response['capture_id'] = MCore::$core->config['capture_id'];
 MCore::$core->response['servers'] = MCore::$core->current_user->getServersIdList();
 MCore::$core->response['phone'] = MCore::$core->current_user->phone;
 MCore::$core->response['sheduler'] = MCore::$core->current_user->sheduler;
+MCore::$core->response['plans'] = MCore::$core->current_user->plans;
 
 $meta = MCore::$core->current_user->getAllCamsTokenMeta();
 
@@ -59,11 +59,49 @@ if (is_array($s) && count($s)>0 && $s[0])
 else
     MCore::$core->response['scripts'] = $skin['scripts'][MCore::$core->current_user->role];
 
+if (!in_array("converted_to_plans", $s)) {
+    MCore::$core->current_user->addPlanDefinitions();
+    $aiTokens = MCore::$core->current_user->getAllAIGroupTokens();
+    $userCameras = MCore::$core->current_user->getCamerasForUser();
+    $userPlans = MCore::$core->current_user->plans;
+    foreach($userCameras as $cam) {
+        $isstorage = array_key_exists("isstorage", $cam['meta']) ? true : false;
+
+        if (!$isstorage) {
+            $recmode = $cam['rec_mode'];
+            $aiType = "off";
+
+            foreach($aiTokens as $token) {
+                if (in_array($cam['id'], $token['channels'])) {
+                    // camera has ai enabled
+                    $aiParams = json_decode($token['meta']['ai_params']);
+                    if ($aiParams->filter == 'recording_thumbnail' && $token['meta']['ai_type'] == "object_and_scene_detection") {
+                        $aiType = "continuous";
+                    } else if ($aiParams->filter == 'undefined' && $token['meta']['ai_type'] == "object_and_scene_detection") {
+                        $aiType = "by_event";
+                    } 
+                }
+            }
+    
+            if ($aiType != 'off' || $recmode != 'off') {
+                $userPlans = MCore::$core->current_user->convertCameraToPlans($cam, $recmode, $aiType, $userPlans);
+            }
+        }
+    }
+
+    MCore::$core->current_user->setPlans($userPlans);
+    $newJs = MCore::$core->current_user->js . "\nconverted_to_plans";
+    MCore::$core->current_user->setJsData($newJs);
+}
+
 if ((!isset($meta['storage_channel_id']) || !(0+$meta['storage_channel_id'])) && !MCore::$core->current_user->isUser()){
     $camera = MCamera::createCamera(MCore::$core->current_user, '#StorageFor'.MCore::$core->current_user->id, false, false, 'Canada/Eastern', '', '', '', 0, 0, 0, true);
     MCore::$core->current_user->updateAllCamsToken();
     $meta['storage_channel_id'] = $camera instanceof MCamera ? $camera->camera['channelID'] : $camera;
     MCore::$core->current_user->setAllCamsTokenMeta($meta);
+
+// Converting old recording/ai cameras to use plans
+
     
 /*    
     $i = array_search("core/modules/archieve/archieve.js",MCore::$core->response['scripts']);

@@ -13,6 +13,7 @@ list($cameraID) = MCore::checkAndGetInputParameters(['id']);
 $camera = MCamera::getCameraByChannelIdAndUser($cameraID, MCore::$core->current_user);
 
 //MCamera::updateLocationByChannelID($cameraID, MCore::$core->current_user, '');
+$planId = MCamera::getCameraPlanId($cameraID);
 
 if ($camera){
     $camera->remove();
@@ -21,6 +22,8 @@ else
     MCamera::removeByChannelID($cameraID, MCore::$core->current_user);
 
 MCore::$core->current_user->updateAllCamsToken();
+
+if ($planId) MCore::$core->current_user->updatePlanUsed($planId, -1);
 
 if (!MCore::$core->current_user->allCamsToken)
     MCore::$core->response['allCamsToken'] = null;

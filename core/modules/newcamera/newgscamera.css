@@ -93,7 +93,7 @@ newgscamera a, newgscamera a:hover{
     color: var(--main-color);
 }
 
-.newcamera input:before {
+/*.newcamera input:before {
     cursor: pointer;
     content: '';
     width: 20px;
@@ -111,7 +111,7 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 
 .newcamera input[disabled]:before{
     cursor: default;
-}
+}*/
 
 
 .newcamera input.svgbtnbefore {

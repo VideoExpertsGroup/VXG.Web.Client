@@ -153,7 +153,7 @@ body.mobile .screens > .addcamera{
 padding:12px 12px 0 12px;
 }
 
-.addcamera input:before {
+.addcamera input:before:not(.plans-check) {
     cursor: pointer;
     content: '';
     width: 20px;
@@ -165,19 +165,33 @@ padding:12px 12px 0 12px;
 background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIj48cmVjdCB4PSIwLjQiIHk9IjAuNCIgd2lkdGg9IjE5LjIiIGhlaWdodD0iMTkuMiIgcng9IjUuNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiLz48L3N2Zz4=) bottom no-repeat;
 background-size: cover!important;
 }
-.addcamera input[disabled]:before{
+.addcamera input[disabled]:before:not(.plans-check){
     cursor: default;
 }
 
 
-.addcamera input:checked:before {
+.addcamera input:checked:before:not(.plans-check) {
 background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMiAyIDIwIDIwIiBmaWxsPSJub25lIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDJDNC42ODYyOSAyIDIgNC42ODYyOSAyIDhWMTZDMiAxOS4zMTM3IDQuNjg2MjkgMjIgOCAyMkgxNkMxOS4zMTM3IDIyIDIyIDE5LjMxMzcgMjIgMTZWOEMyMiA0LjY4NjI5IDE5LjMxMzcgMiAxNiAySDhaTTcuNzE3MTYgMTIuMjgzTDEwLjU0NTYgMTUuMTExNEMxMC43MDE4IDE1LjI2NzYgMTAuOTU1MSAxNS4yNjc2IDExLjExMTMgMTUuMTExNEwxNi43NjgxIDkuNDU0NTNMMTYuMjAyNCA4Ljg4ODg1TDEwLjgyODQgMTQuMjYyOUw4LjI4Mjg1IDExLjcxNzNMNy43MTcxNiAxMi4yODNaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=) bottom no-repeat;
 }
 
-.addcamera input.svgbtnbefore {
+.addcamera input.svgbtnbefore:not(.plans-check) {
     margin-top: 3px;
     margin-left: 26px;
     position: relative;
     height: 0;
     width: 0;
+}
+
+.subscription-group, .subscription-group-cloud{
+    display: flex;
+}
+
+.subscription-info {
+    width: 80%;
+    margin-right: 10px;
+    font-size: 12px !important;
+}
+
+.subbtn, .subbtn-cloud {
+    width: 20%;
 }

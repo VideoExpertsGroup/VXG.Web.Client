@@ -19,7 +19,7 @@ if ($camera_list) {
 
 $groupTokens = MCore::$core->current_user->getAllAIGroupTokens();
 
-foreach ($groupTokens['objects'] as $gt) {
+foreach ($groupTokens as $gt) {
 
     $ai_params = json_decode($gt['meta']['ai_params']);
     $ai_filter = $ai_params->{'filter'};

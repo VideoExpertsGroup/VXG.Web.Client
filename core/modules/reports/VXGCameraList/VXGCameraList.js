@@ -221,7 +221,7 @@ VXGCameraListView.prototype.initDraw = function initDraw(controller, cameraName,
     +	'		<thead>'
     +	'			<tr>'
     +	'				<th>Preview</th>'
-    +	'				<th>Name</th>'
+    //+	'				<th>Name</th>'
     +	'				<th>Location</th>'
     +	'				<th>Meta</th>'
     +	'				<th ifscreen="plan2camera">Plan</th>'
@@ -377,6 +377,10 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
                             if (r.button!='delete') return;
                             core.elements['global-loader'].show();
                             if (camera) camera.deleteCameraPromise().then(function(){
+                                var oldsubid = camera.src.meta.subid;
+                                var planIndex = vxg.user.src.plans.findIndex(p => p.id == oldsubid);
+                                if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
+
                                 var aiCams_string = sessionStorage.getItem("aiCams");
                                 if (aiCams_string) {
                                     var aiCams_array = aiCams_string.split(",").filter(e => e);
@@ -552,15 +556,16 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
         var draggableClass = camerasView == "cameras-group"? "draggable" : "";
 	        
 	    let tr = 
-	'<tr class="sl'+vxgcameralistdata[index].camera_id+' ' + hideCamera + ' ' + locClass + ' ' + draggableClass + ' ' + groupCam + '" data-index="' + index + '" data-camid="'+vxgcameralistdata[index].camera_id+'" access_token="'+ vxgcameralistdata[index].token  +'">' 
-    +	'	<td width="25%"><div ><campreview></campreview></div></td>' 
-    +	'	<td width="20%" class="sname"></td>' 
-    //+   '   <td width="5%" class="uilink" id="'+ vxgcameralistdata[index].camera_id+'-ui">' + ((urlEle) ? urlEle : '') + '</td>'
-    +	'	<td width="23%" class="sloc"></td>' 
+	'<tr class="sl'+vxgcameralistdata[index].camera_id+'" data-index="' + index + '" access_token="'+ vxgcameralistdata[index].token  +'">' 
+    +	'	<td style="width:45%"><div class="namePrev"><campreview></campreview><span id="name_'+ vxgcameralistdata[index].camera_id +'" class="sname"></span></div></td>' 
+    //+	'	<td width="10%" class="sname"></td>' 
+//    +   '   <td style="width:5%" class="uilink" id="'+ vxgcameralistdata[index].camera_id+'-ui">' + ((urlEle) ? urlEle : '') + '</td>'
+    +	'	<td style="width:13%" class="sloc"></td>' 
+    +	'	<td style="width:10%" class="showplans"  id="planbtn_'+ vxgcameralistdata[index].camera_id +'"></td>' 
 //    +	'	<td class="sparkline-container"><span class="sparkline" data-token="' + vxgcameralistdata[index].token + '" data-dataset="'+sparkline+'" style="display:none"></span></td>' 
-    +	'	<td width="17%" class="showai" id="ai_'+ vxgcameralistdata[index].camera_id +'" data-token="' + vxgcameralistdata[index].camera_id + '"></td>' 
-    +	'	<td ifscreen="plan2camera"><div class="splan vxgbutton-transparent hide" onclick_toscreen="plan2camera"></div></td>'
-    +	'	<td  width="15%" class="VXGCameraListActions">'
+    +	'	<td style="width:17%" class="showai" id="ai_'+ vxgcameralistdata[index].camera_id +'" data-token="' + vxgcameralistdata[index].camera_id + '"></td>' 
+//    +	'	<td ifscreen="plan2camera"><div class="splan vxgbutton-transparent hide" onclick_toscreen="plan2camera"></div></td>'
+    +	'	<td  style="width:10%" class="VXGCameraListActions">'
     +	'	<div class="VXGCameraListSettings"><svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg></div>'
     +	'	</td>'
     +	'</tr>';
@@ -573,6 +578,123 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
             }
         } else {
             $(tbody).append( $(tr) );
+        }
+
+        if (vxgcameralistdata[index].src.meta && vxgcameralistdata[index].src.meta.subid && vxgcameralistdata[index].src.meta.subid != "") {
+            // camera has a plan, show dialog to unassign on click
+            var camid = vxgcameralistdata[index].camera_id;
+            $("#planbtn_" + camid).html('<button class="vxgbutton-transparent plan-btn" access_token="'+camid+'">View Sub</button>');
+            $("#planbtn_" + camid).find('button').off('click').on('click', function() {
+                var camName = $("#name_" + camid).text();
+                var subDialog = `
+                    <h1 id="plans-title">Unassign Subscription from Camera ${camName}</h1>
+                    <p class="curr-sub"> ${vxgcameralistdata[index].src.meta.subname} </p>
+                    <button name="apply" class="vxgbutton assign-btn unsub" id="unsubscribe">Unsubscribe</button>
+                `;
+                dialogs['mdialog'].activate(subDialog).then(function(r){
+                    if (r.button!='apply') return;
+
+                    var oldsubid = vxgcameralistdata[index].src.meta.subid;
+
+                    delete vxgcameralistdata[index].src.meta.subid;
+                    delete vxgcameralistdata[index].src.meta.subname;
+
+                    obj = {
+                        "old_sub": oldsubid,
+                        "id": camid,
+                        "meta": vxgcameralistdata[index].src.meta
+                    }
+
+                    core.elements['global-loader'].show();
+
+                    vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
+                        location.reload();
+                    },function(r){
+                        if (r && r.responseJSON && r.responseJSON.errorDetail)
+                            alert(r.responseJSON.errorDetail);
+                        else
+                            alert('Falied to remove subscription');
+                        core.elements['global-loader'].hide();
+                    });                  
+                                    
+                });		
+
+            });
+        } else {
+            // camera doesn't have plan, show list of available ones
+            
+            if (vxg.user.src.plans && vxg.user.src.plans.length != 0) {
+                var camid = vxgcameralistdata[index].camera_id;
+                var meta = vxgcameralistdata[index].src.meta; 
+                $("#planbtn_" + camid).html('<button class="vxgbutton plan-btn" access_token="'+camid+'">Assign Sub</button>');
+                $("#planbtn_" + camid).find('button').off('click').on('click', function() {
+                    var camName = $("#name_" + camid).text();
+                    planTable = `
+                        <tr class="plan-header">
+                            <th>Plan</th>
+                            <th>Count</th>
+                            <th>Used</th>
+                            <th></th>
+                        </tr>
+                    `;
+                    vxg.user.src.plans.forEach(plan => {
+                        if (plan.count != 0) {
+                            var enabled = plan.count != plan.used ? `onclick="checkPlan('${plan.id}')` : "";
+                            planTable += `
+                            <tr class="plan ${ !enabled ? "disabled" : ""}" ${enabled}">
+                                <td class="plan-desc" planid="${plan.id}"> ${plan.name} </td>
+                                <td class="plan-count">${plan.count}</td>
+                                <td class="used-count" >${plan.used}</td>
+                                <td class="checkbox choose-sub">
+                                    <input id="plan_${plan.id}" class="plans-check" type="radio"  ${ !enabled ? "disabled" : ""} name="subid" value="${plan.id}">
+                                    <input style="display:none;" id="name_${plan.id}" value="${plan.name}">
+                                </td>
+                            </tr>
+                            `;
+                        }
+                    });
+    
+                    var plansDialog = `
+                        <h1 id="plans-title">Assign Subscription to Camera ${camName}</h1>
+                        <table class="plansTable">
+                            ${planTable}
+                        </table>
+                        <button name="apply" class="vxgbutton assign-btn">Assign</button>
+                    `;
+                    dialogs['mdialog'].activate(plansDialog).then(function(r){
+                        if (r.button!='apply') return;
+    
+                        var subInfo = {
+                            "subid": r.form.subid,
+                            "subname": $("#name_" + r.form.subid).val()
+                        };
+    
+                        var newMeta = {
+                            ...subInfo,
+                            ...meta
+                          };
+                        
+                        obj = {
+                            "id": camid,
+                            "meta": newMeta
+                        }
+    
+                        core.elements['global-loader'].show();
+    
+                        vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
+                            location.reload();
+                        },function(r){
+                            if (r && r.responseJSON && r.responseJSON.errorDetail)
+                                alert(r.responseJSON.errorDetail);
+                            else
+                                alert('Falied to delete setting');
+                            core.elements['global-loader'].hide();
+                        });                       
+                    });		
+    
+                });
+            } 
+            
         }
 
         if (aiCameras_local) {
@@ -701,10 +823,8 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 	});
 }
 
-VXGCameraListView.prototype.groupByLocation = function groupByLocation(cameralist) {
-    var onlyMetaCams = cameralist.filter(cam => cam.src.meta);
-    var onlyLoc = onlyMetaCams.filter(cam => cam.src.meta.location);
-    return [...new Set(onlyLoc.map(cam => cam.src.meta.location))];
+function checkPlan(plan_id) {
+    $("#plan_" + plan_id).prop("checked", true);
 }
 
 VXGCameraListView.prototype.showWait = function showWait(isWait) {

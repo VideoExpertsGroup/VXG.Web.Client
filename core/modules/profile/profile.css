@@ -21,9 +21,9 @@ float:right;
 padding-right:25px;
 }
 
-.screens .profile table td:last-child{
+/*.screens .profile table td:last-child{
 text-align:right;
-}
+}*/
 
 .header-search input{
 border: 1px solid #ced4da;

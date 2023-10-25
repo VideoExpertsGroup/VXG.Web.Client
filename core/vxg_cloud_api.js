@@ -485,6 +485,20 @@ vxg.api.cloud.getGroupTokenInfo = function(token){
     });
 };
 
+vxg.api.cloud.updateCloudCam = function(camid, meta, user_lkey){
+    var headers = {};
+    headers['Authorization'] = 'LKey ' + user_lkey;
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+    return $.ajax({
+        type: 'PUT',
+        url: vxg.api.cloud.apiSrc+'/api/v3/channels/'+camid+'/',
+        headers: headers,
+        contentType: "application/json",
+        data: JSON.stringify(meta)
+    });
+};
+
 vxg.api.cloud.getCamerasList = function(obj){
     var data = obj || {};
     let headers = vxg.api.cloud.getHeader();

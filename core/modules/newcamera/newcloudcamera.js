@@ -130,6 +130,15 @@ CameraCloudEditControl = function(){
     <label>Password</label>
     <input type="password" autofocus="autofocus" class="gspassword" name="gspassword">
 </div>
+<div class="form-group subscription">
+    <label>Subscription: </label>
+    <div class="subscription-group-cloud">
+        <input type="text" disabled class="subscription-info show-name" name="showname" value="">
+        <span class="vxgbutton subbtn" id="subbtn-cloud">Subscribe</span>
+        <input type="hidden" class="subscription-info" name="subname" value="">
+        <input type="hidden" class="subscription-info" name="subid" value="">
+    </div>
+</div>
 </form>
 <div class="sbt">
 <div class="wait"><span>Wait</span>&nbsp;&nbsp;<div class="spinner"></div></div>
@@ -148,7 +157,7 @@ CameraCloudEditControl = function(){
         <label>Longitude</label>
         <input name="lon" value="">
     </div>`;
-        dropdownOpts += vxg.api.cloudone.camera.setRetention!==undefined ?
+       /* dropdownOpts += vxg.api.cloudone.camera.setRetention!==undefined ?
             `<div class="form-group setting-dropdown rete-dropdown bottom-options">
             <div class="anccsUrlRetentiontime">RECORDING</div>
             <span class="carrot-icon closed"><</span>
@@ -184,7 +193,7 @@ CameraCloudEditControl = function(){
             <option value="continuous">Continuous</option>
             <option value="by_event">By Event</option>
         </select>
-    </div>`:"";
+    </div>`:"";*/
 
         $('#dropdown-options').html(dropdownOpts);
         $('#plugin-dropdown-options').html(dropdownOpts);
@@ -236,6 +245,11 @@ CameraCloudEditControl = function(){
         });
 
         this.reset();
+        if (vxg.user.src.plans && vxg.user.src.plans.length > 0) {
+            this.selectPlan(this);
+        } else {
+            $('.subscription-group').hide();
+        }
         return this.attributeChangedCallback('access_token', access_token);
     }
     this.attributeChangedCallback = function(name, access_token){
@@ -357,19 +371,67 @@ CameraCloudEditControl = function(){
             if (r['allCamsToken']) 
                 vxg.user.src.allCamsToken = r['allCamsToken'];
 
-            if (macAddress && serverSerial) dialogs['mdialog'].activate('<h7>Success!</h7><p>Install the plug-in on your camera and it will automatically connect this camera to your account.</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
-            else dialogs['mdialog'].activate('<h7>Access token</h7><p>Copy and save the access token before closing the window</p><textarea rows="5" style="min-width:200px">'+r.access_tokens.all+'</textarea><p><button name="cancel" class="vxgbutton">Ok</button></p>');    
-            
-            $(".serial-number-input").val("");
-            $(".mac-address-input").val("");
-            $(".password-input").val("");
-            $(".username-input").val("");
+            if(data.subid && data.subname) {
+                var subInfo = {
+                    "subid": data.subid,
+                    "subname": data.subname
+                };
 
-            $(self).attr('access_token','');
-            self.hidewait();
-            $(".server-status").hide()
-            self.dispatchEvent(self.submited_event);
-            self.reset();
+                var newMeta = {
+                    ...subInfo,
+                    ...r.meta
+                    };
+                
+                obj = {
+                    "id": r.id,
+                    "meta": newMeta
+                }
+
+                vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
+                    var aiType = ret['planInfo'].object_detection;
+                    var aiCams_string = sessionStorage.getItem("aiCams");
+                    if (aiCams_string) {
+                        var aiCams_array = aiCams_string.split(",").filter(e => e);
+                        if (aiType != "off") {
+                            if (!aiCams_array.includes(r.id.toString())) {
+                                aiCams_string += "," + r.id;
+                                sessionStorage.setItem("aiCams", aiCams_string); 
+                            }
+                        } else {
+                            if (aiCams_array.includes(r.id.toString())) {
+                                var newAiCams = aiCams_string.replace("," + r.id, "");
+                                sessionStorage.setItem("aiCams", newAiCams); 
+                            }
+                        }
+                    }
+
+                    if (macAddress && serverSerial) dialogs['mdialog'].activate('<h7>Success!</h7><p>Install the plug-in on your camera and it will automatically connect this camera to your account.</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
+                    else dialogs['mdialog'].activate('<h7>Access token</h7><p>Copy and save the access token before closing the window</p><textarea rows="5" style="min-width:200px">'+r.access_tokens.all+'</textarea><p><button name="cancel" class="vxgbutton">Ok</button></p>');    
+                    
+                    $(".serial-number-input").val("");
+                    $(".mac-address-input").val("");
+                    $(".password-input").val("");
+                    $(".username-input").val("");
+
+                    $(self).attr('access_token','');
+                    //self.hidewait();
+                    $(".server-status").hide()
+                    //self.dispatchEvent(self.submited_event);
+                    self.reset();
+                    location.reload();
+                },function(r){
+                    self.hidewait();
+                    if (r && r.responseJSON && r.responseJSON.errorDetail)
+                        alert(r.responseJSON.errorDetail);
+                    else
+                        alert('Falied to delete setting');
+                });       
+            } else {
+                self.hidewait();
+                $(".server-status").hide()
+                self.dispatchEvent(self.submited_event);
+                self.reset();
+            }
         },function(r){
             if (r && r.responseJSON && r.responseJSON.errorDetail) {
                 if (macAddress && serverSerial) $('.server-status').html(r.responseJSON.errorDetail);
@@ -451,13 +513,68 @@ CameraCloudEditControl = function(){
         });
 
     }
+    this.selectPlan = function(self, camera) {
+        $(self).find('[name="showname"]').val("No Subscription Assigned");
+        $(self).find("#subbtn-cloud").on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var camName = camera ? camera.src.name : "new camera";
+            planTable = `
+                <tr class="plan-header">
+                    <th>Plan</th>
+                    <th>Count</th>
+                    <th>Used</th>
+                    <th></th>
+                </tr>
+            `;
+            vxg.user.src.plans.forEach(plan => {
+                if (plan.count != 0) {
+                    var enabled = plan.count != plan.used ? `onclick="checkPlan('${plan.id}')` : "";
+                    planTable += `
+                    <tr class="plan ${ !enabled ? "disabled" : ""}" ${enabled}">
+                        <td class="plan-desc" planid="${plan.id}"> ${plan.name} </td>
+                        <td class="plan-count">${plan.count}</td>
+                        <td class="used-count" >${plan.used}</td>
+                        <td class="checkbox choose-sub">
+                            <input id="plan_${plan.id}" class="plans-check" type="radio"  ${ !enabled ? "disabled" : ""} name="subid" value="${plan.id}">
+                            <input type="hidden" id="name_${plan.id}" value="${plan.name}">
+                        </td>
+                    </tr>
+                    `;
+                }
+            });
+
+            var plansDialog = `
+                <h1 id="plans-title">Assign Subscription to ${camName}</h1>
+                <table class="plansTable">
+                    ${planTable}
+                </table>
+                <button name="select" class="vxgbutton assign-btn">Select</button>
+            `;
+            dialogs['mdialog'].activate(plansDialog).then(function(r){
+                if (r.button!='select') return;
+                var name = $("#name_" + r.form.subid).val();
+                if ($(self).hasClass("wait")) { 
+                    $(self).find('[name="showname"]').val(name);
+                    $(self).find('[name="subname"]').val(name);
+                    $(self).find('[name="subid"]').val(r.form.subid);
+                } else {
+                    $('[name="showname"]').val(name);
+                    $('[name="subname"]').val(name);
+                    $('[name="subid"]').val(r.form.subid);
+                }
+                return;
+            });		
+        });            
+    }
     this.reset = function(){
         $(this).addClass('newcamera');
         $(this).find('.url_protocol [value="cloud"]').remove();
         $(this).find('.iperror').hide();
         $(this).find('[name="serialnumber"], [name="gspassword"], [name="name"], [name="location"], [name="lat"], [name="lon"], [name="desc"], [name="url"], [name="username"], [name="password"], .url_ip, .url_http_port, .url_rtsp_port').val('');
         $(this).find('.url_path').val('onvif/device_service');
-        $(this).find('.url_protocol').val('onvif');
+        $(this).find('.subscription-info').val('');
+        $(this).find('.show-name').val('No Subscription Assigned');
         $(this).removeClass('options').removeClass('rtsp').removeClass('cloud').addClass('onvif');
         this.createTimezonesList($(this).find('[name="tz"]'),moment.tz.guess());
     }

@@ -218,7 +218,11 @@ function onCameraDelete(channel_id){
         dialogs['mdialog'].activate('<h7>Do you want to delete camera '+camera.src.name+'?</h7><p>It can\'t be cancelled </p><p><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">Delete</button></p>').then(function(r){
             if (r.button!='delete') return;
             core.elements['global-loader'].show();
+            var oldsubid = camera.src.meta ? camera.src.meta.subid : -1;
             if (camera) camera.deleteCameraPromise().then(function(){
+                var planIndex = vxg.user.src.plans.findIndex(p => p.id == oldsubid);
+                if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
+                
                 var aiCams_string = sessionStorage.getItem("aiCams");
                 if (aiCams_string) {
                     var aiCams_array = aiCams_string.split(",").filter(e => e);

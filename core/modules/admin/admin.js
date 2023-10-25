@@ -49,15 +49,29 @@ window.screens['admin'] = {
         let self=this;
         return vxg.partners.getList(100).then(function(ret){
 			var partners = ret.partners;
-            let table='<table><thead><tr class="header"><th scope="col">#</th><th scope="col">ID</th><th scope="col">Name</th><th scope="col">Action</th></tr></thead><tbody>';
+            let table=`
+                <table>
+                    <thead>
+                        <tr class="header">
+                            <th scope="col" style="width: 5%"></th>
+                            <th scope="col" style="width: 8%">ID</th>
+                            <th scope="col" style="width: 33%">Name</th>
+                            <th scope="col" style="width: 14%"></th>
+                            <th scope="col" style="width: 40%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
             c = 1;
             var hide_ai_class = ret.aiEnabled ? "" : "hide-ai";
             for (let i in partners) {
-                table += '<tr userid="' + partners[i].src.id + '"><td>' + c + '</td><td>' + partners[i].src.id + '</td><td class="name">' + partners[i].src.name + '</td><td class="action-icons">'
-						+ '<button class="userbtn item-rec userrec setting_rec '+ ((partners[i].src.allow_rec == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></button>'
+                table += '<tr userid="' + partners[i].src.id + '"><td>' + c + '</td><td>' + partners[i].src.id + '</td><td class="name">' + partners[i].src.name + '</td>'
+                        + '<td><button title="Assign Plans" class="item-subs setting_sub sub-btn" userid="'+ partners[i].src.id + '">Assign Plans</button></td>'
+                        + '<td class="action-icons">'
+						//+ '<button class="userbtn item-rec userrec setting_rec '+ ((partners[i].src.allow_rec == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></button>'
 						+ '<button class="userbtn item-arch userarchive setting_int '+ ((partners[i].src.allow_int == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-bookmark-o" aria-hidden="true"></i></button>'
 						+ '<button class="userbtn item-arch userarchive setting_nvr '+ ((partners[i].src.allow_nvr == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-server" aria-hidden="true"></i></button>'
-                        + '<button class="userbtn item-ai userai setting_ai ' + hide_ai_class + " " + ((partners[i].src.allow_ai == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-microchip" aria-hidden="true"></i></button>'
+                        //+ '<button class="userbtn item-ai userai setting_ai ' + hide_ai_class + " " + ((partners[i].src.allow_ai == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-microchip" aria-hidden="true"></i></button>'
                         + '<button onclick_toscreen="admincams" class="userbtn item-delete usercameras" userid="'+ partners[i].src.id +'"><i class="fa fa-video-camera" aria-hidden="true"></i></button>'
 						+ '<button class="userbtn item-delete deleteuser" userid="'+ partners[i].src.id +'"><i class="fa fa-trash-o" aria-hidden="true"></i></button>'
 						+ '</td></tr>';
@@ -78,10 +92,7 @@ window.screens['admin'] = {
 
                 let userid = this.getAttribute('userid');
 				
-				var obj = vxg.partners.list[userid].src.allcamstoken;
-				
-				
-									
+				var obj = vxg.partners.list[userid].src.allcamstoken;						
 			});
 
 
@@ -254,6 +265,19 @@ window.screens['admin'] = {
                     });                    
                 });
             });
+
+            self.wrapper.find('.setting_sub').click(function(){
+                let userid = this.getAttribute('userid');
+                var savedPlans = sessionStorage.getItem('allPlans');
+                if (!savedPlans) {
+                    vxg.api.cloudone.partner.get_plans().then(function(allPlans) {
+                        sessionStorage.setItem("allPlans", JSON.stringify(allPlans["data"]));
+                        assignPlans(userid, partners, allPlans["data"]);
+                    });
+                } else {
+                    assignPlans(userid, partners, JSON.parse(savedPlans));
+                }
+            });
 			
 			
         }, function(){
@@ -274,6 +298,150 @@ window.screens['admin'] = {
     }
 };
 
+function assignPlans(userid, partners, allPlans) {
+    var partnerPlans;
+    partners.forEach(partner => {
+        if (partner.src.id == userid) {
+            partnerPlans = partner.src.plans;
+            return;
+        }
+    })
+
+    partnerPlans = !partnerPlans ? [] : JSON.parse(partnerPlans);
+
+    var planEle = "";
+    allPlans.forEach(plan => {
+        var currCount = 0;
+        var currUsed = 0;
+        var planIndex = partnerPlans.findIndex(p => p.id === plan.id);
+        if (planIndex > -1) {
+            currCount = partnerPlans[planIndex].count;
+            currUsed = partnerPlans[planIndex].used;
+        }
+
+        planEle += `
+            <div class="plan" id="${plan.id}_row">
+                <p class="plan-desc" planid="${plan.id}"> ${plan.name} </p>
+                <input class="plan-count ${currCount == 0 ? "unassigned" : ""}" type="number" id="${plan.id}_count" onchange="checkUnsubscribe('${plan.id}')" name="${plan.id}" value="${currCount}" min="0">
+                <input class="used-count" type="number" id="${plan.id}_used" value="${currUsed}" disabled>
+            </div>
+            `;
+    });
+
+    var plansDialog = `
+        <h5 id="plans-title">Assign Plans</h5>
+        <p id="sub-warning" style="display: none;"></p> 
+        <div class="plans-list-cont">
+            <div class="plans-list">
+                ${planEle}
+            </div>
+            <button name="apply" class="vxgbutton assign-btn">Assign</button>
+        </div>
+    `;
+    dialogs['mdialog'].activate(plansDialog).then(function(r){
+        if (r.button!='apply') return;
+
+        var plansArr = [];
+        var detached = [];
+        allPlans.forEach(plan => {
+            var newCount = $("#" + plan.id + "_count").val();
+            var used = $("#" + plan.id + "_used").val();
+            if (used > newCount) {
+                // special change where we have to remove cameras from subscriptions
+                var detachCount = used - newCount; 
+                var detach = {
+                    "id": plan.id,
+                    "detachCount": detachCount,
+                    "detached": 0
+                };
+                used = newCount;
+                detached.push(detach);
+            }
+
+            if (newCount > 0) {
+                var plan = {
+                    "id": plan.id,
+                    "name": plan.name,
+                    "used": used,
+                    "count": newCount
+                };
+                plansArr.push(plan);
+            }
+        })
+
+        var plansStr = JSON.stringify(plansArr);
+        
+        core.elements['global-loader'].show();
+
+        vxg.api.cloudone.partner.assign_plans(userid, plansStr).then(function(r) {
+            if (detached.length > 0) detachPlans(detached, userid);
+            else location.reload();
+        }, function(err) {
+            if (err && err.responseJSON && r.responseJSON.errorDetail)
+                alert(err.responseJSON.errorDetail);
+            else
+                alert('Falied to update setting');
+            core.elements['global-loader'].hide();
+        });
+    });
+}
+
+function checkUnsubscribe(planid) {
+    var newCount = $("#" + planid + "_count").val();
+    var currUsed = $("#" + planid + "_used").val();
+    var warningEle = $("#sub-warning");
+    if (currUsed > newCount && !warningEle.is(":visible")) {
+        $("#" + planid + "_row").css("background-color", "#ffdc73");
+        warningEle.show();
+        warningEle.html(`<p> This user currently has <b> ${currUsed} </b> cameras subscribed to this plan. Changing the count to <b> ${newCount} </b> will automatically unsubscribe cameras from this plan. </p>`)
+    } else {
+        $("#" + planid + "_row").css("background-color", "transparent");
+        warningEle.hide();
+        warningEle.empty();
+    }
+}
+
+function detachPlans(detachArr, userid) {
+    vxg.api.cloud.setAllCamsToken(vxg.partners.list[userid].src.allcamstoken);
+		
+    vxg.api.cloud.getCamerasList().then(function(cameras){
+        let promiseChain = Promise.resolve();
+        cameras.objects.forEach(cam => {
+            var subid = cam.meta && cam.meta.subid ? cam.meta.subid : null;
+            let i = detachArr.findIndex(p => p.id == subid && p.detachCount != p.detached)
+            if(i > -1) {
+                //var oldsubid = cam.meta.subid;
+                cam.oldsubid = cam.meta.subid;
+
+                delete cam.meta.subid;
+                delete cam.meta.subname;
+
+                var newMeta = {
+                    "meta": cam.meta,
+                }
+
+                detachArr[i].detached++;
+
+                const makeNextPromise = (cam) => () => {
+                    return vxg.api.cloud.updateCloudCam(cam.id, newMeta, vxg.partners.list[userid].src.lkey).then((r) => {
+                        var obj = {
+                            "old_sub": cam.oldsubid,
+                            "id": cam.id,
+                            "meta": [],
+                            "user_id": userid
+                        }
+                        vxg.api.cloudone.camera.setPlans(obj).then(function(p) {
+                            location.reload();
+                        })
+                    });
+                }
+                
+                promiseChain = promiseChain.then(makeNextPromise(cam));
+            }
+        });
+    });
+}
+ 
 function add_user()
 {
 
@@ -297,6 +465,20 @@ function add_user()
 						
 												});
 
+}
+
+function create_user() {
+    // I don't think add user really does anything, so maybe don't advertise it
+    var newuser = document.getElementById('adduser-email').value;
+    $.ajax({
+        type: 'GET',
+        url: vxg.api.cloudone.apiSrc + '/api/v1/distrib/create_partner/?email=' + newuser,
+        contentType: "application/json"
+        }).then(function(d){
+            location.reload();
+        }).catch(function(d){						
+            return ;
+    });
 }
 
 function make_admin()
@@ -325,6 +507,37 @@ function make_admin()
 						});
 						
 												});
+
+}
+
+function make_user_admin(userEmail, makeAdmin) {
+        var dialog = makeAdmin == 'admin' ? `<p class='admin-desc'> Do you want to make <b>${userEmail}</b> an admin? </p>` : `<p class='admin-desc'> Do you want to revoke admin priveleges for <b>${userEmail}</b>? </p>`;
+
+        dialogs['mdialog'].activate(`
+            <h1 id="admin-title"> Are You Sure? </h1>
+            ${dialog}
+            <div class="action-btns">
+                <button name="cancel" class="vxgbutton cancelbtn">Cancel</button>
+                <button name="apply" class="vxgbutton applybtn">Apply</button>
+            </div>
+        `).then(function(r){
+
+        if (r.button!='apply') return;
+
+        let adm_enable = makeAdmin == "admin" ? "on" : "off";
+
+        $.ajax({
+        type: 'GET',
+        url: vxg.api.cloudone.apiSrc + '/api/v1/distrib/update/?email=' + userEmail +'&enable='+adm_enable,
+        contentType: "application/json"
+        //						data: data
+        }).then(function(d){
+            location.reload();
+        }).catch(function(d){						
+            return ;
+        });
+
+            });
 
 }
 
@@ -393,8 +606,8 @@ window.screens['admincams'] = {
 						+'<td class="acc_token">' + cams[i].id + '</td>'
 						+'<td class="acc_token">' + cams[i].token + '</td>'
 						+'<td class="action-icons">'
-						+ '<button class="userbtn item-delete usercameras svgbtnhover" chnlid="'+ cams[i].id +'"></button>'
-						+ '<button class="userbtn item-delete deleteuser svgbtnhover" chnlid="'+ cams[i].id +'"></button>'
+						+ '<button class="userbtn item-delete usercameras" chnlid="'+ cams[i].id +'"><i class="fa fa-video-camera" aria-hidden="true"></i></button>'
+						+ '<button class="userbtn item-delete deleteuser" chnlid="'+ cams[i].id +'"><i class="fa fa-trash-o" aria-hidden="true"></i></button>'
 						+ '</td></tr>';
                 c++;
             }
