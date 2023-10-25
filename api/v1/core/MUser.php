@@ -66,8 +66,8 @@ class MUser{
 
             MUser::createPlanDescription("30 Day Continuous Recording", "CR30", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"off"}', 0);
             MUser::createPlanDescription("30 Day Event Recording", "ER30", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"by_event","object_detection":"off"}', 0);
-            MUser::createPlanDescription("30 Day Continuous Rec with AI by Timer", "CR30_BT", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"continuous"}', 0);
-            MUser::createPlanDescription("30 Day Continuous Rec with AI by Event", "CR30_BE", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"by_event"}', 0);
+            MUser::createPlanDescription("30 day Continued Rec-AI by Timer", "CR30_BT", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"continuous"}', 0);
+            MUser::createPlanDescription("30 day Continued Rec-AI by Event", "CR30_BE", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"by_event"}', 0);
         }
 
         return true;
@@ -1265,9 +1265,9 @@ class MUser{
 
         if ($recmode == 'on') {
             if ($aiType == 'continuous') {
-                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BT", "30 Day Continuous Rec with AI by Timer");
+                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BT", "30 day Continued Rec-AI by Timer");
             } else if ($aiType == 'by_event') {
-                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BE", "30 Day Continuous Rec with AI by Event");
+                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BE", "30 day Continued Rec-AI by Event");
             } else {
                 $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30", "30 Day Continuous Recording");
             }
@@ -1281,9 +1281,9 @@ class MUser{
             // switch rec to "on" (continuous) and add corresponding ai plan
             MCamera::setRetention($channel['id'], $this, "on", false, 720);
             if ($aiType == 'continuous') {
-                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BT", "30 Day Continuous Rec with AI by Timer");
+                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BT", "30 day Continued Rec-AI by Timer");
             } else if ($aiType == 'by_event') {
-                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BE", "30 Day Continuous Rec with AI by Event");
+                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BE", "30 day Continued Rec-AI by Event");
             }
         }
 

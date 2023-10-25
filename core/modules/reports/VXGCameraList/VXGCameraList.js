@@ -583,7 +583,7 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
         if (vxgcameralistdata[index].src.meta && vxgcameralistdata[index].src.meta.subid && vxgcameralistdata[index].src.meta.subid != "") {
             // camera has a plan, show dialog to unassign on click
             var camid = vxgcameralistdata[index].camera_id;
-            $("#planbtn_" + camid).html('<button class="vxgbutton-transparent plan-btn" access_token="'+camid+'">View Sub</button>');
+            $("#planbtn_" + camid).html('<button class="vxgbutton-transparent plan-btn" access_token="'+camid+'">View Plan</button>');
             $("#planbtn_" + camid).find('button').off('click').on('click', function() {
                 var camName = $("#name_" + camid).text();
                 var subDialog = `
@@ -626,7 +626,7 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
             if (vxg.user.src.plans && vxg.user.src.plans.length != 0) {
                 var camid = vxgcameralistdata[index].camera_id;
                 var meta = vxgcameralistdata[index].src.meta; 
-                $("#planbtn_" + camid).html('<button class="vxgbutton plan-btn" access_token="'+camid+'">Assign Sub</button>');
+                $("#planbtn_" + camid).html('<button class="vxgbutton plan-btn" access_token="'+camid+'">Assign Plan</button>');
                 $("#planbtn_" + camid).find('button').off('click').on('click', function() {
                     var camName = $("#name_" + camid).text();
                     planTable = `
@@ -663,7 +663,8 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
                     `;
                     dialogs['mdialog'].activate(plansDialog).then(function(r){
                         if (r.button!='apply') return;
-    
+                        if (r.button=='apply' && r.form.subid === undefined) return;
+
                         var subInfo = {
                             "subid": r.form.subid,
                             "subname": $("#name_" + r.form.subid).val()

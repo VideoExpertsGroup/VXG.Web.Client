@@ -639,6 +639,7 @@ CameraEditControl = function(){
             `;
             dialogs['mdialog'].activate(plansDialog).then(function(r){
                 if (r.button!='select') return;
+                if (r.button=='select' && r.form.subid === undefined) return;
                 var name = $("#name_" + r.form.subid).val();
                 if ($(self).hasClass("wait")) { 
                     $(self).find('[name="showname"]').val(name);
