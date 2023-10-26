@@ -94,7 +94,7 @@ window.screens['profile'] = {
     'on_init':function(){
         let self = this;
 	 if (vxg.user.src.role == "user") $(".prifiletabs > .tab3").hide();
-     if (vxg.user.src.role == "distrib") $(".prifiletabs > .tab4").hide();
+     if (vxg.user.src.role != "partner") $(".prifiletabs > .tab4").hide();
 	 $(self.wrapper).addClass('tab2');
         core.elements['header-center'].text('User '+vxg.user.src.email+' profile');
         this.wrapper.find('.prifiletabs > div').click(function(){

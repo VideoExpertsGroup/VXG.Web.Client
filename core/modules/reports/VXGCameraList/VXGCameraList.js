@@ -580,104 +580,30 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
             $(tbody).append( $(tr) );
         }
 
-        if (vxgcameralistdata[index].src.meta && vxgcameralistdata[index].src.meta.subid && vxgcameralistdata[index].src.meta.subid != "") {
-            // camera has a plan, show dialog to unassign on click
-            var camid = vxgcameralistdata[index].camera_id;
-            $("#planbtn_" + camid).html('<button class="vxgbutton-transparent plan-btn" access_token="'+camid+'">View Plan</button>');
-            $("#planbtn_" + camid).find('button').off('click').on('click', function() {
-                var camName = $("#name_" + camid).text();
-                var subDialog = `
-                    <h1 id="plans-title">Unassign Subscription from Camera ${camName}</h1>
-                    <p class="curr-sub"> ${vxgcameralistdata[index].src.meta.subname} </p>
-                    <button name="apply" class="vxgbutton assign-btn unsub" id="unsubscribe">Unsubscribe</button>
-                `;
-                dialogs['mdialog'].activate(subDialog).then(function(r){
-                    if (r.button!='apply') return;
-
-                    var oldsubid = vxgcameralistdata[index].src.meta.subid;
-
-                    delete vxgcameralistdata[index].src.meta.subid;
-                    delete vxgcameralistdata[index].src.meta.subname;
-
-                    obj = {
-                        "old_sub": oldsubid,
-                        "id": camid,
-                        "meta": vxgcameralistdata[index].src.meta
-                    }
-
-                    core.elements['global-loader'].show();
-
-                    vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
-                        location.reload();
-                    },function(r){
-                        if (r && r.responseJSON && r.responseJSON.errorDetail)
-                            alert(r.responseJSON.errorDetail);
-                        else
-                            alert('Falied to remove subscription');
-                        core.elements['global-loader'].hide();
-                    });                  
-                                    
-                });		
-
-            });
-        } else {
-            // camera doesn't have plan, show list of available ones
-            
-            if (vxg.user.src.plans && vxg.user.src.plans.length != 0) {
+        if (vxg.user.src.role == "partner") {
+            if (vxgcameralistdata[index].src.meta && vxgcameralistdata[index].src.meta.subid && vxgcameralistdata[index].src.meta.subid != "") {
+                // camera has a plan, show dialog to unassign on click
                 var camid = vxgcameralistdata[index].camera_id;
-                var meta = vxgcameralistdata[index].src.meta; 
-                $("#planbtn_" + camid).html('<button class="vxgbutton plan-btn" access_token="'+camid+'">Assign Plan</button>');
+                $("#planbtn_" + camid).html('<button class="vxgbutton-transparent plan-btn" access_token="'+camid+'">View Plan</button>');
                 $("#planbtn_" + camid).find('button').off('click').on('click', function() {
                     var camName = $("#name_" + camid).text();
-                    planTable = `
-                        <tr class="plan-header">
-                            <th>Plan</th>
-                            <th>Count</th>
-                            <th>Used</th>
-                            <th></th>
-                        </tr>
+                    var subDialog = `
+                        <h1 id="plans-title">Unassign Subscription from Camera ${camName}</h1>
+                        <p class="curr-sub"> ${vxgcameralistdata[index].src.meta.subname} </p>
+                        <button name="apply" class="vxgbutton assign-btn unsub" id="unsubscribe">Unsubscribe</button>
                     `;
-                    vxg.user.src.plans.forEach(plan => {
-                        if (plan.count != 0) {
-                            var enabled = plan.count != plan.used ? `onclick="checkPlan('${plan.id}')` : "";
-                            planTable += `
-                            <tr class="plan ${ !enabled ? "disabled" : ""}" ${enabled}">
-                                <td class="plan-desc" planid="${plan.id}"> ${plan.name} </td>
-                                <td class="plan-count">${plan.count}</td>
-                                <td class="used-count" >${plan.used}</td>
-                                <td class="checkbox choose-sub">
-                                    <input id="plan_${plan.id}" class="plans-check" type="radio"  ${ !enabled ? "disabled" : ""} name="subid" value="${plan.id}">
-                                    <input style="display:none;" id="name_${plan.id}" value="${plan.name}">
-                                </td>
-                            </tr>
-                            `;
-                        }
-                    });
-    
-                    var plansDialog = `
-                        <h1 id="plans-title">Assign Subscription to Camera ${camName}</h1>
-                        <table class="plansTable">
-                            ${planTable}
-                        </table>
-                        <button name="apply" class="vxgbutton assign-btn">Assign</button>
-                    `;
-                    dialogs['mdialog'].activate(plansDialog).then(function(r){
+                    dialogs['mdialog'].activate(subDialog).then(function(r){
                         if (r.button!='apply') return;
-                        if (r.button=='apply' && r.form.subid === undefined) return;
-
-                        var subInfo = {
-                            "subid": r.form.subid,
-                            "subname": $("#name_" + r.form.subid).val()
-                        };
     
-                        var newMeta = {
-                            ...subInfo,
-                            ...meta
-                          };
-                        
+                        var oldsubid = vxgcameralistdata[index].src.meta.subid;
+    
+                        delete vxgcameralistdata[index].src.meta.subid;
+                        delete vxgcameralistdata[index].src.meta.subname;
+    
                         obj = {
+                            "old_sub": oldsubid,
                             "id": camid,
-                            "meta": newMeta
+                            "meta": vxgcameralistdata[index].src.meta
                         }
     
                         core.elements['global-loader'].show();
@@ -688,14 +614,90 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
                             if (r && r.responseJSON && r.responseJSON.errorDetail)
                                 alert(r.responseJSON.errorDetail);
                             else
-                                alert('Falied to delete setting');
+                                alert('Falied to remove subscription');
                             core.elements['global-loader'].hide();
-                        });                       
+                        });                  
+                                        
                     });		
     
                 });
-            } 
-            
+            } else {
+                // camera doesn't have plan, show list of available ones
+                
+                if (vxg.user.src.plans && vxg.user.src.plans.length != 0) {
+                    var camid = vxgcameralistdata[index].camera_id;
+                    var meta = vxgcameralistdata[index].src.meta; 
+                    $("#planbtn_" + camid).html('<button class="vxgbutton plan-btn" access_token="'+camid+'">Assign Plan</button>');
+                    $("#planbtn_" + camid).find('button').off('click').on('click', function() {
+                        var camName = $("#name_" + camid).text();
+                        planTable = `
+                            <tr class="plan-header">
+                                <th>Plan</th>
+                                <th>Count</th>
+                                <th>Used</th>
+                                <th></th>
+                            </tr>
+                        `;
+                        vxg.user.src.plans.forEach(plan => {
+                            if (plan.count != 0) {
+                                var enabled = plan.count != plan.used ? `onclick="checkPlan('${plan.id}')` : "";
+                                planTable += `
+                                <tr class="plan ${ !enabled ? "disabled" : ""}" ${enabled}">
+                                    <td class="plan-desc" planid="${plan.id}"> ${plan.name} </td>
+                                    <td class="plan-count">${plan.count}</td>
+                                    <td class="used-count" >${plan.used}</td>
+                                    <td class="checkbox choose-sub">
+                                        <input id="plan_${plan.id}" class="plans-check" type="radio"  ${ !enabled ? "disabled" : ""} name="subid" value="${plan.id}">
+                                        <input style="display:none;" id="name_${plan.id}" value="${plan.name}">
+                                    </td>
+                                </tr>
+                                `;
+                            }
+                        });
+        
+                        var plansDialog = `
+                            <h1 id="plans-title">Assign Subscription to Camera ${camName}</h1>
+                            <table class="plansTable">
+                                ${planTable}
+                            </table>
+                            <button name="apply" class="vxgbutton assign-btn">Assign</button>
+                        `;
+                        dialogs['mdialog'].activate(plansDialog).then(function(r){
+                            if (r.button!='apply') return;
+                            if (r.button=='apply' && r.form.subid === undefined) return;
+    
+                            var subInfo = {
+                                "subid": r.form.subid,
+                                "subname": $("#name_" + r.form.subid).val()
+                            };
+        
+                            var newMeta = {
+                                ...subInfo,
+                                ...meta
+                              };
+                            
+                            obj = {
+                                "id": camid,
+                                "meta": newMeta
+                            }
+        
+                            core.elements['global-loader'].show();
+        
+                            vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
+                                location.reload();
+                            },function(r){
+                                if (r && r.responseJSON && r.responseJSON.errorDetail)
+                                    alert(r.responseJSON.errorDetail);
+                                else
+                                    alert('Falied to delete setting');
+                                core.elements['global-loader'].hide();
+                            });                       
+                        });		
+        
+                    });
+                } 
+                
+            }
         }
 
         if (aiCameras_local) {

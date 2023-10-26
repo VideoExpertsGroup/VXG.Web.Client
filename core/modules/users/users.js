@@ -62,7 +62,7 @@ window.screens['users'] = {
                     '<td class="action-icons">' +
                     //'<button class="userbtn item-resend-confirm" title="Resend confirm email"></button>' +
                     //'<button class="userbtn item-report"></button>' +
-                    '<button class="userbtn item-arch userarchive '+(archive_enable?'active':'')+'" userid='+users[i].src.id+' username="'+users[i].src.name+'"><i class="fa fa-bookmark-o" aria-hidden="true"></i></button>'+
+                    '<button class="userbtn item-arch userarchive '+(archive_enable?'active':'')+'" userid='+users[i].src.id+' username="'+users[i].src.name+'"><i class="fa fa-folder-o" aria-hidden="true"></i></button>'+
                     '<button class="userbtn item-cams usercameras" onclick_toscreen="usercameras"><i class="fa fa-video-camera" aria-hidden="true"></i></button>' +
                     '<button class="userbtn item-edit edituser" onclick_toscreen="edituser"><i class="fa fa-pencil" aria-hidden="true"></i></button>' +
                     //'<button class="userbtn item-goto-user"></button>' +
@@ -333,24 +333,33 @@ window.screens['usercameras'] = {
             let html='';
             for (let i in list){
                 let checked = self.user.src.cameras.indexOf(list[i].camera_id)>=0;
-                html += '<div class="camerablock"><campreview access_token="'+list[i].camera_id+'"></campreview><div><div class="checkbox svgbtn'+(checked?' active':'')+'" channel_id="'+list[i].camera_id+'"></div><div class="name">'+list[i].src.name+'</div><div class="loc">'+list[i].getLocation()+'</div></div></div>';
+                html += `<div class="camerablock">
+                            <campreview access_token="${list[i].camera_id}"></campreview>
+                            <div class="usercamera-cont">
+                                <div class="nameloc"> 
+                                    <span class="name">${list[i].src.name}</span>
+                                    <span class="loc">${list[i].getLocation()}</span>
+                                </div>
+                                <label id="cameraselect" class="camera-label custom-checkbox checkbox ${(checked ? 'active' : '')}" channel_id="${list[i].camera_id}">
+                                    <input class="camera-check" ${(checked ? 'checked' : '')} type="checkbox" id="check_${list[i].camera_id}">
+                                    <span class="checkmark"></span>	
+                                </label>
+                            </div>
+                        </div>`;
             }
+
             $(self.wrapper).find('.usercameralist').html(html);
             $(self.wrapper).find('.usercameralist .camerablock').click(function(){
                 $(this).find('.checkbox').toggleClass('active');
+                var checkInput = $(this).find(".camera-check");
+                checkInput.prop("checked", !checkInput.prop("checked"));
             });
-/*
-            $(self.wrapper).find('.usercameralist').empty().append('<div class="table-wrapper bigmaxwidth"><table class=""><thead><tr><th scope="col">#</th><th scope="col">Preview</th><th scope="col">Name</th><th scope="col"></th></tr></thead><tbody></tbody></table></div>');
 
-            let table='', c=1;
-            for (let i in list){
-                let checked = self.user.src.cameras.indexOf(list[i].camera_id)>=0 ? 'checked' : '';
-                table += '<tr><td>'+c+'</td><td><campreview onclick_toscreen="player" access_token="'+list[i].camera_id+'"></campreview></td><td><camfield access_token="'+list[i].camera_id+'" field="name"></camfield></td><td><input id="cam-'+list[i].camera_id+'" cid="'+list[i].camera_id+'" type="checkbox" '+checked+'/>' +
-                    '<label for="cam-'+list[i].camera_id+'"></label></td></tr>';
-                c++;
-            }
-            $(self.wrapper).find('.usercameralist table tbody').empty().append(table);
-*/
+            $(self.wrapper).find(".camera-check").click(function() {
+                var channelId = $(this).attr('id').replace("check_", "");
+                $(`[channel_id=${channelId}]`).toggleClass("active");
+            })
+
             $(self.wrapper).find('.usercameralist').removeClass('spinner');
         });
 
