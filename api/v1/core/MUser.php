@@ -1279,7 +1279,7 @@ class MUser{
         
         if (($recmode == 'by_event' && $aiType != 'off') || ($recmode == 'off' && $aiType != 'off')) {
             // switch rec to "on" (continuous) and add corresponding ai plan
-            MCamera::setRetention($channel['id'], $this, "on", false, 720);
+            //MCamera::setRetention($channel['id'], $this, "on", false, 720);
             if ($aiType == 'continuous') {
                 $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BT", "30 day Continued Rec-AI by Timer");
             } else if ($aiType == 'by_event') {
