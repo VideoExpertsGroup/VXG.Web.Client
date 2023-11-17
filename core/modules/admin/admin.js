@@ -594,9 +594,10 @@ window.screens['admincams'] = {
 		
 		vxg.api.cloud.setAllCamsToken(self.user.allcamstoken);
 		
-		vxg.api.cloud.getCamerasList().then(function(cameras){
+		var obj ={"limit":1000};
+		vxg.api.cloud.getCamerasList(obj).then(function(cameras){
             var cams = [];
-            cameras.objects.forEach(c => { if (c.meta && !c.meta.isstorage) {cams.push(c)} });
+            cameras.objects.forEach(c => { if ((c.meta && !c.meta.isstorage) || !c.meta) {cams.push(c)} });
 
             let table='<table><thead><tr class="header"><th scope="col">#</th><th scope="col">Name</th><th scope="col">Id</th><th scope="col" style="width:60%">Access token</th><th scope="col">Action</th></tr></thead><tbody>';
             c = 1;
