@@ -200,16 +200,18 @@ class MCamera{
         closelog();
     }
 */
-    public static function createCamera($owneruser, $camera_name, $location,  $recording, $timezone, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd=0, $as_storage=false, $rsid=0){
+    public static function createCamera($owneruser, $camera_name, $location, $group, $recording, $timezone, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd=0, $as_storage=false, $rsid=0){
         if (strlen($camera_name)>64)
             error(501,'Camera name too long');
         if (strlen($location)>64)
             error(501,'Location too long');
         if (strlen($username)>64)
             error(501,'User name too long');
+        if (strlen($group)>64)
+            error(501,'Location too long');
         $channelData = array(
             'name' => $camera_name,
-            'rec_mode' => 'on', //$recording ? 'on' : 'off',
+            'rec_mode' => 'off', //$recording ? 'on' : 'off',
             'timezone' => $timezone
             //'source' => []
         );
@@ -255,6 +257,9 @@ class MCamera{
     
         if ($location)
             MCamera::updateLocationByChannelID($response_cloud['id'], $owneruser, $location);
+
+        if ($group)
+            MCamera::updateGroupByChannelID($response_cloud['id'], $owneruser, $group);
 
         if (isset(MCore::$core->config['no_local_add_camera']) && MCore::$core->config['no_local_add_camera']) {
             $ret = new MCamera();
@@ -338,7 +343,7 @@ class MCamera{
             error(556, 'Failed to update channel2: '. $response_cloud['errorDetail']);
 
         $data = ['records_max_age'=>$time,'meta_max_age'=>$time,'storage_size'=>null,'download_size'=>null, 'live_size'=>null];
-        if ($time<=0){
+        if ($time<0){
             $data['records_max_age']=720;
             $data['meta_max_age']=720;
             $data['download_size']=20;
@@ -417,6 +422,30 @@ class MCamera{
 // used new location method                
 //        if ($location)
 //            $user_from->addLocationToAllCamsTokenMeta($location);
+    }
+
+    public static function updateGroupByChannelID($channel_id, $user_from, $group){
+
+        if (strlen($group)>64)
+            error(501,'Group name too long');
+        $server = $user_from->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed generateServicesURLs');
+
+        $response_cloud = StreamLandAPI::getChannel($channel_id);
+        if (isset($response_cloud['errorDetail'])) 
+            error(556, 'Failed to get channel: '. $response_cloud['errorDetail']);
+        $meta = isset($response_cloud['meta']) ? $response_cloud['meta'] : [];
+
+        unset($meta['group']);
+        if ($group){
+            $meta['group'] = $group;
+        }
+
+        if (!$meta) $meta = null;
+        $response_cloud = StreamLandAPI::updateChannel($channel_id, ['meta'=>$meta]);
+        if (isset($response_cloud['errorDetail'])) 
+            error(556, 'Failed to update channel: '. $response_cloud['errorDetail']);
     }
 
     public function updateCamera($camera_name, $location,  $recording, $timezone, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd=0){
@@ -500,7 +529,7 @@ class MCamera{
         foreach($param as $i=>$v){
             if (''.floatval($v) == $v)
                 $param[$i] = floatval($v);
-            if ($v=="null")
+            if ($v==="null")
                 $param[$i] = null;
         }
 
@@ -771,9 +800,10 @@ class MCamera{
                 if ($currentToken) {
                     if ($targetToken['id'] != $currentToken['id']) {
                         $tokenChannels = $currentToken['channels'];
-                        $key = array_search($channel_id, $tokenChannels);
-                        unset($tokenChannels[$key]);
-                        $params = ['channels' => $tokenChannels];
+                        $newChannels = array_filter($tokenChannels, function($t) use($channel_id) {
+                            return $t != $channel_id; 
+                        });
+                        $params = ['channels' => $newChannels];
                         if(!MCamera::addChannelToGroupTokenByID($currentToken['id'], $channel_id, $user, $params, $type, true)) 
                             error(500, 'Error removing this camera from AI token');
                     } 
@@ -789,8 +819,10 @@ class MCamera{
             } else {
                 $tokenChannels = $targetToken['channels'];
                 if (($key = array_search($channel_id, $tokenChannels)) !== false) {
-                    unset($tokenChannels[$key]);
-                    $params = ['channels' => $tokenChannels];
+                    $newChannels = array_filter($tokenChannels, function($t) use($channel_id) {
+                        return $t != $channel_id; 
+                    });
+                    $params = ['channels' => $newChannels];
                     if(!MCamera::addChannelToGroupTokenByID($targetToken['id'], $channel_id, $user, $params, $type)) 
                         error(500, 'Error removing this camera from AI token');
                 }
@@ -821,6 +853,8 @@ class MCamera{
         }
         
         $ret = StreamLandAPI::UpdateGroupToken($tokenid, $params);
+        if (isset($ret['errorDetail']))
+            error(500, $ret['errorDetail']);    
         if (count(array_diff($ret['channels'],$params['channels'])) != 0) {
             error(550, "Error updating group token");
         }

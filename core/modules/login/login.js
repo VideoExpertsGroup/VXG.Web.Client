@@ -237,6 +237,8 @@ TODO: add auth without firebase
         sessionStorage.removeItem("backToCam");
         sessionStorage.removeItem("aiCams");
         sessionStorage.removeItem("cameraUrls");
+        localStorage.removeItem("cameraList");
+        localStorage.removeItem("cameraList_expiry");
 
 	    window.location.href = '/#';  
         });

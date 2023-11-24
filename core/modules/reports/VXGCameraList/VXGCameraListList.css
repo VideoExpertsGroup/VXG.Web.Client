@@ -12,7 +12,7 @@
     white-space: nowrap;
     text-align: center;
 }
-.cameras-list td:not(.showai) {
+.cameras-list td:not(.showai):not(.showplans) {
     text-overflow: ellipsis;
 }
 .cameras-list td:first-child {

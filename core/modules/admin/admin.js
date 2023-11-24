@@ -343,9 +343,20 @@ function assignPlans(userid, partners, allPlans) {
 
         var plansArr = [];
         var detached = [];
-        allPlans.forEach(plan => {
+        var doAssign = true;
+        for (let i = 0; i < allPlans.length; i++) {
+            var plan = allPlans[i];
             var newCount = $("#" + plan.id + "_count").val();
             var used = $("#" + plan.id + "_used").val();
+            newCount =  parseInt(newCount) ? parseInt(newCount) : newCount == "0" ? 0 : -1;
+            used = parseInt(used) ? parseInt(used) : used == "0" ? 0 : -1;
+
+            if (used < 0 || newCount < 0) {
+                doAssign = false;
+                alert("Error getting information for plans. Please refresh the page and try again.");
+                break;
+            }
+
             if (used > newCount) {
                 // special change where we have to remove cameras from subscriptions
                 var detachCount = used - newCount; 
@@ -367,28 +378,30 @@ function assignPlans(userid, partners, allPlans) {
                 };
                 plansArr.push(plan);
             }
-        })
+        }
 
-        var plansStr = JSON.stringify(plansArr);
+        if (doAssign) {
+            var plansStr = JSON.stringify(plansArr);
         
-        core.elements['global-loader'].show();
-
-        vxg.api.cloudone.partner.assign_plans(userid, plansStr).then(function(r) {
-            if (detached.length > 0) detachPlans(detached, userid);
-            else location.reload();
-        }, function(err) {
-            if (err && err.responseJSON && r.responseJSON.errorDetail)
-                alert(err.responseJSON.errorDetail);
-            else
-                alert('Falied to update setting');
-            core.elements['global-loader'].hide();
-        });
+            core.elements['global-loader'].show();
+    
+            vxg.api.cloudone.partner.assign_plans(userid, plansStr).then(function(r) {
+                if (detached.length > 0) detachPlans(detached, userid);
+                else location.reload();
+            }, function(err) {
+                if (err && err.responseJSON && r.responseJSON.errorDetail)
+                    alert(err.responseJSON.errorDetail);
+                else
+                    alert('Falied to update setting');
+                core.elements['global-loader'].hide();
+            });
+        }
     });
 }
 
 function checkUnsubscribe(planid) {
-    var newCount = $("#" + planid + "_count").val();
-    var currUsed = $("#" + planid + "_used").val();
+    var newCount = parseInt($("#" + planid + "_count").val());
+    var currUsed = parseInt($("#" + planid + "_used").val());
     var warningEle = $("#sub-warning");
     if (currUsed > newCount && !warningEle.is(":visible")) {
         $("#" + planid + "_row").css("background-color", "#ffdc73");

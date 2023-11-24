@@ -11,7 +11,7 @@ if (isset($meta['storage_channel_id']) && $meta['storage_channel_id']>0){
     return;
 }
 
-$camera = MCamera::createCamera(MCore::$core->current_user, '#StorageFor'.MCore::$core->current_user->id, false, false, 'Canada/Eastern', '', '', '', 0, 0, 0, true);
+$camera = MCamera::createCamera(MCore::$core->current_user, '#StorageFor'.MCore::$core->current_user->id, false, false, false, 'Canada/Eastern', '', '', '', 0, 0, 0, true);
 
 MCore::$core->current_user->updateAllCamsToken();
 $meta['storage_channel_id'] = $camera instanceof MCamera ? $camera->camera['channelID'] : $camera;

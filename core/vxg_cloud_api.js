@@ -420,6 +420,18 @@ vxg.api.cloud.getLocations = function(access_token) {
     });
 };
 
+vxg.api.cloud.getGroups = function(access_token) {
+    let headers = vxg.api.cloud.getHeader(access_token);
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+    return $.ajax({
+        type: 'GET',
+        url: vxg.api.cloud.getBaseURLFromToken(access_token) + '/api/v2/cameras/meta/get_values/group/',
+        headers: headers,
+        contentType: "application/json"
+    });
+}
+
 /** Get events list
  *
  * @param channel_id_or_access_token string Channel access token or channel id
@@ -537,6 +549,38 @@ vxg.api.cloud.getCamerasList = function(obj){
         });
     });
 };
+
+vxg.api.cloud.getCamerasList_Cached = function(obj) {
+    var data = obj || {};
+    let headers = vxg.api.cloud.getHeader();
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+    data['include_meta']=true;
+
+    if (localStorage.cameraList && localStorage.cameraList_expiry && Date.now() < parseInt(localStorage.cameraList_expiry)) {
+        return new Promise(function(resolve, reject) {
+            resolve(cachedCamerasCallback(JSON.parse(localStorage.cameraList)));
+        });
+    } else {
+        return $.ajax({
+            type: 'GET',
+            url: vxg.api.cloud.apiSrc + '/api/v5/channels/',
+            headers: headers,
+            contentType: "application/json",
+            data: data,
+            cache: true
+        }).then(function(r) {
+            return cachedCamerasCallback(r);
+        });
+    }    
+}
+
+function cachedCamerasCallback(r) {
+    let ret = r;
+    if (!ret.objects || ret.objects.length<1) return ret;
+    ret.objects.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+    return ret;
+}
 
 vxg.api.cloud.getCameraInfo = function(channel_id, access_token, obj){
     var data = obj || {};

@@ -31,8 +31,8 @@ class MConstants{
         'storage_size' => null, // GB
         'download_size' => null, // GB 
         'live_size' => null, // GB
-        'records_max_age' => 720, // hours , retention time
-        'meta_max_age' => 720, // hours , retention time
+        'records_max_age' => 0, // hours , retention time
+        'meta_max_age' => 0, // hours , retention time
         'gen_images_size' => null, // GB 
         'gen_images_amount' => null,   // We do not generate images from storage  
         'gen_liveimages_size' => null, // GB

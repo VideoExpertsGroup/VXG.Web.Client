@@ -152,6 +152,7 @@ a.listmenu-item.mwebui {
 
 .plan-btn {
     padding: 1px 10px !important;
+    display: none !important;
 }
 
 .plansTable {

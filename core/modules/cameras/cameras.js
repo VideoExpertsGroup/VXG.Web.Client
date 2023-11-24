@@ -82,9 +82,9 @@ function camGrid(size /* 2,3,4 */){
 
 (function( $ ){
 
-  $.fn.simpleMenuPlugin = function() {
+  $.fn.simpleMenuPlugin = function(e) {
 
-    this.click(function(e){
+    //this.click(function(e){
         var self = this;
         let access_token = $(this).attr("access_token");
         let channelID = $(this).attr("cam_id");
@@ -146,7 +146,7 @@ function camGrid(size /* 2,3,4 */){
         } else {
             addSimpleMenu(menu, self, e);
         }
-    });
+    //});
   };
 })( jQuery );
 
@@ -232,6 +232,15 @@ function onCameraDelete(channel_id){
                     }
                 }
 
+                var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
+                if (cameraList) {
+                    cameraList.objects = cameraList.objects.filter(c => c.id != camera.camera_id);
+                    var total = parseInt(cameraList.meta.total_count);
+                    cameraList.meta.total_count = total - 1;
+                    localStorage.cameraList = JSON.stringify(cameraList);
+                }
+
+
                 localStorage.removeItem(camera.camera_id);
                 var backToCam = sessionStorage.getItem("backToCam");
                 if (backToCam == camera.camera_id) sessionStorage.removeItem("backToCam");
@@ -265,6 +274,27 @@ function onCameraScreenResize(){
     else
         $('.screens .cameras').removeClass('gridtop');
 }
+
+
+				  function buttons () {
+    return {
+      btnUsersAdd: {
+        text: 'Highlight Users',
+        icon: 'bi-arrow-clockwise',
+        event: function () {
+          alert('Do some stuff to e.g. search all users which has logged in the last week')
+        },
+        attributes: {
+          title: 'Search all users which has logged in the last week'
+        }
+      },
+    }
+  }
+
+
+
+  $(function() {
+  })
 
 window.screens['cameras'] = {
     'menu_weight':30,
@@ -325,75 +355,261 @@ window.screens['cameras'] = {
 
         let self = this;
         let el = this.wrapper.find('.camlist');
+		
         el.find('.wmore').remove();
         self.wrapper.addClass('loader');
         if (filterarray) {
-            el.html('');
             this.last_filterarray = filterarray;
             this.last_offset = 0;
         } else filterarray = this.last_filterarray;
-        this.camera_list_promise = window.vxg.cameras.getCameraFilterListPromise(20,this.last_offset,filterarray,this.search_text, this.all_locations).then(function(list){
+        
+        this.camera_list_promise = vxg.cameras.getFullCameraList(500,this.last_offset).then(function(list){
             self.camera_list_promise=undefined;
             let h = loadedCams == "" ? "" : loadedCams;
             self.last_offset += list.length;
-            let count = 0;
+            let count = 1;
             var channelIdList = []; 
+            var camGroups = sessionStorage.getItem("camGroups") ? JSON.parse(sessionStorage.getItem("camGroups")) : [];
+
+            var tableData = [];
             for (let i in list){
                 if (list[i].src.name.substr(0,11)=="#StorageFor" && !isNaN(parseInt(list[i].src.name.substr(11)))) continue;
                 if (list[i].src && list[i].src.meta && list[i].src.meta.isstorage) continue;
+                if (!list[i].src || list[i].src.status===undefined) continue;
                 let captured = list[i].src && list[i].src.meta && list[i].src.meta.capture_id && vxg.user.src.capture_id == list[i].src.meta.capture_id ? ' captured' : '';
-                let info = '<div class="caminfo '+list[i].src.status+' '+(list[i].src.recording?'rec':'')+(list[i].src.status=='active'?' online':'')+'">'+(list[i].src.recording?'Online':(list[i].src.status=='active'?'Online':'Offline'))+'</div>';
-                if (!list[i].src || list[i].src.status===undefined) info='';
+                let statusBlock = '<div class="caminfo tablecaminfo '+list[i].src.status+' '+(list[i].src.status=='active'?' online':'')+'">'+ (list[i].src.status=='active'?'Online':'Offline')+'</div>';
                 var channelID = list[i].getChannelID();
                 channelIdList.push(channelID.toString());
-                h += `<div class="camerablock${captured}" access_token="${channelID}" id="scrollto${channelID}">
-                            ${info}
-                            <campreview onclick_toscreen="tagsview"></campreview>
-                            <div>
-                                <div class="settings" access_token="${list[i].token}" cam_id="${channelID}"></div>
-                                <div class="name name${channelID}"></div>
-                                <div class="loc loc${channelID}">${list[i].getLocation()}</div>
-                            </div>
-                        </div>`;
+                var camGroup = "";
+                camGroups.forEach(group => {
+                    if (group.cams.indexOf(channelID.toString()) != -1) {
+                        camGroup = group.name;
+                    }
+                });
+
+                tableData.push({
+                    camId: channelID,
+                    order: count,
+                    state: `<label class="filter-label custom-checkbox" style="margin-left: 25%;">
+                    <input type="checkbox" class="groupCamCheck" cam_name="${list[i].src.name}" cam_id="${channelID}" cam_order="${count}">
+                    <span class="checkmark"></span>	
+                </label>`,
+                    id: `<div class="camerablock${captured}" access_token="${channelID}" id="scrollto${channelID}">
+                    <campreview onclick_toscreen="tagsview"></campreview>`,
+                    status: statusBlock,
+                    recording: list[i].src.recording?'yes':'no',
+                    name: list[i].src.name,
+                    location: list[i].getLocation(),
+                    group: list[i].getGroup(),
+                    action: `<div class="settings" access_token="${list[i].token}" cam_id="${channelID}">
+                    <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
+                </div>`
+                })
+
                 count++;
             }
-            if (h) {
-                var loadPrevCam = sessionStorage.getItem("backToCam");
-                if (loadPrevCam) {
-                    // if camera is not in this list, load more and scroll to it
-                    if (!channelIdList.includes(loadPrevCam)) {
-                        self.loadCameras(null, null, h);
-                    } else {
-                        self.wrapper.removeClass('nocameras');
-                        if (count>=20) h+='<div class="wmore"><button type="button" class="vxgbutton more" data-attr="camera">More</button></div>';        
-                        el.append(h); 
-                        var cameraEle = document.getElementById("scrollto" + loadPrevCam);
-                        cameraEle.scrollIntoView({block: "start", inline: "nearest", behavior: "instant"});
-                        sessionStorage.setItem("backToCam", "");
+
+            if ($('#table').children().length == 0) {
+                var columns = [
+                    {
+                        field: "order",
+                        sortable: true,
+                        cardVisible: false
+                    },
+                    {
+                        field: "state",
+                        cardVisible: false
+                    },
+                    {
+                        field: "id",
+                        width: "140",
+                        title: "Camera",
+                    },
+                    {
+                        field: "status",
+                        title: "Status",
+                        filterControl: "select",
+                        sortable: true,
+                        cardVisible: false
+                    },
+                    {
+                        field: "recording",
+                        title: "Recording",
+                        filterControl: "select",
+                        sortable: true,
+                        cardVisible: false
+                    },
+                    {
+                        field: "name",
+                        title: "Name",
+                        filterControl: "input",
+                        sortable: true,
+                    },
+                    {
+                        field: "location",
+                        title: "Location",
+                        filterControl: "select",
+                        sortable: true,
+                        cardVisible: false
+                    },
+                    {
+                        field: "group",
+                        title: "Group",
+                        filterControl: "select",
+                        sortable: true,
+                        cardVisible: false
+                    },
+                    {
+                        field: "action",
+                        title: "Action"
+                    },
+                ]
+                $('#table').bootstrapTable({
+                    pagination: true,
+                    showToggle: true, 
+                    showSearchClearButton: true,
+                    useRowAttrFunc: true,
+                    filterControl: true,
+                    reorderableRows: true,
+                    toolbar: ".toolbar",
+                    uniqueId: "order",
+                    columns: columns,
+                    onColumnSearch: function (arg1, arg2) {
+                    if (arg1 == 'status')
+                        localStorage.camera_status = arg2;
+                    if (arg1 == 'recording')
+                        localStorage.camera_recording = arg2;
+                    if (arg1 == 'location')
+                        localStorage.camera_location = arg2;
+                    if (arg1 == 'group')
+                        localStorage.camera_group = arg2;
                     }
-                } else {
-                    self.wrapper.removeClass('nocameras');
-                    if (count>=20) h+='<div class="wmore"><button type="button" class="vxgbutton more" data-attr="camera">More</button></div>';    
-                    el.append(h); 
-                }
-                
-                if (count>=20) self.wrapper.find('.more')[0].addEventListener('click', function() {
-                    self.wrapper.find('.more').addClass('spinner').attr('disabled','disabled');
-                    self.loadCameras().then(function(){
-                        self.wrapper.find('.more').removeClass('spinner').removeAttr('disabled');
-                    },function(){
-                        self.wrapper.find('.more').removeClass('spinner').removeAttr('disabled');
-                    });
                 });
-            } else {
-                if (firstsearch){
-                    self.wrapper.addClass('nocameras');
-                    var userFilters = localStorage.getItem("filter-"+vxg.user.src.email);
-                    let savedLocations = userFilters ? JSON.parse(userFilters) : [];
-                    let filterSet = savedLocations.length <= 1 && savedLocations[0] != "" ? "for this filter" : "";
-                    el.html('There are no cameras '+filterSet+'. <a href="javascript:void(0)" ifscreen="addcamera" onclick_toscreen="newcamera">Add a camera</a>');
+
+                $(document).on('click', '#groupingButton', function(event){
+                    event.preventDefault();
+                    var camIdList = [];
+                    var camNameList = "";
+                    var camOrder= [];
+                    $(".groupCamCheck").each(function(i, ele) {
+                        if ($(ele).hasClass("checked")) {
+                            camOrder.push($(ele).attr("cam_order"));
+                            camIdList.push($(ele).attr("cam_id"));
+                            camNameList += camNameList == "" ? $(ele).attr("cam_name") : ", " + $(ele).attr("cam_name");
+                        }
+                    })
+    
+                    if (camIdList.length == 0) {
+                        alert("Please select at least one camera from the list to group.");
+                        return;
+                    }
+    
+                    //var groupsList = sessionStorage.getItem("camGroups") ? JSON.parse(sessionStorage.getItem("camGroups")) : [];
+                    vxg.cameras.getGroupsList().then(function(groupsList) {
+                        var groupItems = "";
+                        groupsList.forEach(group => {
+                            let item = `
+                            <li>    
+                                <label class="filter-label custom-checkbox">
+                                    <span>${group}</span>
+                                    <input class="groupCheck" type="radio" name="groupRadio" value="${group}">
+                                    <span class="checkmark"></span>	
+                                </label>
+                            </li>`
+                            groupItems += item;
+                        })
+                        
+                        dialogs['mdialog'].activate(`
+                            <h7>Select group</h7>
+                            <div>
+                                <p>${camNameList}</p>
+                                <ul class="groupslist">						
+                                <li>    
+                                    <label class="filter-label custom-checkbox">
+                                        <span> Remove From Group</span>
+                                        <input class="groupCheck" type="radio" name="groupRadio" value="noGroup">
+                                        <span class="checkmark"></span>	
+                                    </label>
+                                </li>
+                                ${groupItems}
+                                <li style="display:flex;">    
+                                    <label class="filter-label custom-checkbox" >
+                                        <input class="form-check-input" type="radio" name="groupRadio">
+                                        <span class="checkmark"></span>
+                                        <input class="" type="text" name="newGroupName" id="newGroupName">            
+                                    </label>
+                                </li>  
+                                </ul>  
+                                <button name="apply" class="vxgbutton-transparent" style="width:192px">Set</button>
+                            </div>`).then(function(r){
+                                if (r.button!='apply') return;
+                                var groupName = r.form.newGroupName != '' ? r.form.newGroupName : $('input[name=groupRadio]:checked').val() == "noGroup" ? "" : $('input[name=groupRadio]:checked').val();
+                                let currentGroupInfo;
+    
+                                let promiseChain = Promise.resolve();
+                                for (let i = 0; i < camIdList.length; i++) { 
+                                    currentGroupInfo = camIdList[i];
+    
+                                    const makeNextPromise = (currentGroupInfo) => () => {
+                                        return vxg.api.cloudone.camera.setGroup(currentGroupInfo, groupName)
+                                            .then((r) => {
+                                                return true;
+                                            });
+                                    }
+                                    promiseChain = promiseChain.then(makeNextPromise(currentGroupInfo))
+                                }
+    
+                                camOrder.forEach(i => {
+                                    $('#table').bootstrapTable('updateByUniqueId', {id: i, row: {group: groupName}})
+                                })
+                        });	
+                    })			
+                    })
+	                
+                $(document).on('click', '.groupCamCheck', function(event){
+                    $(this).toggleClass("checked");
+                });
+
+                
+                $(document).on('click', '.settings', function(event){
+                    $(this).simpleMenuPlugin(event)
+                });
+
+                $(document).on('mouseup', '[name="toggle"]', function(event) {
+                    setTimeout(function () {
+                        if (localStorage.camera_status != null) 
+                            $('.bootstrap-table-filter-control-status').val(localStorage.camera_status);
+                        if (localStorage.camera_recording != null) 
+                            $('.bootstrap-table-filter-control-recording').val(localStorage.camera_recording);
+                        if (localStorage.camera_location != null) 
+                            $('.bootstrap-table-filter-control-location').val(localStorage.camera_location);
+                        if (localStorage.camera_group != null) 
+                            $('.bootstrap-table-filter-control-group').val(localStorage.camera_group);
+                    }, 300);
+                });
+            }
+
+            $('#table').bootstrapTable('load', tableData);
+
+            // this is assuming table ordering has already been completed
+            var pageSize = $('#table').bootstrapTable('getOptions').pageSize;
+            var loadPrevCam = sessionStorage.getItem("backToCam");
+            var camRow = loadPrevCam ? tableData.find(d => d.camId == loadPrevCam) : "";
+            var camPage = 1;
+            if (camRow) {
+                var camIndex = camRow.order - 1;
+                camPage = Math.ceil(camIndex / pageSize);
+                if (camPage > 1) {
+                    setTimeout(function() {
+                        // not the best solution, but unsure why it keeps going to page 1 by default
+                        $('#table').bootstrapTable('selectPage', camPage);
+                        sessionStorage.removeItem('backToCam');
+                    }, 500);
                 }
             }
+
+            $('#table').removeClass("table-bordered");
+
             for (let i in list){
                 let cid = list[i].getChannelID();
                 list[i].getName().then(function(name){
@@ -402,7 +618,6 @@ window.screens['cameras'] = {
             }
 
             self.wrapper.removeClass('loader');
-            el.find('.settings').simpleMenuPlugin();
 
         },function(){
             self.camera_list_promise=undefined;
@@ -412,6 +627,20 @@ window.screens['cameras'] = {
         });
 
         return this.camera_list_promise;
+    },
+    selectCamForGroup: function(e) {
+        var groupCamsList = $("#groupingCams").val();
+        var channelId = $(this).attr("channelid");
+        if (!groupCamsList || groupCamsList.indexOf(channelId) == -1) {
+            groupCamsList += "," + channelId;
+            $("#groupingCams").val(groupCamsList);
+            $("#groupingButton").show();
+        } else {
+            // if channelId is in groupCamsList remove it,
+            groupCamsList.replace("," + channelId, "");
+            $("#groupingCams").val(groupCamsList);
+            if (!groupCamsList) $("#groupingButton").hide();
+        }
     },
     'on_hide':function(){
         core.elements['global-loader'].show();

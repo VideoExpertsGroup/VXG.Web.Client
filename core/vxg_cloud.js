@@ -183,6 +183,12 @@ CloudCamera.getLocation = function(){
     return '';
 }
 
+CloudCamera.getGroup = function(){
+    let meta = this.src && this.src.meta && typeof this.src.meta === 'object' ? this.src.meta : {};
+    if (meta['group']) return meta['group'];
+    return '';
+}
+
 CloudCamera.getConfig = function(){
     let self = this;
     return vxg.api.cloud.getCameraConfig(this.camera_id, this.token).then(function(bsrc){
@@ -423,6 +429,35 @@ vxg.cameras.getCameraFilterListPromise = function(limit, offset, filterarray, na
 */
 }
 
+vxg.cameras.getFullCameraList = function(limit, offset, list = []){
+    // first number represents number of minutes cached
+    var expiryTime = 1 * 60 * 1000;
+
+    let metanotfilter='isstorage';
+    let req = {limit:limit, offset:offset};
+    if (metanotfilter) req.meta_not = metanotfilter;
+    return vxg.api.cloud.getCamerasList_Cached(req).then(function(r){
+        for (let i=0;i<r['objects'].length;i++){
+            list[i+offset] = new vxg.cameras.objects.Camera(r.objects[i].token ? r.objects[i].token : r.objects[i].id);
+            list[i+offset].src = r.objects[i];
+        }
+
+        if (list.length < r.meta.total_count) {
+            return vxg.cameras.getFullCameraList(limit, offset + limit, list);
+        } else {
+            if (!localStorage.cameraList || Date.now() > parseInt(localStorage.cameraList_expiry)) {
+                var camList = {};
+                camList.meta = r.meta;
+                camList.objects = list.map(c => c.src);
+                localStorage.cameraList = JSON.stringify(camList) ;
+                localStorage.cameraList_expiry = Date.now() + expiryTime;
+            }
+
+            return list;
+        }
+    });
+}
+
 vxg.cameras.getCameraListWithLatLonPromise = function(limit, offset){
     return vxg.cameras.getCameraListPromise(limit, offset).then(function(r){
         return vxg.api.cloud.getCamerasListV2(vxg.user.src.allCamsToken,limit, offset, {'longitude__isnull':false,'latitude__isnull':false}).then(function(rc){
@@ -566,6 +601,32 @@ vxg.cameras.getLocations = function(limit, offset){
             vxg.cameras.getLocations.metanotfilter += (vxg.cameras.getLocations.metanotfilter?',':'')+'L+'+ret[i];
         ret['No location'] = '';
         return ret;
+    });
+}
+
+vxg.cameras.getLocationsList = function(limit, offset) {
+    if (limit===undefined) limit=50;
+    if (offset===undefined) offset=0;
+
+    return vxg.api.cloud.getLocations(vxg.user.src.allCamsToken).then(function(r){
+        var locs = [];
+        for (let i in r) {
+            locs.push(i);
+        }
+        return locs;
+    });
+}
+
+vxg.cameras.getGroupsList = function(limit, offset) {
+    if (limit===undefined) limit=50;
+    if (offset===undefined) offset=0;
+
+    return vxg.api.cloud.getGroups(vxg.user.src.allCamsToken).then(function(r){
+        var groups = [];
+        for (let i in r) {
+            groups.push(i);
+        }
+        return groups;
     });
 }
 

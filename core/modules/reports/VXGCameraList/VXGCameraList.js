@@ -609,6 +609,14 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
                         core.elements['global-loader'].show();
     
                         vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
+                            var aiCams_string = sessionStorage.getItem("aiCams");
+                            if (aiCams_string) {
+                                var aiCams_array = aiCams_string.split(",").filter(e => e);
+                                if (aiCams_array.includes(camid.toString())) {
+                                    var newAiCams = aiCams_string.replace("," + camid, "");
+                                    sessionStorage.setItem("aiCams", newAiCams); 
+                                }
+                            }
                             location.reload();
                         },function(r){
                             if (r && r.responseJSON && r.responseJSON.errorDetail)
@@ -684,6 +692,22 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
                             core.elements['global-loader'].show();
         
                             vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
+                                var aiType = ret['planInfo'].object_detection;
+                                var aiCams_string = sessionStorage.getItem("aiCams");
+                                if (aiCams_string) {
+                                    var aiCams_array = aiCams_string.split(",").filter(e => e);
+                                    if (aiType && aiType != "off") {
+                                        if (!aiCams_array.includes(camid.toString())) {
+                                            aiCams_string += "," + camid;
+                                            sessionStorage.setItem("aiCams", aiCams_string); 
+                                        }
+                                    } else {
+                                        if (aiCams_array.includes(camid.toString())) {
+                                            var newAiCams = aiCams_string.replace("," + camid, "");
+                                            sessionStorage.setItem("aiCams", newAiCams); 
+                                        }
+                                    }
+                                }
                                 location.reload();
                             },function(r){
                                 if (r && r.responseJSON && r.responseJSON.errorDetail)

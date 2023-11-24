@@ -1242,7 +1242,6 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 }
 
 #plans-title, #admin-title {
-    width: 100%;
     background-color: transparent;
     padding-top: 7px;
     font-size: 18px;
@@ -1250,6 +1249,15 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
     border-bottom: none;
     margin-bottom: 10px;
     color: #5c5c5c;
+}
+
+#plans-title {
+    margin-bottom: 0 !important;
+}
+
+.currentPlan {
+    text-align: center;
+    display: block;
 }
 
 .ncssclipbuttons .transparent-button i {

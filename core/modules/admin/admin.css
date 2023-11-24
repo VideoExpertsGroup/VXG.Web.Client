@@ -518,7 +518,7 @@ position: absolute;
 }
 
 .plan-desc {
-    width: 73%;
+    width: 68%;
     text-align: left !important;
     font-weight: 600 !important;
     margin-top: revert !important;
@@ -530,11 +530,11 @@ position: absolute;
 }
 
 .plan-count {
-    width: 13%;
+    width: 16%;
 }
 
 .used-count {
-    width: 13%;
+    width: 16%;
 }
 
 .mdialog .action-btns {

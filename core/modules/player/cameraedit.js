@@ -45,7 +45,13 @@ CameraEditControl = function(){
 </div>
 <div class="form-group">
     <label>Location</label>
-    <input name="location" >
+    <input name="location" list="locationsList">
+    <datalist id="locationsList"> </datalist>
+</div>
+<div class="form-group">
+    <label>Group</label>
+    <input name="group" list="groupslist">
+    <datalist id="groupslist"> </datalist>
 </div>
 <!--
 <div class="form-group" style="display:none">
@@ -137,8 +143,7 @@ CameraEditControl = function(){
     <label>Description</label>
     <textarea name="desc" rows="5"></textarea>
 </div>
-`/* + (vxg.api.cloudone.camera.setRetention!==undefined ? `
-<div class="form-group setting-dropdown rete-dropdown bottom-options">
+<div class="form-group setting-dropdown rete-dropdown bottom-options custom-plan" style="display: none">
     <div class="anccsUrlRetentiontime">RECORDING</div>
     <span class="carrot-icon closed"><</span>
 </div>
@@ -161,20 +166,18 @@ CameraEditControl = function(){
         <span class="checkmark"></span>	
     </label>
 </div>
-`:'') + `
-` + (vxg.api.cloudone.camera.setAIConfig!==undefined ? `
-<div class="form-group setting-dropdown ai-dropdown bottom-options">
+<div class="form-group setting-dropdown ai-dropdown bottom-options custom-plan" style="display: none">
     <div class="anccsUrlAIConfig">OBJECT DETECTION (AI)</div>
     <span class="carrot-icon closed"><</span>
 </div>
-<div class="form-group ai_type hidesett">
+<div class="form-group ai_type hidesett" >
     <label>AI Object Detection</label>
     <select name="ai_type" class="ai_type_select">
         <option value="off">Off</option>
         <option value="continuous">Continuous</option>
         <option value="by_event">By Event</option>
     </select>
-</div>`:"")*/ + `
+</div>
 </form>
 <div class="sbt"><br/><br/>
 <div class="wait"><span>Wait</span>&nbsp;&nbsp;<div class="spinner"></div></div>
@@ -203,7 +206,25 @@ CameraEditControl = function(){
             }
 
             if ($(this).hasClass("loc-dropdown")) $(".loca").toggle();
+            if ($(this).hasClass("rete-dropdown")) $(".rete").toggle();
+            if ($(this).hasClass("ai-dropdown")) $('.ai_type').toggle();
+        });
 
+        $(this).find('.rete_recmode').change(function(){
+            let type = $(this).val();
+            let url = ($(self).find('.anccsUrl').val()||'').trim();
+            if (type=='off') {
+                $(self).find('.rete_time').addClass("rete_off"); 
+                $(self).find('.rete_time [name="rete_time"]').val(0);
+            }
+            else $(self).find('.rete_time').removeClass("rete_off").show();
+
+            if (type=='on' || type=='by_event') $(self).find('.rete_time [name="rete_time"]').val(72);
+
+            if (url.substr(0,5)=='rtsp:' && type=='by_event')
+                $(self).find('.rectypeinfo').show();
+            else
+                $(self).find('.rectypeinfo').hide();
         });
         
         $(this).find('.type select').change(function(){
@@ -357,60 +378,94 @@ CameraEditControl = function(){
                 data.lat = r.lat ? r.lat : null;
                 data.lon = r.lon ? r.lon : null;
                 vxg.cameras.createCameraPromise(data).then(function(r){
-                    if(data.subid && data.subname) {
-                        var subInfo = {
-                            "subid": data.subid,
-                            "subname": data.subname
-                        };
-        
-                        var newMeta = {
-                            ...subInfo,
-                            ...r.meta
-                          };
-                        
-                        obj = {
-                            "id": r.id,
-                            "meta": newMeta
+                    var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
+                    if (cameraList) {
+                        var custProm =  new Promise(function(resolve, reject){resolve({lat:data.lat,lon:data.lon});});
+
+                        if (data.subid == "CUST") { 
+                            custProm = vxg.api.cloudone.camera.setAIConfig(r.id, {'channel_id': r.id, 'type': data.ai_type }).then(function() {
+                                vxg.api.cloudone.camera.setRetention(r.id, {recording: false, time: data.rete_time, type: data.rete_recmode})
+                            });
                         }
-        
-                        vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
-                            var aiType = ret['planInfo'].object_detection;
-                            var aiCams_string = sessionStorage.getItem("aiCams");
-                            if (aiCams_string) {
-                                var aiCams_array = aiCams_string.split(",").filter(e => e);
-                                if (aiType != "off") {
-                                    if (!aiCams_array.includes(r.id.toString())) {
-                                        aiCams_string += "," + r.id;
-                                        sessionStorage.setItem("aiCams", aiCams_string); 
-                                    }
-                                } else {
-                                    if (aiCams_array.includes(r.id.toString())) {
-                                        var newAiCams = aiCams_string.replace("," + r.id, "");
-                                        sessionStorage.setItem("aiCams", newAiCams); 
-                                    }
+
+                        custProm.then(function() {
+                            vxg.api.cloud.getCameraInfo(r.id).then(function(newCam) {
+                                var subid = data.subid ? data.subid : "NOPLAN";
+                                var subname = data.subname ? data.subname : "No Plan";
+                                var subInfo = {
+                                    "subid": subid,
+                                    "subname": subname
+                                };
+                
+                                var newMeta = {
+                                    ...subInfo,
+                                    ...newCam.meta
+                                    };
+                                
+                                obj = {
+                                    "id": r.id,
+                                    "meta": newMeta
                                 }
-                            }
-                            sessionStorage.setItem(r.id, "true");
-                            //self.hidewait();
-                            $(self).attr('access_token','');
-                            self.reset();
-                            location.reload();
-                            //self.dispatchEvent(self.submited_event);
-                        },function(r){
+
+                                newCam.meta = newMeta;
+        
+                                vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
+                                    var aiType = data.subid == "CUST" ? data.ai_type : ret['planInfo'] ? ret['planInfo'].object_detection : null;
+                                    var aiCams_string = sessionStorage.getItem("aiCams");
+                                    if (aiCams_string) {
+                                        var aiCams_array = aiCams_string.split(",").filter(e => e);
+                                        if (aiType && aiType != "off") {
+                                            if (!aiCams_array.includes(r.id.toString())) {
+                                                aiCams_string += "," + r.id;
+                                                sessionStorage.setItem("aiCams", aiCams_string); 
+                                            }
+                                        } else {
+                                            if (aiCams_array.includes(r.id.toString())) {
+                                                var newAiCams = aiCams_string.replace("," + r.id, "");
+                                                sessionStorage.setItem("aiCams", newAiCams); 
+                                            }
+                                        }
+                                    }
+                                    sessionStorage.setItem(r.id, "true");
+                                    self.hidewait();
+                                    $(self).attr('access_token','');
+                                    self.reset();
+                                    self.dispatchEvent(self.submited_event);
+                                    return screens['cameras'].on_show();
+                                },function(r){
+                                    self.hidewait();
+                                    if (r && r.responseJSON && r.responseJSON.errorDetail)
+                                        alert(r.responseJSON.errorDetail);
+                                    else
+                                        alert('Falied to delete setting');
+                                    self.dispatchEvent(self.submited_event);
+                                });       
+                                
+                                cameraList.objects.push(newCam);
+                                var total = parseInt(cameraList.meta.total_count);
+                                cameraList.meta.total_count = total + 1;
+                                localStorage.cameraList = JSON.stringify(cameraList);
+    
+                            }, function(err) {
+                                self.hidewait();
+                                if (r && r.responseJSON && r.responseJSON.errorDetail)
+                                    alert(r.responseJSON.errorDetail);
+                                else
+                                    alert('Falied to find created camera');
+                            })
+                        }, function(r) {
                             self.hidewait();
                             if (r && r.responseJSON && r.responseJSON.errorDetail)
-                                alert(r.responseJSON.errorDetail);
-                            else
-                                alert('Falied to delete setting');
-                        });       
+                                self.showerror(r.responseJSON.errorDetail);
+                            else 
+                                alert('Falied to set retention or ai');
+
+                        })
                     } else {
-                        sessionStorage.setItem(r.id, "true");
                         self.hidewait();
-                        $(self).attr('access_token','');
-                        self.reset();
                         self.dispatchEvent(self.submited_event);
-                        location.reload();
-                    }
+                        alert("Can't find camera list");
+                    }               
                 },function(r){
                     self.hidewait();
                     if (r && r.responseJSON && r.responseJSON.errorDetail)
@@ -426,39 +481,94 @@ CameraEditControl = function(){
         p.then(function(r){
             data.lat = r.lat ? r.lat : null;
             data.lon = r.lon ? r.lon : null;
+            if (!data.subid || data.subid == "NOPLAN") {
+                data.rete_recmode = "off";
+                data.rete_time = 0;
+            }
             self.camera.updateCameraPromise(data).then(function(r){
-                if (data.subid && data.subname) {
-                    var subInfo = {
-                        "subid": data.subid,
-                        "subname": data.subname
-                    };
-    
-                    var newMeta = {
-                        ...subInfo,
-                        ...self.camera.src.meta
-                      };
+                var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
+                if (cameraList) {
+                    var oldsubid = self.camera.src.meta && self.camera.src.meta.subid ? self.camera.src.meta.subid : "customParameters";
                     
-                    obj = {
-                        "id": self.camera.camera_id,
-                        "meta": newMeta
+                    var custProm =  new Promise(function(resolve, reject){resolve({lat:data.lat,lon:data.lon});});
+
+                    if ((oldsubid == "customParameters" && !data.subid) || data.subid == "CUST" || oldsubid == "CUST"){
+                        if (!self.camera.bsrc.url && data.rete_recmode=='off')
+                            data.rete_time = -1;	
+                        
+                        custProm = vxg.api.cloudone.camera.setAIConfig(self.camera.camera_id, {'channel_id': self.camera.camera_id, 'type': data.ai_type }).then(function() {
+                            vxg.api.cloudone.camera.setRetention(self.camera.camera_id, {recording: false, time: data.rete_time, type: data.rete_recmode})
+                        });
                     }
-    
-                    vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
-                        $(self).attr('access_token','');
-                        self.reset();
-                        //self.dispatchEvent(self.submited_event);
-                        location.reload();
-                    },function(r){
-                        if (r && r.responseJSON && r.responseJSON.errorDetail)
-                            alert(r.responseJSON.errorDetail);
-                        else
-                            alert('Falied to delete setting');
-                        self.hidewait();
-                    });
-                } else {
-                    $(self).attr('access_token','');
-                    self.reset();
-                    self.dispatchEvent(self.submited_event);
+
+                    custProm.then(function() {
+                        vxg.api.cloud.getCameraInfo(self.camera.camera_id).then(function(updatedCam) {
+                            if (data.subid && data.subname) {
+                                var subInfo = {
+                                    "subid": data.subid,
+                                    "subname": data.subname
+                                };
+
+                                if (self.camera.src.meta && self.camera.src.meta.subid) {
+                                    delete self.camera.src.meta.subid;
+                                    delete self.camera.src.meta.subname;
+                                }
+                
+                                var newMeta = {
+                                    ...subInfo,
+                                    ...self.camera.src.meta
+                                };
+
+                                updatedCam.meta = newMeta;
+                                
+                                obj = {
+                                    "id": self.camera.camera_id,
+                                    "old_sub": oldsubid,
+                                    "meta": newMeta
+                                }
+                
+                                vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
+                                    var aiType = data.subid == "CUST" ? data.ai_type : ret['planInfo'] ? ret['planInfo'].object_detection : null;
+                                    var aiCams_string = sessionStorage.getItem("aiCams");
+                                    if (aiCams_string) {
+                                        var aiCams_array = aiCams_string.split(",").filter(e => e);
+                                        if (aiType && aiType != "off") {
+                                            if (!aiCams_array.includes(self.camera.camera_id.toString())) {
+                                                aiCams_string += "," + self.camera.camera_id;
+                                                sessionStorage.setItem("aiCams", aiCams_string); 
+                                            }
+                                        } else {
+                                            if (aiCams_array.includes(self.camera.camera_id.toString())) {
+                                                var newAiCams = aiCams_string.replace("," + self.camera.camera_id, "");
+                                                sessionStorage.setItem("aiCams", newAiCams); 
+                                            }
+                                        }
+                                    }
+
+                                    $(self).attr('access_token','');
+                                    self.reset();
+                                    //self.dispatchEvent(self.submited_event);
+                                    self.dispatchEvent(self.submited_event);
+                                    return screens['cameras'].on_show();
+                                },function(r){
+                                    if (r && r.responseJSON && r.responseJSON.errorDetail)
+                                        alert(r.responseJSON.errorDetail);
+                                    else
+                                        alert('Falied to delete setting');
+                                    self.hidewait();
+                                });
+                            } else {
+                                $(self).attr('access_token','');
+                                self.reset();
+                                self.dispatchEvent(self.submited_event);
+                            }
+
+                            var oldCamIndex = cameraList.objects.findIndex(c => c.id == updatedCam.id);
+                            cameraList.objects[oldCamIndex] = updatedCam;
+                            localStorage.cameraList = JSON.stringify(cameraList);
+                            return screens['cameras'].on_show();
+                        })
+                    })
                 }
             },function(r){
                 self.hidewait();
@@ -485,46 +595,9 @@ CameraEditControl = function(){
         this.camera = camera;
 
         this.showwait('Loading');
-        this.camera.getConfig().then(function(bsrc){
-            var subName = camera.src.meta ? camera.src.meta.subname : null;
-            if (subName) {
-                $(self).find('[name="showname"]').val(subName);
-                $(self).find(".subbtngen").remove();
-                $(self).find('.subscription-group').append($('<span class="vxgbutton subbtn unsub subbtngen" id="unsubbtn">Unsubscribe</span>'));
-                $(self).find("#unsubbtn").on('click',function(e) { 
-                    e.preventDefault();
-                    e.stopPropagation();
-                    var oldsubid = camera.src.meta.subid;
+        this.camera.getConfig().then(function(bsrc){            
+            self.selectPlan(self, camera);
 
-                    delete camera.src.meta.subid;
-                    delete camera.src.meta.subname;
-
-                    obj = {
-                        "old_sub": oldsubid,
-                        "id": camera.camera_id,
-                        "meta": camera.src.meta
-                    }
-
-                    core.elements['global-loader'].show();
-
-                   vxg.api.cloudone.camera.setPlans(obj).then(function (ret) {
-                        var planIndex = vxg.user.src.plans.findIndex(p => p.id == oldsubid);
-                        if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
-                        self.selectPlan(self, camera);
-                        core.elements['global-loader'].hide();
-                        return;
-                    },function(r){
-                        if (r && r.responseJSON && r.responseJSON.errorDetail)
-                            alert(r.responseJSON.errorDetail);
-                        else
-                            alert('Falied to remove subscription');
-                        core.elements['global-loader'].hide();
-                    });    
-                });
-
-            } else {
-                self.selectPlan(self, camera);
-            }
             if (!bsrc){
                 self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
                 self.defferedDispatchEvent(self.error_event);
@@ -579,6 +652,39 @@ CameraEditControl = function(){
             $(self).find('[name="password"]').val(bsrc.password ? bsrc.password : '');
             $(self).find('[name="onvif_rtsp_port_fwd"]').val(bsrc.onvifRtspPort ? bsrc.onvifRtspPort : '');
 
+            var subId = camera.src.meta && camera.src.meta.subid ? camera.src.meta.subid : "customParameters";
+            if (subId == "CUST" || subId == "customParameters") {
+                $(".custom-plan").show();
+                $(self).find('[name="recording"]').val(bsrc.isRecording ? 1 : 0);
+                self.camera.getRetention().then(function(rt){
+                    if (rt){
+                        if (rt.type!==undefined)
+                            $(self).find('[name="rete_recmode"]').val(rt.type);
+    
+                        if (rt.type=='off') $(self).find('.rete_time').addClass("rete_off");
+                        else $(self).find('.rete_time').removeClass("rete_off");
+        
+                        if (rt.time!==undefined)
+                            $(self).find('[name="rete_time"]').val(rt.time);
+                    }
+    
+                    let p = self.camera.getAIConfig ? self.camera.getAIConfig(self.camera.camera_id) : new Promise(function(resolve, reject){ resolve() });
+                    return p.then(function(aiInfo) {
+                        if (aiInfo) $(self).find('[name="ai_type"]').val(aiInfo.ai_type)
+    
+                        $(self).addClass('ready');
+                        self.hidewait();
+                        self.defferedDispatchEvent(self.loaded_event);
+                    }, function(err) {
+                        var t = err;
+                        self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
+                        self.defferedDispatchEvent(self.error_event);
+                    });
+                });
+            } else {
+                $(".custom-plan").hide();
+            }
+
             $(self).addClass('ready');
             self.hidewait();
             self.defferedDispatchEvent(self.loaded_event);
@@ -589,15 +695,21 @@ CameraEditControl = function(){
 
     }
     this.selectPlan = function(self, camera) {
-        $(self).find('[name="showname"]').val("No Subscription Assigned");
+        if (camera) {
+            var subId = camera.src.meta && camera.src.meta.subid ? camera.src.meta.subid : "customParameters";
+            var subName = camera.src.meta && camera.src.meta.subname ? camera.src.meta.subname : "customParameters";
+            var showName = subId == "customParameters" ? "Custom Parameters" : subId == "NOPLAN" ? "No Subscription Assigned" : subName;
+            $(self).find('[name="showname"]').val(showName);
+        }
+
         var subbtnEle;
         if ($(self).hasClass("wait") || $(self).hasClass("ready")) {
             $(self).find(".subbtngen").remove();
-            $(self).find('.subscription-group').append($('<span class="vxgbutton subbtn subbtngen" id="subbtn-edit">Subscribe</span>'));
+            $(self).find('.subscription-group').append($('<span class="vxgbutton subbtn subbtngen" id="subbtn-edit">Subscriptions</span>'));
             subbtnEle = $(self).find("#subbtn-edit");
         } else {
             $(".subbtngen").remove();
-            $('.subscription-group').append($('<span class="vxgbutton subbtn subbtngen" id="subbtn-new">Subscribe</span>'));
+            $('.subscription-group').append($('<span class="vxgbutton subbtn subbtngen" id="subbtn-new">Subscriptions</span>'));
             subbtnEle = $("#subbtn-new");
         }
 
@@ -630,8 +742,21 @@ CameraEditControl = function(){
                 }
             });
 
+            planTable += `
+            <tr class="plan" onclick="checkPlan('NOPLAN')">
+                <td class="plan-desc" planid="NOPLAN"> No Plan </td>
+                <td class="plan-count"></td>
+                <td class="used-count" ></td>
+                <td class="checkbox choose-sub">
+                    <input id="plan_NOPLAN" class="plans-check" type="radio" name="subid" value="NOPLAN">
+                    <input type="hidden" id="name_NOPLAN" value="No Plan">
+                </td>
+            </tr>
+            `;
+
             var plansDialog = `
                 <h1 id="plans-title">Assign Subscription to ${camName}</h1>
+                <span class="currentPlan">Current Plan: ${showName}</span>
                 <table class="plansTable">
                     ${planTable}
                 </table>
@@ -640,13 +765,46 @@ CameraEditControl = function(){
             dialogs['mdialog'].activate(plansDialog).then(function(r){
                 if (r.button!='select') return;
                 if (r.button=='select' && r.form.subid === undefined) return;
-                var name = $("#name_" + r.form.subid).val();
+                var name = showName = $("#name_" + r.form.subid).val();
+                if (r.form.subid == "CUST") {
+                    if (camera) {
+                        core.elements['global-loader'].show();
+                        $(self).find('[name="recording"]').val(camera.bsrc.isRecording ? 1 : 0);
+                        camera.getRetention().then(function(rt){
+                            if (rt){
+                                if (rt.type!==undefined)
+                                    $(self).find('[name="rete_recmode"]').val(rt.type);
+            
+                                if (rt.type=='off') $(self).find('.rete_time').addClass("rete_off");
+                                else $(self).find('.rete_time').removeClass("rete_off");
+                
+                                if (rt.time!==undefined)
+                                    $(self).find('[name="rete_time"]').val(rt.time);
+                            }
+            
+                            let p = camera.getAIConfig ? camera.getAIConfig(camera.camera_id) : new Promise(function(resolve, reject){ resolve() });
+                            return p.then(function(aiInfo) {
+                                if (aiInfo) $(self).find('[name="ai_type"]').val(aiInfo.ai_type);
+                                
+                                $(".custom-plan").show();
+                                core.elements['global-loader'].hide();
+                            })
+                        });
+                    } else {
+                        $(".custom-plan").show();
+                    }
+                }
+                else {
+                    $(".custom-plan").hide();
+                    $('.hidesett').hide();
+                } 
+
                 if ($(self).hasClass("wait")) { 
-                    $(self).find('[name="showname"]').val(name);
+                    $(self).find('[name="showname"]').val(showName);
                     $(self).find('[name="subname"]').val(name);
                     $(self).find('[name="subid"]').val(r.form.subid);
                 } else {
-                    $('[name="showname"]').val(name);
+                    $('[name="showname"]').val(showName);
                     $('[name="subname"]').val(name);
                     $('[name="subid"]').val(r.form.subid);
                 }
@@ -666,8 +824,37 @@ CameraEditControl = function(){
         $(this).removeClass('options').removeClass('location').removeClass('rtsp').removeClass('cloud').addClass('onvif');
         $(this).find('.subscription-info').val('');
         $(this).find('.show-name').val('No Subscription Assigned');
+        $(this).find('.custom-plan').hide();
+        $(this).find('.hidesett').hide();
+
+        $(this).find('[name="rete_recmode"]').val("off");
+        $(this).find('[name="rete_time"]').val(0);
+        $(this).find('[name="ai_type"]').val("off");
+
         this.createTimezonesList($(this).find('[name="tz"]'),moment.tz.guess());
         $(this).find('.sdrecinfo').text('');
+
+        vxg.cameras.getLocationsList().then(function(locs) {
+            var datalist = "";
+            locs.forEach(loc => {
+                datalist += `<option value="${loc}">`
+            })
+
+            $("#locationsList").html(datalist);
+        });
+
+        vxg.cameras.getGroupsList().then(function(groups) {
+            var datalist = "";
+            groups.forEach(group => {
+                datalist += `<option value="${group}">`
+            })
+
+            $("#groupsList").html(datalist);
+        });
+
+        vxg.api.cloudone.user.getPlans().then(function(r) {
+            vxg.user.src.plans = JSON.parse(r.plans);
+        })
     }
     this.createTimezonesList = function(selector, selected) {
         selector.empty();

@@ -200,10 +200,22 @@ font-size: 10px;
     position: relative;
     font-weight: normal;
 }
+
+.tablecaminfo {
+    font-size: 10px;
+    background: gray;
+    padding: 5px 10px;
+    border-radius: 8px;
+    text-align: center;
+    width: 50%;
+    color: white;
+    margin: 0 auto;
+}
+
 .screens > .cameras .camlist .camerablock .caminfo.rec{
     padding-right: 13px;
 }
-.screens > .cameras .camlist .camerablock .caminfo.online{
+.screens > .cameras .camlist .camerablock .caminfo.online, .tablecaminfo.online{
 background-color:var(--main-color);
 }
 .screens > .cameras .camlist .camerablock .caminfo.rec:after{
@@ -258,12 +270,16 @@ border-top: 1px solid var(--main-color);
 }
 
 .screens > .cameras .camlist .camerablock .settings{
-width:40px;
-height:46px;
-float:right;
-    background-repeat: no-repeat;
-    background-position: 16px center;
-cursor:pointer;
+    width:40px;
+    height:40px;
+    /*background-repeat: no-repeat;*/
+    /*background-position: 0 center;*/
+    /*background-image: url(action.svg);*/
+    cursor:pointer;
+    display: flex;
+    align-items: center;
+    margin: auto;
+    justify-content: center;
 }
 
 .screens > .cameras .camlist .camerablock .name{
@@ -410,7 +426,7 @@ min-height: 100px;
     position: relative;
 }
 
-ul.locationlist {
+ul.locationlist, ul.groupslist {
 padding: 0 0 14px 0;
     margin-bottom: 0;
     max-height: 200px;
@@ -564,6 +580,10 @@ text-align: center;
     width: calc(100% - 4px);
 }
 
+.groupCamCheck:hover {
+    cursor: pointer;
+}
+
 .filter-label {
     display: flex;
     align-items: center;
@@ -579,12 +599,16 @@ text-align: center;
     user-select: none;
 }
 
-.filter-label input {
+.filter-label input:not(#newGroupName){
     position: absolute;
     opacity: 0;
     cursor: pointer;
     height: 0;
     width: 0;
+}
+
+.newGroupName {
+    width: 80%;
 }
 
 .checkmark {
@@ -623,3 +647,72 @@ text-align: center;
     margin-top: 5px;
 }
 
+#groupingButton {
+    background-color: var(--main-color);
+    padding: 5px 20px;
+}
+
+.mwebui {
+    text-decoration: none;
+}
+
+.card-view-value .settings {
+    float: right;
+}
+
+.bootstrap-table.bootstrap5 {
+	width:100%;
+}
+
+.screens > .cameras .camlist .bootstrap-table .camerablock{
+	width: calc(100% - 4px);
+    height: 76px;
+    min-height: 76px;
+    max-width: 112px;
+}
+
+.screens > .cameras .camlist .bootstrap-table .camerablock campreview {
+    width: 130px !important;
+    height: 73px !important;
+}
+
+.screens > .cameras .camlist .bootstrap-table .card-view .camerablock campreview {
+    width: unset !important;
+    height: 100% !important;
+}
+
+
+/*.cameras .bootstrap-table .settings {
+    height: 18px;
+    background-repeat-x: no-repeat;
+}*/
+
+.screens > .cameras .camlist .bootstrap-table .has-card-view .camerablock{
+	width: calc(100% - 4px);
+    height: 108px;
+    min-height: 216px;
+    max-width: 322px;
+}
+
+.card-view-title {
+	 display:none;
+}
+
+.bootstrap-table .fixed-table-container .table tbody tr .card-view .card-view-title {
+	 display:none;
+
+}
+
+.bootstrap-table .fixed-table-container .table tbody tr .card-view > label {
+	 display:none;
+}
+
+.bootstrap-table .fixed-table-container.has-card-view .table tbody {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 316px));
+    grid-gap: 20px;
+}
+
+.bootstrap-table .fixed-table-container.has-card-view .table tbody tr td {
+	width: 322px;
+}

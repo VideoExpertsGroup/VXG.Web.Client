@@ -9,8 +9,8 @@ if (!MCore::$core->current_user->isPartner())
     error(401, 'Access denied');
 
 list($name) = MCore::checkAndGetInputParameters(['name']);
-list($location, $recording, $tz, $lat, $lon, $url, $username, $password, $onvif_rtsp_port_fwd, $serialnumber, $macAddress, $uplink) = 
-    MCore::getInputParameters(['location'=>'','recording','tz'=>'UTC','lat'=>0,'lon'=>0,'url','username','password', 'onvif_rtsp_port_fwd'=>0,'serialnumber'=>'','macAddress'=>'', 'uplink'=>'']);
+list($location, $group, $recording, $tz, $lat, $lon, $url, $username, $password, $onvif_rtsp_port_fwd, $serialnumber, $macAddress, $uplink) = 
+    MCore::getInputParameters(['location'=>'','group'=>'','recording','tz'=>'UTC','lat'=>0,'lon'=>0,'url','username','password', 'onvif_rtsp_port_fwd'=>0,'serialnumber'=>'','macAddress'=>'', 'uplink'=>'']);
 
 $password = strval($password);
 $username = strval($username);
@@ -27,7 +27,7 @@ if ($uplink) {
 
 $onvif_rtsp_port_fwd = $onvif_rtsp_port_fwd ? 0+ $onvif_rtsp_port_fwd : 0;
 
-$camera = MCamera::createCamera(MCore::$core->current_user, $name, $location, $recording, $tz, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd, false, $serialnumber);
+$camera = MCamera::createCamera(MCore::$core->current_user, $name, $location, $group, $recording, $tz, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd, false, $serialnumber);
 
 if ($camera && $serialnumber && $macAddress) {
     $newSerialNumber = $camera->checkResolverServiceSerial($serialnumber);
@@ -44,22 +44,22 @@ if ($camera && $serialnumber && $macAddress) {
     }
 }
 
-if ($camera && strpos(MCore::$core->current_user->js,'ai_access')!==false) {
+/*if ($camera && strpos(MCore::$core->current_user->js,'ai_access')!==false) {
     list($ai_type) = MCore::getInputParameters(['ai_type']);
     $aiGroupToken = MCore::$core->current_user->getAIChannelGroupToken($ai_type, $camera->camera['channelID']);
     if(!MCamera::setAIConfigByChannelID($camera->camera['channelID'], $ai_type, $aiGroupToken)) {
         $camera->remove();
         error(401, "Fail to set AI configuration");
     }
-}
+}*/
 
 MCore::$core->current_user->updateAllCamsToken();
 
-if ($camera && strpos(MCore::$core->current_user->js,'retention')!==false){
+/*if ($camera && strpos(MCore::$core->current_user->js,'retention')!==false){
     list($rec_mode, $recording, $time) = MCore::getInputParameters(['rete_recmode', 'rete_sd', 'rete_time']);
     if ($rec_mode || $recording || $time)
         MCore::$core->response = MCamera::setRetention($camera->camera['channelID'], MCore::$core->current_user, $rec_mode, $recording, $time); 
-}
+}*/
 
 
 if ($camera)

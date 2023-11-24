@@ -59,6 +59,8 @@ class MUser{
 
     public function addPlanDefinitions() {
         $planCheck = MCore::$core->pdo->fetchOne('SELECT * from "plan" where "uid"=?', ["CR30"]);
+        $planCheck_cust = MCore::$core->pdo->fetchOne('SELECT * from "plan" where "uid"=?', ["CUST"]);
+
         if (!$planCheck) {
             // convert any existing plans to "LEGACY" plans
             $updateOldPlansQuery = 'UPDATE "plan" SET "desc"=\'LEGACY\'';
@@ -68,6 +70,9 @@ class MUser{
             MUser::createPlanDescription("30 Day Event Recording", "ER30", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"by_event","object_detection":"off"}', 0);
             MUser::createPlanDescription("30 day Continued Rec-AI by Timer", "CR30_BT", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"continuous"}', 0);
             MUser::createPlanDescription("30 day Continued Rec-AI by Event", "CR30_BE", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"by_event"}', 0);
+            MUser::createPlanDescription("Custom Plan", "CUST", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"off"}', 0);
+        } else if (!$planCheck_cust) {
+            MUser::createPlanDescription("Custom Plan", "CUST", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"off"}', 0);
         }
 
         return true;
@@ -1256,62 +1261,6 @@ class MUser{
             error(500, $response_cloud['errorDetail']);
 
         return $ret['objects'];
-    }
-    
-    public function convertCameraToPlans($channel, $recmode, $aiType, $userPlans) {
-        $server = $this->getServerData();
-        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
-            error(555, 'Failed creating camera channel. reason: generateServicesURLs');
-
-        if ($recmode == 'on') {
-            if ($aiType == 'continuous') {
-                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BT", "30 day Continued Rec-AI by Timer");
-            } else if ($aiType == 'by_event') {
-                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BE", "30 day Continued Rec-AI by Event");
-            } else {
-                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30", "30 Day Continuous Recording");
-            }
-        } else if ($recmode == 'by_event') {
-            if ($aiType == 'off') {
-                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "ER30", "30 Day Event Recording");
-            }
-        } 
-        
-        if (($recmode == 'by_event' && $aiType != 'off') || ($recmode == 'off' && $aiType != 'off')) {
-            // switch rec to "on" (continuous) and add corresponding ai plan
-            //MCamera::setRetention($channel['id'], $this, "on", false, 720);
-            if ($aiType == 'continuous') {
-                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BT", "30 day Continued Rec-AI by Timer");
-            } else if ($aiType == 'by_event') {
-                $userPlans = $this->changePlansAndAssign($channel, $userPlans, "CR30_BE", "30 day Continued Rec-AI by Event");
-            }
-        }
-
-        return $userPlans;
-    }
-
-    public function changePlansAndAssign($channel, $userPlans, $planId, $planName) {
-        $hasPlan = false;
-        for ($i = 0; $i < count($userPlans); $i++) {
-            if ($userPlans[$i]['id'] == $planId) {
-                // already has an instance of this plan
-                $hasPlan = true;
-                $userPlans[$i]['used']++;
-                // add another plan if there arent enough
-                if ($userPlans[$i]['used'] > $userPlans[$i]['count']) $userPlans[$i]['count']++;
-                break;
-            }
-        }
-        if (!$hasPlan) {
-            $userPlans[] = ['id' => $planId, 'name' => $planName, 'count' => 1, 'used' => 1];
-        }
-
-        $channelMeta = $channel['meta'];
-        $channelMeta['subid'] = $planId;
-        $channelMeta['subname'] = $planName; 
-
-        MCamera::updateChannelPlans($channel['id'], $channelMeta);
-        return $userPlans;
     }
 
     public function syncWithCamerasOnServer(){

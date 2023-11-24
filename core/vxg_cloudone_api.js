@@ -399,6 +399,19 @@ vxg.api.cloudone.camera.setLocations = function(channel_id, location){
     });
 };
 
+vxg.api.cloudone.camera.setGroup = function(channel_id, group){
+    var data = {channel_id:channel_id, group:group};
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/camera/set_group/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+};
+
 vxg.api.cloudone.camera.shareCamera = function(channel_id, time){
     var data = {channel_id:channel_id, expired_seconds: time};
     return vxg.user.getToken().then(function(r){
