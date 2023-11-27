@@ -481,7 +481,7 @@ CameraEditControl = function(){
         p.then(function(r){
             data.lat = r.lat ? r.lat : null;
             data.lon = r.lon ? r.lon : null;
-            if (!data.subid || data.subid == "NOPLAN") {
+            if (data.subid && data.subid == "NOPLAN") {
                 data.rete_recmode = "off";
                 data.rete_time = 0;
             }
