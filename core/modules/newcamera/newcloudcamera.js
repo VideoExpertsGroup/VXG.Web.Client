@@ -264,8 +264,9 @@ CameraCloudEditControl = function(){
         if (vxg.user.src.plans && vxg.user.src.plans.length > 0) {
             this.selectPlan(this);
         } else {
-            $('.subscription-group').hide();
+            $('.subscription').hide();
         }
+
         return this.attributeChangedCallback('access_token', access_token);
     }
     this.attributeChangedCallback = function(name, access_token){
@@ -637,6 +638,8 @@ CameraCloudEditControl = function(){
         $(this).find('.show-name').val('No Subscription Assigned');
         $(this).removeClass('options').removeClass('rtsp').removeClass('cloud').addClass('onvif');
         this.createTimezonesList($(this).find('[name="tz"]'),moment.tz.guess());
+        $(this).find('.custom-plan').hide();
+        $(this).find('.hidesett').hide();
     }
     this.createTimezonesList = function(selector, selected) {
         selector.empty();

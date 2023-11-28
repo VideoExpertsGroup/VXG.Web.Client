@@ -825,8 +825,8 @@ CameraEditControl = function(){
         $(this).removeClass('options').removeClass('location').removeClass('rtsp').removeClass('cloud').addClass('onvif');
         $(this).find('.subscription-info').val('');
         $(this).find('.show-name').val('No Subscription Assigned');
-        $(this).find('.custom-plan').hide();
-        $(this).find('.hidesett').hide();
+        $('.custom-plan').hide();
+        $('.hidesett').hide();
 
         $(this).find('[name="rete_recmode"]').val("off");
         $(this).find('[name="rete_time"]').val(0);

@@ -799,10 +799,12 @@ class MCamera{
             if ($type != 'off' ) {
                 if ($currentToken) {
                     if ($targetToken['id'] != $currentToken['id']) {
-                        $tokenChannels = $currentToken['channels'];
-                        $newChannels = array_filter($tokenChannels, function($t) use($channel_id) {
-                            return $t != $channel_id; 
-                        });
+                        $newChannels = [];
+                        foreach($currentToken['channels'] as $token) {
+                            if ($token != $channel_id) {
+                                array_push($newChannels, $token);
+                            }
+                        }
                         $params = ['channels' => $newChannels];
                         if(!MCamera::addChannelToGroupTokenByID($currentToken['id'], $channel_id, $user, $params, $type, true)) 
                             error(500, 'Error removing this camera from AI token');
@@ -819,9 +821,12 @@ class MCamera{
             } else {
                 $tokenChannels = $targetToken['channels'];
                 if (($key = array_search($channel_id, $tokenChannels)) !== false) {
-                    $newChannels = array_filter($tokenChannels, function($t) use($channel_id) {
-                        return $t != $channel_id; 
-                    });
+                    $newChannels = [];
+                    foreach($tokenChannels as $token) {
+                        if ($token != $channel_id) {
+                            array_push($newChannels, $token);
+                        }
+                    }
                     $params = ['channels' => $newChannels];
                     if(!MCamera::addChannelToGroupTokenByID($targetToken['id'], $channel_id, $user, $params, $type)) 
                         error(500, 'Error removing this camera from AI token');
