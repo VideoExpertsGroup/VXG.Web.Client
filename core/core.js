@@ -379,8 +379,11 @@ window.core.loadScreens = function(){
 
         return p.then(function(){
             var from_screen = $('body').data('screenid');
-            if (from_screen == 'tagsview' && self.id != 'cameras') {
-                sessionStorage.setItem("backToCam", "");
+            if ((self.id != 'tagsview' && from_screen != 'tagsview') &&
+                (self.id != 'camerasettings' && from_screen != 'camerasettings') &&
+                (self.id != 'camerameta' && from_screen != 'camerameta') && 
+                (self.id != 'addcamera' && from_screen != 'addcamera')) {
+                sessionStorage.removeItem("backToCam");
             }
 
             for (let i in window.screens){

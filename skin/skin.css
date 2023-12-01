@@ -71,6 +71,8 @@
 .newcamera .newcamerabtns .add2{display:none;}
 /*.newcamera .newcamerabtns .add5{display:none;}*/
 
+.single-timeline {display: none !important;}
+
 .prifiletabs .tab1{display:none!important;}
 .prifiletabs .tab3{display:none!important;}
 .profile .wtab1{display:none!important;}

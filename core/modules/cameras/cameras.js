@@ -10,7 +10,7 @@ function camGrid(size /* 2,3,4 */){
     let state = window.screens['cameras'].getState();
     if (!window.screens['cameras'].playerList) {
         try {
-            window.screens['cameras'].playerList = new CloudPlayerList("single-timeline", {timeline: true, calendar: true});
+            //window.screens['cameras'].playerList = new CloudPlayerList("single-timeline", {timeline: true, calendar: true});
         } catch(e) {
             window.screens['cameras'].playerList = null;
         }
@@ -88,6 +88,7 @@ function camGrid(size /* 2,3,4 */){
         var self = this;
         let access_token = $(this).attr("access_token");
         let channelID = $(this).attr("cam_id");
+        sessionStorage.setItem("backToCam", channelID);
 
         var menu =  $(`
         <div class="simplemenu">
@@ -320,7 +321,8 @@ window.screens['cameras'] = {
     'on_show':function(filterarray){
         setTimeout(function(){onCameraScreenResize();},100);
 
-        if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
+        core.elements['header-search'].hide();
+        //if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
         if (!filterarray) {
             var userFilters = localStorage.getItem("filter-"+vxg.user.src.email)
             if (!userFilters) {
@@ -409,12 +411,19 @@ window.screens['cameras'] = {
                 count++;
             }
 
+            if (localStorage.tableOrder == 'desc') {
+                tableData.sort(function (a, b) {
+                    return b.order - a.order;
+                });
+            }
+
             if ($('#table').children().length == 0) {
                 var columns = [
                     {
                         field: "order",
                         sortable: true,
-                        cardVisible: false
+                        cardVisible: false,
+                        class: "ordering"
                     },
                     {
                         field: "state",
@@ -464,16 +473,22 @@ window.screens['cameras'] = {
                         title: "Action"
                     },
                 ]
+
+                var isGridView = self.getState().grid>0 ? true : false;
+
                 $('#table').bootstrapTable({
                     pagination: true,
                     showToggle: true, 
                     showSearchClearButton: true,
                     useRowAttrFunc: true,
                     filterControl: true,
-                    reorderableRows: true,
+                    reorderableRows: !isGridView,
                     toolbar: ".toolbar",
                     uniqueId: "order",
                     columns: columns,
+                    sortName: 'order',
+                    sortOrder: localStorage.tableOrder,
+                    cardView: isGridView,
                     onColumnSearch: function (arg1, arg2) {
                     if (arg1 == 'status')
                         localStorage.camera_status = arg2;
@@ -485,6 +500,13 @@ window.screens['cameras'] = {
                         localStorage.camera_group = arg2;
                     }
                 });
+
+                $(document).on('click', '.ordering .th-inner.sortable.both', function(event) {
+                    if ($(this).hasClass('asc')) localStorage.setItem("tableOrder", "asc");
+                    else if ($(this).hasClass('desc')) localStorage.setItem("tableOrder", "desc");
+                })
+
+                if (isGridView) $('.fixed-table-toolbar').hide();
 
                 $(document).on('click', '#groupingButton', function(event){
                     event.preventDefault();
@@ -591,14 +613,12 @@ window.screens['cameras'] = {
 
             $('#table').bootstrapTable('load', tableData);
 
-            // this is assuming table ordering has already been completed
             var pageSize = $('#table').bootstrapTable('getOptions').pageSize;
             var loadPrevCam = sessionStorage.getItem("backToCam");
             var camRow = loadPrevCam ? tableData.find(d => d.camId == loadPrevCam) : "";
             var camPage = 1;
             if (camRow) {
-                var camIndex = camRow.order - 1;
-                camPage = Math.ceil(camIndex / pageSize);
+                camPage = Math.ceil(camRow.order / pageSize);
                 if (camPage > 1) {
                     setTimeout(function() {
                         // not the best solution, but unsure why it keeps going to page 1 by default
@@ -671,8 +691,8 @@ window.screens['cameras'] = {
             self.wrapper.find('.cambd').hide();self.wrapper.find('.cammap').show();
         }
 
-        core.elements['header-right'].prepend('<div class="camerafilterContainer"><div class="transparent-button camerafilter"><span id="filterbtn">Filter</span></div></div>');
-        core.elements['header-right'].find('.camerafilterContainer').append(
+        //core.elements['header-right'].prepend('<div class="camerafilterContainer"><div class="transparent-button camerafilter"><span id="filterbtn">Filter</span></div></div>');
+        /*core.elements['header-right'].find('.camerafilterContainer').append(
             `<div class="locationContainer" style="display:none;">
                 <div class="locHeader">Select Locations</div>
                 <div class="locList">
@@ -729,7 +749,7 @@ window.screens['cameras'] = {
             },function(){
                 core.elements['global-loader'].hide();
             });
-        });
+        });*/
     },
     fillLocations: function(){
         let self = this;
@@ -806,6 +826,20 @@ window.screens['cameras'] = {
             '</div><div class="transparent-button active addcamera" ifscreen="newcamera" onclick_toscreen="newcamera"><span class="add-icon">+</span><span>Add camera</span></div>');
 
         core.elements['header-right'].find('.nogrid').click(function(){
+            $('.fixed-table-toolbar').show();
+            
+            $("#table").bootstrapTable("refreshOptions", {
+                pagination: true,
+                showToggle: true, 
+                showSearchClearButton: true,
+                useRowAttrFunc: true,
+                filterControl: true,
+                cardView: false,
+                reorderableRows: true,
+            });
+            $('#table').bootstrapTable('filterBy', {});
+            $('#table').removeClass("table-bordered");
+
             self.wrapper.removeClass('grid');
             self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=0; state.list=true; self.setState(state);
@@ -813,36 +847,39 @@ window.screens['cameras'] = {
             core.elements['header-right'].find('.gridmenu span').text($(this).text());
         });
         core.elements['header-right'].find('.grid22').click(function(){
+            var tableOpts = $('#table').bootstrapTable('getOptions');
+            if (tableOpts.reorderableRows) location.reload();
             let state = self.getState(); state.grid=2; self.setState(state);
             if (state.list && self.playerList) {
                 state.list = false; self.setState(state)
                 location.reload();
             } else {
-                self.wrapper.addClass('grid');
                 self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
                 camGrid(2);
                 core.elements['header-right'].find('.gridmenu span').text($(this).text());
             }
         });
         core.elements['header-right'].find('.grid33').click(function(){
+            var tableOpts = $('#table').bootstrapTable('getOptions');
+            if (tableOpts.reorderableRows) location.reload();
             let state = self.getState(); state.grid=3; self.setState(state);
             if (state.list && self.playerList) {
                 state.list = false; self.setState(state)
                 location.reload();
             } else {
-                self.wrapper.addClass('grid');
                 self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
                 camGrid(3);
                 core.elements['header-right'].find('.gridmenu span').text($(this).text());
             }
         });
         core.elements['header-right'].find('.grid44').click(function(){
+            var tableOpts = $('#table').bootstrapTable('getOptions');
+            if (tableOpts.reorderableRows) location.reload();
             let state = self.getState(); state.grid=4; self.setState(state);
             if (state.list && self.playerList) {
                 state.list = false; self.setState(state)
                 location.reload();
             } else {
-                self.wrapper.addClass('grid');
                 self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
                 camGrid(4);
                 core.elements['header-right'].find('.gridmenu span').text($(this).text());

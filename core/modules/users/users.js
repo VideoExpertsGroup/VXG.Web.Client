@@ -30,6 +30,7 @@ window.screens['users'] = {
         });
     },
     'on_show':function(r){
+        core.elements['header-search'].show();
         if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.filtertext ? this.filtertext : '');
         let self = this;
         $(self.wrapper).find('.userlist').empty();
