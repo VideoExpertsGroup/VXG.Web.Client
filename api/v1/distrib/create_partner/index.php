@@ -6,4 +6,10 @@ MCoreJson::init();
 
 
 $email = $_GET["email"];
-MUser::createFirebaseUser($email,'','q1w2e3r4',true);
+$pass = $_GET["pass"];
+
+if (!isset($plans)) {
+	$pass = 'q1w2e3r4';
+}
+	
+MUser::createFirebaseUser($email,'',$pass,true);
