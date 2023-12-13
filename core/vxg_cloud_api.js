@@ -31,7 +31,7 @@ vxg.api.cloud.getBaseURLFromToken = function(access_token) {
 
 vxg.api.cloud.getChannelIdFromToken = function(access_token) {
     let _at;
-    try{_at = JSON.parse(atob(access_token));} 
+    try{_at = JSON.parse(atob(access_token));}
     catch(e){};
     if (!_at) return 0;
     if (_at['camid']!==undefined)
@@ -41,7 +41,7 @@ vxg.api.cloud.getChannelIdFromToken = function(access_token) {
 
 vxg.api.cloud.isSharedToken = function(access_token) {
     let _at;
-    try{_at = JSON.parse(atob(access_token));} 
+    try{_at = JSON.parse(atob(access_token));}
     catch(e){};
     if (!_at) return false;
     if (_at['camid']===undefined && _at['token']!==undefined)
@@ -51,7 +51,7 @@ vxg.api.cloud.isSharedToken = function(access_token) {
 
 vxg.api.cloud.isTokenRW = function(access_token) {
     let _at;
-    try{_at = JSON.parse(atob(access_token));} 
+    try{_at = JSON.parse(atob(access_token));}
     catch(e){};
     if (!_at) return false;
     if (_at['access']===undefined && _at['access'].indexOf('all')!==-1)
@@ -79,7 +79,7 @@ vxg.api.cloud.getHeader = function(channel_access_token) {
     return headers;
 }
 
-/** Get video camera settings - resolution, framerate etc. 
+/** Get video camera settings - resolution, framerate etc.
  *
  * @param channel_id integer Channel ID
  * @param channel_access_token string Channel access token or undefined
@@ -126,7 +126,7 @@ vxg.api.cloud.getCameraSettings = function (channel_id, channel_access_token) {
     });
 };
 
-/** Get video camera settings - resolution, framerate etc. 
+/** Get video camera settings - resolution, framerate etc.
  *
  * @param channel_id integer Channel ID
  * @param channel_access_token string Channel access token or undefined
@@ -150,7 +150,7 @@ vxg.api.cloud.setCameraSettings = function (channel_id, channel_access_token, da
     });
 };
 
-/** Get video stream settings for specified stream - resolution, framerate etc. 
+/** Get video stream settings for specified stream - resolution, framerate etc.
  *
  * @param channel_id integer Channel ID
  * @param vsid string video stream id
@@ -287,7 +287,7 @@ vxg.api.cloud.getAIEnabledCameras = function (channel_ids) {
 
 vxg.api.cloud.getUplinkUrl = function(camid, camurl) {
     var data = {"camid": camid, "url": camurl.replace("/uplink_camera/", "/api/device/" + camid)}
-    
+
     return vxg.user.getToken().then(function(r){
         data.token = r;
         return $.ajax({
@@ -408,6 +408,7 @@ vxg.api.cloud.getCamerasListV2 = function(access_token, limit, offset, args) {
     });
 };
 
+/*
 vxg.api.cloud.getLocations = function(access_token) {
     let headers = vxg.api.cloud.getHeader(access_token);
     if (!headers)
@@ -430,7 +431,19 @@ vxg.api.cloud.getGroups = function(access_token) {
         headers: headers,
         contentType: "application/json"
     });
-}
+}*/
+
+vxg.api.cloud.getMetaTag = function(access_token, tagName) {
+    let headers = vxg.api.cloud.getHeader(access_token);
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+    return $.ajax({
+        type: 'GET',
+        url: vxg.api.cloud.getBaseURLFromToken(access_token) + '/api/v2/cameras/meta/get_values/'+tagName+'/',
+        headers: headers,
+        contentType: "application/json"
+    });
+};
 
 /** Get events list
  *
@@ -450,13 +463,13 @@ vxg.api.cloud.getEventslist = function(access_token, limit, offset, args = undef
     if (args === undefined) {
         args={'include_filemeta_download':true,'include_meta':true,'order_by':'-time'};
     }
-    
+
     if (limit!==undefined) args['limit'] = limit;
     if (offset!==undefined) args['offset'] = offset;
     if (type!==undefined) args['events'] = type;
     if (starttime!==undefined) args['start'] = starttime;
     if (endtime!==undefined) args['end'] = endtime;
-	
+
     return $.ajax({
         type: 'GET',
         url: vxg.api.cloud.getBaseURLFromToken(access_token) + '/api/v2/storage/events/',
@@ -518,6 +531,21 @@ vxg.api.cloud.getCamerasList = function(obj){
         return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
     data['include_meta']=true;
 
+    if (data.detail == "detail") {
+        return $.ajax({
+            type: 'GET',
+            url: vxg.api.cloud.apiSrc + '/api/v2/cameras/',
+            headers: headers,
+            contentType: "application/json",
+            data: data
+        }).then(function(r){
+            let ret = r;
+            if (!ret.objects || ret.objects.length<1) return ret;
+            ret.objects.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+            if (ret.objects[0]['name']) return ret;
+        });
+    }
+
     return $.ajax({
         type: 'GET',
         url: vxg.api.cloud.apiSrc + '/api/v5/channels/',
@@ -572,7 +600,7 @@ vxg.api.cloud.getCamerasList_Cached = function(obj) {
         }).then(function(r) {
             return cachedCamerasCallback(r);
         });
-    }    
+    }
 }
 
 function cachedCamerasCallback(r) {
@@ -667,10 +695,10 @@ vxg.api.cloud.getClipslist = function(access_token, limit, offset, args = undefi
     if (args === undefined) {
         args={'order_by':'-created'}; //created: ascending order of creation time;-created: descending order;event_time: ascending order of event_time;-event_time: descending order.
     }
-    
+
     if (limit!==undefined) args['limit'] = limit;
     if (offset!==undefined) args['offset'] = offset;
-	
+
     return $.ajax({
         type: 'GET',
         url: vxg.api.cloud.getBaseURLFromToken(access_token) + '/api/v2/storage/clips/',
@@ -684,7 +712,7 @@ vxg.api.cloud.deleteClipV2 = function (access_token, clipid) {
     let headers = vxg.api.cloud.getHeader(access_token);
     if (!headers)
         return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
-    
+
     return $.ajax({
         type: 'DELETE',
         url: vxg.api.cloud.getBaseURLFromToken(access_token) + '/api/v2/storage/clips/' + clipid + '/',
@@ -697,7 +725,7 @@ vxg.api.cloud.deleteClip = function (access_token, clipid) {
     let headers = vxg.api.cloud.getHeader(access_token);
     if (!headers)
         return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
-    
+
     return $.ajax({
         type: 'DELETE',
         url: vxg.api.cloud.getBaseURLFromToken(access_token) + '/api/v4/clips/' + clipid + '/',
@@ -738,10 +766,10 @@ vxg.api.cloud.shareClip = function ( access_token, clipid, expire) {
     let headers = vxg.api.cloud.getHeader(access_token);
     if (!headers)
         return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
-    
+
     args = {};
     args.expire = expire;
-    
+
     return $.ajax({
         type: 'POST',
         url: vxg.api.cloud.getBaseURLFromToken(access_token) + '/api/v2/storage/clips/' + clipid + '/sharings/',
@@ -836,12 +864,12 @@ vxg.api.cloud.getClipsIdByMeta = function(access_token, searchword) {
         return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
 
     var sort = []; sort.push("-timestamp");
-    var or  = []; 
+    var or  = [];
 	var or_el = {}; or_el.field = "string.description"; or_el.eq = searchword ; or.push(or_el);
 	or_el = {}; or_el.field = "string.clipcase"; or_el.eq = searchword ; or.push(or_el);
 	or_el = {}; or_el.field = "string.clipname"; or_el.eq = searchword ; or.push(or_el);
     var args = {};
-    
+
     args.sort = sort;
     args.filter = {};
     args.filter.or = or;
@@ -878,3 +906,33 @@ vxg.api.cloud.resolverService = function(serialnumber, password, token) {
     });
 };
 
+
+vxg.api.cloud.backupRecordedVideo = function (channel_access_token, data) {
+    let headers = vxg.api.cloud.getHeader(channel_access_token);
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+
+    camera_id = vxg.api.cloud.getChannelIdFromToken(channel_access_token);
+    return $.ajax({
+        type: 'POST',
+        url: vxg.api.cloud.getBaseURLFromToken(channel_access_token) + '/api/v2/storage/memory_card/'+camera_id+'/synchronize/',
+        contentType: "application/json",
+        headers: headers,
+        data: JSON.stringify(data)
+    });
+};
+
+
+vxg.api.cloud.backupRecordedVideoStatus = function (channel_access_token, rid) {
+    let headers = vxg.api.cloud.getHeader(channel_access_token);
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+
+    camera_id = vxg.api.cloud.getChannelIdFromToken(channel_access_token);
+    return $.ajax({
+        type: 'GET',
+        url: vxg.api.cloud.getBaseURLFromToken(channel_access_token) + '/api/v2/storage/memory_card/' + camera_id + '/synchronize/' + rid + '/',
+        contentType: "application/json",
+        headers: headers
+    });
+};

@@ -152,6 +152,10 @@ CloudOneCamera.getStorageCamera = function(){
     });
 }
 
+CloudOneCamera.backupCamera = function(data){
+    return vxg.api.cloudone.camera.backupCamera(this.camera_id,data);
+}
+
 /*
 url
 tz
@@ -255,6 +259,102 @@ vxg.cameras.createCameraPromise = function(camera_struct/* = {name: "no name", m
         vxg.cameras.invalidate();
         return r;
     });
+}
+
+vxg.cameras.createCameraDVRPromise = function(cameraInfo, dvrInfo){
+    var data = {
+        name: cameraInfo.name,
+        dvrName: dvrInfo.dvrName,
+        location: dvrInfo.location,
+        group: dvrInfo.group,
+        recording: 'off',
+        tz: dvrInfo.tz,
+        username: dvrInfo.username,
+        password: dvrInfo.password,
+        channel_number: cameraInfo.channel_number,
+        dvrId: dvrInfo.uuid
+    }
+
+    if (cameraInfo.isFirst) data.isFirst = true;
+
+    if (dvrInfo.rtspPort) data.onvif_rtsp_port_fwd = dvrInfo.rtspPort;
+
+    var httpPort = dvrInfo.httpPort ? dvrInfo.httpPort : 80;
+    var url = 'http://' + dvrInfo.address + ':' + httpPort + '/dvr_camera/' + dvrInfo.type + '/' + cameraInfo.channel_number;
+    data.url = url;
+
+    return vxg.api.cloudone.camera.add(data).then(function(r){
+        // add meta here?
+        if (r['allCamsToken']!==undefined) {
+            vxg.user.src.allCamsToken = r['allCamsToken'];
+            vxg.api.cloud.setAllCamsToken(r['allCamsToken']);
+        }
+        vxg.cameras.invalidate();
+
+        var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
+        cameraList.objects.push(r);
+        var total = parseInt(cameraList.meta.total_count);
+        cameraList.meta.total_count = total + 1;
+        localStorage.cameraList = JSON.stringify(cameraList);
+
+        return r;
+    });
+}
+
+vxg.cameras.updateCameraDVRPromise = function(cameraInfo, formData){
+    var currentMeta = cameraInfo.camera.meta;
+    currentMeta.location = formData.location;
+    currentMeta.dvr_name = formData.dvrName;
+
+    var httpPort = formData.httpPort ? formData.httpPort : 80;
+    var url = 'http://' + formData.address + ':' + httpPort + '/dvr_camera/' + formData.type + '/' + currentMeta.dvr_camera;
+
+    if (currentMeta.dvr_first_channel) {
+        var dvrObj = JSON.parse(currentMeta.dvr_first_channel);
+        dvrObj.url = 'http://' + formData.address + ':' + httpPort;
+        dvrObj.name = formData.dvrName;
+        currentMeta.dvr_first_channel = JSON.stringify(dvrObj);
+    }
+
+    var data = {
+        name: cameraInfo.name,
+        tz: formData.tz,
+        username: formData.username,
+        password: formData.password,
+        url: url,
+        meta: currentMeta
+    }
+
+    if (formData.rtspPort) data.onvif_rtsp_port_fwd = formData.rtspPort;
+
+    data.url = url;
+
+    return vxg.api.cloud.getCameraInfo(cameraInfo.camera.id).then(function(r) {
+        return vxg.api.cloud.updateCameraConfig(cameraInfo.camera.id, r.token, data).then(function(r){
+            var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
+            if (cameraList) {
+                var oldCamIndex = cameraList.objects.findIndex(c => c.id == r.id);
+                cameraList.objects[oldCamIndex] = r;
+                localStorage.cameraList = JSON.stringify(cameraList);
+            }
+            return r;
+        });
+    })
+
+}
+
+vxg.cameras.removeCameraDVRPromise = function(cameraId){
+    return vxg.cameras.getCameraByIDPromise(cameraId).then(function(cam) {
+        return cam.deleteCameraPromise().then(function(){ 
+            var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
+            if (cameraList) {
+                cameraList.objects = cameraList.objects.filter(c => c.id != cam.camera_id);
+                var total = parseInt(cameraList.meta.total_count);
+                cameraList.meta.total_count = total - 1;
+                localStorage.cameraList = JSON.stringify(cameraList);
+            }
+        });
+    })
 }
 
 vxg.cameras.getServersListPromise = function(limit, offset){

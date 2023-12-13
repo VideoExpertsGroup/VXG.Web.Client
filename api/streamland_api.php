@@ -181,6 +181,15 @@ class StreamLandAPI {
 		));
     }
 
+		
+	static function createMemoryCardBackup($channel_id, $access_token, $data){
+				return StreamLandAPI::requestPost(array(
+					'path' => 'api/v2/storage/memory_card/'.strval ($channel_id).'/synchronize',
+					'acc' => $access_token,
+					'json_data' => $data,
+				));
+			}
+
 		//https://web.skyvr.videoexpertsgroup.com/api/v3/channel_groups/
 		static function CreateGroupToken($params) {
 			return StreamLandAPI::requestPost(array(

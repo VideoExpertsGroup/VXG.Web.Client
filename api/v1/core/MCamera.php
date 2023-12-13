@@ -200,7 +200,7 @@ class MCamera{
         closelog();
     }
 */
-    public static function createCamera($owneruser, $camera_name, $location, $group, $recording, $timezone, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd=0, $as_storage=false, $rsid=0){
+    public static function createCamera($owneruser, $camera_name, $location, $group, $recording, $timezone, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd=0, $as_storage=false, $rsid=0, $meta=null){
         if (strlen($camera_name)>64)
             error(501,'Camera name too long');
         if (strlen($location)>64)
@@ -226,7 +226,13 @@ class MCamera{
             }
             if ($onvif_rtsp_port_fwd) $channelData['source']['onvif_rtsp_port_fwd'] = 0+$onvif_rtsp_port_fwd;
         }
-        $channelData['meta'] = ['capture_id' => MCore::$core->config['capture_id']];
+
+        if ($meta) {
+            $meta['capture_id'] = MCore::$core->config['capture_id'];
+        } else {
+            $meta = ['capture_id' => MCore::$core->config['capture_id']];
+        }
+        $channelData['meta'] = $meta;
         if ($as_storage) $channelData['meta']['isstorage']='isstorage';
         if ($rsid) $channelData['meta']['rsid']=$rsid;
 //        if ($location)
@@ -926,6 +932,21 @@ class MCamera{
             if ($camera->setLimits())
                 $camera->setAITokenLimit();
         return true;
+    }
+
+    public function memoryBackup($channelId, $access_token, $startTime, $endTime, $overwrite) {
+        $server = MCore::$core->current_user->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed to creating camera channel. reason: generateServicesURLs');
+        
+        $cId = $channelId ? $channelId : $this->camera['channelID'];
+        $aT = $access_token ? $access_token : $this->camera['access_tokens']['all'];
+        $existingData = $overwrite ? "delete" : "error";
+        $r = StreamLandAPI::createMemoryCardBackup($cId, $aT, ['start' => $startTime, 'end' => $endTime, "existing_data" => $existingData]);
+        if (!$r || isset($r['errorDetail'])) 
+            error(500, "failed to start memory card synchronization");
+
+        return $r;
     }
 
     public function checkResolverServiceSerial($serialnumber) {

@@ -1,0 +1,72 @@
+<div class="add-dvr-wrapper">
+    <div class="dvr-tabs">
+        <div class="tab active" id="dvrnvr-tab">Recorder</div>
+        <div class="tab disabled" id="dvruplink-tab" style="display: none;">DVR Uplink</div>
+    </div>
+    <form class="dvrnvr tabcontent" id="dvrnvrform">
+        <div class="dvr-info">
+            <div class="dvr-input">
+                <div class="dvr-input-wrapper">
+                    <label class="dvr-label" for="cameraCount">Number of Cameras</label>
+                    <input class="dvr-input" name="cameraCount" type="number" id="cameraCount" value="4" onchange="addCameraNamesInput()" min="1" max="64">
+                </div>
+                <div class="dvr-input-wrapper">
+                    <label class="dvr-label dvrName-label" for="dvrName">Recorder Name</label>
+                    <input class="dvr-input required" name="dvrName" type="text" > 
+                </div>
+                <div class="dvr-input-wrapper">
+                    <label class="dvr-label type-label" for="type">Type</label>
+                    <select class="dvr-input" id="type" name="type">
+                        <option value="hikvision">Hikvision</option>
+                        <option value="dahua">Dahua</option>
+                    </select>
+                </div>
+                <div class="dvr-input-wrapper">
+                    <label class="dvr-label address-label" for="address">IP Address or Domain Name</label>
+                    <input class="dvr-input required" name="address" type="text" >
+                </div>
+                <div class="dvr-input-wrapper">
+                    <label class="dvr-label http-label" for="httpPort">HTTP Port (Optional)</label>
+                    <input class="dvr-input" name="httpPort" type="number" >
+                </div>
+                <div class="dvr-input-wrapper">
+                    <label class="dvr-label rtsp-label" for="rtspPort">RTSP Port</label>
+                    <input class="dvr-input" name="rtspPort" type="number" >
+                </div>
+                <div class="dvr-input-wrapper">
+                    <label class="dvr-label username-label" for="username">Username</label>
+                    <input class="dvr-input required" name="username" type="text" >
+                </div>
+                <div class="dvr-input-wrapper">
+                    <label class="dvr-label password-label" for="password">Password</label>
+                    <input class="dvr-input required" name="password" type="password" >
+                </div>
+                <div class="dvr-input-wrapper">
+                    <label class="dvr-label" for="group">Group</label>
+                    <input class="dvr-input" name="group" type="text" > 
+                </div>
+                <div class="dvr-input-wrapper">
+                    <label class="dvr-label location-label" for="location">Location</label>
+                    <input class="dvr-input" name="location" type="text" >
+                </div>
+                <div class="dvr-input-wrapper">
+                    <label class="dvr-label tz-label" for="tz">Timezone</label>
+                    <select class="dvr-input" id="tz-select" name="tz">
+                    </select>
+                </div>
+            </div>
+            <div id="camera-names">
+            </div>
+        </div>
+        <div class="error-wrapper">
+            <p id="error-message"></p>
+        </div>
+        <div class="action-btns">
+            <button class="vxgbutton" onclick_toscreen="back" style="margin-right: 10px;">Back</button>
+            <button name="add" class="vxgbutton add-btn" id="add-dvr">Add Recorder</button> 
+        </div>
+    </form>
+    <div class="tabcontent dvruplink" style="display: none;">
+    </div>
+
+</div>

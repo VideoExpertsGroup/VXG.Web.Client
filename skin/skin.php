@@ -18,6 +18,8 @@ $skin["scripts"]["user"]=[
 $skin["scripts"]["partner"]=[
     "core/modules/reports/reports.js",
     "core/modules/users/users.js",
+    "core/modules/dvr_nvr/dvr_nvr.js",
+    "core/modules/dvr_nvr/add_dvr.js",
 //    "core/modules/servers/servers.js",
     "core/modules/cameras/cameras.js",
     "core/modules/mdialog/mdialog.js",

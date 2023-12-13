@@ -1342,3 +1342,7 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 .enable-disable-sdcard {
     display: none; 
 }
+
+body:not(.recorders) .header-right .adddvr {
+    display: none;
+}

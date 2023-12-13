@@ -41,6 +41,9 @@ cameraedit.uplink .notinuplink{
 cameraedit.rtsp .onvifOnly{
 display:none;
 }
+cameraedit.dvr .notindvr {
+    display:none;
+}
 
 .hidesett {
     display: none;
@@ -194,4 +197,8 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 
 .subbtn, .subbtn-cloud {
     width: 20%;
+}
+
+option.dvr-disabled:disabled {
+    background-color: #d0d0d0;
 }

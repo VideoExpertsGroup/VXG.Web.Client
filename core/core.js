@@ -135,6 +135,10 @@ window.core.onclick_toscreen = function(e){
     if (window.screens[screen]) {
         window.screens[screen].src = this;
         window.screens[screen].from_screen = $('body').data('screenid');
+        if (screen == 'add_dvr' && window.screens[screen].from_screen == 'recorders') {
+            var dvrId = this.editdvr ? this.editdvr : $(this).attr("editdvr");
+            if (dvrId) sessionStorage.setItem("editingDvr", dvrId);
+        }
         if(screen == 'tagsview' && window.screens[screen].from_screen == 'cameras') {
             var id = this.channelID ? this.channelID : $(this).attr("channelID");
             if (id) sessionStorage.setItem("backToCam", id);

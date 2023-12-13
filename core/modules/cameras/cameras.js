@@ -92,12 +92,12 @@ function camGrid(size /* 2,3,4 */){
 
         var menu =  $(`
         <div class="simplemenu">
-        <div class="listmenu-item mcamera" onclick_toscreen="tagsview" channelID='${channelID}'><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>
-        <div class="listmenu-item msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Stream Settings </span></div>
-        <div class="listmenu-item mchart" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>
-        <a class="listmenu-item mwebui" id="ui-link" href="" target="_blank" style="display: none"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> Camera UI </span></a>
-        <div class="listmenu-item mconfigure" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
-        <div class="listmenu-item mtrash" onclick="onCameraDelete('${channelID}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
+        <div class="listmenu-item cam-menu mcamera dvrcam" onclick_toscreen="tagsview" channelID='${channelID}'><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>
+        <div class="listmenu-item cam-menu msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Stream Settings </span></div>
+        <div class="listmenu-item cam-menu mchart dvrcam" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>
+        <a class="listmenu-item cam-menu mwebui" id="ui-link" href="" target="_blank" style="display: none"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> Camera UI </span></a>
+        <div class="listmenu-item cam-menu mconfigure dvrcam" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
+        <div class="listmenu-item cam-menu mtrash" onclick="onCameraDelete('${channelID}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
         </div>`);
         
         var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
@@ -137,6 +137,9 @@ function camGrid(size /* 2,3,4 */){
                         core.elements['global-loader'].hide();
                         addSimpleMenu(menu, self, e);
                     });
+                } else if (config.url && config.url.includes("dvr_camera")) {
+                    $(menu).find(".cam-menu:not(.dvrcam)").css("display", "none");
+                    addSimpleMenu(menu, self, e);
                 } else {
                     cameraUrls.push({id: config.id, url: "nourl"});
                     sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
@@ -221,7 +224,7 @@ function onCameraDelete(channel_id){
             core.elements['global-loader'].show();
             var oldsubid = camera.src.meta ? camera.src.meta.subid : -1;
             if (camera) camera.deleteCameraPromise().then(function(){
-                var planIndex = vxg.user.src.plans.findIndex(p => p.id == oldsubid);
+                var planIndex = vxg.user.src.plans ? vxg.user.src.plans.findIndex(p => p.id == oldsubid) : -1;
                 if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
                 
                 var aiCams_string = sessionStorage.getItem("aiCams");
@@ -275,6 +278,23 @@ function onCameraScreenResize(){
     else
         $('.screens .cameras').removeClass('gridtop');
 }
+
+
+				  function buttons () {
+    return {
+      btnUsersAdd: {
+        text: 'Highlight Users',
+        icon: 'bi-arrow-clockwise',
+        event: function () {
+          alert('Do some stuff to e.g. search all users which has logged in the last week')
+        },
+        attributes: {
+          title: 'Search all users which has logged in the last week'
+        }
+      },
+    }
+  }
+
 
 
 				  function buttons () {
@@ -645,6 +665,15 @@ window.screens['cameras'] = {
             el.html('Failed to load list of cameras');
             self.wrapper.removeClass('loader');
         });
+		
+		    
+
+/*    $('#button').click(function () {
+      alert(JSON.stringify($('#table').bootstrapTable('getData').map(function (row) {
+        return row.id
+      })))
+    })
+*/
 
         return this.camera_list_promise;
     },

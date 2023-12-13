@@ -43,12 +43,12 @@ CameraEditControl = function(){
     <label>Name</label>
     <input autofocus="autofocus" class="name" name="name" >
 </div>
-<div class="form-group">
+<div class="form-group notindvr">
     <label>Location</label>
     <input name="location" list="locationsList">
     <datalist id="locationsList"> </datalist>
 </div>
-<div class="form-group">
+<div class="form-group notindvr">
     <label>Group</label>
     <input name="group" list="groupslist">
     <datalist id="groupslist"> </datalist>
@@ -62,55 +62,55 @@ CameraEditControl = function(){
     </select>
 </div>
 -->
-<div class="form-group type">
+<div class="form-group type notindvr">
     <label>Type</label> 
     <select class="url_protocol">
         <option value="onvif" selected>ONVIF camera</option>
         <option value="rtsp">Video URL</option>
     </select>
 </div>
-<div class="form-group rtspOnly notincloud notinuplink">
+<div class="form-group rtspOnly notincloud notinuplink notindvr">
     <label>URL</label>
     <input name="url" class="anccsUrl">
 </div>
 
-<div class="form-group rtspOnly notincloud setting-dropdown opt-dropdown notinuplink">
+<div class="form-group rtspOnly notincloud setting-dropdown opt-dropdown notinuplink notindvr">
     <div class="anccsUrlOptions">OPTIONS</div>
 </div>
 
-<div class="form-group rtspOnly options notincloud notinuplink">
+<div class="form-group rtspOnly options notincloud notinuplink notindvr">
     <label for="url_prot">Protocol&nbsp;</label>
     <input type="text" class="url_prot form-control input500" value="">
 </div>
-<div class="form-group options notincloud notinuplink">
+<div class="form-group options notincloud notinuplink notindvr">
     <label for="url_ip">IP address or domain name&nbsp;</label>
     <input type="text" class="url_ip form-control input500" value="">
     <div class="iperror">Invalid domain name or ip address</div>
 </div>
-<div class="form-group options notincloud notinuplink">
+<div class="form-group options notincloud notinuplink notindvr">
     <label for="url_http_port" class="onvifOnly">HTTP port&nbsp;</label>
     <label for="url_http_port" class="rtspOnly">Port&nbsp;</label>
     <input type="number" class="url_http_port form-control input500" value="">
 </div>
-<div class="form-group options notincloud notinuplink">
+<div class="form-group options notincloud notinuplink notindvr">
     <label class="onvifOnly" for="url_rtsp_port">RTSP port&nbsp;</label>
     <input type="number" class="onvifOnly url_rtsp_port form-control input500" name="onvif_rtsp_port_fwd">
     <i class="onvifOnly"></i>
 </div>
-<div class="form-group options notincloud">
+<div class="form-group options notincloud notindvr">
   <label for="deviceLogin">Username&nbsp;</label>
   <input type="text" class="form-control input500 url_user_name" name="username" >
 </div>
-<div class="form-group options notincloud" style="position: relative">
+<div class="form-group options notincloud notindvr" style="position: relative">
   <label for="devicePassword">Password&nbsp;</label>
   <input type="password" class="password form-control input500 url_password" autocomplete="new-password" name="password"><i class="showhidepass show-password"></i>
 </div>
-<div class="form-group options notincloud notinuplink">
+<div class="form-group options notincloud notinuplink notindvr">
     <label class="" for="url_path">Path&nbsp;</label>
     <input type="text" class="url_path form-control input500" value="">
 </div>
 
-<div class="form-group">
+<div class="form-group notindvr">
     <label>Timezone</label>
     <select name="tz">
     </select>
@@ -125,7 +125,7 @@ CameraEditControl = function(){
     </div>
 </div>
 
-<div class="form-group setting-dropdown loc-dropdown bottom-options">
+<div class="form-group setting-dropdown loc-dropdown bottom-options notindvr">
     <div class="anccsUrlLocation">GEOLOCATION</div>
     <span class="carrot-icon closed"><</span>
 </div>
@@ -152,7 +152,7 @@ CameraEditControl = function(){
     <select name="rete_recmode" class="rete_recmode">
         <option value="off" selected>Off</option>
         <option value="on">Continuous</option>
-        <option value="by_event">By Event</option>
+        <option class="dvr-disabled" value="by_event">By Event</option>
     </select>
 </div>
 <div class="form-group rete_time rete rete_off hidesett">
@@ -175,7 +175,7 @@ CameraEditControl = function(){
     <select name="ai_type" class="ai_type_select">
         <option value="off">Off</option>
         <option value="continuous">Continuous</option>
-        <option value="by_event">By Event</option>
+        <option class="dvr-disabled" value="by_event">By Event</option>
     </select>
 </div>
 </form>
@@ -616,7 +616,7 @@ CameraEditControl = function(){
             //else
                 //$(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
 
-            $(self).removeClass('rtsp').removeClass('onvif').removeClass('cloud');
+            $(self).removeClass('rtsp').removeClass('onvif').removeClass('cloud').removeClass('dvr');
 
             if (!bsrc.url && !$(self).find('.url_protocol [value="cloud"]').length) {
                 $(self).find('.url_protocol').append('<option value="cloud">Cloud camera'); 
@@ -628,6 +628,9 @@ CameraEditControl = function(){
             } else if (bsrc.url.includes("/uplink_camera/")) {
                 $(self).find('.url_protocol').val('uplink');
                 $(self).addClass('uplink');
+            } else if (bsrc.url.includes("/dvr_camera/")) {
+                $(self).addClass('dvr');
+                $(self).find('.dvr-disabled').attr('disabled', true);
             } else {
                 if (bsrc.url){
                     $(self).find('.url_protocol').val('rtsp');
@@ -728,7 +731,7 @@ CameraEditControl = function(){
             `;
             vxg.user.src.plans.forEach(plan => {
                 if (plan.count != 0) {
-                    var enabled = plan.count != plan.used ? `onclick="checkPlan('${plan.id}')` : "";
+                    var enabled = plan.count == plan.used || (camera && camera.bsrc.url.includes('dvr_camera') && plan.name.includes("Event")) ? '' : `onclick="checkPlan('${plan.id}')`;
                     planTable += `
                     <tr class="plan ${ !enabled ? "disabled" : ""}" ${enabled}">
                         <td class="plan-desc" planid="${plan.id}"> ${plan.name} </td>
@@ -834,6 +837,8 @@ CameraEditControl = function(){
 
         this.createTimezonesList($(this).find('[name="tz"]'),moment.tz.guess());
         $(this).find('.sdrecinfo').text('');
+
+        $(this).find('.dvr-disabled').attr('disabled', false);
 
         vxg.cameras.getLocationsList().then(function(locs) {
             var datalist = "";

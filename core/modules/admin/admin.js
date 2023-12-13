@@ -302,7 +302,7 @@ function assignPlans(userid, partners, allPlans) {
     var partnerPlans;
     partners.forEach(partner => {
         if (partner.src.id == userid) {
-            partnerPlans = partner.src.plans;
+            partnerPlans = partner.src.plans && partner.src.plans != "null" ? partner.src.plans : null;
             return;
         }
     })

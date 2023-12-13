@@ -29,12 +29,12 @@ vxg.support.aiTypeToAIName = function(ai_type){
         case 'object_and_scene_detection': return 'OBJECT AND SCENE DETECTION';
         case 'facial_analysis': return 'FACIAL ANALYSIS';
         // MS
-        case 'computer_vision': return 'COMPUTER VISION'; 
+        case 'computer_vision': return 'COMPUTER VISION';
         case 'face': return 'FACE DETECTION';
         // GOOGLE
-        case 'detect_labels': return 'DETECT LABELS'; 
+        case 'detect_labels': return 'DETECT LABELS';
         case 'detect_faces': return 'DETECT FACES';
-        case 'object_localization' : return 'OBJECT LOCALIZATION'; 
+        case 'object_localization' : return 'OBJECT LOCALIZATION';
         default:
     }
     return '';
@@ -113,7 +113,7 @@ vxg.cameras.objects.Camera = function(token_or_id) {
             this.events = new vxg.cameras.objects.CameraEventList(token_or_id);
         } catch(e){
         }
-    } 
+    }
 }
 
 if (old_camera_prototype) {
@@ -229,7 +229,7 @@ CloudCamera.updateCameraPromise = function(camera_struct){
         config.login = String(camera_struct['username']).trim();
         config.password = camera_struct['password'] ? String(camera_struct['password']).trim() : '';
     }
-    if (camera_struct['url'].trim()) 
+    if (camera_struct['url'].trim())
         config.url = camera_struct['url'].trim();
     return vxg.api.cloud.updateCameraConfig(this.camera_id, this.token, config).then(function(){
         window.vxg.cameras.invalidate();
@@ -297,6 +297,19 @@ CloudCamera.getUserMetaBeforeTime = function(timestamp){
     });
 }
 
+CloudCamera.backupRecordedVideo = function(data){
+    return this.getToken().then(function(token){
+        return vxg.api.cloud.backupRecordedVideo(token, data);
+    });
+}
+
+CloudCamera.backupRecordedVideoStatus = function(rid){
+    return this.getToken().then(function(token){
+        return vxg.api.cloud.backupRecordedVideoStatus(token, rid);
+    });
+}
+
+
 class CloudClip{
     constructor(data, token) {
         this.src = data;
@@ -318,7 +331,7 @@ class CloudClip{
                     });
                 });
             },1000);
-        else 
+        else
             setTimeout(function(){d.reject();},0);
         return d;
     }
@@ -591,7 +604,7 @@ vxg.cameras.getLocations = function(limit, offset){
     if (limit===undefined) limit=50;
     if (offset===undefined) offset=0;
 
-    return vxg.api.cloud.getLocations(vxg.user.src.allCamsToken).then(function(r){
+    return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, 'location').then(function(r){
         let ret = {};
         for (let i in r){
             ret[i+' ('+r[i]+')'] = vxg.support.md5(i).toLowerCase();
@@ -608,7 +621,7 @@ vxg.cameras.getLocationsList = function(limit, offset) {
     if (limit===undefined) limit=50;
     if (offset===undefined) offset=0;
 
-    return vxg.api.cloud.getLocations(vxg.user.src.allCamsToken).then(function(r){
+    return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, 'location').then(function(r){
         var locs = [];
         for (let i in r) {
             locs.push(i);
@@ -621,7 +634,7 @@ vxg.cameras.getGroupsList = function(limit, offset) {
     if (limit===undefined) limit=50;
     if (offset===undefined) offset=0;
 
-    return vxg.api.cloud.getGroups(vxg.user.src.allCamsToken).then(function(r){
+    return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, 'group').then(function(r){
         var groups = [];
         for (let i in r) {
             groups.push(i);

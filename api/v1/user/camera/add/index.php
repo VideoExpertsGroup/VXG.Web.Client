@@ -3,14 +3,15 @@
 include_once ('../../../core/MCoreJson.php');
 include_once ('../../../core/MCamera.php');
 include_once ('../../../core/MUser.php');
+
 MCoreJson::init();
 MCore::checkOnlyForAuthorized();
 if (!MCore::$core->current_user->isPartner())
     error(401, 'Access denied');
 
 list($name) = MCore::checkAndGetInputParameters(['name']);
-list($location, $group, $recording, $tz, $lat, $lon, $url, $username, $password, $onvif_rtsp_port_fwd, $serialnumber, $macAddress, $uplink) = 
-    MCore::getInputParameters(['location'=>'','group'=>'','recording','tz'=>'UTC','lat'=>0,'lon'=>0,'url','username','password', 'onvif_rtsp_port_fwd'=>0,'serialnumber'=>'','macAddress'=>'', 'uplink'=>'']);
+list($location, $group, $recording, $tz, $lat, $lon, $url, $username, $password, $onvif_rtsp_port_fwd, $serialnumber, $macAddress, $uplink, $dvrName, $channel_number, $dvrId, $isFirst) = 
+    MCore::getInputParameters(['location'=>'','group'=>'','recording','tz'=>'UTC','lat'=>0,'lon'=>0,'url','username','password', 'onvif_rtsp_port_fwd'=>0,'serialnumber'=>'','macAddress'=>'', 'uplink'=>'', 'dvrName' => '', 'channel_number' => '', 'dvrId' => '', 'isFirst' => false]);
 
 $password = strval($password);
 $username = strval($username);
@@ -27,7 +28,17 @@ if ($uplink) {
 
 $onvif_rtsp_port_fwd = $onvif_rtsp_port_fwd ? 0+ $onvif_rtsp_port_fwd : 0;
 
-$camera = MCamera::createCamera(MCore::$core->current_user, $name, $location, $group, $recording, $tz, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd, false, $serialnumber);
+$meta = null;
+if ($dvrName && $channel_number) {
+    $dvr_url = explode("/dvr_camera/", $url)[0];
+    $loc_str = $location ? ', "location": "'.$location.'"' : "";
+    $dvrInfo_str = '{"url": "'.$dvr_url.'", "name": "'.$dvrName.'", "id": "'.$dvrId.'" '.$loc_str.'}';
+    //$dvrInfo = ['name' => $dvrName, 'url' => $url, 'id' => $dvrId];
+    //if ($location) $dvrInfo['loc'] = $location;
+    $meta = ['dvr_name' => $dvrName, 'dvr_camera' => $channel_number, $dvrId => 'dvr_id', 'subid' => 'NOPLAN', 'subname' => 'No Plan'];
+    if ($isFirst) $meta['dvr_first_channel'] = $dvrInfo_str;
+}
+$camera = MCamera::createCamera(MCore::$core->current_user, $name, $location, $group, $recording, $tz, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd, false, $serialnumber, $meta);
 
 if ($camera && $serialnumber && $macAddress) {
     $newSerialNumber = $camera->checkResolverServiceSerial($serialnumber);

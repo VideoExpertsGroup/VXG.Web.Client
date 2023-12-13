@@ -15,7 +15,7 @@ vxg.api.cloudone.user.login = function(obj){
     if (obj['password']) {
 alert('only firebase support!');
 //	obj.password = CryptoJS.SHA3(obj.password, {outputLength: vs_api.hashBits}).toString(CryptoJS.enc.Base64);
-    } 
+    }
 /*
     else if (vs_api['token'] && vs_api.token !== '') {
         if (!obj['token'])
@@ -432,6 +432,19 @@ vxg.api.cloudone.camera.getStorageCamera = function(){
         return $.ajax({
             type: 'POST',
             url: vxg.api.cloudone.apiSrc+'/api/v1/user/camera/get_storage/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+};
+
+vxg.api.cloudone.camera.backupCamera = function(channel_id, obj){
+    var data = {channel_id:channel_id, startTime: obj.startTime, endTime: obj.endTime, overwrite: obj.overwrite};
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/camera/backup/',
             contentType: "application/json",
             data: JSON.stringify(data)
         });

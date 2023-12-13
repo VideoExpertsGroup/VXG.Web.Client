@@ -50,7 +50,7 @@ window.screens['tagsview'] = {
         }
 
         self.timestamp = undefined;
-	self.set_mode('showevents'); 
+	self.set_mode('showevents');
         if ($('body').hasClass('mobile')) $(self.wrapper).find('.tagslistwrapper .sharebnts').hide();
         $(self.wrapper).find('.tagslistwrapper .shareinfo').hide();
         if (access_token) this.access_token = access_token;
@@ -65,16 +65,42 @@ window.screens['tagsview'] = {
                 $('.headerBlock .header-center').text(name);
             });
             self.camera = camera;
+
+            // Meta data "dvr"="" is set for every channel that belonds to any DVR
+            $("#enable-dvr-input").prop('checked', false);
+            if (self.camera.src && "meta" in self.camera.src && ("dvr" in self.camera.src.meta || "dvr_name" in self.camera.src.meta || "dvr_camera" in self.camera.src.meta))
+                $("#backup-ctrl").show();
+            else
+                $("#backup-ctrl").hide();
+
+            /*
+            vxg.api.cloud.getCameraConfig(self.camera.camera_id, self.camera.token).then(function(cam) {
+                var camUrl = cam.url;
+                if (camUrl && camUrl.includes("dvr_camera")) {
+                   // $(".dvr-label-text").removeClass("disabled");
+                    $("#enable-dvr-input").prop('checked', true);
+                    $("#backup-ctrl").show();
+                } else {
+                  //  $(".dvr-label-text").addClass("disabled");
+                    $("#enable-dvr-input").prop('checked', false);
+                    $("#backup-ctrl").hide();
+                }
+            });
+            */
+
             if (self.player.player.sdCardCompatible) {
                 var localStorage_sdCard = localStorage.getItem(self.camera.camera_id);
-                var sdCardEnabled = (typeof localStorage_sdCard === "string" && localStorage_sdCard.toLowerCase() === "true");        
+                var sdCardEnabled = (typeof localStorage_sdCard === "string" && localStorage_sdCard.toLowerCase() === "true");
                 if (sdCardEnabled) {
+                    $("#backup-ctrl").show();
+                /*
                     $('.cloudplayer-sd-backup').attr('id', 'sd-enabled');
                     $("#enable-sd-input").prop('checked', true);
-                } 
+                }
                 else {
                     $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
                     $("#enable-sd-input").prop('checked', false);
+                */
                 }
                 /*self.camera.getCameraType().then(function(type) {
                     // 1 - SD Card, 0 - Cloud
@@ -84,6 +110,7 @@ window.screens['tagsview'] = {
                     console.log(err.responseText);
                 })*/
             }
+
             $(self.wrapper).find('events-list').attr('access_token',camera.token);
             try {
                 var inc = new Date().getTime() / 1000;
@@ -125,21 +152,23 @@ window.screens['tagsview'] = {
                 self.access_token = camera.token;
                 self.player.setSource(self.access_token);
                 self.timestamp = timestamp;
-                if (timestamp!==undefined && timestamp>0) 
+                if (timestamp!==undefined && timestamp>0)
                     tryStart(timestamp);
-                else 
+                else
                     tryStart(-1);
             }
 
             self.update_meta_list();
-            
+
             self.updateActivity( self.access_token);
+
         }, function(){
             alert('Fail load camera');
         });
         return defaultPromise();
     },
     'on_hide':function(){
+        $("#backup-ctrl").hide();
         this.player.stop();
         return defaultPromise();
     },
@@ -173,7 +202,7 @@ window.screens['tagsview'] = {
     },
     updateActivity: function ( access_token ) {
 	let self = this;
-    
+
 	var targetElement	= self.wrapper.find('.eventslist')[0];
 	let apiGetActivityFunc	= vxg.api.cloud.getEventslist;
 	let somethingWrongFunc	= self.somethingWrong;
@@ -185,7 +214,7 @@ window.screens['tagsview'] = {
 	return (n < 10 ? '0' : '') + n;
     },
     modes() {
-        return ['showedittag','shownotes','showevents','showcreateclip','showsnapshot','showshare','showfilterclip']; 
+        return ['showedittag','shownotes','showevents','showcreateclip','showsnapshot','showshare','showfilterclip'];
     },
     get_mode(){
         let wrapper = $(this.wrapper);
@@ -201,7 +230,7 @@ window.screens['tagsview'] = {
         for (let i=0;i<this.modes().length;i++)
             wrapper.removeClass(this.modes()[i]);
         wrapper.addClass(mode);
-        
+
 	if (mode === 'showevents') {
 		if (self.wrapper.currentFilter == null || self.wrapper.currentFilter === undefined) {
 			self.updateActivity( self.access_token);
@@ -239,8 +268,8 @@ window.screens['tagsview'] = {
             $(self.wrapper).addClass('showevents');
         let d = $.Deferred();
         let f = false;
-        core.elements['global-loader'].show();        
-        
+        core.elements['global-loader'].show();
+
         var playerOptions = {timeline: true, timelineampm: true, mute: true, alt_protocol_names:true, calendar: true/*, cloud_domain: vs_api.options['cloud_domain'], useOnlyPlayerFormat: 'html5'*/};
         if (window.core.isMobile()){
             playerOptions.disableAudioControl = true;
@@ -259,7 +288,7 @@ window.screens['tagsview'] = {
             if (sdCardEnabled) {
                 $('.cloudplayer-sd-backup').attr('id', 'sd-enabled');
                 $("#enable-sd-input").prop('checked', true);
-            } 
+            }
             else $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
         } else {
             $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
@@ -267,14 +296,19 @@ window.screens['tagsview'] = {
         }
 
 
-        $('.enable-sd-label').change(function() { 
+        $('.enable-sd-label').change(function() {
             var sdEnabled = $("#enable-sd-input").is(':checked') ? true : false;
             localStorage.setItem(self.camera.camera_id, sdEnabled);
             localStorage.setItem("from_tagsview", self.access_token);
             //if (!sdEnabled) self.player.player._toggleSync(true);
             location.reload();
         });
-        
+
+        $('.enable-dvr-label').change(function() {
+            var dvrEnabled = $("#enable-dvr-input").is(':checked') ? true : false;
+            dvrEnabled ? $("#backup-ctrl").show() : $("#backup-ctrl").hide();
+        });
+
         $('.tonewver').click(function(){
             $('.mainkplayer')[0].pause();
             self.player.pause();
@@ -295,12 +329,107 @@ window.screens['tagsview'] = {
                });
             }
         });
+
+
+        $("#start-backup").click(function() {
+            var startTime = $("#startTime").val();
+            var endTime = $("#endTime").val();
+            var speed = Number($("#speed").val());
+            var overwrite = $("#overwrite").is(':checked') ? true : false;
+            $(".backup-status").html('Backup <span id="error-message"> </span>');
+
+            var now = new Date();
+
+            if (new Date(endTime).getTime() < new Date(startTime).getTime()) {
+                $(".backup-status").html('Backup <span id="error-message"> Error: Start time should be after end time. </span>');
+                return;
+            }
+
+            if (new Date(startTime).getTime() > now.getTime() || new Date(endTime).getTime() > now.getTime()) {
+                $(".backup-status").html('Backup <span id="error-message">  Error: Currently unable to schedule future backups. Please enter a past time. </span>');
+                return;
+            }
+
+            utc_start_time = new Date(startTime).toISOString().replace("Z","");
+            utc_stop_time = new Date(endTime).toISOString().replace("Z","");
+            existing_data_ = "error";
+            if (overwrite) existing_data_ = "delete";
+                else existing_data_ = "error"
+            var data = {
+                start:  utc_start_time,
+                end: utc_stop_time,
+                existing_data: existing_data_,
+                speed: speed
+            }
+
+            // It is better to change button on the cancel
+            // so user can interrupt it
+            $("#start-backup").attr('disabled','disabled');
+            // Start local loader here
+            self.camera.backupRecordedVideo(data).then(function(r) {
+
+            var rid = r.id;
+            setTimeout(step, 1000);
+            var counter = 0;
+            function loader()
+            {
+                progress = ".";
+                $(".backup-status").html('Backup <span id="error-message">'+ '*'.repeat(counter)  +'</span>');
+                counter++;
+                if (counter == 10) counter=1;
+            }
+
+
+
+            function step() {
+                    self.camera.backupRecordedVideoStatus(rid).then(function(r) {
+                        //console.log(".backupRecordedVideoStatus status:" +  r.status);
+                        if (r.status == "pending")
+                        {
+                            loader();
+                            setTimeout(step, 1000);
+                        }
+                        else
+                        {
+                            if (r.status != "error")
+                            {
+                                $(".backup-status").html('Backup <span id="error-message">' + "Error can not handle the your request:" + r.error_code  + '</span>');
+                                console.log("Error on getting status  backupRecordedVideo Error" + r.error_code );
+                            }
+
+                            $(".backup-status").html('Backup <span id="error-message"></span>');
+                            $("#start-backup").removeAttr('disabled');
+                            // stop local loader here
+                        }
+
+                    },function(r){
+                        $("#start-backup").removeAttr('disabled');
+                        // stop local loader here
+                        $(".backup-status").html('Backup <span id="error-message">' + "Error can not handle the your request:" + r.responseText  + '</span>');
+                        console.log("Error on getting status  backupRecordedVideo Error" + r.responseText );
+                    });
+                }
+
+            },function(r){
+                $("#start-backup").removeAttr('disabled');
+                error_message = r.responseText;
+                if (r.status == 409)  //CONFLICT
+                    error_message = "There is data for the requested period";
+
+                 // stop local loader here
+                $(".backup-status").html('Backup <span id="error-message">' + "Error can not handle the your request:" + error_message  + '</span>');
+                console.log("Can not create backup recorded video from " + startTime +  " to " + endTime +  " ERROR" + error_message);
+            }
+            )
+
+        });
+
         setTimeout(function(){
             if (!f) core.elements['global-loader'].hide();
             f = true;
             d.resolve();
         },100);
-        
+
         var targetElement = self.wrapper.find('.eventslist')[0];
 	var activity_controller = new VXGActivityController(targetElement);
 
@@ -316,7 +445,7 @@ window.screens['tagsview'] = {
 
         var el_clockpicker = $(this.wrapper).find('.calendarStartTime');
         el_clockpicker.clockpicker({
-	    autoclose: true, 
+	    autoclose: true,
 	    twelvehour: false,
 	    default: '00:00',
 	});
@@ -364,7 +493,7 @@ window.screens['tagsview'] = {
                 if (self.update_snapshottime_timer) clearTimeout(self.update_snapshottime_timer);
                 self.update_snapshottime_timer = setTimeout(function(){
                     let pos = self.player.getPosition();
-                    if (pos!=time) 
+                    if (pos!=time)
                         self.player.setPosition(time);
                     delete self.update_snapshottime_timer;
                 },1000);
@@ -376,7 +505,7 @@ window.screens['tagsview'] = {
             let mode = self.get_mode(); if (mode=='shownotes' || mode=='showevents') self.modebeforeedit = mode;
             let el_datepicker = $(self.wrapper).find('.calendarStartDate')[0];
 	    let el_clockpicker = $(self.wrapper).find('.calendarStartTime')[0];
-            
+
             if (el_datepicker.value === '' && el_clockpicker.value === '') {
 		let now = new Date();
 		el_datepicker.value = now.getFullYear() + '/' + minTwoDigits(now.getMonth()+1) + '/'+ minTwoDigits(now.getDate());
@@ -384,56 +513,56 @@ window.screens['tagsview'] = {
 	    }
             self.set_mode('showfilterclip');
         });
-        
+
         $(this.wrapper).find('.clearfilterbtn').click(function(){
 		self.wrapper.currentFilter = null;
 		core.elements['header-right'].find('.ncssbuttons .filterclip')[0].classList.remove('vxgbutton-rounded');
-		self.set_mode('showevents'); 
+		self.set_mode('showevents');
         });
         $(this.wrapper).find('.setfilterbtn').click(function(){
     		let date	= $(self.wrapper).find('.tagsviewfilter .calendarStartDate').val();
     		let time	= $(self.wrapper).find('.tagsviewfilter .calendarStartTime').val();
     		let period	= $(self.wrapper).find('.tagsviewfilter .calendarPeriod').val();
-    		
+
     		var startDate = new Date( date + ' ' + time );
     		var startSec  = startDate.getTime();
     		var endSec = startSec - Number(period)*60*60*1000;
     		var endDate = new Date(endSec);
-    		
+
     		console.log('<Debug> ' + endSec + '~' + startSec);
-    		
+
     		if (!Number.isInteger(endSec) || !Number.isInteger(startSec)) {
     			return;
     		}
-    		
-    		var starttime_str = endDate.getUTCFullYear() 
-		+ "-" + minTwoDigits(Number(endDate.getUTCMonth()) + 1) 
-		+ "-" + minTwoDigits(endDate.getUTCDate()) 
-		+ "T" + minTwoDigits(endDate.getUTCHours()) 
-		+ ":" + minTwoDigits(endDate.getUTCMinutes()) 
+
+    		var starttime_str = endDate.getUTCFullYear()
+		+ "-" + minTwoDigits(Number(endDate.getUTCMonth()) + 1)
+		+ "-" + minTwoDigits(endDate.getUTCDate())
+		+ "T" + minTwoDigits(endDate.getUTCHours())
+		+ ":" + minTwoDigits(endDate.getUTCMinutes())
 		+ ":" + minTwoDigits(endDate.getUTCSeconds());
-	
-		var endtime_str = startDate.getUTCFullYear() 
-		+ "-" + minTwoDigits(Number(startDate.getUTCMonth()) + 1) 
-		+ "-" + minTwoDigits(startDate.getUTCDate()) 
-		+ "T" + minTwoDigits(startDate.getUTCHours()) 
-		+ ":" + minTwoDigits(startDate.getUTCMinutes()) 
+
+		var endtime_str = startDate.getUTCFullYear()
+		+ "-" + minTwoDigits(Number(startDate.getUTCMonth()) + 1)
+		+ "-" + minTwoDigits(startDate.getUTCDate())
+		+ "T" + minTwoDigits(startDate.getUTCHours())
+		+ ":" + minTwoDigits(startDate.getUTCMinutes())
 		+ ":" + minTwoDigits(startDate.getUTCSeconds());
-    		
+
     		var targetElement = self.wrapper.find('.eventslist')[0];
-    		
+
     		let filter = {};
     		filter.start = starttime_str;
     		filter.end = endtime_str;
     		filter.motion = true;
-    		
+
     		self.wrapper.currentFilter = filter;
     		core.elements['header-right'].find('.ncssbuttons .filterclip')[0].classList.add('vxgbutton-rounded');
-    		
+
     		targetElement.acceptVXGFilter(filter);
     		self.set_mode('showevents');
         });
-        
+
         core.elements['header-right'].find('.ncssbuttons .makeclip').click(function(){
             let pos = self.player.getPosition();
             if (self.player.player.isLive() || typeof pos !== "number" || pos === 0){
@@ -459,7 +588,7 @@ window.screens['tagsview'] = {
                 if (self.metaEnabled) {
                     return clip.setMeta(title, notes, clipcase, time).then(function(readyclip){
                         dialogs['idialog'].activate('The clip<br/>successfully created',3000);
-    
+
                         $(self.wrapper).find('.clip').removeClass('spinner').find('button').removeAttr('disabled');
                         $(self.wrapper).find('.clip .cancel:visible').click();
     /*

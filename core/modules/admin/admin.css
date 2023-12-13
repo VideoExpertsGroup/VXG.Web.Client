@@ -501,6 +501,8 @@ position: absolute;
 
 .plans-list-cont {
     max-width: 420px;
+    max-height: 550px;
+    overflow-y: auto;
 }
 
 .plan {
