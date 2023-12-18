@@ -377,7 +377,7 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
                             if (r.button!='delete') return;
                             core.elements['global-loader'].show();
                             if (camera) camera.deleteCameraPromise().then(function(){
-                                var oldsubid = camera.src.meta.subid;
+                                var oldsubid = camera.src.meta && camera.src.meta.subid ? camera.src.meta.subid : "";
                                 var planIndex = vxg.user.src.plans.findIndex(p => p.id == oldsubid);
                                 if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
 
