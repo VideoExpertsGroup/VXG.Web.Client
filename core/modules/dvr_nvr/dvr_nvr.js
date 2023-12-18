@@ -125,7 +125,6 @@ window.screens['recorders'] = {
             reorderableRows: true,
             useRowAttrFunc: true,
             filterControl: true,
-            toolbar: ".toolbar",
             uniqueId: "order",
             columns: columns,
             sortName: 'order',
@@ -242,7 +241,7 @@ function onDVRDelete(dvrId){
   
           var menu =  $(`
           <div class="simplemenu">
-          <div class="listmenu-item dvr-menu mwebui_dvr"> <a id="ui-link" href="${url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> RECORDER UI </span></a></div>
+          <div class="listmenu-item dvr-menu mwebui_dvr"> <a id="ui-link" href="${url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> Recorder UI </span></a></div>
           <div class="listmenu-item dvr-menu mconfigure_dvr" ifscreen="add_dvr" onclick_toscreen="add_dvr" editdvr="${dvrid}"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
           <div class="listmenu-item dvr-menu mtrash_dvr" onclick="onDVRDelete('${dvrid}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
           </div>`);

@@ -421,8 +421,8 @@ window.screens['cameras'] = {
                     status: statusBlock,
                     recording: list[i].src.recording?'yes':'no',
                     name: list[i].src.name,
-                    location: list[i].getLocation(),
-                    group: list[i].getGroup(),
+                    location: list[i].src.meta && list[i].src.meta.location ? list[i].src.meta.location : "",
+                    group: list[i].src.meta && list[i].src.meta.group ? list[i].src.meta.group : "",
                     action: `<div class="settings" access_token="${list[i].token}" cam_id="${channelID}">
                     <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
                 </div>`
@@ -459,7 +459,7 @@ window.screens['cameras'] = {
                         title: "Status",
                         filterControl: "select",
                         sortable: true,
-                        cardVisible: false
+                        cardVisible: false,
                     },
                     {
                         field: "recording",
@@ -472,7 +472,7 @@ window.screens['cameras'] = {
                         field: "name",
                         title: "Name",
                         filterControl: "input",
-                        sortable: true,
+                        sortable: true
                     },
                     {
                         field: "location",
@@ -510,21 +510,37 @@ window.screens['cameras'] = {
                     sortOrder: localStorage.tableOrder,
                     cardView: isGridView,
                     onColumnSearch: function (arg1, arg2) {
+                    var userId = vxg.user.src.uid;
                     if (arg1 == 'status')
-                        localStorage.camera_status = arg2;
+                        localStorage.setItem("camera_status" + userId, arg2);
                     if (arg1 == 'recording')
-                        localStorage.camera_recording = arg2;
+                        localStorage.setItem("camera_recording" + userId, arg2);
                     if (arg1 == 'location')
-                        localStorage.camera_location = arg2;
+                        localStorage.setItem("camera_location" + userId, arg2);
                     if (arg1 == 'group')
-                        localStorage.camera_group = arg2;
-                    }
+                        localStorage.setItem("camera_group" + userId, arg2);
+                    if (arg1 == 'name')
+                        localStorage.setItem("camera_name" + userId, arg2);
+                }
                 });
+
+                $("#table").hide();
 
                 $(document).on('click', '.ordering .th-inner.sortable.both', function(event) {
                     if ($(this).hasClass('asc')) localStorage.setItem("tableOrder", "asc");
                     else if ($(this).hasClass('desc')) localStorage.setItem("tableOrder", "desc");
                 })
+
+                setTimeout(function() {
+                    var userId = vxg.user.src.uid;
+                    $('.bootstrap-table-filter-control-status').val(localStorage.getItem("camera_status" + userId));
+                    $('.bootstrap-table-filter-control-recording').val(localStorage.getItem("camera_recording" + userId));
+                    $('.bootstrap-table-filter-control-location').val(localStorage.getItem("camera_location" + userId));
+                    $('.bootstrap-table-filter-control-group').val(localStorage.getItem("camera_group" + userId));
+                    $('.bootstrap-table-filter-control-name').val(localStorage.getItem("camera_name" + userId));
+                    $("#table").show();
+                    $('.camlist').show();
+                }, 500);
 
                 if (isGridView) $('.fixed-table-toolbar').hide();
 
@@ -619,14 +635,15 @@ window.screens['cameras'] = {
 
                 $(document).on('mouseup', '[name="toggle"]', function(event) {
                     setTimeout(function () {
-                        if (localStorage.camera_status != null) 
-                            $('.bootstrap-table-filter-control-status').val(localStorage.camera_status);
-                        if (localStorage.camera_recording != null) 
-                            $('.bootstrap-table-filter-control-recording').val(localStorage.camera_recording);
-                        if (localStorage.camera_location != null) 
-                            $('.bootstrap-table-filter-control-location').val(localStorage.camera_location);
-                        if (localStorage.camera_group != null) 
-                            $('.bootstrap-table-filter-control-group').val(localStorage.camera_group);
+                        var userId = vxg.user.src.uid;
+                        if (localStorage.getItem("camera_status" + userId) != null) 
+                            $('.bootstrap-table-filter-control-status').val(localStorage.getItem("camera_status" + userId));
+                        if (localStorage.getItem("camera_recording" + userId) != null) 
+                            $('.bootstrap-table-filter-control-recording').val(localStorage.getItem("camera_recording" + userId));
+                        if (localStorage.getItem("camera_location" + userId) != null) 
+                            $('.bootstrap-table-filter-control-location').val(localStorage.getItem("camera_location" + userId));
+                        if (localStorage.getItem("camera_group" + userId) != null) 
+                            $('.bootstrap-table-filter-control-group').val(localStorage.getItem("camera_group" + userId));
                     }, 300);
                 });
             }

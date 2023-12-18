@@ -222,7 +222,7 @@ CloudCamera.updateCameraPromise = function(camera_struct){
         name: camera_struct['name'],
         latitude: camera_struct['lat'],
         longitude: camera_struct['lon'],
-        timezone: camera_struct['timezone'] ? camera_struct['timezone'] : camera_struct['tz']
+        timezone: camera_struct['timezone'] ? camera_struct['timezone'] : camera_struct['tz'],
     };
     if (parseInt(camera_struct['onvif_rtsp_port_fwd'])>0) config.onvif_rtsp_port_fwd = parseInt(camera_struct['onvif_rtsp_port_fwd']);
     if (camera_struct['username'].trim()) {
@@ -231,6 +231,11 @@ CloudCamera.updateCameraPromise = function(camera_struct){
     }
     if (camera_struct['url'].trim())
         config.url = camera_struct['url'].trim();
+
+    if (this.src.meta && (this.src.meta.location || (!this.src.meta.location && camera_struct['location']))) this.src.meta.location = camera_struct['location'] ? camera_struct['location'] : "";
+    if (this.src.meta && (this.src.meta.group || (!this.src.meta.group && camera_struct['group']))) this.src.meta.group = camera_struct['group'] ? camera_struct['group'] : "";
+    if (this.src.meta) config.meta = this.src.meta;
+
     return vxg.api.cloud.updateCameraConfig(this.camera_id, this.token, config).then(function(){
         window.vxg.cameras.invalidate();
     });

@@ -143,6 +143,9 @@ CloudOneCamera.setEventTypes = function(data){
 CloudOneCamera.setLocation = function(location){
     return vxg.api.cloudone.camera.setLocations(this.camera_id, location);
 }
+CloudOneCamera.setGroup = function(group){
+    return vxg.api.cloudone.camera.setGroup(this.camera_id, group);
+}
 CloudOneCamera.shareCamera = function(time){
     return vxg.api.cloudone.camera.shareCamera(this.camera_id,time);
 }
@@ -205,7 +208,9 @@ CloudOneCamera.updateCameraPromise = function(camera_struct){
     let self = this;
     // Call updateCameraPromise from CloudOne object
     return this.__proto__.__proto__.updateCameraPromise.apply(this, [camera_struct]).then(function(){
-        return self.setLocation(camera_struct['location']);
+        //self.setLocation(camera_struct['location']);
+        //self.setGroup(camera_struct['group']);
+        return;
     });
 }
 

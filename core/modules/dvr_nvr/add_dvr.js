@@ -20,17 +20,24 @@ window.screens['add_dvr'] = {
 
         self.editingDvr = sessionStorage.getItem('editingDvr');
         if (self.editingDvr) {
+            $('#add-dvr').html("Modify Recorder");
             sessionStorage.removeItem('editingDvr');
             return vxg.api.cloud.getCamerasList({"meta": self.editingDvr, "detail":'detail'}).then(function(cameras){
                 self.cameras = cameras.objects;
+                self.editing = true;
                 self.loadDvrInfo();
             });
+        } else {
+            $('#add-dvr').html("Add Recorder");
+            $('.header-center').html("Add Recorder");
+            self.editing = false;
         }
 
         return defaultPromise();
     },
     'on_show':function(){
-
+        var self = this;
+        if (self.editing) $('.header-center').html("Edit Recorder");
     },
     'on_hide':function(){
     },

@@ -648,7 +648,8 @@ CameraEditControl = function(){
 
             $(self).find('[name="name"]').val(bsrc.name);
             $(self).find('[name="location"]').val('');
-            $(self).find('[name="location"]').val(self.camera.getLocation());
+            $(self).find('[name="location"]').val(self.camera.src.meta && self.camera.src.meta.location ? self.camera.src.meta.location : '' );
+            $(self).find('[name="group"]').val(self.camera.src.meta && self.camera.src.meta.group ? self.camera.src.meta.group : '' );
             $(self).find('[name="lat"]').val(bsrc.lat&&bsrc.lat!='0'?bsrc.lat:'');
             $(self).find('[name="lon"]').val(bsrc.lon&&bsrc.lon!='0'?bsrc.lon:'');
             $(self).find('[name="desc"]').val(bsrc.desc ? bsrc.desc : '');
