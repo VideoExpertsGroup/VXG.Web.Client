@@ -41,6 +41,8 @@ window.screens['tagsview'] = {
     },
     'on_show':function(access_token, timestamp){
         let self =this;
+	$("#sd_wrapper").hide();
+	$("#backup-ctrl").hide();
         if (self.player.element) {
             self.player.element.querySelector(".cloudplayer-calendar-container").classList.remove("offline");
             self.player.element.querySelector(".cloudplayer-controls-container").classList.remove("offline");
@@ -67,11 +69,18 @@ window.screens['tagsview'] = {
             self.camera = camera;
 
             // Meta data "dvr"="" is set for every channel that belonds to any DVR
-            $("#enable-dvr-input").prop('checked', false);
-            if (self.camera.src && "meta" in self.camera.src && ("dvr" in self.camera.src.meta || "dvr_name" in self.camera.src.meta || "dvr_camera" in self.camera.src.meta))
+            
+            if (self.camera.src && "meta" in self.camera.src && 
+	      ("dvr" in self.camera.src.meta || 
+               "dvr_name" in self.camera.src.meta || 
+               "dvr_camera" in self.camera.src.meta || 
+               "memorycard_recording" in self.camera.src.meta))
                 $("#backup-ctrl").show();
             else
+	    {
                 $("#backup-ctrl").hide();
+	        $("#sd_wrapper").show();
+
 
             /*
             vxg.api.cloud.getCameraConfig(self.camera.camera_id, self.camera.token).then(function(cam) {
@@ -92,15 +101,14 @@ window.screens['tagsview'] = {
                 var localStorage_sdCard = localStorage.getItem(self.camera.camera_id);
                 var sdCardEnabled = (typeof localStorage_sdCard === "string" && localStorage_sdCard.toLowerCase() === "true");
                 if (sdCardEnabled) {
-                    $("#backup-ctrl").show();
-                /*
                     $('.cloudplayer-sd-backup').attr('id', 'sd-enabled');
                     $("#enable-sd-input").prop('checked', true);
+		    $("#backup-ctrl").show();
                 }
                 else {
                     $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
                     $("#enable-sd-input").prop('checked', false);
-                */
+		    $("#backup-ctrl").hide();
                 }
                 /*self.camera.getCameraType().then(function(type) {
                     // 1 - SD Card, 0 - Cloud
@@ -110,6 +118,7 @@ window.screens['tagsview'] = {
                     console.log(err.responseText);
                 })*/
             }
+	    }
 
             $(self.wrapper).find('events-list').attr('access_token',camera.token);
             try {

@@ -544,6 +544,7 @@ background: black;
 
 .sd-wrapper {
     margin-top: 15px;
+    display: flex;
 }
 
 .dvr-wrapper {
@@ -624,13 +625,10 @@ background: black;
     display: flex;
 }
 
-.ctrl-checkbox {
-    width: 0%;
-}
-
 .ctrl-inputs {
     width: 60%;
     padding-top: 15px;
+    margin-left: 30px;
 }
 
 .time-input-wrapper {

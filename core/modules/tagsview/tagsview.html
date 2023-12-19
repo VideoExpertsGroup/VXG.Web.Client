@@ -7,54 +7,56 @@
                 <div id="tagsplayer" class="ratio-content" style="background-color: #000;"></div>
             </div>
         </div>
-        <div class="cam-ctrl-wrapper">
-            <div class="ctrl-checkbox">
-                <div class="sd-wrapper" style="display:none">
+        <div class="cam-ctrl-wrapper" >
+            <div class="ctrl-checkbox" >
+                <div class="sd-wrapper" id="sd_wrapper" style="display: none;" >
                     <label class="enable-camctrl-label enable-sd-label custom-checkbox">
                         <input id="enable-sd-input" type="checkbox" name="sdcard"/>
                         <span class="checkmark"></span>
                     </label>
                     <span class="camctrl-label-text">This camera has SD Card Recording</span>
                 </div>
+<!--
                 <div class="dvr-wrapper" style="display:none">
                     <label class="enable-camctrl-label enable-dvr-label custom-checkbox">
-                        <!-- <input id="enable-dvr-input" type="checkbox" disabled name="dvrnvr"/> -->
+                        <!-- <input id="enable-dvr-input" type="checkbox" disabled name="dvrnvr"/> --
                         <input id="enable-dvr-input" type="checkbox" name="dvrnvr"/>
                         <span class="checkmark"></span>
                     </label>
                     <span class="camctrl-label-text dvr-label-text">This camera is connected through a DVR/NVR.</span>
                 </div>
+-->
             </div>
-           <div class="ctrl-inputs">
-            <div class="backup-wrapper" id="backup-ctrl" style="display: none;">
-                <div class="backup-text">
-                    <p class="backup-status">Backup</p>
-                </div>
-                <div class="time-input-wrapper">
-                    <div class="time-wrapper">
-                        <label class="time-label" for="startTime">Start Time:</label>
-                        <input type="datetime-local" class="time-input" id="startTime" name="startTime" />
+            <div class="ctrl-inputs">
+                <div class="backup-wrapper" id="backup-ctrl" style="display: none;">
+                    <div class="backup-text">
+                        <p class="backup-status">Backup</p>
                     </div>
-                    <div class="time-wrapper">
-                        <label class="time-label" for="endTime">End Time:</label>
-                        <input type="datetime-local" class="time-input" id="endTime" name="endTime" />
+                    <div class="time-input-wrapper">
+                        <div class="time-wrapper">
+                            <label class="time-label" for="startTime">Start Time:</label>
+                            <input type="datetime-local" class="time-input" id="startTime" name="startTime" />
+                        </div>
+                        <div class="time-wrapper">
+                            <label class="time-label" for="endTime">End Time:</label>
+                            <input type="datetime-local" class="time-input" id="endTime" name="endTime" />
+                        </div>
+                        <div class="time-wrapper">
+                            <label class="time-label" for="soeed">Speed:</label>
+                            <input type="number" class="time-input" name="speed" id="speed" value="1" min="1" max="16">
+                        </div>
+                        <button class="btn backup-btn" id="start-backup">Backup</button>
                     </div>
-                    <div class="time-wrapper">
-                        <label class="time-label" for="soeed">Speed:</label>
-                        <input type="number" class="time-input" name="speed" id="speed" value="1" min="1" max="16">
+                    <div class="overwrite-wrapper" style="display:none">
+                        <label class="enable-camctrl-label custom-checkbox">
+                            <input id="overwrite" type="checkbox" name="overwrite"/>
+                            <span class="checkmark"></span>
+                        </label>
+                        <span class="camctrl-label-text">Overwrite any existing cloud recordings.</span>
                     </div>
-                    <button class="btn backup-btn" id="start-backup">Backup</button>
-                </div>
-                <div class="overwrite-wrapper" style="display:none">
-                    <label class="enable-camctrl-label custom-checkbox">
-                        <input id="overwrite" type="checkbox" name="overwrite"/>
-                        <span class="checkmark"></span>
-                    </label>
-                    <span class="camctrl-label-text">Overwrite any existing cloud recordings.</span>
                 </div>
             </div>
-           </div>
-        </div>
+	   </div>
     </div>
     <div class="tagslistwrapper">
         <div class="btnarea"><div class="showevents">Events</div><div class="shownotes">Notes</div><div class="addnote"><div class="closebtn"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i><span>Add note</span></div></div><div class="addclip"><div class="closebtn"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i><span>Create clip</span></div></div><div class="addshare"><div class="closebtn"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i><span>Share</span></div></div><div class="setfilter"><div class="closebtn"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i><span>Filter</span></div></div></div>
