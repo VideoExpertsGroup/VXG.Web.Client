@@ -35,7 +35,7 @@ if ($dvrName && $channel_number) {
     $dvrInfo_str = '{"url": "'.$dvr_url.'", "name": "'.$dvrName.'", "id": "'.$dvrId.'" '.$loc_str.'}';
     //$dvrInfo = ['name' => $dvrName, 'url' => $url, 'id' => $dvrId];
     //if ($location) $dvrInfo['loc'] = $location;
-    $meta = ['dvr_name' => $dvrName, 'dvr_camera' => $channel_number, $dvrId => 'dvr_id', 'subid' => 'NOPLAN', 'subname' => 'No Plan'];
+    $meta = ['dvr_name' => $dvrName, 'dvr_camera' => $channel_number, $dvrId => 'dvr_id', 'dvr_id' => $dvrId, 'subid' => 'NOPLAN', 'subname' => 'No Plan'];
     if ($isFirst) $meta['dvr_first_channel'] = $dvrInfo_str;
 }
 $camera = MCamera::createCamera(MCore::$core->current_user, $name, $location, $group, $recording, $tz, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd, false, $serialnumber, $meta);
