@@ -362,21 +362,24 @@ window.screens['tagsview'] = {
 
 	    // 10 minutes limitation 
 	    // For backuping
-            if ((new Date(endTime).getTime() - new Date(startTime).getTime()) > 10*1000*60 ) { 
-                $(".backup-status").html('Backup <span id="error-message"> Warning: the maximum duration of a segment cannot exceed 10 minutes. </span>');
-                return;
-            }
+            //if ((new Date(endTime).getTime() - new Date(startTime).getTime()) > 10*1000*60 ) { 
+            //    $(".backup-status").html('Backup <span id="error-message"> Warning: the maximum duration of a segment cannot exceed 10 minutes. </span>');
+            //    return;
+            //}
 
             utc_start_time = new Date(startTime).toISOString().replace("Z","");
             utc_stop_time = new Date(endTime).toISOString().replace("Z","");
-            existing_data_ = "error";
-            if (overwrite) existing_data_ = "delete";
-                else existing_data_ = "error"
+            existing_data_ = "smart";
+            //if (overwrite) existing_data_ = "delete";
+            //    else existing_data_ = "error"
+
+
             var data = {
                 start:  utc_start_time,
                 end: utc_stop_time,
                 existing_data: existing_data_,
-                speed: speed
+                speed: speed,
+		duration: 60
             }
 
             // It is better to change button on the cancel
@@ -395,7 +398,6 @@ window.screens['tagsview'] = {
                 counter++;
                 if (counter == 10) counter=1;
             }
-
 
 
             function step() {
