@@ -320,7 +320,7 @@ class MCamera{
         return ['type'=>$channel['rec_mode'], 'recording'=> (isset($response_cloud['memorycard_recording']) && $response_cloud['memorycard_recording']?1:0), 'sdCardEnabled'=> $sdCardEnabled, 'time'=>$limits['records_max_age']];
     }
 
-    public static function setRetention($channel_id, $user_from, $rec_mode, $recording, $time){
+    public static function setRetention($channel_id, $user_from, $rec_mode, $recording, $time, $storage_size = null){
         $server = $user_from->getServerData();
         if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
             error(555, 'Failed generateServicesURLs');
@@ -348,7 +348,7 @@ class MCamera{
         if (isset($response_cloud['errorDetail'])) 
             error(556, 'Failed to update channel2: '. $response_cloud['errorDetail']);
 
-        $data = ['records_max_age'=>$time,'meta_max_age'=>$time,'storage_size'=>null,'download_size'=>null, 'live_size'=>null];
+        $data = ['records_max_age'=>$time,'meta_max_age'=>$time,'storage_size'=>$storage_size,'download_size'=>null, 'live_size'=>null];
         if ($time<0){
             $data['records_max_age']=720;
             $data['meta_max_age']=720;

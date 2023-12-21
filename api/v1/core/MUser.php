@@ -60,6 +60,8 @@ class MUser{
     public function addPlanDefinitions() {
         $planCheck = MCore::$core->pdo->fetchOne('SELECT * from "plan" where "uid"=?', ["CR30"]);
         $planCheck_cust = MCore::$core->pdo->fetchOne('SELECT * from "plan" where "uid"=?', ["CUST"]);
+        $planCheck_back = MCore::$core->pdo->fetchOne('SELECT * from "plan" where "uid"=?', ["BACK"]);
+
 
         if (!$planCheck) {
             // convert any existing plans to "LEGACY" plans
@@ -71,8 +73,16 @@ class MUser{
             MUser::createPlanDescription("30 day Continued Rec-AI by Timer", "CR30_BT", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"continuous"}', 0);
             MUser::createPlanDescription("30 day Continued Rec-AI by Event", "CR30_BE", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"by_event"}', 0);
             MUser::createPlanDescription("Custom Plan", "CUST", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"off"}', 0);
-        } else if (!$planCheck_cust) {
+            MUser::createPlanDescription("100 GB Plan", "BACK", 1, '{"type":"camera","storage_size":1000,"records_max_age":null,"meta_max_age":null,"memorycard_rec":false,"rec_mode":"off","object_detection":"off"}', 0);
+            return true;
+        } 
+        
+        if (!$planCheck_cust) {
             MUser::createPlanDescription("Custom Plan", "CUST", 1, '{"type":"camera","records_max_age":720,"meta_max_age":720,"memorycard_rec":false,"rec_mode":"on","object_detection":"off"}', 0);
+        } 
+
+        if (!$planCheck_back) {
+            MUser::createPlanDescription("100 GB Plan", "BACK", 1, '{"type":"camera","storage_size":1000,"records_max_age":null,"meta_max_age":null,"memorycard_rec":false,"rec_mode":"off","object_detection":"off"}', 0);
         }
 
         return true;

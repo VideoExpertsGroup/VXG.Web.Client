@@ -59,9 +59,10 @@ if (is_array($s) && count($s)>0 && $s[0])
 else
     MCore::$core->response['scripts'] = $skin['scripts'][MCore::$core->current_user->role];
 
-if (strpos(MCore::$core->current_user->desc, "converted_to_plans") === false) {
+if (strpos(MCore::$core->current_user->desc, "backup") === false) {
     MCore::$core->current_user->addPlanDefinitions();
-    $newDesc = MCore::$core->current_user->desc . "\nconverted_to_plans";
+    $addDesc = strpos(MCore::$core->current_user->desc, "converted_to_plans") === false ? "\nconverted_to_plans, backup" : ", backup";
+    $newDesc = MCore::$core->current_user->desc . $addDesc;
     MCore::$core->current_user->updateUser(null, $newDesc, null, null, null, null);
     $newJs = MCore::$core->current_user->js . "\ncore/vxg_ai_access.js\ncore/vxg_retention_access.js";
     MCore::$core->current_user->setJsData($newJs);

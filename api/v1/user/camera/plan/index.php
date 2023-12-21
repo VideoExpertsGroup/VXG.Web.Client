@@ -56,12 +56,14 @@ if ($newPlan != "NOPLAN") {
 
     if($newPlan != "CUST") {
         $planInfo = $user->getPlanInfo($newPlan);
+        $storageSize = $planInfo->storage_size ? $planInfo->storage_size : null;
         $ret = MCamera::setRetention(
             $channelId, 
             $user, 
             $planInfo->rec_mode, 
             $planInfo->memorycard_rec, 
-            $planInfo->records_max_age
+            $planInfo->records_max_age,
+            $storageSize
         );
     
         $ai_type = $planInfo->object_detection;
