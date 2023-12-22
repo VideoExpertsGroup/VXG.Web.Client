@@ -533,6 +533,15 @@ window.screens['cameras'] = {
 
                 setTimeout(function() {
                     var userId = vxg.user.src.uid;
+		    // Can we move this code to the onPreBody or other Event of the BootstapTable  	
+		    // onPreBody	pre-body.bs.table	data	Fires before the table body is rendered
+	            // https://bootstrap-table-docs3.wenzhixin.net.cn/documentation/
+		    //  		 
+		    var inputs = document.querySelectorAll('.bootstrap-table-filter-control-name');
+		    inputs.forEach(function (c_input) {
+		      c_input.setAttribute('autocomplete', 'off');
+		    });
+
                     $('.bootstrap-table-filter-control-status').val(localStorage.getItem("camera_status" + userId));
                     $('.bootstrap-table-filter-control-recording').val(localStorage.getItem("camera_recording" + userId));
                     $('.bootstrap-table-filter-control-location').val(localStorage.getItem("camera_location" + userId));
