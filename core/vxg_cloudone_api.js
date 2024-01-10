@@ -467,8 +467,9 @@ vxg.api.cloudone.camera.update = function(obj){
     });
 };
 
-vxg.api.cloudone.camera.del = function(cameraID){
+vxg.api.cloudone.camera.del = function(cameraID, gatewayUrl = null){
     var data = {id: cameraID};
+    if (gatewayUrl) data.gatewayUrl = gatewayUrl;
 //    data.uid = vs_api.uid;
 //    if (vs_api.manage_uid)
 //        data.manage_uid = vs_api.manage_uid;

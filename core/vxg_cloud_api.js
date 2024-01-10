@@ -299,6 +299,18 @@ vxg.api.cloud.getUplinkUrl = function(camid, camurl) {
     });
 }
 
+vxg.api.cloud.restartGateway = function(gatewayUrl) {
+    return vxg.user.getToken().then(function(r){
+        let data={gatewayUrl:gatewayUrl, token: r};
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/restart_gateway/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+}
+
 /** Get channel preview image
  *
  * @return Promise
@@ -532,9 +544,10 @@ vxg.api.cloud.getCamerasList = function(obj){
     data['include_meta']=true;
 
     if (data.detail == "detail") {
+        var url = obj.id ? vxg.api.cloud.apiSrc + '/api/v2/cameras/' + obj.id : vxg.api.cloud.apiSrc + '/api/v2/cameras/';
         return $.ajax({
             type: 'GET',
-            url: vxg.api.cloud.apiSrc + '/api/v2/cameras/',
+            url: url,
             headers: headers,
             contentType: "application/json",
             data: data
@@ -636,7 +649,8 @@ vxg.api.cloud.getCameraInfo = function(channel_id, access_token, obj){
 
 vxg.api.cloud.getCameraConfig = function(channel_id, access_token){
     var data = {detail:'detail', include_meta:true};
-    let headers = vxg.api.cloud.getHeader(access_token);
+    
+    let headers = access_token ? vxg.api.cloud.getHeader(access_token) : vxg.api.cloud.getHeader();
     if (!headers)
         return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
 

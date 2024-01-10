@@ -39,6 +39,8 @@ CameraCloudEditControl = function(){
 <div class="form-group camera_finder_link">
 `+camera_finder_link+`
 </div>
+<input type="hidden" name="gatewayId">
+<input type="hidden" name="gatewayUrl">
 <div class="form-group">
     <label>Name</label>
     <input autofocus="autofocus" class="name" name="name" >
@@ -82,17 +84,17 @@ CameraCloudEditControl = function(){
     <label for="url_prot">Protocol&nbsp;</label>
     <input type="text" class="url_prot form-control input500" value="">
 </div>
-<div class="form-group options notincloud" style="display:none">
-    <label for="url_ip">IP address or domain name&nbsp;</label>
-    <input type="text" class="url_ip form-control input500" value="">
+<div class="form-group options notincloud gatewayinput" style="display:none">
+    <label class="gateway_ip_label" for="url_ip">Camera IP (Local IP of camera, located in Gateway network)</label>
+    <input type="text" name="url_ip" class="url_ip form-control input500" value="">
     <div class="iperror">Invalid domain name or ip address</div>
 </div>
-<div class="form-group options notincloud" style="display:none">
+<div class="form-group options notincloud gatewayinput" style="display:none">
     <label for="url_http_port" class="onvifOnly">HTTP port&nbsp;</label>
     <label for="url_http_port" class="rtspOnly">Port&nbsp;</label>
-    <input type="number" class="url_http_port form-control input500" value="">
+    <input type="number" name="url_http_port" class="url_http_port form-control input500" value="">
 </div>
-<div class="form-group options notincloud" style="display:none">
+<div class="form-group options notincloud gatewayinput" style="display:none">
     <label class="onvifOnly" for="url_rtsp_port">RTSP port&nbsp;</label>
     <input type="number" class="onvifOnly url_rtsp_port form-control input500" name="onvif_rtsp_port_fwd">
     <i class="onvifOnly"></i>
@@ -379,6 +381,8 @@ CameraCloudEditControl = function(){
             $(".server-status").show();
         }
 
+        data.gatewayCam = data.gatewayId ? true : false;
+        
         let res;
         if (!this.camera)
             res = vxg.cameras.createCameraPromise(data);
@@ -437,8 +441,8 @@ CameraCloudEditControl = function(){
                                     }
                                 }
     
-                                if (macAddress && serverSerial) dialogs['mdialog'].activate('<h7>Success!</h7><p>Install the plug-in on your camera and it will automatically connect this camera to your account.</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
-                                else dialogs['mdialog'].activate('<h7>Access token</h7><p>Copy and save the access token before closing the window</p><textarea rows="5" style="min-width:200px">'+r.access_tokens.all+'</textarea><p><button name="cancel" class="vxgbutton">Ok</button></p>');    
+                                if (!data.gatewayCam && macAddress && serverSerial) dialogs['mdialog'].activate('<h7>Success!</h7><p>Install the plug-in on your camera and it will automatically connect this camera to your account.</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
+                                else if (!data.gatewayCam) dialogs['mdialog'].activate('<h7>Access token</h7><p>Copy and save the access token before closing the window</p><textarea rows="5" style="min-width:200px">'+r.access_tokens.all+'</textarea><p><button name="cancel" class="vxgbutton">Ok</button></p>');    
                                 
                                 $(".serial-number-input").val("");
                                 $(".mac-address-input").val("");
@@ -632,7 +636,7 @@ CameraCloudEditControl = function(){
         $(this).addClass('newcamera');
         $(this).find('.url_protocol [value="cloud"]').remove();
         $(this).find('.iperror').hide();
-        $(this).find('[name="serialnumber"], [name="gspassword"], [name="name"], [name="location"], [name="lat"], [name="lon"], [name="desc"], [name="url"], [name="username"], [name="password"], .url_ip, .url_http_port, .url_rtsp_port').val('');
+        $(this).find('[name="serialnumber"], [name="gspassword"], [name="name"], [name="location"], [name="group"], [name="lat"], [name="lon"], [name="desc"], [name="url"], [name="username"], [name="password"], .url_ip, .url_http_port, .url_rtsp_port').val('');
         $(this).find('.url_path').val('onvif/device_service');
         $(this).find('.subscription-info').val('');
         $(this).find('.show-name').val('No Subscription Assigned');
@@ -794,5 +798,19 @@ CameraCloudEditControl = function(){
 //        $('.url_protocol').attr('disabled','disabled');
         $(this).find('.iperror').show();
     }
-
+    this.getCookie = function(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 }

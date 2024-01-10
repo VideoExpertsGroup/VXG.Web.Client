@@ -10,8 +10,30 @@ if (!MCore::$core->current_user->isPartner())
     error(401, 'Access denied');
 
 list($name) = MCore::checkAndGetInputParameters(['name']);
-list($location, $group, $recording, $tz, $lat, $lon, $url, $username, $password, $onvif_rtsp_port_fwd, $serialnumber, $macAddress, $uplink, $dvrName, $channel_number, $dvrId, $isFirst) = 
-    MCore::getInputParameters(['location'=>'','group'=>'','recording','tz'=>'UTC','lat'=>0,'lon'=>0,'url','username','password', 'onvif_rtsp_port_fwd'=>0,'serialnumber'=>'','macAddress'=>'', 'uplink'=>'', 'dvrName' => '', 'channel_number' => '', 'dvrId' => '', 'isFirst' => false]);
+list($location, 
+     $group, 
+     $recording, 
+     $tz, 
+     $lat, $lon, 
+     $url, 
+     $username, $password, 
+     $onvif_rtsp_port_fwd, $http_port,
+     $serialnumber, $macAddress, $uplink, 
+     $dvrName, $channel_number, $uuid, $isFirst, 
+     $gatewayId, $max_num_cameras,
+     $gatewayCam, $gatewayUrl, $cameraIp) = 
+    MCore::getInputParameters(['location'=>'',
+                               'group'=>'',
+                               'recording',
+                               'tz'=>'UTC',
+                               'lat'=>0,'lon'=>0,
+                               'url',
+                               'username','password',
+                               'onvif_rtsp_port_fwd'=>0, 'url_http_port'=>0,
+                               'serialnumber'=>'','macAddress'=>'', 'uplink'=>'',
+                               'dvrName'=>'','channel_number'=>'','uuid' =>'','isFirst'=>false,
+                               'gatewayId'=>'','max_num_cameras'=>'',
+                               'gatewayCam' => false, 'gatewayUrl' => '', 'url_ip' => '']);
 
 $password = strval($password);
 $username = strval($username);
@@ -20,7 +42,7 @@ $name = strval($name);
 if (MCore::$core->current_user->getUserCamerasCount()>=MConstants::MAX_CAMERAS_PER_USER)
     error(401, 'Camera limit exceeded for current user');
 
-if ($uplink) {
+if ($uplink || $gatewayId) {
     $url = MCore::$core->config['camera_proxy_service'];
     if (!$url)
         error(500, 'Camera proxy service url not set.');
@@ -32,11 +54,13 @@ $meta = null;
 if ($dvrName && $channel_number) {
     $dvr_url = explode("/dvr_camera/", $url)[0];
     $loc_str = $location ? ', "location": "'.$location.'"' : "";
-    $dvrInfo_str = '{"url": "'.$dvr_url.'", "name": "'.$dvrName.'", "id": "'.$dvrId.'" '.$loc_str.'}';
-    //$dvrInfo = ['name' => $dvrName, 'url' => $url, 'id' => $dvrId];
-    //if ($location) $dvrInfo['loc'] = $location;
-    $meta = ['dvr_name' => $dvrName, 'dvr_camera' => $channel_number, $dvrId => 'dvr_id', 'dvr_id' => $dvrId, 'subid' => 'NOPLAN', 'subname' => 'No Plan'];
+    $dvrInfo_str = '{"url": "'.$dvr_url.'", "name": "'.$dvrName.'", "id": "'.$uuid.'" '.$loc_str.'}';
+    $meta = ['dvr_name' => $dvrName, 'dvr_camera' => $channel_number, $uuid => 'dvr_id', 'dvr_id' => $uuid, 'subid' => 'NOPLAN', 'subname' => 'No Plan'];
     if ($isFirst) $meta['dvr_first_channel'] = $dvrInfo_str;
+} else if ($gatewayCam && $gatewayId) {
+    $meta = [$gatewayId => 'gateway_id', 'gateway_id' => $gatewayId, 'gateway_cam' => "gateway_cam"];
+} else if ($gatewayId && $max_num_cameras && $uuid) {
+    $meta = ['gateway' => 'gateway', $gatewayId => 'gateway_id', 'gateway_id' => $gatewayId, $uuid => 'unique_id', 'max_num_cameras' => $max_num_cameras, 'subid' => 'NOPLAN', 'subname' => 'No Plan'];
 }
 $camera = MCamera::createCamera(MCore::$core->current_user, $name, $location, $group, $recording, $tz, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd, false, $serialnumber, $meta);
 
@@ -53,6 +77,27 @@ if ($camera && $serialnumber && $macAddress) {
         $camera->remove();
         error(401, 'Fail to call camera resolver service');
     }
+}
+
+if ($gatewayCam) {
+    $gatewayAuthToken = $camera->getGatewayAuthToken($gatewayUrl);
+    $http = $http_port ? $http_port : 80;
+    $rtsp = $onvif_rtsp_port_fwd ? $onvif_rtsp_port_fwd : 554;
+
+    $params = [ 'ip'=>$cameraIp,
+                'http_port'=>$http,
+                'rtsp_port'=>$rtsp,
+                'is_active'=>false,
+                'pid'=>null,
+                'access_token'=>$camera->camera['rwToken']
+            ];
+
+    if ($serialnumber && $macAddress) {
+        $params['serial'] = $serialnumber;
+        $params['mac'] = $macAddress;
+    }
+
+    $camera->addCameraToGateway($params, $gatewayUrl, $gatewayAuthToken);
 }
 
 /*if ($camera && strpos(MCore::$core->current_user->js,'ai_access')!==false) {

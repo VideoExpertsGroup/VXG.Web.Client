@@ -216,7 +216,7 @@ function onDVRDelete(dvrId){
                 currentCamId = cameraIds[i];
     
                 const makeNextPromise = (currentCamId) => () => {
-                    return vxg.cameras.removeCameraDVRPromise(currentCamId)
+                    return vxg.cameras.removeCameraFromListPromise(currentCamId)
                         .then((r) => {
                             if (i == cameraIds.length - 1) {
                                 location.reload();

@@ -139,6 +139,10 @@ window.core.onclick_toscreen = function(e){
             var dvrId = this.editdvr ? this.editdvr : $(this).attr("editdvr");
             if (dvrId) sessionStorage.setItem("editingDvr", dvrId);
         }
+        if (screen == 'add_gateway' && window.screens[screen].from_screen == 'gateway') {
+            var gatewayId = this.editGateway ? this.editGateway : $(this).attr("editGateway");
+            if (gatewayId) sessionStorage.setItem("editingGateway", gatewayId);
+        }
         if(screen == 'tagsview' && window.screens[screen].from_screen == 'cameras') {
             var id = this.channelID ? this.channelID : $(this).attr("channelID");
             if (id) sessionStorage.setItem("backToCam", id);

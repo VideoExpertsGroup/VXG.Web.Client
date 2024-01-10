@@ -88,6 +88,10 @@ function camGrid(size /* 2,3,4 */){
         var self = this;
         let access_token = $(this).attr("access_token");
         let channelID = $(this).attr("cam_id");
+
+        let gatewayId = $(this).attr("gateway_id");
+        let gatewayToken = $(this).attr("gateway_token");
+
         sessionStorage.setItem("backToCam", channelID);
 
         var menu =  $(`
@@ -97,7 +101,7 @@ function camGrid(size /* 2,3,4 */){
         <div class="listmenu-item cam-menu mchart dvrcam" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>
         <a class="listmenu-item cam-menu mwebui" id="ui-link" href="" target="_blank" style="display: none"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> Camera UI </span></a>
         <div class="listmenu-item cam-menu mconfigure dvrcam" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
-        <div class="listmenu-item cam-menu mtrash" onclick="onCameraDelete('${channelID}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
+        <div class="listmenu-item cam-menu mtrash" onclick="onCameraDelete('${channelID}', '${gatewayId}', '${gatewayToken}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
         </div>`);
         
         var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
@@ -214,7 +218,7 @@ function onEventsSet(e){
     });;
 }
 
-function onCameraDelete(channel_id){
+function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null){
     setTimeout(function(){$('.simplemenu').remove();},10);
 
     vxg.cameras.getCameraByIDPromise(channel_id).then(function(camera){
@@ -223,50 +227,81 @@ function onCameraDelete(channel_id){
             if (r.button!='delete') return;
             core.elements['global-loader'].show();
             var oldsubid = camera.src.meta ? camera.src.meta.subid : -1;
-            if (camera) camera.deleteCameraPromise().then(function(){
-                var planIndex = vxg.user.src.plans ? vxg.user.src.plans.findIndex(p => p.id == oldsubid) : -1;
-                if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
-                
-                var aiCams_string = sessionStorage.getItem("aiCams");
-                if (aiCams_string) {
-                    var aiCams_array = aiCams_string.split(",").filter(e => e);
-                    if (aiCams_array.includes(camera.camera_id.toString())) {
-                        var newAiCams = aiCams_string.replace("," + camera.camera_id, "");
-                        sessionStorage.setItem("aiCams", newAiCams); 
-                    }
-                }
 
-                var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
-                if (cameraList) {
-                    cameraList.objects = cameraList.objects.filter(c => c.id != camera.camera_id);
-                    var total = parseInt(cameraList.meta.total_count);
-                    cameraList.meta.total_count = total - 1;
-                    localStorage.cameraList = JSON.stringify(cameraList);
-                }
-
-
-                localStorage.removeItem(camera.camera_id);
-                var backToCam = sessionStorage.getItem("backToCam");
-                if (backToCam == camera.camera_id) sessionStorage.removeItem("backToCam");
+            var gatewayUrl = "";
+            if (gatewayId && gatewayToken) {
                 var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
-                var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : "";
-                if (cameraUrls) {
-                    var removeCurrent = cameraUrls.filter(cam => cam.id != camera.camera_id);
-                    sessionStorage.setItem("cameraUrls", JSON.stringify(removeCurrent));
+                var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : [];
+                var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id == gatewayId) : "";
+        
+                if (savedCam && savedCam.url && savedCam.url != "nourl") {
+                    gatewayUrl = savedCam.url;
+                    return doCameraDelete(camera, oldsubid, gatewayUrl);
+                } else if (!savedCam) {
+                    vxg.api.cloud.getCameraConfig(gatewayId, gatewayToken).then(function(config) {
+                        return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
+                            if (!urlinfo.id && !urlinfo.url) {
+                                alert('Error finding url to remove camera from gateway');
+                                return;
+                            } else {
+                                cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
+                                sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));  
+                                gatewayUrl = urlinfo.url;
+                                return doCameraDelete(camera, oldsubid, gatewayUrl);
+                            }
+                            
+                        });
+                    })
                 }
-
-                core.elements['global-loader'].hide();
-                return screens['cameras'].on_show();
-            }, function(r){
-                core.elements['global-loader'].hide();
-                let err_text = 'Failed to delete camera';
-                if (r && r.responseJSON && r.responseJSON.errorDetail) err_text = r.responseJSON.errorDetail;
-                dialogs['mdialog'].activate('<h7>Error</h7><p>'+err_text+'</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
-            });
-
+            } else {
+                return doCameraDelete(camera, oldsubid);
+            }
         });
     })
+}
 
+function doCameraDelete(camera, oldsubid, gatewayUrl = null) {
+    if (camera) camera.deleteCameraPromise(gatewayUrl).then(function(){
+        var planIndex = vxg.user.src.plans ? vxg.user.src.plans.findIndex(p => p.id == oldsubid) : -1;
+        if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
+        
+        var aiCams_string = sessionStorage.getItem("aiCams");
+        if (aiCams_string) {
+            var aiCams_array = aiCams_string.split(",").filter(e => e);
+            if (aiCams_array.includes(camera.camera_id.toString())) {
+                var newAiCams = aiCams_string.replace("," + camera.camera_id, "");
+                sessionStorage.setItem("aiCams", newAiCams); 
+            }
+        }
+
+        var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
+        if (cameraList) {
+            cameraList.objects = cameraList.objects.filter(c => c.id != camera.camera_id);
+            var total = parseInt(cameraList.meta.total_count);
+            cameraList.meta.total_count = total - 1;
+            localStorage.cameraList = JSON.stringify(cameraList);
+        }
+
+
+        localStorage.removeItem(camera.camera_id);
+        var backToCam = sessionStorage.getItem("backToCam");
+        if (backToCam == camera.camera_id) sessionStorage.removeItem("backToCam");
+        var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
+        var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : "";
+        if (cameraUrls) {
+            var removeCurrent = cameraUrls.filter(cam => cam.id != camera.camera_id);
+            sessionStorage.setItem("cameraUrls", JSON.stringify(removeCurrent));
+        }
+
+        location.reload();
+        //core.elements['global-loader'].hide();
+        //return screens['cameras'].on_show();
+    }, function(r){
+        core.elements['global-loader'].hide();
+        let err_text = 'Failed to delete camera';
+        if (r && r.responseJSON && r.responseJSON.errorDetail) err_text = r.responseJSON.errorDetail;
+        dialogs['mdialog'].activate('<h7>Error</h7><p>'+err_text+'</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
+    });
 }
 
 function onCameraScreenResize(){
@@ -385,8 +420,10 @@ window.screens['cameras'] = {
             this.last_offset = 0;
         } else filterarray = this.last_filterarray;
         
-        this.camera_list_promise = vxg.cameras.getFullCameraList(500,this.last_offset).then(function(list){
+        this.camera_list_promise = vxg.cameras.getFullCameraList(500,this.last_offset).then(function(fullList){
             self.camera_list_promise=undefined;
+            var gatewaysList = fullList.filter(cam => {return cam.src.meta && cam.src.meta.gateway});
+            var list = fullList.filter(cam => {return cam.src.meta && cam.src.meta.gateway == undefined});
             let h = loadedCams == "" ? "" : loadedCams;
             self.last_offset += list.length;
             let count = 1;
@@ -409,6 +446,17 @@ window.screens['cameras'] = {
                     }
                 });
 
+                var gatewayId = null;
+                var gatewayToken = null;
+                if (list[i].src.meta && list[i].src.meta.gateway_cam) {
+                    gatewaysList.forEach(gateway => {
+                        if (gateway.src.meta && gateway.src.meta.gateway_id == list[i].src.meta.gateway_id) {
+                            gatewayId = gateway.camera_id;
+                            gatewayToken = gateway.token;
+                        }
+                    })
+                }
+
                 tableData.push({
                     camId: channelID,
                     order: count,
@@ -423,7 +471,7 @@ window.screens['cameras'] = {
                     name: list[i].src.name,
                     location: list[i].src.meta && list[i].src.meta.location ? list[i].src.meta.location : "",
                     group: list[i].src.meta && list[i].src.meta.group ? list[i].src.meta.group : "",
-                    action: `<div class="settings" access_token="${list[i].token}" cam_id="${channelID}">
+                    action: `<div class="settings" access_token="${list[i].token}" cam_id="${channelID}" gateway_id="${gatewayId}" gateway_token="${gatewayToken}">
                     <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
                 </div>`
                 })

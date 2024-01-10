@@ -530,6 +530,7 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 	$.each(vxgcameralistdata, function (index) {
             if (vxgcameralistdata[index].src.name.substr(0,11)=="#StorageFor" && !isNaN(parseInt(vxgcameralistdata[index].src.name.substr(11)))) return;
             if (vxgcameralistdata[index].src&&vxgcameralistdata[index].src.meta&&vxgcameralistdata[index].src.meta.isstorage=='isstorage') return;
+            if (vxgcameralistdata[index].src&&vxgcameralistdata[index].src.meta&&vxgcameralistdata[index].src.meta.gateway) return;
 
 	    vxgcameralistdata[index].allCamsToken = allcamtoken;
 

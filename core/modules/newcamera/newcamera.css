@@ -97,6 +97,13 @@ color: var(--main-color);
 margin-bottom:10px;
 }
 
+.newcameratabs.gatewayCamera > .newcamerabtns > .add2,
+.newcameratabs.gatewayCamera > .newcamerabtns > .add3,
+.newcameratabs.gatewayCamera > .newcamerabtns > .add4{
+    display: none;
+}
+
+
 .plugin-link {
     margin-top: 15px;
 }
@@ -111,3 +118,8 @@ body.newcamera .headerBlock .header-left .mainbackbtn{
 }
 
 body.mobile.newcamera #mobile-menu-btn{display:none;}
+
+.disabled {
+    pointer-events: none;
+    background-color: #e4e4e4;
+}

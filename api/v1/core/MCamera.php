@@ -986,6 +986,79 @@ class MCamera{
         return false;
     }
 
+    public function getUplinkUrl($url, $camid) {
+        $authPass = MCore::$core->config['uplink_proxies_password']; 
+        if (!$authPass) return;
+
+        $ch=curl_init($url);
+        curl_setopt_array($ch, [CURLOPT_POST => false, CURLOPT_CUSTOMREQUEST=>'GET', CURLOPT_RETURNTRANSFER => true, CURLOPT_VERBOSE => true,
+            CURLOPT_HTTPHEADER => ['Content-Type:application/json', 'Authorization: Bearer '. $authPass]]);
+
+        $result = curl_exec($ch);
+        $r = json_decode($result, JSON_OBJECT_AS_ARRAY);
+        return $r;
+    }
+
+    public function restartGateway($gatewayUrl, $gatewayAuthToken) {
+        $restartUrl = $gatewayUrl.'/api/restart/';
+        $ch=curl_init($restartUrl);
+        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_VERBOSE => true,
+                                CURLOPT_HTTPHEADER => ['Content-Type:application/json', 'Authorization: Token '. $gatewayAuthToken]]);
+
+        $result = curl_exec($ch);
+        // will return false if it worked
+        $ret = $result === false ? true : false;
+        return $ret;
+    }
+
+    public function getGatewayAuthToken($gatewayUrl) {
+        $username = MCore::$core->config['gateway_default_user'];
+        $pass = MCore::$core->config['gateway_default_pass'];
+
+        if (!$username || !$pass) error(500, "Missing default user and default pass to access auth token.");
+
+        $json_params = json_encode([
+            "username"=>$username,
+            "password"=>$pass
+        ]);
+
+        $authUrl = $gatewayUrl.'/api/auth-token/';
+        $ch=curl_init($authUrl);
+        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $json_params, CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true,
+                                CURLOPT_HTTPHEADER => ['Content-Type:application/json']]);
+        $result = curl_exec($ch);
+        // being returned as an html string 
+        $sub = '{"token":"';
+        $arr = explode($sub, $result);
+        $important = $arr[1];
+        $r = $important ? str_replace('"}', "",$important) : error(500, "Incorrect return from gateway auth");
+
+        return $r;
+    }
+
+    public function addCameraToGateway($params, $gatewayUrl, $gatewayAuthToken) {
+        $json_params = json_encode($params);
+        $addCamUrl = $gatewayUrl.'/api/add-camera/';
+        $ch=curl_init($addCamUrl);
+        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_VERBOSE => true,
+                                CURLOPT_HTTPHEADER => ['Content-Type:application/json', 'Authorization: Token '. $gatewayAuthToken, 'Content-Length: ' . strlen($json_params)], CURLOPT_POSTFIELDS => $json_params]);
+
+        $result = curl_exec($ch);
+        $r = json_decode($result, JSON_OBJECT_AS_ARRAY);
+        return $r;
+    }
+
+    public function removeCameraFromGateway($gatewayUrl, $gatewayAuthToken) {
+        $removeCamUrl = $gatewayUrl.'/api/cameras/'.$this->camera['channelID']."/";
+        $ch=curl_init($removeCamUrl);
+        curl_setopt_array($ch, [CURLOPT_CUSTOMREQUEST => "DELETE", CURLOPT_RETURNTRANSFER => true, CURLOPT_VERBOSE => true,
+                                CURLOPT_HTTPHEADER => ['Content-Type:application/json', 'Authorization: Token '. $gatewayAuthToken]]);
+
+        $result = curl_exec($ch);
+        $r = json_decode($result, JSON_OBJECT_AS_ARRAY);
+        return $r;
+    }
+
     /**
      * Remove this camera
      */
@@ -1009,6 +1082,11 @@ class MCamera{
                   error_log('Error removing camera serial number: $code');
                   //error(554, $code . ": Error removing camera serial number");
             curl_close($ch);
+        }
+
+        if (isset($response_cloud,$response_cloud['meta'],$response_cloud['meta']['gateway_cam'])) {
+            // remove from gateway
+
         }
 
         //$this->removeAIToken();

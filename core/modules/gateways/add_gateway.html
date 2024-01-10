@@ -1,0 +1,44 @@
+<div class="add-gateway-wrapper">
+    <!-- <div class="gateway-tabs">
+        <div class="tab active" id="gatewaynvr-tab">Recorder</div>
+        <div class="tab disabled" id="gatewayuplink-tab" style="display: none;">DVR Uplink</div>
+    </div> -->
+    <form class="gateway tabcontent" id="gatewayform">
+        <div class="gateway-info">
+            <div class="gateway-input">
+                <!-- Not sure if we need a field with maximum number of cameras 
+                <div class="gateway-input-wrapper">
+                    <label class="gateway-label" for="cameraCount">Number of Cameras</label>
+                    <input class="gateway-input" name="cameraCount" type="number" id="cameraCount" value="4" onchange="addCameraNamesInput()" min="1" max="64">
+                </div>
+                -->
+                <div class="gateway-input-wrapper">
+                    <label class="gateway-label name-label" for="name">Name</label>
+                    <input class="gateway-input required" name="name" type="text" >
+                </div>
+                <div class="gateway-input-wrapper">
+                    <label class="gateway-label group-label" for="group">Group</label>
+                    <input class="gateway-input" name="group" type="text" > 
+                </div>
+                <div class="gateway-input-wrapper">
+                    <label class="gateway-label location-label" for="location">Location</label>
+                    <input class="gateway-input" name="location" type="text" >
+                </div>
+                <div class="gateway-input-wrapper hide-edit-cont">
+                    <label class="gateway-label guid-label" for="guid">Gateway ID</label>
+                    <input class="gateway-input required hide-edit" name="guid" type="text" >
+                </div>
+            </div>
+        </div>
+        <div class="error-wrapper">
+            <p id="error-message"></p>
+        </div>
+        <div class="action-btns">
+            <button class="vxgbutton" onclick_toscreen="back" style="margin-right: 10px;">Back</button>
+            <button name="add" class="vxgbutton add-btn" id="add-gateway"></button> 
+        </div>
+    </form>
+    <div class="tabcontent gatewayuplink" style="display: none;">
+    </div>
+
+</div>

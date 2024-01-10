@@ -19,17 +19,80 @@ window.screens['newcamera'] = {
         if (!access_token) access_token='';
         this.access_token = access_token;
 
+        var gatewayCamId = $(this.src).getNearParentAtribute("channel_id");
+        var gatewayCamToken = $(this.src).getNearParentAtribute("gateway_token");
+
+        if (gatewayCamId && gatewayCamToken) {
+            this.gatewayCamId = gatewayCamId;
+            this.gatewayCamToken = gatewayCamToken;
+        } else {
+            this.wrapper.find('.newcameratabs').removeClass("gatewayCamera");
+            this.gatewayCamId = null;
+            this.gatewayCamToken = null;
+        }
+
         if (!access_token) return defaultPromise();
         return vxg.cameras.getCameraFrom(access_token).then(function(camera){
             self.camera = camera;
         });
     },
     'on_show':function(camtoken){
-
+        var self = this;
      	this.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add4').removeClass('add5').addClass('add3');
-
+        
         if (!this.camera) {
             this.wrapper.find('cameraedit').attr('access_token','');
+
+            if (this.gatewayCamId) {
+                return vxg.api.cloud.getCameraConfig(this.gatewayCamId, this.gatewayCamToken).then(function(cam) {
+                    self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add3').removeClass('add4').addClass('add5');
+                    self.wrapper.find('.newcameratabs').addClass("gatewayCamera");
+                    $('.headerBlock .header-center').text("Add Camera to " + cam.name);
+                    $('[name="location"]').addClass("disabled");
+                    $('[name="group"').addClass("disabled");
+                    // gateway unique_id ?
+                    $('[name="gatewayId"]').val(cam.meta.gateway_id);
+                    if(cam.meta && cam.meta.location) self.wrapper.find('[name="location"').val(cam.meta.location);
+                    if(cam.meta && cam.meta.group) self.wrapper.find('[name="group"').val(cam.meta.group);
+                    $('[name="url_http_port"]').val(80);
+                    $('[name="onvif_rtsp_port_fwd"]').val(554);
+                    $('#prov-server-input').attr('checked', false);
+                    $('.uplink-wrapper').hide();
+                    $('.loc-dropdown').hide();
+                    $('.gatewayinput').show();
+
+                    var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
+                    var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : [];
+                    var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id == this.gatewayCamId) : "";
+
+                    if (savedCam && savedCam.url && savedCam.url != "nourl") {
+                        $('[name="gatewayUrl"]').val(savedCam.url);
+                    } else if (!savedCam) {
+                        return vxg.api.cloud.getUplinkUrl(cam.id, cam.url).then(function(urlinfo) {
+                            if (!urlinfo.id && !urlinfo.url) {
+                                cameraUrls.push({id: config.id, url: "nourl"});
+                                sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
+                            } else {
+                                cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
+                                sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));  
+                                $('[name="gatewayUrl"]').val(urlinfo.url);
+                            }
+                        });
+                    }
+                });
+            } else {
+                $('[name="location"]').removeClass("disabled");
+                $('[name="group"').removeClass("disabled");
+                $('[name="gatewayId"]').val("");
+                $('[name="gatewayUrl"]').val("");
+                $(['[name="url_http_port"']).val('');
+                $(['[name="onvif_rtsp_port_fwd"']).val('');
+                self.wrapper.find('[name="location"').val("");
+                self.wrapper.find('[name="group"').val("");
+                $('#prov-server-input').attr('checked', true);
+                $('.uplink-wrapper').show();
+                $('.gatewayinput').hide();
+            }
             return defaultPromise();
         }
         core.elements['global-loader'].show();

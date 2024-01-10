@@ -1346,3 +1346,11 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 body:not(.recorders) .header-right .adddvr {
     display: none;
 }
+
+body:not(.gateway) .header-right .addgateway {
+    display: none;
+}
+
+body:not(.gateway_cams) .header-right .addgatewaycams {
+    display: none;
+}

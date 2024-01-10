@@ -365,7 +365,9 @@ CameraEditControl = function(){
             }
 
         }
+
         if (isCloud) data.url='';
+
         let p;
         if (data.url && purl.host && (!data.lat || !data.lon))
             p = this.ipToLocation(purl.host);
@@ -821,7 +823,7 @@ CameraEditControl = function(){
         $(this).addClass('newcamera');
         $(this).find('.url_protocol [value="cloud"]').remove();
         $(this).find('.iperror').hide();
-        $(this).find('[name="name"], [name="location"], [name="lat"], [name="lon"], [name="desc"], [name="url"], [name="username"], [name="password"], .url_ip, .url_http_port, .url_rtsp_port').val('');
+        $(this).find('[name="name"], [name="location"], [name="group"], [name="lat"], [name="lon"], [name="desc"], [name="url"], [name="username"], [name="gatewayId"], [name="gatewayUrl"], .url_ip, .url_http_port, .url_rtsp_port').val('');
         $(this).find('.url_path').val('onvif/device_service');
         $(this).find('.url_protocol').val('onvif');
         //$(this).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
@@ -831,6 +833,10 @@ CameraEditControl = function(){
         $(this).find('.show-name').val('No Subscription Assigned');
         $('.custom-plan').hide();
         $('.hidesett').hide();
+        $('.loc-dropdown').show();
+
+        $('[name="location"]').removeClass("disabled");
+        $('[name="group"').removeClass("disabled");
 
         $(this).find('[name="rete_recmode"]').val("off");
         $(this).find('[name="rete_time"]').val(0);
