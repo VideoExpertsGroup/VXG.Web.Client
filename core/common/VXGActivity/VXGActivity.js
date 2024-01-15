@@ -237,8 +237,10 @@ VXGActivityView.prototype.ActivitiesList_resolve_name = function ActivitiesList_
 	    name="Sound";break;
 	case "linecross":
 	    name="Line cross";break;
+	case "network":
+		name="Network";break;
 	default:
-	    name="Unknown";break;
+	    name=event_name;break;
     }
     return name;
 }
@@ -260,7 +262,6 @@ VXGActivityView.prototype.ActivitiesList_get_meta = function ActivitiesList_get_
 	    output =  additional_search + ((event.meta[additional_search] !== undefined && parseInt(event.meta[additional_search]) > 0 ) ? (" : " +event.meta[additional_search]) : (""));
 	}
     }
-
     return this.capitalizeFirstLetter(output);
 }
 
@@ -464,16 +465,20 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	    let dclass=""; /* "d-flex ";*/
 	    let addon='';
 	    
-            if (this.name === "object_and_scene_detection" || this.name === "yolov4_detection") {
-//	    if (self.ActivitiesList_get_meta(this, additional_search)) {
-		meta = '<span class="detected-label">'+ self.ActivitiesList_get_meta(this, additional_search) + '&nbsp;</span>';
-		dclass += "tometaview";
-		addon = 'img_url="'+ ((this.thumb && this.thumb.url) ? this.thumb.url : '') + '" ai_type="' + this.name + '" event_id="'+this.id+'" token="'+ self.roToken +'" meta="'+btoa(JSON.stringify(tags))+'" camid="'+this.camid+'" time="' + this.time + 'Z"' ;
-	    } else {
+        if (this.name == "network") {
+			dclass += "camerastatusdialog";
+			addon = 'camid="'+this.camid+'" time="'+this.time+'Z" status="'+ (this.online ? "online" : "offline") +'"';
+			meta = '<span class="detected-label empty">&nbsp;</span>';
+		} else if (this.name == "motion") {
 		dclass += "toeventview";
 		addon = 'camid="'+this.camid+'" time="'+this.time+'Z" eventname="'+ this.name +'"';
 		meta = '<span class="detected-label empty">&nbsp;</span>';
-	    }
+	    } else {
+			//meta = '<span class="detected-label">'+ self.ActivitiesList_get_meta(this, additional_search) + '&nbsp;</span>';
+			dclass += "tometaview";
+			addon = 'img_url="'+ ((this.thumb && this.thumb.url) ? this.thumb.url : '') + '" ai_type="' + this.name + '" event_id="'+this.id+'" token="'+ self.roToken +'" meta="'+btoa(JSON.stringify(tags))+'" camid="'+this.camid+'" time="' + this.time + 'Z"' ;		
+		} 
+
 	    var cameraInfo = '';
 	    let camera = self.objByCamid(this.camid);
 	    if (camera != null) {
@@ -496,7 +501,9 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 //	    +	'					<div>' + meta + '</div>' 	    
 	    +	'					<small class="text-muted">' + timeString + '</small>' 
 	    +	'				</div>'
-	    +	'				<strong>' + self.ActivitiesList_resolve_name(this.name)  + '</strong>' 
+	    +	'				<div class="event-name">' 
+		+	'					<span>' + self.ActivitiesList_resolve_name(this.name)  + '</span>'
+		+	'				</div>' 
 	    +	'			</div>' 
 	    +	'		</div>' 
 	    +	'	</div>' 
@@ -517,6 +524,18 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 
 	    //}
 	});
+
+	$('.camerastatusdialog').on("click", function() {
+		var time = this.getAttribute('time');
+		var status = this.getAttribute('status');
+		dialogs['mdialog'].activate(`
+				<p style="font-size: 15px">At the time of this event (${time}), this camera was <b>${status}</b>.</p>
+				<div>
+					<button name="apply" class="vxgbutton-transparent btn-full-width">Exit</button>
+				</div>`).then(function(r){
+                if (!r || r.button!='apply') return;
+            });
+	})
 
 	if (VXGActivitydata !== undefined && VXGActivitydata.length == limit) {
 		$(this.more).addClass('visible');
@@ -668,7 +687,7 @@ var VXGActivityController = function VXGActivityController( element ) {
 ///	 function listActivityCB(operation, obj),there operation - is name, obj - is event-record;
 ///offset - request field for bigdata for getting data with offset (default: 0)
 ///limit  - request field for bigdata for getting data with limited amount (default: 40)
-VXGActivityController.prototype.showActivityList = function showActivityList ( rotoken, allcamtoken, apiGetActivityFunc , apiGetActivityWrongFunc, controlCallbackFunc, offset=0, limit=40, use_filter ) {
+VXGActivityController.prototype.showActivityList = function showActivityList ( rotoken, allcamtoken, apiGetActivityFunc , apiGetActivityWrongFunc, controlCallbackFunc, offset=0, limit=40, use_filter, use_time_filter) {
     this.clView.callbackFunc 	= controlCallbackFunc;
     this.activityFunc		= apiGetActivityFunc;
     this.wrongFunc 		= apiGetActivityWrongFunc;
@@ -684,7 +703,8 @@ VXGActivityController.prototype.showActivityList = function showActivityList ( r
 	this.clView.render(this);
 	this.clView.showWait(); //trick for fake request
     } else {
-        let f = !use_filter ? (window.skin&&window.skin.events_filter?window.skin.events_filter:"motion,sound,linecross,post_object_and_scene_detection,object_and_scene_detection,yolov4_detection") : window.skin.use_filter;
+        let f = !use_filter ? (window.skin&&window.skin.events_filter?window.skin.events_filter:"") : window.skin.use_filter;
+		let tf = !use_time_filter ? '' : window.skin.use_time_filter;
 	let params = {
 		roToken: rotoken,
 		allCamsToken: allcamtoken,
@@ -692,11 +712,13 @@ VXGActivityController.prototype.showActivityList = function showActivityList ( r
 		    token: allcamtoken,
 		    offset: offset,
 		    limit: limit,
-		    events: f,
+		    //events: f,
 		    include_meta: true,
 		    order_by: '-time',
 		}
 	};
+	if (f) params.requestParams.events = f;
+	if (tf) params.requestParams.end = tf;
 	this.clModel.getData( params, this.updateDataCB.bind(this), this.showWait.bind(this), apiGetActivityFunc, apiGetActivityWrongFunc);
     }
 }

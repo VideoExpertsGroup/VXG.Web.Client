@@ -123,6 +123,10 @@ display:none;
 min-height: 40px;
 }
 
+body.camerametaview .headerBlock .header-left .mainbackbtn{
+    display: block!important;
+}
+
 #metaDialog .modal-dialog{
     width: 90%;
     max-width: 900px;
@@ -142,6 +146,10 @@ height:0px;
 margin-bottom: 20px;
 }
 
+.metaTitle {
+    font-size: 18px;
+    font-weight: 600;
+}
 
 #metaDialog .metaImg{
 width:320px;

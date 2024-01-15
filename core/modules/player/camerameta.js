@@ -9,6 +9,7 @@ window.screens['camerameta'] = {
     'stablecss':[path+'scamerameta.css'],
     'js':[],
     'on_before_show':function(access_token, start_time_utc, end_time_utc){
+        this.wrapper.find('.sarea').html('<button class="vxgbutton" onclick_toscreen="back">Back</button>');
         this.do_not_update = this.from_back ? true : false;
         if (this.do_not_update) return defaultPromise();
         if (this.scroll_top!==undefined)
@@ -348,10 +349,13 @@ window.screens['camerametaview'] = {
             core.elements['header-center'].html('Camera '+name+': metadata');
         });
 
-        $(this.wrapper).find('.metaImg').attr('src',this.event.src.thumb.url);
+        var imgSrc = this.event.src.thumb && this.event.src.thumb.url ? this.event.src.thumb.url : "";
+
+        $(this.wrapper).find('.metaImg').attr('src',imgSrc);
+        $(this.wrapper).find('.metaTitle').empty();
+        if (!imgSrc) $(this.wrapper).find('.metaTitle').html("Meta data for event "+ this.event.src.name + ":");
         $(this.wrapper).find('.metaSvg').empty();
         $(this.wrapper).find('.metaText').empty();
-
 
         var visual = false;
         if (this.event.src.name === 'object_and_scene_detection' || this.event.src.name === "yolov4_detection")

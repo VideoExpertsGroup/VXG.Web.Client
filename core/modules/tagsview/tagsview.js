@@ -570,7 +570,7 @@ window.screens['tagsview'] = {
     		let filter = {};
     		filter.start = starttime_str;
     		filter.end = endtime_str;
-    		filter.motion = true;
+    		//filter.motion = true;
 
     		self.wrapper.currentFilter = filter;
     		core.elements['header-right'].find('.ncssbuttons .filterclip')[0].classList.add('vxgbutton-rounded');

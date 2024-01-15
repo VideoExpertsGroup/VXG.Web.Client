@@ -24,7 +24,7 @@ window.skin.color_of_min_curve = '#7BB247';
 
 // Filter for activity
 // motion - only motion event , motion,
-window.skin.events_filter = "motion";
+//window.skin.events_filter = "motion";
 
 window.skin.privacyPolicy = "#";
 window.skin.termsOfUse = "#";

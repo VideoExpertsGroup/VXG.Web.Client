@@ -47,10 +47,16 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 ul.activitylist {
 padding: 0 0 14px 0;
     margin-bottom: 0;
-    max-height: 200px;
+    max-height: 250px;
+    min-width: 400px;
     overflow-x: hidden;
     overflow-y: auto;
-    border-bottom: 1px solid #E6E6E6;
+    /*border-bottom: 1px solid #E6E6E6;*/
+}
+
+.custom-input-label {
+    text-align: left !important;
+    margin-bottom: 2px;
 }
 
 .filter-label {
@@ -106,4 +112,17 @@ padding: 0 0 14px 0;
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
+}
+
+.time-filter-cont {
+    width:25%;
+    display: flex;
+    align-items: flex-end;
+}
+
+.time-input-cont {
+    margin-right: 15px;
+}
+.time-filter-label {
+    margin-bottom: 3px;
 }

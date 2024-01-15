@@ -71,9 +71,10 @@ font-weight: 600;
     font-size: 12px;
 }
 
-.feed-element > .tometaview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > strong ,
-.feed-element > .toeventview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > strong {
-font-size: 12px;
+.feed-element > .tometaview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > .event-name ,
+.feed-element > .toeventview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > .event-name,
+.feed-element > .camerastatusdialog > .VXGActivityCardInfo > .VXGActivityCardInfoMain > .event-name {
+    font-size: 12px;
     top: 3px;
     position: absolute;
     right: 3px;
@@ -83,7 +84,12 @@ font-size: 12px;
     padding: 3px 8px;
     z-index: 1;
     font-weight: 400;
+    max-width: 135px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
+
 
 .feed-element > .tometaview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > div > .label
 {
@@ -91,7 +97,8 @@ font-size: 12px;
 }
 
 .feed-element > .tometaview > .VXGActivityCardInfo > .text-navy,
-.feed-element > .toeventview > .VXGActivityCardInfo > .text-navy {
+.feed-element > .toeventview > .VXGActivityCardInfo > .text-navy,
+.feed-element > .camerastatusdialog > .VXGActivityCardInfo > .text-navy {
     display: none;
 }
 
@@ -122,11 +129,12 @@ font-size: 12px;
 }
 
 .toeventview > .flex-grow-1 > .d-flex ,
-.tometaview > .flex-grow-1 > .d-flex  {
+.tometaview > .flex-grow-1 > .d-flex,
+.camerastatusdialog > .flex-grow-1 > .d-flex {
     display: block;
 }
 
-.toeventview, .tometaview {
+.toeventview, .tometaview, .camerastatusdialog {
     display: block;
     background-color: #ffffff; /*#f4f6fa;*/
     color: #000000;

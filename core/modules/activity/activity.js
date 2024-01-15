@@ -89,7 +89,7 @@ window.screens['activity'] = {
 		    let controlCbFunc 	= listActivityCB2;
 		    targetElement.setCameraArray(answer);
                     camera0.getToken().then(function(token){
-                        targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,40,true);
+                        targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,40,true, true);
                     });
 
 		}else {
@@ -147,6 +147,10 @@ window.screens['activity'] = {
 			var activityFilter = localStorage.getItem("activityFilter");
 			var savedFiltersStr = activityFilter == null ? window.skin.use_filter : activityFilter;
 			var savedFilters = savedFiltersStr.split(',');
+			var defaultFilters = "motion,object_and_scene_detection,post_object_and_scene_detection,network";
+			var customFiltersList = savedFilters.filter(f => !defaultFilters.includes(f) );
+			var customFilterString = "";
+			customFiltersList.forEach(c => { customFilterString += (customFilterString?', ':'')+c; });
 
             dialogs['mdialog'].activate(`
 				<h7>Select motion filter</h7>
@@ -173,33 +177,60 @@ window.screens['activity'] = {
 								<span class="checkmark"></span>		
 							</label>
 						</li>
+						<li>
+							<label class="filter-label custom-checkbox">
+								<span>Network</span>
+								<input type="checkbox" `+(savedFilters.indexOf('network')!==-1?'checked':'')+` name="network">
+								<span class="checkmark"></span>		
+							</label>
+						</li>
+						<li>
+							<p class="custom-input-label">Custom event list (seperated by commas)</p>
+							<input type="text" class="custom-filter-input" name="custom_filter_list" value="${customFilterString}">
+						</li>
 					</ul>
 				</div>
 				<div>
-					<button name="apply" class="vxgbutton-transparent" style="width:192px">Set</button>
+					<button name="apply" class="vxgbutton-transparent" style="width:100%">Set</button>
 				</div>`).then(function(r){
                 if (!r || r.button!='apply') return;
 				let f='';
-                for (let i in r.form){
-                    if (r.form[i]=='on') f += (f?',':'')+i;
-                }
+				let customFilterArr = r.form.custom_filter_list ? r.form.custom_filter_list.split(',') : [];
+				for (let c in customFilterArr) { f += (f?',':'')+customFilterArr[c].trim(); }
+                for (let i in r.form){ if (r.form[i]=='on') f += (f?',':'')+i; }
 				if (f.split(",").length != 3) $('#activityfilter-btn').addClass("filterset");
 				else $('#activityfilter-btn').removeClass("filterset");
 				localStorage.setItem("activityFilter", f);
-                window.skin.use_filter = f==''?'none':f;
+                window.skin.use_filter = f;
                 self.activate();
             });
-
         });
+
+		$("#set-time-filter").on("click", function() {
+			var endTime = $("#filter-time").val();
+			var utcTime = endTime ? new Date(endTime).toISOString() : '';
+			localStorage.setItem("activityTimeFilter", utcTime);
+			window.skin.use_time_filter = utcTime;
+			self.activate();
+		});
+
 //        alert('on_ready Test screen');
     },
 // Когда скрипт инициализируется первый раз (чтоб не выполнять лишнюю работу, возможно даже не нужную пользователю)
     'on_init':function(){
 		var activityFilter = localStorage.getItem("activityFilter");
-		window.skin.use_filter = activityFilter == null ? 'motion,object_and_scene_detection,post_object_and_scene_detection' : activityFilter;
+		window.skin.use_filter = activityFilter == null ? '' : activityFilter;
 
 		if (window.skin.use_filter.split(",").length != 3) $('#activityfilter-btn').addClass("filterset");
 		else $('#activityfilter-btn').removeClass("filterset");
+
+		var activityTimeFilter = localStorage.getItem("activityTimeFilter");
+		if (activityTimeFilter) {
+			var timeFilterDatetime = new Date(activityTimeFilter);
+			timeFilterDatetime.setMinutes(timeFilterDatetime.getMinutes() - timeFilterDatetime.getTimezoneOffset());
+			$('#filter-time').val(timeFilterDatetime.toISOString().slice(0,16));
+		}
+		window.skin.use_time_filter = activityTimeFilter == null ? '' : activityTimeFilter;
 
 //        alert('on_init Test screen');
         return defaultPromise();
