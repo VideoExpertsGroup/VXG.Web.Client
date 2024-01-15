@@ -881,7 +881,8 @@ class MUser{
         $firebase_user = $auth->getUser($uid);
         if (!$firebase_user->email) return false;
 // TODO: check email verification
-        if (MCore::$core->config['no_check_mail_auth']!=true && !$firebase_user->emailVerified)
+        if (isset(MCore::$core->config->no_check_mail_auth) &&
+         MCore::$core->config['no_check_mail_auth']!==true && !$firebase_user->emailVerified )            
             error(401, 'Email is not verified');
 
 // Либо читаем существующего пользователя, либо создаем пользователя с ролью "partner"

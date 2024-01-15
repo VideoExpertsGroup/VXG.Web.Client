@@ -107,7 +107,7 @@ CameraCloudEditControl = function(){
   <label for="devicePassword">Password&nbsp;</label>
   <input type="password" class="password form-control input500 url_password" autocomplete="new-password" name="password"><i class="showhidepass show-password"></i>
 </div>
-<div class="form-group options notincloud" style="display:none">
+<div class="form-group options notincloud notindvr" style="display:none">
     <label class="" for="url_path">Path&nbsp;</label>
     <input type="text" class="url_path form-control input500" value="">
 </div>
@@ -313,6 +313,7 @@ CameraCloudEditControl = function(){
         let macAddress = $(".mac-address-input").val();
         var pass = $(".password-input").val();
         var username = $(".username-input").val();
+        var path = $(".path-input").val();
         let data = $(this).find('form').serializeObject();
         let hiddenOpts = (self.id == "plugin-camera") ? $('#plugin-dropdown-options').serializeObject() : $('#dropdown-options').serializeObject();
         data = {...data, ...hiddenOpts};
@@ -323,6 +324,7 @@ CameraCloudEditControl = function(){
             data.password = pass;
             data.username = username;
             data.uplink = true;
+	    data.path = path;	
         }
         if (!data.name){
             core.flashInputBackgroundColor($(this).find('.name'));

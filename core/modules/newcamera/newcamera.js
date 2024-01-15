@@ -169,6 +169,7 @@ window.screens['newcamera'] = {
             self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add3').removeClass('add5').addClass('add4');
             $(".serial-number-input").val("");
             $(".username-input").val("");
+            $(".path-input").val("");
             $(".password-input").val("");
             $(".mac-address-input").val("");
         });

@@ -166,12 +166,9 @@ window.screens['reports'] = {
 	path+'VXGCameraList/VXGCameraList.css'
     ],
     'commoncss': [
-	'VXGActivity/VXGActivity.css',
-	'sdk/vxgwebsdk/bootstrap.min.css'
+	'VXGActivity/VXGActivity.css'
     ],
     'commonjs':[
-	'sdk/vxgwebsdk/popper.min.js',
-	'sdk/vxgwebsdk/bootstrap.min.js',
 	'VXGActivity/VXGActivity.js'
     ],
     'js': [

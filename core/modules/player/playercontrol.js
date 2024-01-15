@@ -35,7 +35,7 @@ window.controls['player'] = {
     'js':[],
     'css':[],
     'commoncss':['sdk/vxgwebsdk/video-js.min.css', 'sdk/vxgwebsdk/CloudSDK.min.css'],
-    'commonjs':[/*'sdk/moment.min.js','sdk/moment-timezone-with-data-2012-2022.min.js',*/'sdk/vxgwebsdk/popper.min.js','sdk/vxgwebsdk/video.min.js'/*,'sdk/videojs-http-streaming.js'*,'sdk/videojs-contrib-hls.js'*/,'sdk/vxgwebsdk/webrtc-adapter-latest.js','sdk/vxgwebsdk/CloudSDK.debug.js','sdk/vxgwebsdk/LocalPlayer.js'],
+    'commonjs':[/*'sdk/moment.min.js','sdk/moment-timezone-with-data-2012-2022.min.js','sdk/vxgwebsdk/popper.min.js'*/,'sdk/vxgwebsdk/video.min.js'/*,'sdk/videojs-http-streaming.js'*,'sdk/videojs-contrib-hls.js'*/,'sdk/vxgwebsdk/webrtc-adapter-latest.js','sdk/vxgwebsdk/CloudSDK.debug.js','sdk/vxgwebsdk/LocalPlayer.js'],
     'observedAttributes':function(){
         return ['access_token'];
     },

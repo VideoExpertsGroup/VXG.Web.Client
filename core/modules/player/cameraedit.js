@@ -105,9 +105,9 @@ CameraEditControl = function(){
   <label for="devicePassword">Password&nbsp;</label>
   <input type="password" class="password form-control input500 url_password" autocomplete="new-password" name="password"><i class="showhidepass show-password"></i>
 </div>
-<div class="form-group options notincloud notinuplink notindvr">
+<div class="form-group options notincloud notindvr">
     <label class="" for="url_path">Path&nbsp;</label>
-    <input type="text" class="url_path form-control input500" value="">
+    <input type="text" class="url_path " name="url_path" value="">
 </div>
 
 <div class="form-group notindvr">
@@ -365,11 +365,19 @@ CameraEditControl = function(){
             }
 
         }
+        else if (this.isUplinkCamera(this.url))
+        {
+            // Change path name in the URL if it is changed
+            var urlObject = new URL(this.url);
+            data.url = this.url;
+            data.url = data.url.replace(urlObject.pathname,"/uplink_camera/" + data.url_path)
+            //data.remove('path');
+            // ----------------------------------------------
+        }
 
         if (isCloud) data.url='';
-
         let p;
-        if (data.url && purl.host && (!data.lat || !data.lon))
+        if (data.url && purl && purl.host && (!data.lat || !data.lon))
             p = this.ipToLocation(purl.host);
         else
             p =  new Promise(function(resolve, reject){resolve({lat:data.lat,lon:data.lon});});
@@ -591,6 +599,10 @@ CameraEditControl = function(){
         this.defferedDispatchEvent(this.error_event);
         return r;
     }
+    this.isUplinkCamera = function(url){
+        // We may extend this function in the future
+        return url && url.includes("/uplink_camera/")
+    }
     this.onCameraLoaded = function(camera){
         let self = this;
         if (!camera) return this.onCameraLoadedFail();
@@ -611,9 +623,13 @@ CameraEditControl = function(){
                 $(self).find('.url_protocol').attr('disabled','disabled');
             }
 
-            if (bsrc.url && bsrc.url.includes("/uplink_camera/")) {
+            if ( self.isUplinkCamera(bsrc.url) ) {
                 $(self).find('.url_protocol').attr('disabled','disabled');
-                $(self).find('.url_protocol').append('<option value="uplink">Uplink Camera'); 
+                $(self).find('.url_protocol').append('<option value="uplink">Uplink Camera');
+            }
+
+            if (!bsrc.url && !$(self).find('.url_protocol [value="cloud"]').length) {
+                $(self).find('.url_protocol').append('<option value="cloud">Cloud camera');
             }
             //else
                 //$(self).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
@@ -627,7 +643,7 @@ CameraEditControl = function(){
             if (bsrc.url.substr(0,5)=='onvif') {
                 $(self).find('.url_protocol').val('onvif');
                 $(self).addClass('onvif');
-            } else if (bsrc.url.includes("/uplink_camera/")) {
+            } else if (self.isUplinkCamera(bsrc.url)) {
                 $(self).find('.url_protocol').val('uplink');
                 $(self).addClass('uplink');
             } else if (bsrc.url.includes("/dvr_camera/")) {
@@ -643,8 +659,25 @@ CameraEditControl = function(){
                 }
             }
 
-            $(self).find('[name="url"]').val(bsrc.url && !bsrc.url.includes("/uplink_camera/")? bsrc.url : '');
+            var url = bsrc.url
+            if (self.isUplinkCamera(bsrc.url))
+            {
+                url = ''; self.url = bsrc.url;
+
+                var url1 = new URL(bsrc.url);
+                if (url1)
+                {
+                    var modifiedUrl = url1.pathname.replace(new RegExp("^" + "/uplink_camera/"), "");
+                    $(self).find('[name="url_path"]').val(modifiedUrl);
+                }
+                $(self).find('[name="url"]').val(url);
+            }
+            else // Other cameras
+            {
+                $(self).find('[name="url"]').val(url);
             self.onUrlChange();
+            }
+
 
             self.createTimezonesList($(self).find('[name="tz"]'),bsrc.tz);
 
@@ -691,6 +724,7 @@ CameraEditControl = function(){
             } else {
                 $(".custom-plan").hide();
             }
+
 
             $(self).addClass('ready');
             self.hidewait();
@@ -828,7 +862,7 @@ CameraEditControl = function(){
         $(this).find('.url_protocol').val('onvif');
         //$(this).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
         $(this).find('.url_protocol').removeAttr('disabled');
-        $(this).removeClass('options').removeClass('location').removeClass('rtsp').removeClass('cloud').addClass('onvif');
+        $(this).removeClass('options').removeClass('location').removeClass('rtsp').removeClass('cloud').addClass('onvif').removeClass('uplink');
         $(this).find('.subscription-info').val('');
         $(this).find('.show-name').val('No Subscription Assigned');
         $('.custom-plan').hide();
@@ -864,6 +898,10 @@ CameraEditControl = function(){
 
             $("#groupsList").html(datalist);
         });
+
+        if ($('.url_protocol option[value="uplink"]'))  $('.url_protocol option[value="uplink"]').remove();
+        if ($('.url_protocol option[value="cloud"]'))  $('.url_protocol option[value="cloud"]').remove();
+
 
         vxg.api.cloudone.user.getPlans().then(function(r) {
             vxg.user.src.plans = JSON.parse(r.plans);
@@ -999,6 +1037,10 @@ CameraEditControl = function(){
     }
     this.onUrlPartChange = function(){
         var url = '';
+
+        if (this.isUplinkCamera(this.url))
+            return ;
+
         var prot = $(this).find('.url_protocol').children("option:selected").val();
         if (prot=='onvif')
             url='onvif://';

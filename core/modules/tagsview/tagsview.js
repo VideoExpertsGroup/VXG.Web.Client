@@ -16,14 +16,11 @@ window.screens['tagsview'] = {
     ],
     'stablecss':[path+'stagsview.css'],
     'commoncss':[
-	'sdk/vxgwebsdk/bootstrap.min.css',
 	'inspinia/css/plugins/clockpicker/clockpicker.css',
 	'inspinia/css/plugins/datepicker/datepicker3.css',
 	'VXGActivity/VXGActivity.css'
     ],
     'commonjs':[
-	'sdk/vxgwebsdk/popper.min.js',
-	'sdk/vxgwebsdk/bootstrap.min.js',
 	'inspinia/js/plugins/clockpicker/clockpicker.js',
 	'inspinia/js/plugins/datepicker/bootstrap-datepicker.js',
 	'VXGActivity/VXGActivity.js'

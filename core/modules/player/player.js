@@ -8,7 +8,7 @@ window.screens['player'] = {
     'css': [],
     'stablecss':[path+'player.css'],
     'commoncss':['sdk/vxgwebsdk/video-js.min.css', 'sdk/vxgwebsdk/CloudSDK.min.css'],
-    'commonjs':[/*'sdk/moment.min.js','sdk/moment-timezone-with-data-2012-2022.min.js',*/'sdk/vxgwebsdk/popper.min.js','sdk/vxgwebsdk/video.min.js'/*,'sdk/videojs-http-streaming.js','sdk/videojs-contrib-hls.js'*/,'sdk/vxgwebsdk/webrtc-adapter-latest.js','sdk/vxgwebsdk/CloudSDK.debug.js','sdk/vxgwebsdk/vxg_cloud_player.js'],
+    'commonjs':[/*'sdk/moment.min.js','sdk/moment-timezone-with-data-2012-2022.min.js',*'sdk/vxgwebsdk/popper.min.js'*/,'sdk/vxgwebsdk/video.min.js'/*,'sdk/videojs-http-streaming.js','sdk/videojs-contrib-hls.js'*/,'sdk/vxgwebsdk/webrtc-adapter-latest.js','sdk/vxgwebsdk/CloudSDK.debug.js','sdk/vxgwebsdk/vxg_cloud_player.js'],
 /*
     'get_args':function(){
         if (this.start_camtoken){

@@ -21,7 +21,7 @@ list($location,
      $serialnumber, $macAddress, $uplink, 
      $dvrName, $channel_number, $uuid, $isFirst, 
      $gatewayId, $max_num_cameras,
-     $gatewayCam, $gatewayUrl, $cameraIp) = 
+     $gatewayCam, $gatewayUrl, $cameraIp, $path) = 
     MCore::getInputParameters(['location'=>'',
                                'group'=>'',
                                'recording',
@@ -33,7 +33,7 @@ list($location,
                                'serialnumber'=>'','macAddress'=>'', 'uplink'=>'',
                                'dvrName'=>'','channel_number'=>'','uuid' =>'','isFirst'=>false,
                                'gatewayId'=>'','max_num_cameras'=>'',
-                               'gatewayCam' => false, 'gatewayUrl' => '', 'url_ip' => '']);
+                               'gatewayCam' => false, 'gatewayUrl' => '', 'url_ip' => '', 'path' => '']);
 
 $password = strval($password);
 $username = strval($username);
@@ -46,6 +46,14 @@ if ($uplink || $gatewayId) {
     $url = MCore::$core->config['camera_proxy_service'];
     if (!$url)
         error(500, 'Camera proxy service url not set.');
+
+    // Check if the first character is "/"
+    if (substr($path, 0, 1) === '/') {
+        // Remove the first character
+        $path = substr($path, 1);
+    }
+    // Other checking can be done here
+    $url .= $path;
 }
 
 $onvif_rtsp_port_fwd = $onvif_rtsp_port_fwd ? 0+ $onvif_rtsp_port_fwd : 0;
