@@ -423,7 +423,7 @@ window.screens['cameras'] = {
         this.camera_list_promise = vxg.cameras.getFullCameraList(500,this.last_offset).then(function(fullList){
             self.camera_list_promise=undefined;
             var gatewaysList = fullList.filter(cam => {return cam.src.meta && cam.src.meta.gateway});
-            var list = fullList.filter(cam => {return cam.src.meta && cam.src.meta.gateway == undefined});
+            var list = fullList.filter(cam => {if (cam.src.meta) return cam.src.meta.gateway == undefined; else return cam;});
             let h = loadedCams == "" ? "" : loadedCams;
             self.last_offset += list.length;
             let count = 1;
