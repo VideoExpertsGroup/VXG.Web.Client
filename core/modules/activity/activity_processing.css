@@ -1,0 +1,255 @@
+body {
+    background-color: rgb(244, 246, 250) !important;
+}
+
+.header-border {
+    width: 100%;
+    height: 25px;
+    background: #4e4e4e;
+    border-bottom: 10px solid var(--main-color);
+}
+
+.header-info-cont {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-info {
+    width: 32%;
+    margin: 3% 1% 1%;
+    font-weight: 600;
+    font-size: 20px;
+    text-align: center;
+}
+
+.header-info span{
+    display: block;
+    width: 100%;
+    color: #161616;
+}
+
+.image-info-cont, .image-title-cont {
+    display: flex;
+    margin-top: 10px;
+}
+
+.image-section, .image-title {
+    width:32%;
+    margin-left: 1%;
+}
+
+.image-tags {
+    display: flex;
+    width: 100%;
+}
+
+.data-cont {
+    width: 32%;
+    margin-left: 1%;
+}
+
+.tags-btn-cont {
+    display: flex;
+}
+
+.event-thumbnail {
+    width: 100%;
+}
+
+.image-and-tags {
+    width: 60%;
+    -webkit-flex: auto;
+    flex: auto;
+    margin-right: 20px;
+    max-width: 1228px;
+}
+
+.image-wrapper {
+    position: relative;
+    width: auto;
+    float: left;
+}
+
+.tags-label {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.metaTags{
+    clear: both;
+    margin-bottom: 10px;
+}
+
+.metaTags a {
+    color: var(--main-color);
+    cursor: pointer;
+}
+
+.event-info {
+    display: flex;
+}
+
+.event-label {
+    margin: 0;
+    width: 30%;
+}
+
+.metaSvg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.metaImg {
+    max-height: calc(100vh - 225px);
+    min-height: 276px;
+    object-fit: contain;
+max-width: 100%;
+}
+
+.meta {
+    width: 1px;
+    overflow: hidden;
+    height: 1px;
+    position: absolute;
+}
+
+.image-title {
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.event-info-cont {
+    width: 70%;
+}
+
+.processing-ctrl-cont {
+    display: flex;
+    margin: 1%;
+    width: 32%;
+    justify-content: space-between;
+}
+
+.processing-info-cont {
+    display: flex;
+}
+
+.processing-cont {
+    width: 32%;
+    margin-top: 15px;
+}
+
+.status-btn-cont {
+    display: flex;
+    justify-content: space-between;
+}
+
+.status-input-cont {
+    margin-right: 1%;
+    width: 30%;
+}
+
+.description-title {
+    margin: 0 0 3px;
+}
+
+.show-btn {
+    margin: 15px 0;
+}
+
+.button-container {
+    width: 32%;
+}
+
+.raw-data-cont {
+    margin: 1%;
+    padding: 5px;
+    background: white;
+    width: 97%;
+    max-height: 150px;
+    overflow-y: auto;
+    border-bottom: 7px solid var(--main-color);
+    color: #313131;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.event-description {
+    border-bottom: 7px solid var(--main-color);
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.car-info {
+    margin-top: 3px;
+}
+
+/* The container */
+.status-input  {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-top: 3px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: normal;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Hide the browser's default checkbox */
+  .status-input input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  /* Create a custom checkbox */
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+  }
+  
+  /* On mouse-over, add a grey background color */
+  .status-input:hover input ~ .checkmark {
+    background-color: #ccc;
+  }
+  
+  /* When the checkbox is checked, add a blue background */
+  .status-input input:checked ~ .checkmark {
+    background-color: var(--main-color);;
+  }
+  
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the checkmark when checked */
+  .status-input input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .status-input .checkmark:after {
+    left: 7px;
+    top: 3px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }

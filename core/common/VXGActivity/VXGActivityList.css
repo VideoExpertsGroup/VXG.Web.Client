@@ -6,8 +6,11 @@
     display: flex;
 }
 
-.toeventview, .tometaview, .camerastatusdialog{
+/*.toeventview, .tometaview, .camerastatusdialog{
     display: flex;
+}*/
+.event-ele {
+  display: flex;
 }
 
 .feed-activity-list {

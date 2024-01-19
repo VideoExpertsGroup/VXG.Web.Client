@@ -147,7 +147,7 @@ window.screens['activity'] = {
 			var activityFilter = localStorage.getItem("activityFilter");
 			var savedFiltersStr = activityFilter == null ? window.skin.use_filter : activityFilter;
 			var savedFilters = savedFiltersStr.split(',');
-			var defaultFilters = "motion,object_and_scene_detection,post_object_and_scene_detection,network";
+			var defaultFilters = "motion,object_and_scene_detection,post_object_and_scene_detection,network,vehicle_stopped_detection,plate_recognition,crowd_detection";
 			var customFiltersList = savedFilters.filter(f => !defaultFilters.includes(f) );
 			var customFilterString = "";
 			customFiltersList.forEach(c => { customFilterString += (customFilterString?', ':'')+c; });
@@ -181,6 +181,27 @@ window.screens['activity'] = {
 							<label class="filter-label custom-checkbox">
 								<span>Network</span>
 								<input type="checkbox" `+(savedFilters.indexOf('network')!==-1?'checked':'')+` name="network">
+								<span class="checkmark"></span>		
+							</label>
+						</li>
+						<li>
+							<label class="filter-label custom-checkbox">
+								<span>Vehicle Stopped</span>
+								<input type="checkbox" `+(savedFilters.indexOf('vehicle_stopped_detection')!==-1?'checked':'')+` name="vehicle_stopped_detection">
+								<span class="checkmark"></span>		
+							</label>
+						</li>
+						<li>
+							<label class="filter-label custom-checkbox">
+								<span>LPR</span>
+								<input type="checkbox" `+(savedFilters.indexOf('plate_recognition')!==-1?'checked':'')+` name="plate_recognition">
+								<span class="checkmark"></span>		
+							</label>
+						</li>
+						<li>
+							<label class="filter-label custom-checkbox">
+								<span>Crowd</span>
+								<input type="checkbox" `+(savedFilters.indexOf('crowd_detection')!==-1?'checked':'')+` name="crowd_detection">
 								<span class="checkmark"></span>		
 							</label>
 						</li>

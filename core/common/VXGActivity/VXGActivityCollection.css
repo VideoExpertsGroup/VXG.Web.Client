@@ -71,7 +71,7 @@ font-weight: 600;
     font-size: 12px;
 }
 
-.feed-element > .tometaview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > .event-name ,
+/*.feed-element > .tometaview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > .event-name ,
 .feed-element > .toeventview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > .event-name,
 .feed-element > .camerastatusdialog > .VXGActivityCardInfo > .VXGActivityCardInfoMain > .event-name {
     font-size: 12px;
@@ -99,6 +99,44 @@ font-weight: 600;
 .feed-element > .tometaview > .VXGActivityCardInfo > .text-navy,
 .feed-element > .toeventview > .VXGActivityCardInfo > .text-navy,
 .feed-element > .camerastatusdialog > .VXGActivityCardInfo > .text-navy {
+    display: none;
+}*/
+.feed-element > .event-ele > .VXGActivityCardInfo > .VXGActivityCardInfoMain > .event-name {
+    font-size: 12px;
+    top: 3px;
+    position: absolute;
+    right: 3px;
+    color: white;
+    border-radius: 10px;
+    background-color: var(--main-color);
+    padding: 3px 8px;
+    z-index: 1;
+    font-weight: 400;
+    max-width: 135px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.event-name.new {
+    background-color: #258cff !important;
+}
+
+.event-name.in_progress {
+    background-color: #e3bd2c !important; 
+}
+
+.event-name.completed {
+    background-color: #7BB247 !important;
+}
+
+
+.feed-element > .tometaview > .VXGActivityCardInfo > .VXGActivityCardInfoMain > div > .label
+{
+    display: block;    
+}
+
+.feed-element > .event-ele > .VXGActivityCardInfo > .text-navy {
     display: none;
 }
 
@@ -128,7 +166,17 @@ font-weight: 600;
     z-index: 1;
 }
 
-.toeventview > .flex-grow-1 > .d-flex ,
+.event-ele > .flex-grow-1 > .d-flex {
+    display: block;
+}
+
+.event-ele {
+    display: block;
+    background-color: #ffffff; /*#f4f6fa;*/
+    color: #000000;
+}
+
+/*.toeventview > .flex-grow-1 > .d-flex ,
 .tometaview > .flex-grow-1 > .d-flex,
 .camerastatusdialog > .flex-grow-1 > .d-flex {
     display: block;
@@ -136,6 +184,6 @@ font-weight: 600;
 
 .toeventview, .tometaview, .camerastatusdialog {
     display: block;
-    background-color: #ffffff; /*#f4f6fa;*/
+    background-color: #ffffff; //#f4f6fa;
     color: #000000;
-}
+}*/

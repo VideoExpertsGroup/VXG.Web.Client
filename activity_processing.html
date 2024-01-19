@@ -1,0 +1,124 @@
+<html> 
+<head>
+    <title>Event Processing</title>
+    <link rel="stylesheet" type="text/css" href="core/modules/activity/activity_processing.css" />
+    <link rel="stylesheet" type="text/css" href="core/core.css" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link rel="stylesheet" href="core/common/icons/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="skin/colors.css" />
+
+    <script src="core/jquery-3.5.1.js"></script>
+	<script src="core/jquery-ui.js"></script>
+    <script src="core/modules/activity/activity_processing.js"></script>
+    <!-- <script src="core/modules/player/camerameta.js"></script> -->
+    <script src="core/vxg_cloud_api.js"></script>
+    <script src="core/vxg_cloudone_api.js"></script>
+    <script src="core/vxg_cloud.js"></script>
+    <script src="core/vxg_cloudone.js"></script>
+    <script src="core/core.js"></script>
+    <link rel="stylesheet" type="text/css" href="core/common/sdk/vxgwebsdk/range-slider.min.css">
+    <link rel="stylesheet" type="text/css" href="core/common/sdk/vxgwebsdk/video-js.min.css">
+    <link rel="stylesheet" type="text/css" href="core/common/sdk/vxgwebsdk/CloudSDK.min.css">
+    <script type="text/javascript" src="core/common/sdk/vxgwebsdk/x2js.min.js"></script>
+    <script type="text/javascript" src="core/common/sdk/vxgwebsdk/gl-matrix-min.js"></script>
+    <script type="text/javascript" src="core/common/sdk/vxgwebsdk/range-slider.min.js"></script>
+    <script type="text/javascript" src="core/common/sdk/vxgwebsdk/moment.min.js"></script>
+    <script type="text/javascript" src="core/common/sdk/vxgwebsdk/moment-timezone-with-data-1970-2030.min.js"></script>
+    <script type="text/javascript" src="core/common/sdk/vxgwebsdk/vxg_cloud_player.js"></script>
+    <script type="text/javascript" src="core/common/sdk/vxgwebsdk/video.min.js"></script>
+    <script type="text/javascript" src="core/common/sdk/vxgwebsdk/webrtc-adapter-latest.js"></script>
+    <script type="text/javascript" src="core/common/sdk/vxgwebsdk/CloudSDK.min.js"></script>
+    <script type="text/javascript" src="core/common/sdk/vxgwebsdk/LocalPlayer.js"></script>
+
+
+</head>
+<body>
+    <div class="header-border"></div>
+    <!-- <div class="header-info-cont"> -->
+        <!-- <p class="header-info event-type">Event Type <span id="event-type"></span></p> -->
+        <!-- <p class="header-info event-status">Event Status <span id="event-type"> New </span></p> -->
+    <!-- </div> -->
+    <div class="image-title-cont">
+        <p class="image-title">Event Snapshot</p>
+        <p class="image-title">Event Playback</p>
+        <p class="image-title">Camera Live</p>
+    </div>
+    <div class="image-info-cont">
+        <div class="image-section event-thumbnail-cont">
+            <div class="image-wrapper">      
+                <div class="metaSvg" id="metaSvg1"></div>     
+                <div class="metaTitle"></div>       
+                <img class="metaImg event-thumbnail" src="">    
+            </div>
+        </div>
+        <div class="image-section event-playback-cont">
+            <video width="100%" controls id="event-video">
+            </video>
+        </div>
+        <div class="image-section video-live-cont">
+            <div id="live-player"></div>
+        </div>
+    </div>
+    <div class="image-tags">
+        <div class="data-cont">
+            <div class="tags-btn-cont">
+                <div class="tags-cont">
+                    <p class="tags-label">Event Tags:</p>
+                    <div class="metaTags"></div>  
+                    <div class="meta" style="display: none;">    
+                        <textarea readonly class="metaText"></textarea>  
+                    </div>
+                </div>
+                <button class="vxgbutton processing-btn show-btn">Toggle Raw Data</button>
+            </div>    
+            <div class="raw-data-cont" style="display: none">
+                <pre class="raw-data"></pre>
+            </div>
+        </div>
+        <div class="processing-ctrl-cont">
+            <div class="event-info-cont">
+                <div class="event-info">
+                    <p class="event-label">Time:</p>
+                    <span class="event-time"></span>
+                </div>
+                <div class="event-info">
+                    <p class="event-label">Camera: </p>
+                    <span class="event-camera"></span>
+                </div>
+                <div class="event-info">
+                    <p class="event-label">Location:</p>
+                    <span class="event-loc"></span>
+                </div>
+                <div class="event-info">
+                    <p class="event-label">Type:</p>
+                    <span class="event-type"></span>
+                </div>
+                <div class="event-info">
+                    <p class="event-label">Status:</p>
+                    <span class="event-status"></span>
+                </div>
+            </div>
+            <button class="vxgbutton processing-btn start-btn" disabled>Start Processing</button>
+        </div>
+        <div class="processing-cont" style="display:none">
+            <div class="status-btn-cont">
+                <div class="status-input-cont">
+                    <label class="status-input">True
+                        <input type="radio" name="event-status">
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="status-input">False
+                        <input type="radio" name="event-status">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <button class="vxgbutton processing-btn end-btn">Complete Event Processing</button>
+            </div>
+            <div class="description-cont">
+                <p class="description-title">Description:</p>
+                <textarea class="event-description" rows="7" ></textarea>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

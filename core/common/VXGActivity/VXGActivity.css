@@ -157,13 +157,21 @@ body .VXGActivityMore {
     grid-column-start: 1;
 }
 
-.toeventview .event-info,
+/*.toeventview .event-info,
 .tometaview .event-info,
 .camerastatusdialog .event-info{
     padding-right: 10px
 }
 
 .toeventview, .tometaview, .camerastatusdialog{
+    cursor:pointer;
+}*/
+
+.event-ele .event-info {
+    padding-right: 10px;
+}
+
+.event-ele{
     cursor:pointer;
 }
 

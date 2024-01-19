@@ -239,6 +239,12 @@ VXGActivityView.prototype.ActivitiesList_resolve_name = function ActivitiesList_
 	    name="Line cross";break;
 	case "network":
 		name="Network";break;
+	case "vehicle_stopped_detection":
+		name="Vehicle Stopped";break;
+	case "crowd_detection":
+		name="Crowd";break;
+	case "plate_recognition":
+		name="LPR";break;
 	default:
 	    name=event_name;break;
     }
@@ -393,6 +399,7 @@ VXGActivityView.prototype.objByCamid = function objByCamid ( camid ) {
 VXGActivityView.prototype.render = function render(controller, params, VXGActivitydata) {
     this.more.classList.remove('spinner');
     let activitiesContainer = this.element.getElementsByClassName('feed-activity-list')[0]; 
+	let isActivitiesPage = $(this.element).hasClass("activity_activitylist") ? true : false;
 
     var offset = 0;
     var limit  = 40;
@@ -461,29 +468,42 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 		    }
 		}
 	    }
-	    let meta;
-	    let dclass=""; /* "d-flex ";*/
-	    let addon='';
-	    
-        if (this.name == "network") {
-			dclass += "camerastatusdialog";
-			addon = 'camid="'+this.camid+'" time="'+this.time+'Z" status="'+ (this.online ? "online" : "offline") +'"';
-			meta = '<span class="detected-label empty">&nbsp;</span>';
-		} else if (this.name == "motion") {
-		dclass += "toeventview";
-		addon = 'camid="'+this.camid+'" time="'+this.time+'Z" eventname="'+ this.name +'"';
-		meta = '<span class="detected-label empty">&nbsp;</span>';
-	    } else {
-			//meta = '<span class="detected-label">'+ self.ActivitiesList_get_meta(this, additional_search) + '&nbsp;</span>';
-			dclass += "tometaview";
-			addon = 'img_url="'+ ((this.thumb && this.thumb.url) ? this.thumb.url : '') + '" ai_type="' + this.name + '" event_id="'+this.id+'" token="'+ self.roToken +'" meta="'+btoa(JSON.stringify(tags))+'" camid="'+this.camid+'" time="' + this.time + 'Z"' ;		
-		} 
 
 	    var cameraInfo = '';
 	    let camera = self.objByCamid(this.camid);
 	    if (camera != null) {
 		cameraInfo = '<span class="camera-name"><camfield field="name" access_token="'+camera.camera_id+'"></camfield></span>';
 	    }
+
+		let dclass = "event-ele ";
+		let addon = "";
+		if (isActivitiesPage) {
+	    	dclass+=" event-processing ";
+			addon = `
+			img_url="${((this.thumb && this.thumb.url) ? this.thumb.url : '')}" 
+			event_name="${this.name}"
+			event_id="${this.id}" 
+			display_name="${self.ActivitiesList_resolve_name(this.name)}" 
+			token="${(camera ? camera.token : null)}" 
+			meta="${btoa(JSON.stringify(tags, null, 2))}" 
+			camera_name="${(camera ? camera.src.name : null)}" 
+			location="${(camera && camera.src.meta ? camera.src.meta.location : null)}"
+			time="${this.time}Z" 
+			filemeta="${((this.filemeta && this.filemeta.download && this.filemeta.download.url ? this.filemeta.download.url : ''))}"
+			`;
+		} else {
+			if (this.name == "motion") {
+				dclass += "toeventview";
+				addon = 'camid="'+this.camid+'" time="'+this.time+'Z" eventname="'+ this.name +'"';
+			} else {
+				dclass += "tometaview";
+				addon = 'img_url="'+ ((this.thumb && this.thumb.url) ? this.thumb.url : '') + '" ai_type="' + this.name + '" event_id="'+this.id+'" token="'+ self.roToken +'" meta="'+btoa(JSON.stringify(tags))+'" camid="'+this.camid+'" time="' + this.time + 'Z"' ;		
+			}
+		}
+
+		// get event status for class and set colour accordingly, hard coding as random for now
+		var eventStatuses = ["new", "in_progress", "completed"];
+		var statusClass = eventStatuses[0];
 
 		var thumb_src = !this.thumb || !this.thumb.url ? "" : this.thumb.url;
 	    
@@ -501,7 +521,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 //	    +	'					<div>' + meta + '</div>' 	    
 	    +	'					<small class="text-muted">' + timeString + '</small>' 
 	    +	'				</div>'
-	    +	'				<div class="event-name">' 
+	    +	'				<div class="event-name ' + statusClass + '">' 
 		+	'					<span>' + self.ActivitiesList_resolve_name(this.name)  + '</span>'
 		+	'				</div>' 
 	    +	'			</div>' 
@@ -525,7 +545,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	    //}
 	});
 
-	$('.camerastatusdialog').on("click", function() {
+	/*$('.camerastatusdialog').on("click", function() {
 		var time = this.getAttribute('time');
 		var status = this.getAttribute('status');
 		dialogs['mdialog'].activate(`
@@ -535,7 +555,27 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 				</div>`).then(function(r){
                 if (!r || r.button!='apply') return;
             });
-	})
+	})*/
+
+	$('.event-processing').on("click", function() {
+
+		window.event_processing = window.event_processing || {};
+		window.event_processing.thumb_url = $(this).attr("img_url");
+		window.event_processing.camera_name = $(this).attr("camera_name");
+		window.event_processing.token = $(this).attr("token");
+		window.event_processing.meta = $(this).attr("meta");
+		window.event_processing.filemeta_download = $(this).attr("filemeta");
+		window.event_processing.event_id = $(this).attr("event_id");
+		window.event_processing.event_name = $(this).attr("event_name");
+		window.event_processing.display_name = $(this).attr("display_name");
+		window.event_processing.time = $(this).attr("time");
+		window.event_processing.location = $(this).attr("location");
+
+		window.event_processing.metascreen = window.screens['camerametaview'];
+
+		var url = window.location.origin + "/activity_processing.html";
+		window.open(url, '_blank').focus();
+	});
 
 	if (VXGActivitydata !== undefined && VXGActivitydata.length == limit) {
 		$(this.more).addClass('visible');
@@ -713,6 +753,7 @@ VXGActivityController.prototype.showActivityList = function showActivityList ( r
 		    offset: offset,
 		    limit: limit,
 		    //events: f,
+			include_filemeta_download: true,
 		    include_meta: true,
 		    order_by: '-time',
 		}
