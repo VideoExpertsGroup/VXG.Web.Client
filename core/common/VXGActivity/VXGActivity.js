@@ -251,6 +251,21 @@ VXGActivityView.prototype.ActivitiesList_resolve_name = function ActivitiesList_
     return name;
 }
 
+VXGActivityView.prototype.ActivitiesList_resolve_status = function ActivitiesList_resolve_status(event_status){
+	var status = "";
+	switch(event_status) {
+	case "not_handled":
+		status="New";break;
+	case "in_progress":
+		status="In Progress";break;
+	case "processed":
+		status="Completed";break;
+	default:
+		status=event_status;break;
+	}
+	return status;
+}
+
 VXGActivityView.prototype.ActivitiesList_get_meta = function ActivitiesList_get_meta(event, additional_search){
     if (!event.hasOwnProperty('meta'))
 	return "";
@@ -453,15 +468,16 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 
 	    if (this.meta != null) {
 		let a=[];
+		var skipMetaList = ["description", "process", "total", "start_time", "end_time", "ip_address", "user_id", "result"]
 		for (var prop in this.meta){
-		    if (! (prop == this.name || this.meta[prop] === "" || prop === "total")){
+		    if (! (prop == this.name || this.meta[prop] === "" || skipMetaList.includes(prop))){
 			a.push({a:prop,v:this.meta[prop]});
 		    }
 		}
 		a = a.sort(function(a, b){return parseInt(b.v)-parseInt(a.v)});
 		for (var prop in a) {
 // Exclude Groop ID , meta and ai_engine
-		    if (! (a[prop].a == this.name || a[prop].v === "" || a[prop].a === "total")){
+		    if (! (a[prop].a == this.name || a[prop].v === "" || a[prop].a === "total" || skipMetaList.includes(prop))){
 			let v = a[prop].v;
 			objects += (objects?", ":"")+a[prop].a+ (parseInt(v)?"&nbsp;("+v+")":"");
 			tags[a[prop].a]=v;
@@ -475,6 +491,9 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 		cameraInfo = '<span class="camera-name"><camfield field="name" access_token="'+camera.camera_id+'"></camfield></span>';
 	    }
 
+		var eventStatus = this.meta && this.meta.process ? this.meta.process : "no_status";
+		var sendMeta = this.meta ? this.meta : {};
+
 		let dclass = "event-ele ";
 		let addon = "";
 		if (isActivitiesPage) {
@@ -483,9 +502,11 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 			img_url="${((this.thumb && this.thumb.url) ? this.thumb.url : '')}" 
 			event_name="${this.name}"
 			event_id="${this.id}" 
+			event_status="${self.ActivitiesList_resolve_status(eventStatus)}"
 			display_name="${self.ActivitiesList_resolve_name(this.name)}" 
 			token="${(camera ? camera.token : null)}" 
-			meta="${btoa(JSON.stringify(tags, null, 2))}" 
+			tags="${btoa(JSON.stringify(tags, null, 2))}" 
+			meta="${btoa(JSON.stringify(sendMeta, null, 2))}" 
 			camera_name="${(camera ? camera.src.name : null)}" 
 			location="${(camera && camera.src.meta ? camera.src.meta.location : null)}"
 			time="${this.time}Z" 
@@ -500,10 +521,6 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 				addon = 'img_url="'+ ((this.thumb && this.thumb.url) ? this.thumb.url : '') + '" ai_type="' + this.name + '" event_id="'+this.id+'" token="'+ self.roToken +'" meta="'+btoa(JSON.stringify(tags))+'" camid="'+this.camid+'" time="' + this.time + 'Z"' ;		
 			}
 		}
-
-		// get event status for class and set colour accordingly, hard coding as random for now
-		var eventStatuses = ["new", "in_progress", "completed"];
-		var statusClass = eventStatuses[0];
 
 		var thumb_src = !this.thumb || !this.thumb.url ? "" : this.thumb.url;
 	    
@@ -521,7 +538,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 //	    +	'					<div>' + meta + '</div>' 	    
 	    +	'					<small class="text-muted">' + timeString + '</small>' 
 	    +	'				</div>'
-	    +	'				<div class="event-name ' + statusClass + '">' 
+	    +	'				<div class="event-name ' + eventStatus + '">' 
 		+	'					<span>' + self.ActivitiesList_resolve_name(this.name)  + '</span>'
 		+	'				</div>' 
 	    +	'			</div>' 
@@ -545,18 +562,6 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	    //}
 	});
 
-	/*$('.camerastatusdialog').on("click", function() {
-		var time = this.getAttribute('time');
-		var status = this.getAttribute('status');
-		dialogs['mdialog'].activate(`
-				<p style="font-size: 15px">At the time of this event (${time}), this camera was <b>${status}</b>.</p>
-				<div>
-					<button name="apply" class="vxgbutton-transparent btn-full-width">Exit</button>
-				</div>`).then(function(r){
-                if (!r || r.button!='apply') return;
-            });
-	})*/
-
 	$('.event-processing').on("click", function() {
 
 		window.event_processing = window.event_processing || {};
@@ -564,12 +569,16 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 		window.event_processing.camera_name = $(this).attr("camera_name");
 		window.event_processing.token = $(this).attr("token");
 		window.event_processing.meta = $(this).attr("meta");
+		window.event_processing.tags = $(this).attr("tags");
 		window.event_processing.filemeta_download = $(this).attr("filemeta");
 		window.event_processing.event_id = $(this).attr("event_id");
+		window.event_processing.event_status = $(this).attr("event_status");
 		window.event_processing.event_name = $(this).attr("event_name");
 		window.event_processing.display_name = $(this).attr("display_name");
 		window.event_processing.time = $(this).attr("time");
 		window.event_processing.location = $(this).attr("location");
+
+		window.event_processing.user_email = vxg.user.src.email.replaceAll("@", "_AT_").replaceAll(".", "_DOT_");
 
 		window.event_processing.metascreen = window.screens['camerametaview'];
 

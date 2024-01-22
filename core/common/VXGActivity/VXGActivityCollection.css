@@ -118,7 +118,7 @@ font-weight: 600;
     white-space: nowrap;
 }
 
-.event-name.new {
+.event-name.not_handled, .event-name.no_status {
     background-color: #258cff !important;
 }
 
@@ -126,7 +126,7 @@ font-weight: 600;
     background-color: #e3bd2c !important; 
 }
 
-.event-name.completed {
+.event-name.processed {
     background-color: #7BB247 !important;
 }
 

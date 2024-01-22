@@ -52,6 +52,21 @@ body {
     display: flex;
 }
 
+.btn-cont {
+    display: flex;
+    flex-direction: column;
+}
+
+.save-btn {
+    margin-top: 10px;
+}
+
+.save-btn:hover {
+    background-color: var(--main-color);
+    color: white;
+    cursor: pointer;
+}
+
 .event-thumbnail {
     width: 100%;
 }

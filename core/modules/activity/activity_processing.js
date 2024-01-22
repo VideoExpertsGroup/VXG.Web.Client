@@ -6,22 +6,32 @@ $( document ).ready(function() {
     var location = activity_window.event_processing.location;
     var token = activity_window.event_processing.token;    
     var filemeta_download = activity_window.event_processing.filemeta_download;
+    var tags = activity_window.event_processing.tags ? JSON.parse(atob(activity_window.event_processing.tags)) : null;
     var meta = activity_window.event_processing.meta ? JSON.parse(atob(activity_window.event_processing.meta)) : null;
     var eventId = activity_window.event_processing.event_id;
     var eventName = activity_window.event_processing.event_name;
     var eventDisplayName = activity_window.event_processing.display_name;
     var eventTime = activity_window.event_processing.time;
-    var eventStatus = "New";
+    var eventStatus = activity_window.event_processing.event_status;
+
+    var userEmail = activity_window.event_processing.user_email;
 
     $(".event-time").html(eventTime);
     $(".event-camera").html(cameraName);
     $(".event-loc").html(location);
     $(".event-type").html(eventDisplayName);
-    $(".event-status").html(eventStatus);
+    $(".event-status").html(eventStatus == "no_status" ? "New" : eventStatus);
 
     $(".event-thumbnail").attr("src", thumburl);
     $(".raw-data").text(atob(activity_window.event_processing.meta));
 
+    if (eventStatus == "In Progress" || eventStatus == "Completed") {
+        if (meta.result == "true") $("#check-true").attr("checked", true);
+        if (meta.result == "false") $("#check-false").attr("checked", true);
+        if (meta.description) $(".event-description").val(meta.description);
+        $('.processing-cont').show();
+    }
+    
     getEventVideo(token, eventTime).then(function(ret) {
         var videoSources = "";
         ret.objects.forEach(video => {
@@ -56,15 +66,15 @@ $( document ).ready(function() {
         if (filemeta_download) {
             getFileMeta(filemeta_download).then(function(filemeta) { 
                 $('.metaText').val(JSON.stringify(filemeta,'','  '));
-                createMetaList(meta, eventName, true);   
+                createMetaList(tags, eventName, true);   
             }, function(err) {
                 console.log(err.responseText);
             })
         } else {
-            createMetaList(meta, eventName, false);   
+            createMetaList(tags, eventName, false);   
         }    
     } else {
-        createMetaList(meta, eventName, false); 
+        createMetaList(tags, eventName, false); 
     }
 
     window.playback_player = new CloudPlayerSDK('live-player', {
@@ -78,18 +88,155 @@ $( document ).ready(function() {
 	playback_player.setSource(token);
 
     $('.start-btn').click(function() {
-        $('.processing-cont').show();
+        // change processing status to in_progress
+        $.getJSON("https://api.ipify.org?format=json",
+            function (data) {
+                var updateMetaFunctions = [];
+                if (eventStatus == "no_status") {
+                    updateMetaFunctions.push(createMetaTag(eventId, token, {"tag": "process", "data": "in_progress"}));
+                } else {
+                    updateMetaFunctions.push(updateMetaTag(eventId, token, "process", {"data": "in_progress"}));
+                    updateMetaFunctions.push(removeMetaTag(eventId, token, "status_not_handled"));
+                }
+        
+                updateMetaFunctions.push(createMetaTag(eventId, token, {"tag": "status_in_progress", "data": ""}));
+                updateMetaFunctions.push(createMetaTag(eventId, token, {"tag": "user_id", "data": userEmail}));
+                updateMetaFunctions.push(createMetaTag(eventId, token, {"tag": "user_"+userEmail, "data": ""}));
+                updateMetaFunctions.push(createMetaTag(eventId, token, {"tag": "ip_address", "data": data.ip}));
+                var start = new Date();
+                updateMetaFunctions.push(createMetaTag(eventId, token, {"tag": "start_time", "data": start.toISOString()}));
+        
+                Promise.all(updateMetaFunctions).then(function() {
+                    $('.processing-cont').show();
+                }, function(err) {
+                    alert("Error occured while updating event: " + err.responseText);
+                });
+            })
     });
 
     $('.end-btn').click(function() {
-        // send processing information
-        window.close();
+        var updateMetaFunctions = [];
+
+        var alarmStatus = $('input[name="alarm-status"]:checked').val();
+        var description = $('.event-description').val();
+
+        if (alarmStatus) {
+            updateMetaFunctions.push(checkAndSaveTag(eventId, token, "result", meta.result, alarmStatus));
+            var resultSearch = alarmStatus === "true" ? "result_true" : "result_false";
+            if (resultSearch === "result_true" && meta.result_false === "") updateMetaFunctions.push(removeMetaTag(eventId, token, "result_false"));
+            if (resultSearch === "result_false" && meta.result_true === "") updateMetaFunctions.push(removeMetaTag(eventId, token, "result_true"));
+
+            if (meta[resultSearch] === undefined) updateMetaFunctions.push(createMetaTag(eventId, token, {"tag": resultSearch, "data": ""}));
+        }
+        if (description) updateMetaFunctions.push(checkAndSaveTag(eventId, token, "description", meta.description, description));
+
+        updateMetaFunctions.push(updateMetaTag(eventId, token, "process", {"data": "processed"}));
+        updateMetaFunctions.push(createMetaTag(eventId, token, {"tag": "status_processed", "data": ""}));
+        updateMetaFunctions.push(removeMetaTag(eventId, token, "status_in_progress"));
+
+        var end = new Date();
+        updateMetaFunctions.push(createMetaTag(eventId, token, {"tag": "end_time", "data": end.toISOString()}));
+
+        Promise.all(updateMetaFunctions).then(function() {
+            console.log("Changed event processing status to in_progress");
+            window.opener.location.reload(false);
+            window.close();
+        }, function(err) {
+            console.log("Error changing processing status: " + err.responseText);
+        });
     });
+
+    $('.save-btn').click(function() {
+        var updateMetaFunctions = [];
+        
+        var alarmStatus = $('input[name="alarm-status"]:checked').val();
+        var description = $('.event-description').val();
+
+        if (alarmStatus) {
+            updateMetaFunctions.push(checkAndSaveTag(eventId, token, "result", meta.result, alarmStatus));
+            var resultSearch = alarmStatus === "true" ? "result_true" : "result_false";
+            if (resultSearch === "result_true" && meta.result_false === "") updateMetaFunctions.push(removeMetaTag(eventId, token, "result_false"));
+            if (resultSearch === "result_false" && meta.result_true === "") updateMetaFunctions.push(removeMetaTag(eventId, token, "result_true"));
+            if (meta[resultSearch] === undefined) updateMetaFunctions.push(createMetaTag(eventId, token, {"tag": resultSearch, "data": ""}));
+        }
+        if (description) updateMetaFunctions.push(checkAndSaveTag(eventId, token, "description", meta.description, description));
+
+        Promise.all(updateMetaFunctions).then(function() {
+            console.log("Changed event processing status to in_progress");
+            window.opener.location.reload(false);
+            window.close();
+        }, function(err) {
+            console.log("Error changing processing status: " + err.responseText);
+        });
+    })
 
     $('.show-btn').click(function() {
         $('.raw-data-cont').toggle();
     });
 });
+
+async function checkAndSaveTag(eventId, token, tagKey, currentTagVal, newTagVal) {
+    if (currentTagVal) {
+        updateMetaTag(eventId, token, tagKey, {"data": newTagVal}).then(function() { 
+            console.log('Successfully saved tag'); 
+        }, function(err) {
+            alert("Error saving tag: " + err.responseText)
+        });
+    } else {
+        createMetaTag(eventId, token, {"tag": tagKey, "data": newTagVal}).then(function() { 
+            console.log('Successfully updated tag'); 
+        }, function(err) {
+            alert("Error updating tag: " + err.responseText)
+        });
+    }
+}
+
+async function createMetaTag(eventId, accessToken, proccessingData) {
+    let base_url = getBaseURLFromToken(accessToken);
+    if (!base_url) 
+        return new Promise(function(resolve, reject){setTimeout(function(){reject();}, 0);});
+
+    var storageUrl = `${base_url}/api/v2/storage/events/${eventId}/meta/`
+
+    return $.ajax({
+        type: 'POST',
+        url: storageUrl,
+        headers: {'Authorization': 'Acc ' + accessToken},
+        contentType: "application/json",
+        data: JSON.stringify(proccessingData)
+    });
+}
+
+async function updateMetaTag(eventId, accessToken, tagName, data) {
+    let base_url = getBaseURLFromToken(accessToken);
+    if (!base_url) 
+        return new Promise(function(resolve, reject){setTimeout(function(){reject();}, 0);});
+
+    var storageUrl = `${base_url}/api/v2/storage/events/${eventId}/meta/${tagName}`;
+
+    return $.ajax({
+        type: 'PUT',
+        url: storageUrl,
+        headers: {'Authorization': 'Acc ' + accessToken},
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data)
+    });
+}
+
+async function removeMetaTag(eventId, accessToken, tagName) {
+    let base_url = getBaseURLFromToken(accessToken);
+    if (!base_url) 
+        return new Promise(function(resolve, reject){setTimeout(function(){reject();}, 0);});
+
+    var storageUrl = `${base_url}/api/v2/storage/events/${eventId}/meta/${tagName}`
+
+    return $.ajax({
+        type: 'DELETE',
+        url: storageUrl,
+        headers: {'Authorization': 'Acc ' + accessToken},
+        contentType: "application/json",
+    });
+}
 
 function createMetaList(tags, eventName, hasFileMeta) {
     var visual = false;
@@ -122,6 +269,22 @@ function createMetaList(tags, eventName, hasFileMeta) {
         }
     });
 }
+
+/*async function editMeta(eventId, accessToken, meta) {
+    let base_url = getBaseURLFromToken(accessToken);
+    if (!base_url) 
+        return new Promise(function(resolve, reject){setTimeout(function(){reject();}, 0);});
+
+    var storageUrl = `${base_url}/api/v2/storage/events/${eventId}/`
+
+    return $.ajax({
+        type: 'PUT',
+        url: storageUrl,
+        headers: {'Authorization': 'Acc ' + accessToken},
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(meta)
+    });
+}*/
 
 async function getFileMeta(filemeta_download) {
     return $.ajax({

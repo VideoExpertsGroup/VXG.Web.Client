@@ -98,25 +98,28 @@
                     <span class="event-status"></span>
                 </div>
             </div>
-            <button class="vxgbutton processing-btn start-btn" disabled>Start Processing</button>
+            <button class="vxgbutton processing-btn start-btn">Start Processing</button>
         </div>
         <div class="processing-cont" style="display:none">
             <div class="status-btn-cont">
                 <div class="status-input-cont">
                     <label class="status-input">True
-                        <input type="radio" name="event-status">
+                        <input type="radio" id="check-true" name="alarm-status" value="true">
                         <span class="checkmark"></span>
                     </label>
                     <label class="status-input">False
-                        <input type="radio" name="event-status">
+                        <input type="radio" id="check-false" name="alarm-status" value="false">
                         <span class="checkmark"></span>
                     </label>
                 </div>
-                <button class="vxgbutton processing-btn end-btn">Complete Event Processing</button>
+                <div class="btn-cont">
+                    <button class="vxgbutton processing-btn end-btn">Complete Event Processing</button>
+                    <button class="vxgbutton-transparent processing-btn save-btn">Save without Completing</button>
+                </div>
             </div>
             <div class="description-cont">
                 <p class="description-title">Description:</p>
-                <textarea class="event-description" rows="7" ></textarea>
+                <textarea class="event-description" rows="7" maxlength="255"></textarea>
             </div>
         </div>
     </div>
