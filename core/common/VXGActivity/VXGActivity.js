@@ -834,6 +834,10 @@ VXGActivityController.prototype.acceptVXGFilter = function acceptVXGFilter(filte
 	var meta = "";
 	
 	if (filter !== undefined) {
+		if (filter.meta !== undefined) {
+			meta = filter.meta;
+		}
+
 	    if (filter.label !== undefined && filter.label !== "") {
 		let prepareLabel = filter.label.charAt(0).toUpperCase() + filter.label.slice(1).toLowerCase();
 		filter.label = prepareLabel;
@@ -914,10 +918,13 @@ VXGActivityController.prototype.acceptVXGFilter = function acceptVXGFilter(filte
 	    token: allcamtoken,
 	    offset: 0,
 	    limit:  40,
-	    events: events,
+	    //events: events,
 	    include_meta: true,
+		include_filemeta_download: true,
 	    order_by: '-time'
 	};
+
+	if (events) requestParams.events = events;
 	
 	if ((meta !== "") && ((filter.motion === undefined) || (filter.motion === false)) ) {
 	    requestParams.meta = meta;

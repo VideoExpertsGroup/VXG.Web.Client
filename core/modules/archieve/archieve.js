@@ -3,7 +3,7 @@ var path = window.core.getPath('archieve.js');
 
 
 window.screens['archive'] = {
-    'menu_weight':50,
+    'menu_weight':52,
     'menu_name':'Archive',
     'get_args':function(){
     },

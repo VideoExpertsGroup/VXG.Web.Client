@@ -43,7 +43,7 @@ padding:15px 24px;
 position: relative;
 margin-top: 15px;
 }
-.screens > .reports:not(.showstat) .block5{
+.screens > .home:not(.showstat) .block5{
 display:none;
 }
 .block4 table{
@@ -73,15 +73,16 @@ margin-left: 32px;
 }
 
 @media (min-width: 1414px) {
-    .block4 {
-	height: calc(100% - 356px - 1em);
-    }
-    .screens > .reports:not(.showstat) .block4{
+    .screens > .home:not(.showstat) .block4{
         height: 100%;
+    }
+
+    .block4 {
+	    height: calc(100% - 356px - 1em);
     }
 }
 
-body.reports .headerBlock .header-right .signout {
+body.home .headerBlock .header-right .signout {
     display: block!important;
 }
 

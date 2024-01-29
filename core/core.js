@@ -156,7 +156,7 @@ window.core.onclick_toscreen = function(e){
         window.core.screen_order.pop();
         var t = window.core.screen_order;
         if (window.core.screen_order.filter(Boolean).length == 0) {
-            if (!core.isMobile()) window.screens['reports'].activate()
+            if (!core.isMobile()) window.screens['home'].activate()
             else window.screens['cameras'].activate()
         }
 

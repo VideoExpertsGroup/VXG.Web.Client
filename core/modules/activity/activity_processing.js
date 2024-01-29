@@ -31,6 +31,10 @@ $( document ).ready(function() {
         if (meta.description) $(".event-description").val(meta.description);
         $('.processing-cont').show();
     }
+
+    if (eventStatus == "Completed") {
+        $(".processing-input").attr("disabled", true);
+    }
     
     getEventVideo(token, eventTime).then(function(ret) {
         var videoSources = "";

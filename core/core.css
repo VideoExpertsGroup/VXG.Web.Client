@@ -1132,7 +1132,7 @@ body .vxgbutton-rounded {
     display: flex;
 }
 
-.reports {
+.home {
     height: 100%;
 }
 
@@ -1145,7 +1145,8 @@ body .vxgbutton-rounded {
 }
 
 .header-right > .camerafilterContainer,
-.header-right > .activityfilterContainer{
+.header-right > .activityfilterContainer,
+.header-right > .reportsfilterContainer {
     display: none;
 }
 
@@ -1188,7 +1189,7 @@ display:none;
 .svgbtnhover{filter: brightness(0.598) sepia(.73) hue-rotate(-328deg) saturate(0)!important;}
 
 
-body.mobile .global-menu .reports,
+body.mobile .global-menu .home,
 body.mobile .global-menu .users
 {display:none;}
 

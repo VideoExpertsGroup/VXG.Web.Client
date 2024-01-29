@@ -145,9 +145,9 @@ function chartPointCB ( data ) {
 	}
 }
 
-window.screens['reports'] = {
+window.screens['home'] = {
     'menu_weight': 10,
-    'menu_name':'Reports',
+    'menu_name':'Home',
     'get_args':function(){
     },
 //  TODO:

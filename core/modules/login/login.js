@@ -196,7 +196,7 @@ TODO: add auth without firebase
                   return window.core.loadControls(r['scripts']).then(function(){
                       let p;
                       var token = null;
-                      if (!core.isMobile()) p = 'reports'; else p='cameras';
+                      if (!core.isMobile()) p = 'home'; else p='cameras';
 
                       var localStorage_fromtagsview = localStorage.getItem("from_tagsview");
                       var from_tagsview = (typeof localStorage_fromtagsview === "string");

@@ -1,0 +1,85 @@
+.user-input {
+    display: flex;
+    align-items: center;
+    padding: 15px 0 15px 15px;
+}
+
+.token-label {
+    font-weight: 600;
+}
+
+input.token-input {
+    margin-left: 10px;
+    padding: 5px;
+    width: 75%;
+}
+
+.getcameras-btn {
+    padding: 5px 30px;
+    margin-left: 10px;
+    background-color: #7bb247;
+    color: white;
+    border: 2px solid #7bb247;
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+.getcameras-btn:hover {
+    cursor: pointer;
+    background-color: #6b9d3c;
+}
+
+.cams-container {
+    width: 20%;
+    max-height: 86vh;
+    overflow-y: auto;
+}
+
+.title {
+    margin-top: 0;
+}
+
+.players-container {
+    width:80%;
+    display: flex;
+    flex-direction: column;
+    height: 86.5vh;
+}
+
+.row {
+    height: 32%;
+    margin: 0 0 1% 0 !important;
+}
+
+.player {
+    width: 32% !important;
+    height: 100% !important;
+    margin-right: 1%;
+}
+
+.camera, .node-dropdown {
+    padding: 7px 20px 7px 3px;
+}
+
+.node-cam {
+    display: none;
+    padding-left: 15px;
+}
+
+.control-container {
+    display: flex;
+    padding: 5px 15px;
+}
+
+.node-name {
+    font-weight: 600;
+}
+
+.camera:hover, .node-dropdown:hover {
+    cursor: pointer;
+    background-color: #cecece;
+}
+
+.cloudplayer-controls {
+    display: none !important;
+}

@@ -402,7 +402,7 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
                                 }
 
                                 core.elements['global-loader'].hide();
-                                return screens['reports'].on_show();
+                                return screens['home'].on_show();
                             }, function(r){
                                 core.elements['global-loader'].hide();
                                 let err_text = 'Failed to delete camera';

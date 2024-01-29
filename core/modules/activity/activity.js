@@ -52,20 +52,9 @@ window.screens['activity'] = {
 // Когда экран "активируется" - например вследствие нажатия меню
     'on_search':function(text){
         console.log("DEBUG: Activity search text:" + text );
-        var search_obj = {};
-        if (text.toLowerCase() === "motion"){
-    	    search_obj.motion = true;
-        } else {
-	    search_obj.meta = true;
-	    if (text && (text.length > 0)) {
-		search_obj.label = text;
-	    } else {
-		search_obj.motion = true;
-		search_obj.sound = true;
-		search_obj.linecross = true;
-	    }
-        }
-        
+		var search_obj = {};
+        search_obj.meta = text;
+
 	targetElement = this.wrapper.find('.activity_activitylist')[0];
         targetElement.acceptVXGFilter(search_obj);
     },
@@ -101,6 +90,8 @@ window.screens['activity'] = {
         return defaultPromise();
     },
     'on_show':function(r){
+		core.elements['header-search'].show();
+		$('.mainsearch').find('input').attr("placeholder", "Search Tags");
         if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
         if (this.scroll_top!==undefined)
             $('.screens').scrollTop(this.scroll_top);

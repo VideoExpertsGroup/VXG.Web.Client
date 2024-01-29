@@ -1,0 +1,229 @@
+.reportslist > .noreports {
+    color: #626262;
+    text-align: center;
+    margin-top: 20%;
+}
+
+.reportslist {
+    max-height: 95%;
+    overflow-y: auto;
+}
+
+.download-report {
+    margin-bottom: 10px;
+    float: right;
+    border-radius: 5px !important;
+}
+
+.download-report:hover {
+    background-color: var(--main-color);
+    color: white;
+}
+
+.reportsfilterContainer {
+    display: block !important;
+}
+
+.show-report-filter {
+    color: var(--main-color);
+}
+
+.show-report-filter:hover {
+    cursor: pointer;
+}
+
+.header-right .reportsfilter{
+    width: 75px;
+    display: flex;
+}
+
+.header-right .reportsfilter:after {
+    padding: 0;
+    display: inline-block;
+margin-left: 6px;
+}
+
+.header-right .reportsfilterContainer{
+    display: block;
+}
+
+.filter-title {
+    text-align: center;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+}
+
+.chosenCameraList {
+    margin: 15px 0;
+}
+
+.chosenCamera {
+    font-size: 14px;
+    padding: 7px;
+    margin: 0 3px;
+    background-color: #d7d7ff;
+    border-radius: 5px;
+}
+
+.chosenCamera:hover {
+    cursor: pointer;
+    background-color: #babae5;
+}
+
+.status-result-cont {
+    display: flex;
+    justify-content: space-between;
+}
+
+.status-result-cont > div {
+    width: 50%;
+}
+
+.time-inputs-cont {
+    display: flex;
+    margin-top: 5px;
+}
+
+.start-time-cont {
+    margin-right: 10px;
+}
+
+.generate-button {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.custom-input-label {
+    text-align: left !important;
+    margin-bottom: 2px;
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 200;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.filter-label input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    border: thin solid #a7a7a7;
+    border-radius: 4px;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.filter-label input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.filter-label .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+  
+.filterElement{
+    min-width: 500px;
+}
+
+.filter-inputs-cont > div > label, .checkbox-input-label  {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.input-cont {
+    margin-top: 20px;
+}
+
+.dialogs{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-content: space-evenly;
+    justify-content: space-evenly;
+    flex-direction: column;
+    background-color: #000a;
+}
+.dialogs > div{
+    background: white;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid gray;
+}
+
+ul.ui-autocomplete.ui-menu{
+    width:400px;
+    background-color: white;
+    background-color: white;
+    padding: 0;
+    list-style: none;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+ul.ui-autocomplete .ui-menu-item {
+    padding: 3px 10px;
+}
+
+ul.ui-autocomplete .ui-menu-item:hover {
+    background-color: #d5d5d5;
+}
+
+#reportsTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+  
+#reportsTable td, #reportsTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+  
+#reportsTable tr:nth-child(even){background-color: #f2f2f2;}
+
+#reportsTable tr:hover {background-color: #ddd;}
+  
+#reportsTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: var(--main-color);
+}
