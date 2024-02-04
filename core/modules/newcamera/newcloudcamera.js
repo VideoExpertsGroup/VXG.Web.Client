@@ -45,10 +45,14 @@ CameraCloudEditControl = function(){
     <label>Name</label>
     <input autofocus="autofocus" class="name" name="name" >
 </div>
-<div class="form-group">
-    <label>Location</label>
-    <input name="location" list="locationsList">
-    <datalist id="locationsList"> </datalist>
+<div class="form-group location">
+    <label>Location: </label>
+    <div class="dialog-group location-group">
+        <input type="text" disabled class="dialog-info location-info show-location" name="shownlocation" value="">
+        <input type="hidden" class="location-info" name="location_str" value="">
+        <input type="hidden" class="location-info" name="new_location_str" value="">
+        <span class="vxgbutton locbtn dialogbtn" id="locbtn-cloud">Locations</span>
+    </div>
 </div>
 <div class="form-group">
     <label>Group</label>
@@ -215,6 +219,16 @@ CameraCloudEditControl = function(){
         $(this).find('.anccsUrlOptions').click(function(){
             $(self).toggleClass('options');
         });
+
+        $(this).find("#locbtn-cloud").click(function(e) {
+            e.preventDefault();
+            if (localStorage.locationHierarchy == undefined)
+                self.createLocationHierarchy();
+            else {
+                var editingLoc = $(self).find('[name="location_str"]').val();
+                self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy), editingLoc, self);
+            }
+        })
         
         $('#dropdown-options .rete .rete_recmode').change(function(){
             let type = $(this).val();
@@ -384,15 +398,52 @@ CameraCloudEditControl = function(){
         }
 
         data.gatewayCam = data.gatewayId ? true : false;
-        
+        var newLocation = data.new_location_str;
+        delete data.new_location_str;
+
         let res;
         if (!this.camera)
             res = vxg.cameras.createCameraPromise(data);
         else
             res = this.camera.updateCameraPromise(data);
         res.then(function(r){
-            var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
-            if (cameraList) {
+            if (newLocation) {
+                var locationStr = data.location_str;
+                var locationHierarchy = localStorage.locationHierarchy ? JSON.parse(localStorage.locationHierarchy) : {};
+                var newLocArr = newLocation.split(":");
+                if (newLocArr.length == 1) self.updateObjProp(locationHierarchy, {}, locationStr.replaceAll(":", "."))
+                else {
+                    var currPath = locationStr == newLocation || !locationStr ? "" : locationStr.replace(":" + newLocation, "");
+                    if (!currPath) {
+                        var province = newLocArr[0];
+                        newLocArr.shift();
+                        var object = {}, o = object;
+                        for(var i = 0; i < newLocArr.length; i++) {
+                            o = o[newLocArr[i]] = {};
+                        }
+                        locationHierarchy[province] = object;
+                    } else {
+                        var province = newLocArr[0];
+                        newLocArr.shift();
+                        var object = {}, o = object;
+                        for(var i = 0; i < newLocArr.length; i++) {
+                            o = o[newLocArr[i]] = {};
+                        }
+
+                        if (locationStr == newLocation || !locationStr) {
+                            locationHierarchy[province] = object;
+                        } else {
+                            var fullLocArr = locationStr.split(":").filter(loc => {
+                                if (!newLocArr.includes(loc)) return loc;
+                            });
+                            
+                            self.updateObjProp(locationHierarchy, object, fullLocArr.join("."))
+                        }
+                    }
+                }
+
+                localStorage.locationHierarchy = JSON.stringify(locationHierarchy);
+            }
                     if (r['allCamsToken']) 
                         vxg.user.src.allCamsToken = r['allCamsToken'];
                     
@@ -456,24 +507,29 @@ CameraCloudEditControl = function(){
                                 $(".server-status").hide()
                                 //self.dispatchEvent(self.submited_event);
                                 self.reset();
-                                return screens['cameras'].on_show();
+                                return;
+                                //return screens['cameras'].on_show();
                             },function(r){
                                 self.hidewait();
                                 if (r && r.responseJSON && r.responseJSON.errorDetail)
                                     alert(r.responseJSON.errorDetail);
                                 else
                                     alert('Falied to delete setting');
-                            });        
-                            cameraList.objects.push(newCam);
-                            var total = parseInt(cameraList.meta.total_count);
-                            cameraList.meta.total_count = total + 1;
-                            localStorage.cameraList = JSON.stringify(cameraList);
+                            });
+                            var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
+                            if (cameraList) {
+                                cameraList.objects.push(newCam);
+                                var total = parseInt(cameraList.meta.total_count);
+                                cameraList.meta.total_count = total + 1;
+                                localStorage.cameraList = JSON.stringify(cameraList);
+                            }
                             
                             self.hidewait();
                             $(".server-status").hide()
                             self.dispatchEvent(self.submited_event);
                             self.reset();
-                            return screens['cameras'].on_show();
+                            return;
+                            //screens['cameras'].on_show();
         
                     },function(r){
                         if (r && r.responseJSON && r.responseJSON.errorDetail) {
@@ -491,7 +547,6 @@ CameraCloudEditControl = function(){
                         self.defferedDispatchEvent(self.error_event);
                     });         
                 });
-            }
         });
 
         return true;
@@ -557,7 +612,154 @@ CameraCloudEditControl = function(){
             self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
             self.defferedDispatchEvent(self.error_event);
         });
+    }
+    this.onLocationHierarchyLoaded = function(locationHierarchy, editingLoc = '', self = null) {
+        var dropdownTreeStr;
+        if ( Object.keys(locationHierarchy).length == 0) {
+            dropdownTreeStr = "<p class='nolocs'>No locations have been set for this account. Add a location below</p>"
+        } else {
+            var dropdownTree = this.createLocationList(locationHierarchy)
+            dropdownTreeStr = $(dropdownTree).prop('outerHTML');
+        }
 
+        var showValue = editingLoc ? $(self).find(".show-location").val() : "";
+        var existingValue = editingLoc ? editingLoc : "";
+
+        var locationDialog = `
+            <h4 class="locations-title">Locations</h4>
+            ${dropdownTreeStr}
+            <div class="existing-loc-cont">
+                <label for="show_existing_loc">Exisiting Location:</label>
+                <div class="existing-input-cont">
+                    <input name="show_existing_loc" class="disabled choosen-location" type="text" value="${showValue}"></input>
+                    <input name="existing_loc" class="choosen-location" type="hidden" value="${existingValue}"></input>
+                    <span class="clear-location vxgbutton" onclick="clearLocationChoice()">Clear</span>
+                </div>
+            </div>
+            <div class="new-loc-cont">
+                <label for="new_loc" title="Location will be added to the existing location choosen. Separate any sublevel locations you want to add by commas">Add New Location:</label>
+                <input name="new_loc" title="Location will be added to the existing location choosen. Separate any sublevel locations you want to add by commas" class="new-location" type="text"></input>
+            </div>
+            <button name="select" class="vxgbutton assign-btn">Select</button>
+        `
+        dialogs['mdialog'].activate(locationDialog).then(function(r){
+            if (r.button!='select') return;
+            var showLoc = r.form.show_existing_loc ? r.form.show_existing_loc : "";
+            var existing_loc = r.form.existing_loc ? r.form.existing_loc.split(":") : [];
+            var locArr = r.form.existing_loc ? r.form.existing_loc.split(":") : [];
+            if (locArr.length == locTypes.length) {
+                alert("Cannot add a new location to a "+ locTypes[locTypes.length - 1] +".");
+            }
+            if (r.form.new_loc) {
+                var newLocArr = r.form.new_loc.split(",");
+                var newLocStr = [];
+                for (var i = 0; i < newLocArr.length; i++) {
+                    var newLocName = newLocArr[i].trim();
+                    if (existing_loc.length + i > 4) break;
+                    var newLoc = locTypes[existing_loc.length + i].toLocaleLowerCase() + "_" + newLocName.replaceAll(" ", "_");
+                    locArr.push(newLoc)
+                    newLocStr.push(newLoc);
+                }
+                $('[name="new_location_str"]').val(newLocStr.join(":"));
+                showLoc += showLoc ? ", " + r.form.new_loc : r.form.new_loc;
+            }
+
+            $('[name="shownlocation"]').val(showLoc);
+            $('[name="location_str"]').val(locArr.join(":"));
+        });		
+    }
+    this.createLocationList = function(locationHierarchy) {
+        if (locationHierarchy instanceof Object && !(locationHierarchy instanceof String)) {
+            var firstObj = Object.keys(locationHierarchy)[0];
+            var locType = firstObj ? firstObj.split("_")[0] : "EMPTY";
+            var ul = $(`<ul class="location-hierarchy ${locType}-ul" ${(locType != "province" ? `style="display:none"` : "")}></ul>`);
+            for (var child in locationHierarchy) {
+                var childName = child.substring(child.indexOf("_") + 1).replaceAll("_", " ");
+                var li_ele = $(`
+                        <li class="loc-dropdown ${child}-dropdown" locName=${child}>
+                            <div class="location-btn-cont">
+                                <span class="loc-name" onclick="chooseLocation(this)">${childName}</span>
+                                <i class="location-arrow fa fa-caret-down" onclick="showNextTier(event, this, '${locType}')" aria-hidden="true"></i>
+                            </div>    
+                        </li>`);
+                li_ele.append(this.createLocationList(locationHierarchy[child]));
+                ul.append(li_ele);
+            }
+            return ul;
+        }
+    }
+    this.createLocationHierarchy = function() {
+        var self = this;
+        var locationHierarchy = localStorage.locationHierarchy ?  JSON.parse(localStorage.locationHierarchy) : {};
+        if (!Object.keys(locationHierarchy).length) {
+            return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, "Province").then(function(locations) {
+                for (const loc in locations) {
+                    var firstLoc = "province_" + loc.replaceAll(" ", "_");
+                    locationHierarchy[firstLoc] = {}
+                }
+
+                let currentProvince;
+                var locationsArr = Object.keys(locationHierarchy);
+                if (locationsArr.length == 0) {
+                    self.onLocationHierarchyLoaded({});
+                };
+                let promiseChain = Promise.resolve();
+                for (let i = 0; i < locationsArr.length; i++) { 
+                    currentProvince = locationsArr[i];
+
+                    const makeNextPromise = (currentProvince) => () => {
+                        return window.vxg.cameras.getCameraListPromise(500,0,currentProvince,undefined,undefined) 
+                            .then((cameras) => {
+                                self.getSubLocations(locationHierarchy, 1, cameras, [currentProvince]);
+                                if (i == locationsArr.length - 1) {
+                                    localStorage.locationHierarchy = JSON.stringify(locationHierarchy);
+                                    self.onLocationHierarchyLoaded(locationHierarchy);
+                                }
+                                return true;
+                            });
+                    }
+                    promiseChain = promiseChain.then(makeNextPromise(currentProvince))
+                }
+            })
+        }
+    }
+    this.getSubLocations = function(locationHierarchy, locLevel, cameras, prevLocs) {
+        var self = this;
+        if (locLevel == 4) return {};
+        else {
+            // get rid of any cameras that don't have the previous filter
+            var camsFiltered = cameras.filter(cam => {
+                var inCurrentLoc = true;
+                if (cam.src.meta[locTypes[locLevel]] == undefined) inCurrentLoc = false;
+                prevLocs.forEach(prevLoc => {
+                    if (cam.src.meta && cam.src.meta[prevLoc] == undefined) {inCurrentLoc = false}
+                })
+                if (inCurrentLoc) return cam;
+            });
+            
+            if (camsFiltered.length == 0) { return {} }
+
+            camsFiltered.forEach(cam => {
+                // checking if current location is in the hierarchy
+                var currLocName = locTypes[locLevel].toLowerCase() + "_" + cam.src.meta[locTypes[locLevel]].replaceAll(" ", "_");
+                var currentLocPath = prevLocs.concat(currLocName)
+                const currentLoc = currentLocPath.reduce((object, key) => {
+                    return (object || {})[key];
+                }, locationHierarchy);
+                
+                if (currentLoc == undefined) { 
+                    self.updateObjProp(locationHierarchy, {}, currentLocPath.join("."));
+                    return self.getSubLocations(locationHierarchy, locLevel + 1, cameras, currentLocPath);
+                }
+            });
+        }
+    }
+    this.updateObjProp = function(obj, value, propPath) {
+        const [head, ...rest] = propPath.split('.');
+    
+        !rest.length
+            ? obj[head] = value
+            : this.updateObjProp(obj[head], value, rest.join('.'));
     }
     this.selectPlan = function(self, camera) {
         if (camera) {
@@ -638,7 +840,7 @@ CameraCloudEditControl = function(){
         $(this).addClass('newcamera');
         $(this).find('.url_protocol [value="cloud"]').remove();
         $(this).find('.iperror').hide();
-        $(this).find('[name="serialnumber"], [name="gspassword"], [name="name"], [name="location"], [name="group"], [name="lat"], [name="lon"], [name="desc"], [name="url"], [name="username"], [name="password"], .url_ip, .url_http_port, .url_rtsp_port').val('');
+        $(this).find('[name="serialnumber"], [name="gspassword"], [name="name"], [name="location"], [name="shownlocation"], [name="new_location_str"], [name="location_str"], [name="group"], [name="lat"], [name="lon"], [name="desc"], [name="url"], [name="username"], [name="password"], .url_ip, .url_http_port, .url_rtsp_port').val('');
         $(this).find('.url_path').val('onvif/device_service');
         $(this).find('.subscription-info').val('');
         $(this).find('.show-name').val('No Subscription Assigned');

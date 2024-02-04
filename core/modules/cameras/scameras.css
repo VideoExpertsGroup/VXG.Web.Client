@@ -7,11 +7,12 @@
 }
 
 body.cameras .header-right .addcamera,
-body.cameras .header-right .nogrid,
+body.cameras .header-right .cam-dropdown-item {
+/* body.cameras .header-right .nogrid,
 body.cameras .header-right .grid22,
 body.cameras .header-right .grid33,
 body.cameras .header-right .grid44,
-body.cameras .header-right .gridmap {
+body.cameras .header-right .gridmap { */
     display: block;
 background-size: 75%;
     background-repeat: no-repeat;
@@ -85,6 +86,14 @@ content: ' ';
     /*background-size: 50px 50px;*/
     background-position: 50% 50%;
     z-index: 1;
+}
+
+.location-img {
+    height: 150px;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 60%;
+    background-image: url(camera.svg);
 }
 
 .cameras2 .captured:before{

@@ -47,7 +47,7 @@ window.screens['users'] = {
     'show_users':function(archive_channel_id){
         let self=this;
         return vxg.users.getList(100).then(function(users){
-            let table='<table><thead><tr class="header"><th scope="col">#</th><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Cameras</th><th scope="col">Action</th></tr></thead><tbody>';
+            let table='<table><thead><tr class="header"><th scope="col">#</th><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Role</th><th scope="col">Cameras</th><th scope="col">Action</th></tr></thead><tbody>';
             let c=1;
             for (let i in users){
 
@@ -59,7 +59,7 @@ window.screens['users'] = {
                 let storimg = '<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOS4zNSAxNlYxMC43OTE3QzE5LjM1IDEwLjE4NDIgMTguODU3NSA5LjY5MTY3IDE4LjI1IDkuNjkxNjdIMTMuNDg3N0MxMi41MDEgOS42OTE2NyAxMS41ODE5IDkuMTg5OTEgMTEuMDQ4MyA4LjM1OTg2TDkuNzkxNzMgNi40MDUxN0M5LjU4OTMzIDYuMDkwMzIgOS4yNDA3MiA1LjkgOC44NjY0MyA1LjlINkM1LjM5MjQ5IDUuOSA0LjkgNi4zOTI0OSA0LjkgN1YxNkM0LjkgMTYuNjA3NSA1LjM5MjQ5IDE3LjEgNiAxNy4xSDE4LjI1QzE4Ljg1NzUgMTcuMSAxOS4zNSAxNi42MDc1IDE5LjM1IDE2Wk02IDVDNC44OTU0MyA1IDQgNS44OTU0MyA0IDdWMTZDNCAxNy4xMDQ2IDQuODk1NDMgMTggNiAxOEgxOC4yNUMxOS4zNTQ2IDE4IDIwLjI1IDE3LjEwNDYgMjAuMjUgMTZWMTAuNzkxN0MyMC4yNSA5LjY4NzEgMTkuMzU0NiA4Ljc5MTY3IDE4LjI1IDguNzkxNjdIMTMuNDg3N0MxMi44MDcyIDguNzkxNjcgMTIuMTczNCA4LjQ0NTYzIDExLjgwNTQgNy44NzMxOEwxMC41NDg4IDUuOTE4NDhDMTAuMTgwOCA1LjM0NjA0IDkuNTQ2OTYgNSA4Ljg2NjQzIDVINloiIGZpbGw9IiNCMkIyQjIiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNi42MjUyIDYuNTMzM0MxNy40ODEyIDYuNTMzMyAxOC4xNzUyIDcuMjI3MjYgMTguMTc1MiA4LjA4MzNWOS4wNjI0N0gxOS4wNzUyVjguMDgzM0MxOS4wNzUyIDYuNzMwMiAxNy45NzgzIDUuNjMzMyAxNi42MjUyIDUuNjMzM0gxMC4yMjk0VjYuNTMzM0gxNi42MjUyWiIgZmlsbD0iI0IyQjJCMiIvPgo8L3N2Zz4=" style="margin-top: -17px;">';
                 if (archive_enable) storimg = '<img class="svgbtn" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgN0M0IDUuODk1NDMgNC44OTU0MyA1IDYgNUw4Ljg2NjQzIDVDOS41NDY5NiA1IDEwLjE4MDggNS4zNDYwNCAxMC41NDg4IDUuOTE4NDhMMTEuODA1NCA3Ljg3MzE4QzEyLjE3MzQgOC40NDU2MyAxMi44MDcyIDguNzkxNjcgMTMuNDg3NyA4Ljc5MTY3SDE4LjI1QzE5LjM1NDYgOC43OTE2NyAyMC4yNSA5LjY4NzEgMjAuMjUgMTAuNzkxN1YxNkMyMC4yNSAxNy4xMDQ2IDE5LjM1NDYgMTggMTguMjUgMThINkM0Ljg5NTQzIDE4IDQgMTcuMTA0NiA0IDE2VjdaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTguNjI1IDkuMDYyNDJWOC4wODMyNUMxOC42MjUgNi45Nzg2OCAxNy43Mjk2IDYuMDgzMjUgMTYuNjI1IDYuMDgzMjVMMTAuMjI5MiA2LjA4MzI1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuOSIvPgo8L3N2Zz4=" style="margin-top: -17px;">';
                 table += '<tr userid="' + users[i].src.id + '"><td>' + c + '</td><td class="name">' + users[i].src.name + '</td><td class="email">' + users[i].src.email + '</td>' +
-                    //'<td>' + users[i].src.desc + '</td>' +
+                    '<td> Operator </td>' +
                     '<td>' + totalcameras + '</td>' +
                     '<td class="action-icons">' +
                     //'<button class="userbtn item-resend-confirm" title="Resend confirm email"></button>' +
@@ -349,6 +349,20 @@ window.screens['usercameras'] = {
                             </div>
                         </div>`;
             }
+            var assignedLocations = self.user.src.locations;
+            if (assignedLocations) {
+                $(".chosenLocations").empty();
+                for (var i = 0; i < assignedLocations.length; i++) {
+                    var locArr = assignedLocations[i].split(":");
+                    var shownName = [];
+                    for(var j = 0; j < locArr.length; j++) {
+                        var locName = locArr[j].substring(locArr[j].indexOf("_") + 1).replaceAll("_", " ");
+                        shownName.push(locName);
+                    }
+                    
+                    $('.chosenLocations').append(`<span class="chosenloc" onclick="removeLoc(this, '${assignedLocations[i]}', '${assignedLocations}')">${shownName.join(", ")}</span>`);
+                }
+            }
 
             $(self.wrapper).find('.usercameralist').html(html);
             $(self.wrapper).find('.usercameralist .camerablock').click(function(){
@@ -362,6 +376,12 @@ window.screens['usercameras'] = {
                 $(`[channel_id=${channelId}]`).toggleClass("active");
             })
 
+            if (localStorage.locationHierarchy == undefined)
+                self.createLocationHierarchy();
+            else {
+                self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy));
+            }
+
             $(self.wrapper).find('.usercameralist').removeClass('spinner');
         });
 
@@ -373,37 +393,231 @@ window.screens['usercameras'] = {
     },
     'on_init':function(){
         let self = this;
+        $('.tab').click(function() {
+            if ($(this).hasClass('disabled')) return;
+            var tabType = this.id.replace('-tab', '');
+            $('.tab').removeClass('active');
+            $(this).addClass('active');
+            $('.tabcontent').hide();
+            $('.' + tabType).show();
+        });
+
         this.wrapper.find('.apply').click(function(){
               core.elements['global-loader'].show();
 
-              let r = [], attach = [], detach = [];
+              let r = [], attach = [], detach = [], locs =[];
               $(self.wrapper).find('.usercameralist .checkbox.active').each(function(){
                   r.push(parseInt($(this).attr('channel_id')));
               });
               for (let i in r)
-                  if (self.user.src.cameras.indexOf(r[i])===-1)
+                  if (self.user.src.cameras.indexOf(r[i])===-1) 
                       attach.push(r[i]);
               for (let i in self.user.src.cameras)
                   if (r.indexOf(self.user.src.cameras[i])===-1 && (!vxg.user.src.allCamsTokenMeta || parseInt(vxg.user.src.allCamsTokenMeta.storage_channel_id)!=self.user.src.cameras[i]))
                       detach.push(self.user.src.cameras[i]);
-              vxg.api.cloudone.user.relation({attach: attach, detach: detach, withUserID: self.user.src.id}).then(function (ret) {
-                  self.user.src.cameras = r;
+
+              var locationStrs = $("[name='location_strs']").val();
+              var detachLocations = $("[name='detach_locations']").val();
+              if (locationStrs) {
+                var locationsArr = locationStrs.split(',').filter(l => l);
+                for (let i = 0; i < locationsArr.length; i++) { 
+                    locs.push(locationsArr[i]);
+                    if (self.user.src.locations.indexOf(locationsArr[i])===-1)
+                        attach.push(locationsArr[i]);
+                }
+            }
+            if (detachLocations) {
+                var detachArr = detachLocations.split(',').filter(l => l);
+                detachArr.forEach(de => {
+                    detach.push(de);
+                })
+            }
+                
+            vxg.api.cloudone.user.relation({attach: attach, detach: detach, withUserID: self.user.src.id}).then(function (ret) {
+                    self.user.src.cameras = r;
+                    // should be all added + remove
+                    self.user.src.locations = locs;
+                    core.elements['global-loader'].hide();
+                    window.core.onclick_toscreen('back');
+                },function(r){
+                  if (r && r.responseJSON && r.responseJSON.errorDetail)
+                      alert(r.responseJSON.errorDetail);
+                  else
+                      alert('Falied to update user cameras');
                   core.elements['global-loader'].hide();
-                  window.core.onclick_toscreen('back');
-              },function(r){
-                if (r && r.responseJSON && r.responseJSON.errorDetail)
-                    alert(r.responseJSON.errorDetail);
-                else
-                    alert('Falied to update user cameras');
-                core.elements['global-loader'].hide();
-            });
-
-
+              });
         });
 
         return defaultPromise();
+    },
+    onLocationHierarchyLoaded: function(locationHierarchy) {
+        var dropdownTree;
+        if ( Object.keys(locationHierarchy).length == 0) {
+            dropdownTree = $("<p class='nolocs'>No locations have been set for this account</p>");
+        } else {
+            dropdownTree = this.createLocationList(locationHierarchy)
+        }
+
+        $(".locationslist").empty();
+        $('[name="location_strs"]').empty();
+
+        $(".locationslist").append(dropdownTree)
+
+        // dialogs['mdialog'].activate(locationDialog).then(function(r){
+        //     if (r.button!='select') return;
+        //     var showLoc = r.form.show_existing_loc ? r.form.show_existing_loc : "";
+        //     var existing_loc = r.form.existing_loc ? r.form.existing_loc.split(":") : [];
+        //     var locArr = r.form.existing_loc ? r.form.existing_loc.split(":") : [];
+        //     if (locArr.length == locTypes.length) {
+        //         alert("Cannot add a new location to a "+ locTypes[locTypes.length - 1] +".");
+        //     }
+        //     if (r.form.new_loc) {
+        //         var newLocArr = r.form.new_loc.split(",");
+        //         var newLocStr = [];
+        //         for (var i = 0; i < newLocArr.length; i++) {
+        //             var newLocName = newLocArr[i].trim();
+        //             if (existing_loc.length + i > 4) break;
+        //             var newLoc = locTypes[existing_loc.length + i].toLocaleLowerCase() + "_" + newLocName.replaceAll(" ", "_");
+        //             locArr.push(newLoc)
+        //             newLocStr.push(newLoc);
+        //         }
+        //         $('[name="new_location_str"]').val(newLocStr.join(":"));
+        //         showLoc += showLoc ? ", " + r.form.new_loc : r.form.new_loc;
+        //     }
+
+        //     $('[name="shownlocation"]').val(showLoc);
+        //     $('[name="location_str"]').val(locArr.join(":"));
+        // });		
+    },
+    createLocationList: function(locationHierarchy) {
+        var locations = this.user.src.locations;
+        if (locationHierarchy instanceof Object && !(locationHierarchy instanceof String)) {
+            var firstObj = Object.keys(locationHierarchy)[0];
+            var locType = firstObj ? firstObj.split("_")[0] : "EMPTY";
+            var ul = $(`<ul class="location-hierarchy ${locType}-ul" ${(locType != "province" ? `style="display:none"` : "")}></ul>`);
+            for (var child in locationHierarchy) {
+                var childName = child.substring(child.indexOf("_") + 1).replaceAll("_", " ");
+                var li_ele = $(`
+                        <li class="loc-dropdown ${child}-dropdown" locName=${child}>
+                            <div class="location-btn-cont">
+                                <span class="loc-name" onclick="chooseLocation_users(this, '${locations}')">${childName}</span>
+                                <i class="location-arrow fa fa-caret-down" onclick="showNextTier(event, this, '${locType}')" aria-hidden="true"></i>
+                            </div>    
+                        </li>`);
+                li_ele.append(this.createLocationList(locationHierarchy[child]));
+                ul.append(li_ele);
+            }
+            return ul;
+        }
+    },
+    createLocationHierarchy: function() {
+        var self = this;
+        var locationHierarchy = localStorage.locationHierarchy ?  JSON.parse(localStorage.locationHierarchy) : {};
+        if (!Object.keys(locationHierarchy).length) {
+            return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, "Province").then(function(locations) {
+                for (const loc in locations) {
+                    var firstLoc = "province_" + loc.replaceAll(" ", "_");
+                    locationHierarchy[firstLoc] = {}
+                }
+                let currentProvince;
+                var locationsArr = Object.keys(locationHierarchy);
+                if (locationsArr.length == 0) {
+                    self.onLocationHierarchyLoaded({});
+                };
+                let promiseChain = Promise.resolve();
+                for (let i = 0; i < locationsArr.length; i++) { 
+                    currentProvince = locationsArr[i];
+
+                    const makeNextPromise = (currentProvince) => () => {
+                        return window.vxg.cameras.getCameraListPromise(500,0,currentProvince,undefined,undefined) 
+                            .then((cameras) => {
+                                self.getSubLocations(locationHierarchy, 1, cameras, [currentProvince]);
+                                if (i == locationsArr.length - 1) {
+                                    localStorage.locationHierarchy = JSON.stringify(locationHierarchy);
+                                    self.onLocationHierarchyLoaded(locationHierarchy);
+                                }
+                                return true;
+                            });
+                    }
+                    promiseChain = promiseChain.then(makeNextPromise(currentProvince))
+                }
+            })
+        }
+    },
+    getSubLocations: function(locationHierarchy, locLevel, cameras, prevLocs) {
+        var self = this;
+        if (locLevel == 4) return {};
+        else {
+            // get rid of any cameras that don't have the previous filter
+            var camsFiltered = cameras.filter(cam => {
+                var inCurrentLoc = true;
+                if (cam.src.meta[locTypes[locLevel]] == undefined) inCurrentLoc = false;
+                prevLocs.forEach(prevLoc => {
+                    if (cam.src.meta && cam.src.meta[prevLoc] == undefined) {inCurrentLoc = false}
+                })
+                if (inCurrentLoc) return cam;
+            });
+            
+            if (camsFiltered.length == 0) { return {} }
+
+            camsFiltered.forEach(cam => {
+                // checking if current location is in the hierarchy
+                var currLocName = locTypes[locLevel].toLowerCase() + "_" + cam.src.meta[locTypes[locLevel]].replaceAll(" ", "_");
+                var currentLocPath = prevLocs.concat(currLocName)
+                const currentLoc = currentLocPath.reduce((object, key) => {
+                    return (object || {})[key];
+                }, locationHierarchy);
+                
+                if (currentLoc == undefined) { 
+                    self.updateObjProp(locationHierarchy, {}, currentLocPath.join("."));
+                    return self.getSubLocations(locationHierarchy, locLevel + 1, cameras, currentLocPath);
+                }
+            });
+        }
+    },
+    updateObjProp: function(obj, value, propPath) {
+        const [head, ...rest] = propPath.split('.');
+    
+        !rest.length
+            ? obj[head] = value
+            : this.updateObjProp(obj[head], value, rest.join('.'));
     }
 };
+
+function chooseLocation_users(currentLocEle, locations) {
+    var showLocationArr = [];
+    var locationArr = [];
+    var foundAllLocs = false;
+    while(!foundAllLocs) {
+        currentLocEle = $(currentLocEle).parent().parent();
+        var locName = $(currentLocEle).attr("locName");
+        if (locName == undefined) foundAllLocs = true;
+        else {
+            var showName = locName.substring(locName.indexOf("_") + 1).replaceAll("_", " ");
+            showLocationArr.push(showName);
+            locationArr.push(locName);
+        }
+    }
+    locationArr.reverse();
+    showLocationArr.reverse();
+    $('.chosenLocations').append(`<span class="chosenloc" onclick="removeLoc(this, '${locationArr.join(":")}','${locations}')">${showLocationArr.join(", ")}</soan>`);
+    var currentChosen = $('[name="location_strs"]').val();
+    currentChosen += currentChosen ? "," + locationArr.join(":") : locationArr.join(":");
+    $('[name="location_strs"]').val(currentChosen);
+}
+
+function removeLoc(current, locToRemove, currentLocs) {
+    var currentChosen = $('[name="location_strs"]').val();
+    var removed = currentChosen.replaceAll(locToRemove, "");
+    current.remove();
+    if (currentLocs.includes(locToRemove)) {
+        var currentDetach = $('[name="detach_locations"]').val();
+        var newDetach = currentDetach ? "," + locToRemove : locToRemove;
+        $('[name="detach_locations"]').val(newDetach);
+    }
+    $('[name="location_strs"]').val(removed);
+}
+
 
 function getUserFromElement(element){
     let userid = $(element).attr('userid');
@@ -452,7 +666,6 @@ window.screens['userarchive'] = {
               let attach = [], detach = [];
               if (checked) attach.push(archive_channel_id);
               else detach.push(archive_channel_id);
-
 
               core.elements['global-loader'].show();
 

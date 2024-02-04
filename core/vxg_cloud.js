@@ -9,7 +9,7 @@ vxg.cameras.preload_size = vxg.cameras.preload_size || 10;
 vxg.cameras.one_time_load_limit = vxg.cameras.one_time_load_limit || 1000; // maximum items that can be downloaded at a time
 vxg.cameras.random_list = vxg.cameras.random_list || {};         // random list of camera structures
 vxg.cameras.continuous_list = vxg.cameras.continuous_list || [];      // continuous list of camera structures
-
+const locTypes = ["Province", "City", "Zone", "Circuit", "Subcircuit"];
 
 ////////////////////////////////////////////
 // Helper functions
@@ -232,7 +232,37 @@ CloudCamera.updateCameraPromise = function(camera_struct){
     if (camera_struct['url'].trim())
         config.url = camera_struct['url'].trim();
 
-    if (this.src.meta && (this.src.meta.location || (!this.src.meta.location && camera_struct['location']))) this.src.meta.location = camera_struct['location'] ? camera_struct['location'] : "";
+    if (this.src.meta) {
+        var locArr = camera_struct.location_str ? camera_struct.location_str.split(":") : [];
+
+        var hasLocTypes = [];
+        for (var i = 0; i < locArr.length; i++) {
+            hasLocTypes.push(locTypes[i]);
+            var locName = locArr[i].substring(locArr[i].indexOf("_") + 1).replaceAll("_", " ");
+            if (i == locArr.length - 1) this.src.meta.location = locName;
+            if (this.src.meta[locTypes[i]] == undefined) {
+                this.src.meta[locTypes[i]] = locName;
+                this.src.meta[locArr[i]] = "";
+            } else if (this.src.meta[locTypes[i]] != locName) {
+                var currentLocName = locTypes[i].toLowerCase() + "_" + this.src.meta[locTypes[i]].replaceAll(" ", "_");
+                delete this.src.meta[currentLocName];
+                this.src.meta[locTypes[i]] = locName;
+                this.src.meta[locArr[i]] = "";
+            } 
+        }
+        if (hasLocTypes.length > 0) {
+            // removing any location fields that weren't included in the new location 
+            // ie Ontario, Toronto, North York --> Ontario, Toronto (remove North York)
+            for(var p = hasLocTypes.length; p < locTypes.length; p++) {
+                if (this.src.meta[locTypes[p]] != undefined) {
+                    var currentLocName = locTypes[p].toLowerCase() + "_" + this.src.meta[locTypes[p]].replaceAll(" ", "_");
+                    delete this.src.meta[currentLocName];
+                    delete this.src.meta[locTypes[p]];
+                }
+            }
+        }
+    }
+    //if (this.src.meta && (this.src.meta.location || (!this.src.meta.location && camera_struct['location']))) this.src.meta.location = camera_struct['location'] ? camera_struct['location'] : "";
     if (this.src.meta && (this.src.meta.group || (!this.src.meta.group && camera_struct['group']))) this.src.meta.group = camera_struct['group'] ? camera_struct['group'] : "";
     if (this.src.meta) config.meta = this.src.meta;
 

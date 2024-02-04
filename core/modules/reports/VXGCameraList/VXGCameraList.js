@@ -287,7 +287,9 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
         `<a class="listmenu-item mwebui" href="${savedCam.url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> Camera UI </span></a>` :
         "";
 
-    if (!savedCam) {
+    var userType = vxg.user.src.role;
+
+    if (!savedCam && userType != "users") {
         vxg.api.cloud.getCameraConfig(cam.camera_id, cam.token).then(function(config) {
             var link;
             if (config.url && config.url.includes("onvif")) {
@@ -322,16 +324,21 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
 	let menu = `
         <div class="VXGCameraListMenu">
         	<div class="listmenu-item mcamera" ifscreen="tagsview" onclick_toscreen="tagsview"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>
-        	<div class="listmenu-item msetting" ifscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Stream Settings </span></div>
+        	<div class="listmenu-item msetting subuser-hide" ifscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Stream Settings </span></div>
         	<div class="listmenu-item mchart" ifscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>
-        	<div class="listmenu-item mconfigure" ifscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
-        	${urlMenuItem}
-        	<div class="listmenu-item mtrash"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
+        	<div class="listmenu-item mconfigure subuser-hide" ifscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
+        	${(userType != "user" ? urlMenuItem : "")}
+        	<div class="listmenu-item mtrash subuser-hide"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
         </div>
     `;
+
 	if (!el.length && savedCam) {
 	    $(whoCall).append(menu);
 	    el = $(whoCall).find('.VXGCameraListMenu');
+
+        if (userType == "user") {
+            $(".subuser-hide").hide();
+        }
 	    
 	    $(whoCall).find('.mcamera').unbind().bind('click', function(evt){
 			let index = $(indexCarrier).data('index');

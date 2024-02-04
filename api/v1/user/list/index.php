@@ -85,11 +85,16 @@ while($row = $stmt->fetch()){
         //$row3 = array('totalUsers' => 0);
     }
     if (!$isNoDetails) {
-        $stmt2 = $conn->prepare('SELECT "cameraCHID" FROM "userCamera" u WHERE u."userID"='.$row['id']);
+        $stmt2 = $conn->prepare('SELECT "cameraCHID", "location" FROM "userCamera" u WHERE u."userID"='.$row['id']);
         if (!$stmt2->execute()) StaticLib::error(500, $stmt2->errorInfo());
         $row2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-        $cameras = [];
-        foreach($row2 as $v) $cameras[] =$v['cameraCHID'];
+        $cameras = []; $locations = [];
+        foreach($row2 as $v) {
+            $cameras[] =$v['cameraCHID']; 
+            if ($v['location'] != ""){
+                $locations[] = $v['location'];
+            }
+        }
         $stmt3 = $conn->prepare('SELECT count(*) AS "totalUsers" FROM "user" WHERE "parentUserID"=' . $row['id']);
         if (!$stmt3->execute()) StaticLib::error(500, $stmt3->errorInfo());
         $row3 = $stmt3->fetch();
@@ -106,6 +111,7 @@ while($row = $stmt->fetch()){
             'totalUsers' => $row3['totalUsers'],
             'totalCameras' => count($row2),
             'cameras' => $cameras,
+            'locations' => $locations,
             'bandwidthBytes' => $row['bandwidthBytes'],
             'storageBytes' => $row['storageBytes'],
             'revenue' => $row['revenue'],

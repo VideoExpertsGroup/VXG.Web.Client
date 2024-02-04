@@ -1221,10 +1221,16 @@ class MUser{
             $this->updateAdminAllCamsToken();
             return;
         }
-        $channels = MCore::$core->pdo->fetchAll('SELECT "cameraCHID" from "userCamera" u where u."userID"=?', [$this->id]);
-        $channels_id = [];
-        if (is_array($channels)) foreach($channels as $ch)
-            $channels_id[] = $ch['cameraCHID'];
+        $channels = MCore::$core->pdo->fetchAll('SELECT "cameraCHID", "location" from "userCamera" u where u."userID"=?', [$this->id]);
+        $channels_id = []; $locations = [];
+        if (is_array($channels)) {
+            foreach($channels as $ch) {
+                if ($ch['cameraCHID'])
+                    $channels_id[] = $ch['cameraCHID'];
+                if ($ch['location'] != "")
+                    $locations[] = $ch['location'];
+            }
+        }
 
         $server = $this->getServerData();
         include_once(dirname(dirname(dirname(__FILE__))).'/streamland_api.php');
@@ -1238,20 +1244,32 @@ class MUser{
             if (!in_array($o['id'],$channels_id))
                 $channels_id[] = $o['id'];
 */
+        foreach($locations as $location) {
+            $locArr = explode(":", $location);
+            $cameras = StreamLandAPI::getCamerasList($locArr[count($locArr) - 1]);
+            foreach($cameras['objects'] as $cam) {
+                $inCurrentLoc = true;
+                foreach($locArr as $loc) {
+                    if (!isset($cam['meta'][$loc])) $inCurrentLoc = false;
+                }
+                if ($inCurrentLoc) $channels_id[] = $cam['id'];
+            }
+        }
+
         $response_cloud = ['token'=>'', 'id'=>0];
         if (!$this->allCamsTokenID){
             $data = [
                 'channels' => $channels_id,
                 'expire' => "2099-12-31T00:00:00", // 10 years
                 'name' => "AllCamsUser#" . $this->id,
-                'channels_access' => "watch"
+                'channels_access' => "all"
             ];
             $response_cloud = StreamLandAPI::createAllCamsToken($data);
         }
         if (isset($response_cloud['status']) && $response_cloud['status']==500)
             error(500, $response_cloud['errorDetail']);
         if ($this->allCamsTokenID)
-            $response_cloud = StreamLandAPI::updateAllCamsToken($this->allCamsTokenID, ['channels' => $channels_id, 'channels_access' => "watch",'max_channels_amount'=>100]);
+            $response_cloud = StreamLandAPI::updateAllCamsToken($this->allCamsTokenID, ['channels' => $channels_id, 'channels_access' => "all",'max_channels_amount'=>100]);
         if (!$response_cloud['token']) $response_cloud['token'] = $this->allCamsToken ? $this->allCamsToken : '';
         if (!$response_cloud['id']) $response_cloud['id'] = $this->allCamsTokenID ? $this->allCamsTokenID : '';
  
@@ -1415,6 +1433,12 @@ class MUser{
         MCore::$core->pdo->query('INSERT INTO "userCamera"  ("userID", "cameraCHID") VALUES (?, ?)',[$this->id, $channel_id]);
     }
 
+    public function attachLocationToUser($location) {
+        $r = MCore::$core->pdo->fetchOne('SELECT count(*) from "userCamera" where "userID"=? and "location"=?',[$this->id, $location]);
+        if ($r>0) return;
+        MCore::$core->pdo->query('INSERT INTO "userCamera"  ("userID", "location") VALUES (?, ?)',[$this->id, $location]);
+    }
+
     /**
      * Detach camera to this user
      * After calling this function, updateAllCamsToken() function call is required
@@ -1423,6 +1447,11 @@ class MUser{
      */
     public function detachCameraByChannelID($channel_id){
         MCore::$core->pdo->query('DELETE from "userCamera" where "userID"=? and "cameraCHID"=?',[$this->id, $channel_id]);
+    }
+
+    public function detachLocationFromUser($location){
+        xdebug_break();
+        MCore::$core->pdo->query('DELETE from "userCamera" where "userID"=? and "location"=?',[$this->id, $location]);
     }
 
     public function setAccess($services_access, $debug_access){

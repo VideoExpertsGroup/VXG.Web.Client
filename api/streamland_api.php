@@ -325,15 +325,13 @@ class StreamLandAPI {
 		));
 	}
 
-	static function getCamerasList(){
+	static function getCamerasList($meta = null){
+		$params = ['include_meta' => 'true', 'limit' => 1000];
+		if ($meta) $params["meta"] = $meta;
         return StreamLandAPI::requestGet(array(
 			'path' => 'api/v3/channels/',
 			'lkey' => StreamLandAPI::$streamland_key,
-			// TODO PARAMS should be formed on the upper level
-			'get_params' => array(
-				'include_meta' => 'true',
-				'limit' => 1000,
-			),
+			'get_params' => $params
 		));
 	}
 	

@@ -557,7 +557,7 @@ background-color:var(--main-color);
 color:white;
 }
 
-.subbtn {
+.dialogbtn {
     font-weight: 300;
 }
 
@@ -969,7 +969,7 @@ display:none;
 }
 
 .menu-dropdown {
-    width: 50px;
+    width: 70px;
     margin: 3px 0 0 0;
     padding: 10px 0;
     border-radius:3px;

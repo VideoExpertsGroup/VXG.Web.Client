@@ -183,6 +183,7 @@ TODO: add auth without firebase
         function onLogin(r){
             vxg.user.src = r;
             sessionStorage.removeItem("backToCam");
+            localStorage.removeItem('locPath');
 
             if (!window.vxgstripe)
                     window.vxgstripe={};
@@ -239,6 +240,8 @@ TODO: add auth without firebase
         sessionStorage.removeItem("cameraUrls");
         localStorage.removeItem("cameraList");
         localStorage.removeItem("cameraList_expiry");
+        localStorage.removeItem("locPath");
+        localStorage.removeItem("locationHierarchy");
 
 	    window.location.href = '/#';  
         });

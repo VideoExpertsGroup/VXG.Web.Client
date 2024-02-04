@@ -7,7 +7,7 @@ MCoreJson::init();
 MCore::checkOnlyForAuthorized();
 if (MCore::$core->current_user->isPartner() && !MCore::$core->current_user->serverLkey)
     MCore::$core->current_user->updateLicenseKey();
-if (!MCore::$core->current_user->allCamsToken)
+if (!MCore::$core->current_user->allCamsToken || MCore::$core->current_user->isUser())
     MCore::$core->current_user->updateAllCamsToken();
 
 $server = MCore::$core->current_user->getServerData();

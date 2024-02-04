@@ -296,7 +296,8 @@ font-weight:400;
 color: #676A6C;
 padding: 0px 0px 0px 16px;
 }
-body.screens > .cameras .header-right .addcamera,body.screens > .cameras .header-right .nogrid, body.screens > .cameras .header-right .grid22, body.screens > .cameras .header-right .grid33, body.screens > .cameras .header-right .grid44, body.screens > .cameras .header-right .gridmap {
+/* body.screens > .cameras .header-right .addcamera,body.screens > .cameras .header-right .nogrid, body.screens > .cameras .header-right .grid22, body.screens > .cameras .header-right .grid33, body.screens > .cameras .header-right .grid44, body.screens > .cameras .header-right .gridmap { */
+body.screens > .cameras .header-right .addcamera, body.screens > .cameras .header-right .cam-dropdown-item {
     background-size: 75%;
     background-repeat: no-repeat;
     background-position: center;
@@ -509,6 +510,10 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 .gridmenu i {
     color: var(--main-color);
     margin-left: 5px;
+}
+
+.gridmenu span {
+    width: 70px;
 }
 
 .header-right .addcamera {
@@ -764,4 +769,77 @@ text-align: center;
 
 .bootstrap-table .fixed-table-container.has-card-view .table tbody tr td {
 	width: 322px;
+}
+
+.loc-cont {
+    width: 100%;
+}
+
+.loclist {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.loclist > div {
+    margin-right: 15px;
+    margin-bottom: 15px
+}
+
+.card-body.location-body {
+    display: flex;
+    justify-content: space-between;
+    font-size: 17px;
+}
+
+.location-prev {
+    width: 100%;
+    height: 150px;
+}
+
+.location-tools {
+    display: flex;
+}
+
+.backToLocations {
+    margin-right: 10px;
+    height: 30px;
+    background-color: var(--main-color);
+    border: 2px solid var(--main-color);
+    border-radius: 15px;
+    font-size: 16px !important;
+    font-weight: 600;
+    padding: 0 10px;
+}
+
+.backToLocations:hover {
+    cursor: pointer;
+    background-color: white;
+    color: var(--main-color);
+}
+
+
+.card-buttons {
+    width: 25%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.card-buttons i:hover {
+    cursor:pointer;
+}
+
+.nocamsloc {
+    text-align: center;
+    margin-top: 15%;
+    color: #4a4a4a;
+    width: 100%;
+}
+
+.nocamsloc span {
+    color:#6e6d6d;
+}
+
+.nocamsloc span:hover {
+    cursor: pointer;
+    color:#7d7d7d;
 }

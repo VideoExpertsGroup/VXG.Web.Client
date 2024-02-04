@@ -22,17 +22,25 @@ $storage_id = isset($meta['storage_channel_id']) ? 0+$meta['storage_channel_id']
 $usermeta = $user->getAllCamsTokenMeta();
 $user_storage_id = isset($usermeta['storage_channel_id']) ? 0+$usermeta['storage_channel_id'] : 0;
 
-$attach_cams = []; $detach_cams = [];
-foreach($attach as $camid){
-    $user->attachCameraByChannelID($camid);
-    if ($camid==$storage_id && $storage_id!=$user_storage_id){
+foreach($attach as $attachItem){
+    if (is_int($attachItem)) {
+        $user->attachCameraByChannelID($attachItem);
+    } else {
+        $user->attachLocationToUser($attachItem);
+    }
+
+    if ($attachItem==$storage_id && $storage_id!=$user_storage_id){
         $usermeta['storage_channel_id'] = $storage_id;
         $user->setAllCamsTokenMeta($usermeta);
     }
 }
-foreach($detach as $camid) {
-    $user->detachCameraByChannelID($camid);
-    if ($camid==$storage_id && $storage_id==$user_storage_id){
+foreach($detach as $detachItem) {
+    if (is_int($detachItem)) {
+        $user->detachCameraByChannelID($detachItem);
+    } else {
+        $user->detachLocationFromUser($detachItem);
+    }
+    if ($detachItem==$storage_id && $storage_id==$user_storage_id){
         unset($usermeta['storage_channel_id']);
         $user->setAllCamsTokenMeta($usermeta);
     }

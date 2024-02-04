@@ -11,6 +11,7 @@ if (!MCore::$core->current_user->isPartner())
 
 list($name) = MCore::checkAndGetInputParameters(['name']);
 list($location, 
+     $location_str,
      $group, 
      $recording, 
      $tz, 
@@ -23,6 +24,7 @@ list($location,
      $gatewayId, $max_num_cameras,
      $gatewayCam, $gatewayUrl, $cameraIp, $path) = 
     MCore::getInputParameters(['location'=>'',
+                               'location_str'=>'',
                                'group'=>'',
                                'recording',
                                'tz'=>'UTC',
@@ -70,6 +72,24 @@ if ($dvrName && $channel_number) {
 } else if ($gatewayId && $max_num_cameras && $uuid) {
     $meta = ['gateway' => 'gateway', $gatewayId => 'gateway_id', 'gateway_id' => $gatewayId, $uuid => 'unique_id', 'max_num_cameras' => $max_num_cameras, 'subid' => 'NOPLAN', 'subname' => 'No Plan'];
 }
+
+if ($location_str) {
+    $locTypes = ["Province", "City", "Zone", "Circuit", "Subcircuit"];
+    $locArr = explode(":", $location_str);
+    for ($i = 0; $i < count($locArr); $i++) {
+        $removeLocType = trim(substr($locArr[$i], strpos($locArr[$i], '_') + 1));
+        $locName = str_replace("_", " ", $removeLocType);
+        if ($i == count($locArr) - 1) $location = $locName;
+        // "Province": "Ontario", "province_Ontario": ""
+        if ($meta){
+            $meta[$locArr[$i]] = "";
+            $meta[$locTypes[$i]] = $locName;
+        } else {
+            $meta = [$locArr[$i] => "", $locTypes[$i] => $locName];
+        }
+    }
+}
+
 $camera = MCamera::createCamera(MCore::$core->current_user, $name, $location, $group, $recording, $tz, $url, $username, $password, $lat, $lon, $onvif_rtsp_port_fwd, false, $serialnumber, $meta);
 
 if ($camera && $serialnumber && $macAddress) {
