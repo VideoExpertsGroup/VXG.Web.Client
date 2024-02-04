@@ -64,7 +64,7 @@ window.screens['users'] = {
                     '<td class="action-icons">' +
                     //'<button class="userbtn item-resend-confirm" title="Resend confirm email"></button>' +
                     //'<button class="userbtn item-report"></button>' +
-                    '<button class="userbtn item-arch userarchive '+(archive_enable?'active':'')+'" userid='+users[i].src.id+' username="'+users[i].src.name+'"><i class="fa fa-folder-o" aria-hidden="true"></i></button>'+
+                    //'<button class="userbtn item-arch userarchive '+(archive_enable?'active':'')+'" userid='+users[i].src.id+' username="'+users[i].src.name+'"><i class="fa fa-folder-o" aria-hidden="true"></i></button>'+
                     '<button class="userbtn item-cams usercameras" onclick_toscreen="usercameras"><i class="fa fa-video-camera" aria-hidden="true"></i></button>' +
                     '<button class="userbtn item-edit edituser" onclick_toscreen="edituser"><i class="fa fa-pencil" aria-hidden="true"></i></button>' +
                     //'<button class="userbtn item-goto-user"></button>' +

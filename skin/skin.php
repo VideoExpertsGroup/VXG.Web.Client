@@ -13,7 +13,7 @@ $skin["scripts"]["user"]=[
     "core/modules/tagsview/tagsview.js",
     "core/modules/clipview/clipview.js",
     "core/modules/bottomline/bottomline.js",
-    "core/modules/archieve/archieve.js"
+    // "core/modules/archieve/archieve.js"
 ];
 $skin["scripts"]["partner"]=[
     "core/modules/reports/reports.js",
