@@ -42,26 +42,26 @@ CameraCloudEditControl = function(){
 <input type="hidden" name="gatewayId">
 <input type="hidden" name="gatewayUrl">
 <div class="form-group">
-    <label>Name</label>
+    <label>${$.t('common.name')}</label>
     <input autofocus="autofocus" class="name" name="name" >
 </div>
 <div class="form-group location">
-    <label>Location: </label>
+    <label>${$.t('common.location')}</label>
     <div class="dialog-group location-group">
         <input type="text" disabled class="dialog-info location-info show-location" name="shownlocation" value="">
         <input type="hidden" class="location-info" name="location_str" value="">
         <input type="hidden" class="location-info" name="new_location_str" value="">
-        <span class="vxgbutton locbtn dialogbtn" id="locbtn-cloud">Locations</span>
+        <span class="vxgbutton locbtn dialogbtn" id="locbtn-cloud">${$.t('common.locations')}</span>
     </div>
 </div>
 <div class="form-group">
-    <label>Group</label>
+    <label>${$.t('common.group')}</label>
     <input name="group" list="groupslist">
     <datalist id="groupslist"> </datalist>
 </div>
 <!--
 <div class="form-group" style="display:none">
-    <label>Recording</label>
+    <label>${$.t('common.recording')}</label>
     <select name="recording" >
         <option value="1">On</option>
         <option value="0">Off</option>
@@ -69,139 +69,139 @@ CameraCloudEditControl = function(){
 </div>
 -->
 <div class="form-group type" style="display:none">
-    <label>Type</label>&nbsp;&nbsp;&nbsp;<a target="_blank" rel="noopener noreferrer" href="`+vxg.links.error+`">How to add a camera?</a> 
+    <label>${$.t('common.type')}</label>&nbsp;&nbsp;&nbsp;<a target="_blank" rel="noopener noreferrer" href="`+vxg.links.error+`">${$.t('cameras.howtoAddACamera')}</a> 
     <select class="url_protocol">
-        <option value="onvif" selected>ONVIF camera</option>
-        <option value="rtsp">Video URL</option>
+        <option value="onvif" selected>${$.t('common.onvifCamera')}</option>
+        <option value="rtsp">${$.t('common.videoUrl')}</option>
     </select>
 </div>
 <div class="form-group rtspOnly notincloud" style="display:none">
-    <label>URL</label>
+    <label>${$.t('common.url')}</label>
     <input name="url" class="anccsUrl">
 </div>
 
 <div class="form-group rtspOnly notincloud" style="display:none">
-    <div class="anccsUrlOptions">OPTIONS</div>
+    <div class="anccsUrlOptions">${$.t('common.options').toUpperCase()}</div>
 </div>
 
 <div class="form-group rtspOnly options notincloud" style="display:none">
-    <label for="url_prot">Protocol&nbsp;</label>
+    <label for="url_prot">${$.t('common.protocol')}&nbsp;</label>
     <input type="text" class="url_prot form-control input500" value="">
 </div>
 <div class="form-group options notincloud gatewayinput" style="display:none">
-    <label class="gateway_ip_label" for="url_ip">Camera IP (Local IP of camera, located in Gateway network)</label>
+    <label class="gateway_ip_label" for="url_ip">${$.t('newCamera.cameraIpLabel')}</label>
     <input type="text" name="url_ip" class="url_ip form-control input500" value="">
-    <div class="iperror">Invalid domain name or ip address</div>
+    <div class="iperror">${$.t('newCamera.invalidDomainOrIpAddress')}</div>
 </div>
 <div class="form-group options notincloud gatewayinput" style="display:none">
-    <label for="url_http_port" class="onvifOnly">HTTP port&nbsp;</label>
-    <label for="url_http_port" class="rtspOnly">Port&nbsp;</label>
+    <label for="url_http_port" class="onvifOnly">${$.t('common.httpPort')}&nbsp;</label>
+    <label for="url_http_port" class="rtspOnly">${$.t('common.port')}&nbsp;</label>
     <input type="number" name="url_http_port" class="url_http_port form-control input500" value="">
 </div>
 <div class="form-group options notincloud gatewayinput" style="display:none">
-    <label class="onvifOnly" for="url_rtsp_port">RTSP port&nbsp;</label>
+    <label class="onvifOnly" for="url_rtsp_port">${$.t('common.rtspPort')}&nbsp;</label>
     <input type="number" class="onvifOnly url_rtsp_port form-control input500" name="onvif_rtsp_port_fwd">
     <i class="onvifOnly"></i>
 </div>
 <div class="form-group options notincloud" style="display:none">
-  <label for="deviceLogin">Username&nbsp;</label>
+  <label for="deviceLogin">${$.t('common.username')}&nbsp;</label>
   <input type="text" class="form-control input500 url_user_name" name="username" >
 </div>
 <div class="form-group options notincloud" style="position: relative;display:none">
-  <label for="devicePassword">Password&nbsp;</label>
+  <label for="devicePassword">${$.t('common.password')}&nbsp;</label>
   <input type="password" class="password form-control input500 url_password" autocomplete="new-password" name="password"><i class="showhidepass show-password"></i>
 </div>
 <div class="form-group options notincloud notindvr" style="display:none">
-    <label class="" for="url_path">Path&nbsp;</label>
+    <label class="" for="url_path">${$.t('common.path')}&nbsp;</label>
     <input type="text" class="url_path form-control input500" value="">
 </div>
 
 <div class="form-group">
-    <label>Timezone</label>
+    <label>${$.t('common.timezone')}</label>
     <select name="tz">
     </select>
 </div>
 <div class="form-group" style="display:none">
-    <label>Latitude</label>
+    <label>${$.t('common.latitude')}</label>
     <input name="lat" value="0">
 </div>
 <div class="form-group" style="display:none">
-    <label>Longitude</label>
+    <label>${$.t('common.longitude')}</label>
     <input name="lon" value="0">
 </div>
 
 <div class="form-group" style="display:none">
-    <label>Description</label>
+    <label>${$.t('common.description')}</label>
     <textarea name="desc" rows="5"></textarea>
 </div>
 <div class="form-group" style="display:none">
-    <label>Serial number</label>
+    <label>${$.t('common.serialNumber')}</label>
     <input autofocus="autofocus" class="serialnumber" name="serialnumber">
 </div>
 <div class="form-group" style="display:none">
-    <label>Password</label>
+    <label>${$.t('common.password')}</label>
     <input type="password" autofocus="autofocus" class="gspassword" name="gspassword">
 </div>
 <div class="form-group subscription">
-    <label>Subscription: </label>
+    <label>${$.t('common.subscription')}: </label>
     <div class="subscription-group-cloud">
         <input type="text" disabled class="subscription-info show-name" name="showname" value="">
-        <span class="vxgbutton subbtn" id="subbtn-cloud">Subscriptions</span>
+        <span class="vxgbutton subbtn" id="subbtn-cloud">${$.t('common.subscriptions')}</span>
         <input type="hidden" class="subscription-info" name="subname" value="">
         <input type="hidden" class="subscription-info" name="subid" value="">
     </div>
 </div>
 </form>
 <div class="sbt">
-<div class="wait"><span>Wait</span>&nbsp;&nbsp;<div class="spinner"></div></div>
+<div class="wait"><span>${$.t('common.wait')}</span>&nbsp;&nbsp;<div class="spinner"></div></div>
             `+
             '</div>');
         var dropdownOpts = `<div class="form-group setting-dropdown loc-dropdown bottom-options">
-        <div class="anccsUrlLocation">GEOLOCATION</div>
+        <div class="anccsUrlLocation">${$.t('common.geolocation').toUpperCase()}</div>
         <span class="carrot-icon closed"><</span>
     </div>
     
     <div class="form-group loca hidesett">
-        <label>Latitude</label>
+        <label>${$.t('common.latitude')}</label>
         <input name="lat" value="">
     </div>
     <div class="form-group loca hidesett">
-        <label>Longitude</label>
+        <label>${$.t('common.longitude')}</label>
         <input name="lon" value="">
     </div>
     <div class="form-group setting-dropdown rete-dropdown bottom-options custom-plan" style="display: none">
-            <div class="anccsUrlRetentiontime">RECORDING</div>
+            <div class="anccsUrlRetentiontime">${$.t('common.recording').toUpperCase()}</div>
             <span class="carrot-icon closed"><</span>
         </div>
         <div class="form-group rete hidesett">
-            <label>Cloud recording</label>&nbsp;&nbsp;&nbsp;<label class="rectypeinfo" style="display:none;font-weight: lighter;">(recording type "By Event" is not supported for RTSP cameras)</label>
+            <label>${$.t('common.cloudRecording')}</label>&nbsp;&nbsp;&nbsp;<label class="rectypeinfo" style="display:none;font-weight: lighter;">(${$.t('newCamera.cloudRecordingLabel')})</label>
             <select name="rete_recmode" class="rete_recmode" id="recmode_cloud">
-                <option value="off" selected>Off</option>
-                <option value="on">Continuous</option>
-                <option value="by_event">By Event</option>
+                <option value="off" selected>${$.t('common.off')}</option>
+                <option value="on">${$.t('common.continuous')}</option>
+                <option value="by_event">${$.t('common.byEvent')}</option>
             </select>
         </div>
         <div class="form-group rete_time rete rete_off hidesett" id="retetime_cloud">
-            <label>Retention time (hours)</label>
+            <label>${$.t('newCamera.retentionTimeLabel')}</label>
             <input name="rete_time" value="72">
         </div>
         <div class="form-group rete reten rete_sd hidesett">
             <label class="sd-label custom-checkbox" id="locctrl">
-                <span>This camera has SD Card Recording</span>
+                <span>${$.t('newCamera.hasSdCardRecordingLabel')}</span>
                 <input type="checkbox" name="rete_sd">
                 <span class="checkmark"></span>	
             </label>
         </div>
         <div class="form-group setting-dropdown ai-dropdown bottom-options custom-plan" style="display: none">
-        <div class="anccsUrlAIConfig">OBJECT DETECTION (AI)</div>
+        <div class="anccsUrlAIConfig">${$.t('newCamera.objectDetection')}</div>
         <span class="carrot-icon closed"><</span>
     </div>
     <div class="form-group ai_type hidesett">
-        <label>AI Object Detection</label>
+        <label>${$.t('newCamera.aiObjectDetection')}</label>
         <select name="ai_type" class="ai_type_select">
-            <option value="off">Off</option>
-            <option value="continuous">Continuous</option>
-            <option value="by_event">By Event</option>
+            <option value="off">${$.t('common.off')}</option>
+            <option value="continuous">${$.t('common.continuous')}</option>
+            <option value="by_event">${$.t('common.byEvent')}</option>
         </select>
     </div>`;
 
@@ -300,12 +300,12 @@ CameraCloudEditControl = function(){
         $(this).removeClass('newcamera');
         if (parseInt(access_token)>0){
             $(this).addClass('nodata').removeClass('ready');
-            this.showwait('Loading');
+            this.showwait($.t('common.loading'));
             return window.vxg.cameras.getCameraByIDPromise(parseInt(access_token)).then(function(camera){self.onCameraLoaded(camera);}, function(){self.onCameraLoadedFail();});
         }
         if (access_token) {
             $(this).addClass('nodata').removeClass('ready');
-            this.showwait('Loading');
+            this.showwait($.t('common.loading'));
             return window.vxg.cameras.getCameraByTokenPromise(access_token).then(function(camera){self.onCameraLoaded(camera);}, function(){self.onCameraLoadedFail();});
         }
         $(this).removeClass('nodata');
@@ -391,9 +391,9 @@ CameraCloudEditControl = function(){
         }
 
         if (isCloud) data.url='';
-        if (!serverSerial) this.showwait('Saving');
+        if (!serverSerial) this.showwait($.t('common.saving'));
         else {
-            $(".server-status").html('Saving')
+            $(".server-status").html($.t('common.saving'))
             $(".server-status").show();
         }
 
@@ -494,8 +494,8 @@ CameraCloudEditControl = function(){
                                     }
                                 }
     
-                                if (!data.gatewayCam && macAddress && serverSerial) dialogs['mdialog'].activate('<h7>Success!</h7><p>Install the plug-in on your camera and it will automatically connect this camera to your account.</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
-                                else if (!data.gatewayCam) dialogs['mdialog'].activate('<h7>Access token</h7><p>Copy and save the access token before closing the window</p><textarea rows="5" style="min-width:200px">'+r.access_tokens.all+'</textarea><p><button name="cancel" class="vxgbutton">Ok</button></p>');    
+                                if (!data.gatewayCam && macAddress && serverSerial) dialogs['mdialog'].activate(`<h7>${$.t('common.success')}!</h7><p>${$.t('toast.installCameraPluginSuccess')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
+                                else if (!data.gatewayCam) dialogs['mdialog'].activate(`<h7>${$.t('common.accessToken')}</h7><p>${$.t('toast.copyAndSaveAccessTokenBeforeClosingWindow')}</p><textarea rows="5" style="min-width:200px">${r.access_tokens.all}</textarea><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
                                 
                                 $(".serial-number-input").val("");
                                 $(".mac-address-input").val("");
@@ -514,7 +514,7 @@ CameraCloudEditControl = function(){
                                 if (r && r.responseJSON && r.responseJSON.errorDetail)
                                     alert(r.responseJSON.errorDetail);
                                 else
-                                    alert('Falied to delete setting');
+                                    alert($.t('toast.deleteSettingFailed'));
                             });
                             var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
                             if (cameraList) {
@@ -523,7 +523,7 @@ CameraCloudEditControl = function(){
                                 cameraList.meta.total_count = total + 1;
                                 localStorage.cameraList = JSON.stringify(cameraList);
                             }
-                            
+
                             self.hidewait();
                             $(".server-status").hide()
                             self.dispatchEvent(self.submited_event);
@@ -538,8 +538,8 @@ CameraCloudEditControl = function(){
                         }
     
                         else {
-                            if (macAddress && serverSerial) $('.server-status').html('<a target="_blank" href="'+vxg.links.error+'">Error #2</a>');
-                            else self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #2</a>');
+                            if (macAddress && serverSerial) $('.server-status').html(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #2</a>`);
+                            else self.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #2</a>`);
                         }
                         
                         setTimeout(function(){self.hidewait();},10000);
@@ -553,7 +553,7 @@ CameraCloudEditControl = function(){
     },
     this.onCameraLoadedFail = function(r){
         $(this).addClass('nodata');
-        this.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
+        this.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #3</a>`);
         this.defferedDispatchEvent(this.error_event);
         return r;
     }
@@ -563,10 +563,10 @@ CameraCloudEditControl = function(){
         $(this).removeClass('nodata');
         this.camera = camera;
 
-        this.showwait('Loading');
+        this.showwait($.t('common.loading'));
         this.camera.getConfig().then(function(bsrc){
             if (!bsrc){
-                self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
+                self.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #3</a>`);
                 self.defferedDispatchEvent(self.error_event);
                 return;
             }
@@ -574,7 +574,7 @@ CameraCloudEditControl = function(){
             $(self).removeClass('rtsp').removeClass('onvif').removeClass('cloud');
 
             if (!bsrc.url && !$(self).find('.url_protocol [value="cloud"]').length)
-                $(self).find('.url_protocol').append('<option value="cloud">Cloud camera'); 
+                $(self).find('.url_protocol').append(`<option value="cloud">${$.t('common.cloudCamera')}`);
 
             if (bsrc.url.substr(0,5)=='onvif') {
                 $(self).find('.url_protocol').val('onvif');
@@ -609,7 +609,7 @@ CameraCloudEditControl = function(){
             self.hidewait();
             self.defferedDispatchEvent(self.loaded_event);
         }, function(){
-            self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
+            self.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #3</a>`);
             self.defferedDispatchEvent(self.error_event);
         });
     }
@@ -765,7 +765,7 @@ CameraCloudEditControl = function(){
         if (camera) {
             var subId = camera.src.meta && camera.src.meta.subid ? camera.src.meta.subid : "customParameters";
             var subName = camera.src.meta && camera.src.meta.subname ? camera.src.meta.subname : "customParameters";
-            var showName = subId == "customParameters" ? "Custom Parameters" : subId == "NOPLAN" ? "No Subscription Assigned" : subName;
+            var showName = subId == "customParameters" ? $.t('common.customParameters') : subId == "NOPLAN" ? $.t('newCamera.noSubscriptionAssigned') : subName;
             $(self).find('[name="showname"]').val(showName);
         }
         $(self).find("#subbtn-cloud").on('click', function(e) {
@@ -774,9 +774,9 @@ CameraCloudEditControl = function(){
             var camName = camera ? camera.src.name : "new camera";
             planTable = `
                 <tr class="plan-header">
-                    <th>Plan</th>
-                    <th>Count</th>
-                    <th>Used</th>
+                    <th>${$.t('common.plan')}</th>
+                    <th>${$.t('common.count')}</th>
+                    <th>${$.t('common.used')}</th>
                     <th></th>
                 </tr>
             `;
@@ -799,7 +799,7 @@ CameraCloudEditControl = function(){
 
             planTable += `
             <tr class="plan" onclick="checkPlan('NOPLAN')">
-                <td class="plan-desc" planid="NOPLAN"> No Plan </td>
+                <td class="plan-desc" planid="NOPLAN"> ${$.t('newCamera.noPlan')} </td>
                 <td class="plan-count"></td>
                 <td class="used-count" ></td>
                 <td class="checkbox choose-sub">
@@ -810,11 +810,11 @@ CameraCloudEditControl = function(){
             `;
 
             var plansDialog = `
-                <h1 id="plans-title">Assign Subscription to ${camName}</h1>
+                <h1 id="plans-title">${$.t('newCamera.assignSubscriptionTo')} ${camName}</h1>
                 <table class="plansTable">
                     ${planTable}
                 </table>
-                <button name="select" class="vxgbutton assign-btn">Select</button>
+                <button name="select" class="vxgbutton assign-btn">${$.t('action.select')}</button>
             `;
             dialogs['mdialog'].activate(plansDialog).then(function(r){
                 if (r.button!='select') return;
@@ -843,7 +843,7 @@ CameraCloudEditControl = function(){
         $(this).find('[name="serialnumber"], [name="gspassword"], [name="name"], [name="location"], [name="shownlocation"], [name="new_location_str"], [name="location_str"], [name="group"], [name="lat"], [name="lon"], [name="desc"], [name="url"], [name="username"], [name="password"], .url_ip, .url_http_port, .url_rtsp_port').val('');
         $(this).find('.url_path').val('onvif/device_service');
         $(this).find('.subscription-info').val('');
-        $(this).find('.show-name').val('No Subscription Assigned');
+        $(this).find('.show-name').val($.t('newCamera.noSubscriptionAssigned'));
         $(this).removeClass('options').removeClass('rtsp').removeClass('cloud').addClass('onvif');
         this.createTimezonesList($(this).find('[name="tz"]'),moment.tz.guess());
         $(this).find('.custom-plan').hide();
@@ -867,7 +867,7 @@ CameraCloudEditControl = function(){
             selector.append(o.html(tz));
         }
         if (selectedIndex < 0)
-            selector.prepend($('<option selected>').html('Select a Timezone').val(''));
+            selector.prepend($('<option selected>').html($.t('newCamera.selectTimezonePlaceholder')).val(''));
         else
             selector[0].selectedIndex = selectedIndex;
     }

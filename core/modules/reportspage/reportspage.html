@@ -1,70 +1,74 @@
 
 <div class="dialogs filterDialog" style="display: none;">
     <div class="filterElement">
-        <h5 class="filter-title">Report Filters</h5>
+        <h5 class="filter-title" data-i18n="reports.reportFilters">Report Filters</h5>
         <p class="error-message" style="display: none;"></p>
         <div class="filter-inputs-cont">
             <div class="input-cont cameraid-input-cont">
-                <label for="cameraIds"> Cameras </label>
+                <label for="cameraIds" data-i18n="common.cameras"> Cameras </label>
                 <input name="cameraIds" id="cameraIds"> 
                 <div class="chosenCameraList"></div>
             </div>
             <div class="input-cont user-input-cont">
-                <label for="userid"> User Email </label>
+                <label for="userid" data-i18n="common.userEmail"> User Email </label>
                 <input type="text" name="userid" id="userid"> 
             </div>
             <div class="input-cont user-input-cont">
-                <label class="time-label"> Time Range </label>
+                <label class="time-label" data-i18n="common.timeRange"> Time Range </label>
                 <div class="time-inputs-cont">
                     <div class="start-time-cont">
-                        <label for="starttime"> Start Time </label>
+                        <label for="starttime" data-i18n="common.startTime"> Start Time </label>
                         <input type="datetime-local" name="starttime" id="startTimeFilter" class="timefilter">
                     </div>
                     <div class="end-time-cont">
-                        <label for="endtime"> End Time </label>
+                        <label for="endtime" data-i18n="common.endTime"> End Time </label>
                         <input type="datetime-local" name="endtime" id="endTimeFilter" class="timefilter">
                     </div>
                 </div>
             </div>
             <div class="input-cont status-result-cont">
                 <div class="status-cont">
-                    <label class="checkbox-input-label">Processing Status</label>
+                    <label class="checkbox-input-label" data-i18n="common.processingStatus">Processing Status</label>
                     <div class="statuses">
                         <label class="filter-label custom-checkbox">
-                            <span>New</span>
+                            <span data-i18n="common.eventStatuses.new">New</span>
                             <input type="checkbox" class="status_checkbox" name="not_handled" value="status_not_handled">
                             <span class="checkmark"></span>	
                         </label>
                         <label class="filter-label custom-checkbox">
-                            <span>In Progress</span>
+                            <span data-i18n="common.eventStatuses.inProgress">In Progress</span>
                             <input type="checkbox" class="status_checkbox" name="in_progress" value="status_in_progress">
                             <span class="checkmark"></span>	
                         </label>
                         <label class="filter-label custom-checkbox">
-                            <span>Processed</span>
+                            <span data-i18n="common.eventStatuses.processed">Processed</span>
                             <input type="checkbox" class="status_checkbox" name="processed" value="status_processed">
                             <span class="checkmark"></span>	
                         </label>
                     </div>  
                 </div>
                 <div class="result-cont">
-                    <label class="checkbox-input-label">Processing Result</label>
+                    <label class="checkbox-input-label" data-i18n="common.processingResult">Processing Result</label>
                     <div class="results">
                         <label class="filter-label custom-checkbox">
-                            <span>True</span>
+                            <span data-i18n="common.true">True</span>
                             <input type="checkbox" name="result_true">
                             <span class="checkmark"></span>	
                         </label>
                     </div>
                 </div>
             </div>
-            <button class="vxgbutton generate-button" id="generateReport">Generate Report</button>
+            <button class="vxgbutton generate-button" id="generateReport" data-i18n="action.generateReport">Generate Report</button>
         </div>
     </div>
 </div>
 
 <div class="reportslist noreports">
     <div class="noreports">
-        <h5> No reports to view. <span class="show-report-filter"> Generate a Report. </span> </h5>
+        <h5> <span data-i18n="reports.noReportsToView">No reports to view.</span> <span class="show-report-filter" data-i18n="reports.generateReport"> Generate a Report. </span> </h5>
     </div>
 </div>
+
+<script>
+    localize();
+</script>

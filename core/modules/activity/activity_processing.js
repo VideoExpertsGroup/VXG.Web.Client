@@ -20,7 +20,7 @@ $( document ).ready(function() {
     $(".event-camera").html(cameraName);
     $(".event-loc").html(location);
     $(".event-type").html(eventDisplayName);
-    $(".event-status").html(eventStatus == "no_status" ? "New" : eventStatus);
+    $(".event-status").html(eventStatus == "no_status" ? $.t('action.new') : eventStatus);
 
     $(".event-thumbnail").attr("src", thumburl);
     $(".raw-data").text(atob(activity_window.event_processing.meta));
@@ -60,8 +60,8 @@ $( document ).ready(function() {
         // show car info
         var carInfo = `
             <p class="car-info"> 
-                <b> ${(meta.license_plate ? meta.license_plate : "unknown")} </b>, car brand: ${(meta.car_brand ? meta.car_brand : "unknown")}, 
-                car color: ${(meta.car_color ? meta.car_color : "unknown")}, car model: ${(meta.car_model ? meta.car_model : "unknown")}
+                <b> ${(meta.license_plate ? meta.license_plate : $.t('common.unknown'))} </b>, car brand: ${(meta.car_brand ? meta.car_brand : $.t('common.unknown'))}, 
+                car color: ${(meta.car_color ? meta.car_color : $.t('common.unknown'))}, car model: ${(meta.car_model ? meta.car_model : $.t('common.unknown'))}
             </p>
         `;
         $('.metaTags').html(carInfo);
@@ -113,7 +113,7 @@ $( document ).ready(function() {
                 Promise.all(updateMetaFunctions).then(function() {
                     $('.processing-cont').show();
                 }, function(err) {
-                    alert("Error occured while updating event: " + err.responseText);
+                    alert($.t('toast.errorOccurredWhileUpdatingEvent') + ": " + err.responseText);
                 });
             })
     });
@@ -326,7 +326,7 @@ function show_rect(name, type) {
     else if (type === 'yolov4_detection')
         return show_rect_yolo_object_detection(data, name);     
 
-    alert("The visualisation is not supported by the chosen AI : '" + type + "'");     
+    alert($.t('toast.visualisationNotSupportedByChosenAI') + " : '" + type + "'");
     return;
 }
 

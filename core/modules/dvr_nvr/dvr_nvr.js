@@ -4,7 +4,7 @@ window.dialogs = window.dialogs || {};
 var path = window.core.getPath('dvr_nvr.js');
 window.screens['recorders'] = {
     'menu_weight': 31,
-    'menu_name':'Recorders',
+    'menu_name': $.t('recorders.title'),
     'get_args':function(){
     },
     'menu_icon': '<i class="fa fa-building" aria-hidden="true"></i>',
@@ -27,8 +27,7 @@ window.screens['recorders'] = {
     },
     'on_init':function(){
         let self = this;
-        core.elements['header-right'].prepend('' +
-            '<div class="transparent-button active adddvr" ifscreen="add_dvr" onclick_toscreen="add_dvr"><span class="add-icon">+</span><span>Add Recorder</span></div>');
+        core.elements['header-right'].prepend(`<div class="transparent-button active adddvr" ifscreen="add_dvr" onclick_toscreen="add_dvr"><span class="add-icon">+</span><span>${$.t('recorders.addRecorder')}</span></div>`);
         return defaultPromise();
     },
     loadDVRs: function() {
@@ -65,31 +64,31 @@ window.screens['recorders'] = {
             {
                 field: "id",
                 width: "140",
-                title: "Recorder",
+                title: $.t('common.recorder'),
             },
             {
                 field: "name",
-                title: "Name",
+                title: $.t('common.name'),
                 filterControl: "input",
                 sortable: true,
             },
             {
                 field: "location",
-                title: "Location",
+                title: $.t('common.location'),
                 filterControl: "select",
                 sortable: true,
                 cardVisible: false
             },
             {
                 field: "group",
-                title: "Group",
+                title: $.t('common.group'),
                 filterControl: "select",
                 sortable: true,
                 cardVisible: false
             },
             {
                 field: "action",
-                title: "Action"
+                title: $.t('common.action')
             },
         ];
 
@@ -113,7 +112,7 @@ window.screens['recorders'] = {
 
         if (count == 0) {
             self.wrapper.addClass('nodvrs');
-            $('#dvr-table').html('<div class="no-recorders"><p>No Recorders</p></div>');
+            $('#dvr-table').html(`<div class="no-recorders"><p>${$.t('recorders.noRecorders')}</p></div>`);
             self.wrapper.removeClass('loader');
             return;
         } 
@@ -174,7 +173,7 @@ function addCameraNamesInput(cameraInfo = null) {
 
         camerasHtml += `
             <div class="dvr-input-wrapper">
-                <label class="dvr-label cameras-label" for="cameraName${i}">Camera Name ${i}</label>
+                <label class="dvr-label cameras-label" for="cameraName${i}">${$.t('common.cameraName')} ${i}</label>
                 <input class="dvr-input cameras-input required" name="cameraName${i}" type="text" value="${camName}"> 
                 <input name="cameraId${i}" type="hidden" value="${camId}"> 
             </div>
@@ -205,7 +204,7 @@ function createTimezonesList () {
 
 function onDVRDelete(dvrId){
     setTimeout(function(){$('.simplemenu').remove();},10);
-    dialogs['mdialog'].activate('<h7>Do you want to delete all cameras connected via this Recorder?</h7><p>It can\'t be cancelled </p><div class="action-btns modal-actions"><button name="cancel" class="vxgbutton">Cancel</button><button name="delete" class="vxgbutton delete-btn bg-danger">Delete</button></div>').then(function(r){
+    dialogs['mdialog'].activate(`<h7>${$.t('recorders.deleteConfirm.title')}</h7><p>${$.t('recorders.deleteConfirm.content')} </p><div class="action-btns modal-actions"><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button><button name="delete" class="vxgbutton delete-btn bg-danger">${$.t('action.delete')}</button></div>`).then(function(r){
         if (r.button!='delete') return;
         core.elements['global-loader'].show();
         return vxg.api.cloud.getCamerasList({"meta": dvrId, "detail":'detail'}).then(function(cameras){
@@ -241,9 +240,9 @@ function onDVRDelete(dvrId){
   
           var menu =  $(`
           <div class="simplemenu">
-          <div class="listmenu-item dvr-menu mwebui_dvr"> <a id="ui-link" href="${url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> Recorder UI </span></a></div>
-          <div class="listmenu-item dvr-menu mconfigure_dvr" ifscreen="add_dvr" onclick_toscreen="add_dvr" editdvr="${dvrid}"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
-          <div class="listmenu-item dvr-menu mtrash_dvr" onclick="onDVRDelete('${dvrid}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
+          <div class="listmenu-item dvr-menu mwebui_dvr"> <a id="ui-link" href="${url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.recorderUI')} </span></a></div>
+          <div class="listmenu-item dvr-menu mconfigure_dvr" ifscreen="add_dvr" onclick_toscreen="add_dvr" editdvr="${dvrid}"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.config')} </span></div>
+          <div class="listmenu-item dvr-menu mtrash_dvr" onclick="onDVRDelete('${dvrid}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>
           </div>`);
   
           addSimpleMenu(menu, self, e);

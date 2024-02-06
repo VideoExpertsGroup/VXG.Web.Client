@@ -3,18 +3,18 @@ window.controls = window.controls || {};
 var path = window.core.getPath('camerameta.js');
 
 window.screens['camerameta'] = {
-    'header_name': 'Camera metadata',
+    'header_name': $.t('cameraMetadata.title'),
     'html': path+'camerameta.html',
     'css': [path+'camerameta.css'],
     'stablecss':[path+'scamerameta.css'],
     'js':[],
     'on_before_show':function(access_token, start_time_utc, end_time_utc){
-        this.wrapper.find('.sarea').html('<button class="vxgbutton" onclick_toscreen="back">Back</button>');
+        this.wrapper.find('.sarea').html(`<button class="vxgbutton" onclick_toscreen="back">${$.t('action.back')}</button>`);
         this.do_not_update = this.from_back ? true : false;
         if (this.do_not_update) return defaultPromise();
         if (this.scroll_top!==undefined)
             delete this.scroll_top;
-        core.elements['header-center'].html('Camera metadata');
+        core.elements['header-center'].html($.t('cameraMetadata.title'));
         core.elements['global-loader'].show();
         let self = this;
 
@@ -44,7 +44,7 @@ window.screens['camerameta'] = {
             this.autodownload = true;
         this.setCurTime();
         this.camera.getName().then(function(name){
-            core.elements['header-center'].html('Camera '+name+': metadata');
+            core.elements['header-center'].html(`${$.t('common.camera')} ${name}: ${$.t('common.metadata').toLowerCase()}`);
         });
 
         return this.updateTable();
@@ -152,12 +152,12 @@ window.screens['camerameta'] = {
 
             }
             if (!table) {
-                $(self.wrapper).find('.tablearea').empty().append('No metadata found');
+                $(self.wrapper).find('.tablearea').empty().append($.t('cameraMetadata.noMetadataFound'));
                 $(self.wrapper).find('.tablearea').removeClass('spinner');
                 return;
             }
             if (!_more)
-                $(self.wrapper).find('.tablearea').empty().append('<table class="table"><tr><th>#</th><th>Time</th><th>Objects</th><th>Action</th></tr></table>');
+                $(self.wrapper).find('.tablearea').empty().append(`<table class="table"><tr><th>#</th><th>${$.t('common.time')}</th><th>${$.t('common.objects')}</th><th>${$.t('common.action')}</th></tr></table>`);
             $(self.wrapper).find('.tablearea tbody').append(table);
             self.offset += r.length;
             if (self.offset < self.camera.events.total_count)
@@ -176,9 +176,9 @@ window.screens['camerameta'] = {
 
         },function(r){
             if (r.status!=401)
-                alert('Error loading meta');
+                alert($.t('toast.loadingMetaError'));
             else
-                $(self.wrapper).find('.tablearea').empty().append('No metadata found');
+                $(self.wrapper).find('.tablearea').empty().append($.t('cameraMetadata.noMetadataFound'));
             $(self.wrapper).find('.tablearea').removeClass('spinner');
             $(self.wrapper).find('.more').removeAttr('disabled');
         });
@@ -290,7 +290,7 @@ window.screens['camerameta'] = {
 
 
 window.screens['camerametaview'] = {
-    'header_name': 'Metadata',
+    'header_name': $.t('common.metadata'),
     'html': path+'camerametaview.html',
     'css': [path+'camerameta.css'],
     'stablecss':[],
@@ -346,14 +346,14 @@ window.screens['camerametaview'] = {
     'on_show':function(camtoken){
         let self = this;
         this.camera.getName().then(function(name){
-            core.elements['header-center'].html('Camera '+name+': metadata');
+            core.elements['header-center'].html(`${$.t('common.camera')} ${name}: ${$.t('common.metadata').toLowerCase()}`);
         });
 
         var imgSrc = this.event.src.thumb && this.event.src.thumb.url ? this.event.src.thumb.url : "";
 
-        $(this.wrapper).find('.metaImg').attr('src',imgSrc);
+        $(this.wrapper).find('.metaImg').attr('src', imgSrc);
         $(this.wrapper).find('.metaTitle').empty();
-        if (!imgSrc) $(this.wrapper).find('.metaTitle').html("Meta data for event "+ this.event.src.name + ":");
+        if (!imgSrc) $(this.wrapper).find('.metaTitle').html(`${$.t('cameraMetadata.metadataForEvent')} ${this.event.src.name}:`);
         $(this.wrapper).find('.metaSvg').empty();
         $(this.wrapper).find('.metaText').empty();
 
@@ -433,7 +433,7 @@ window.screens['camerametaview'] = {
             else if (type === 'yolov4_detection')
                 return self.show_rect_yolo_object_detection(data, name);     
 
-            alert("The visualisation is not supported by the chosen AI : '" + type + "'");     
+            alert(`${$.t('toast.visualisationNotSupportedByChosenAi')}: '${type}'`);
             return;
     },
     'show_rect_aws_object_and_scene_detection':function(ai_json, name)

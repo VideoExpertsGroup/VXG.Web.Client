@@ -3,7 +3,7 @@ window.controls = window.controls || {};
 window.dialogs = window.dialogs || {};
 var path = window.core.getPath('gateway_cams.js');
 window.screens['gateway_cams'] = {
-    'header_name': 'Gateway Cams',
+    'header_name': $.t('gateways.gatewayCams'),
     'html': path+'gateway_cams.html',
     'css': [path+'gateway.css'],
     'commonjs':[],
@@ -33,7 +33,7 @@ window.screens['gateway_cams'] = {
     'on_init':function(){
         let self = this;
         core.elements['header-right'].prepend('' +
-        '<div class="transparent-button active addgatewaycams" ifscreen="newcamera" onclick_toscreen="newcamera" channel_id="" gateway_token=""><span class="add-icon">+</span><span>Add Camera To Gateway</span></div>');
+        `<div class="transparent-button active addgatewaycams" ifscreen="newcamera" onclick_toscreen="newcamera" channel_id="" gateway_token=""><span class="add-icon">+</span><span>${$.t('gateways.addCameraToGateway')}</span></div>`);
         return defaultPromise();
     },
     loadGatewayCams: function() {
@@ -70,45 +70,45 @@ window.screens['gateway_cams'] = {
             {
                 field: "id",
                 width: "140",
-                title: "Camera",
+                title: $.t('common.camera'),
             },
             {
                 field: "status",
-                title: "Status",
+                title: $.t('common.status'),
                 filterControl: "select",
                 sortable: true,
                 cardVisible: false,
             },
             {
                 field: "recording",
-                title: "Recording",
+                title: $.t('common.recording'),
                 filterControl: "select",
                 sortable: true,
                 cardVisible: false
             },
             {
                 field: "name",
-                title: "Name",
+                title: $.t('common.name'),
                 filterControl: "input",
                 sortable: true
             },
             {
                 field: "location",
-                title: "Location",
+                title: $.t('common.location'),
                 filterControl: "select",
                 sortable: true,
                 cardVisible: false
             },
             {
                 field: "group",
-                title: "Group",
+                title: $.t('common.group'),
                 filterControl: "select",
                 sortable: true,
                 cardVisible: false
             },
             {
                 field: "action",
-                title: "Action"
+                title: $.t('common.action')
             },
         ]
 

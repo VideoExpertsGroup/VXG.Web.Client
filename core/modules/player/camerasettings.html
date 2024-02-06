@@ -1,10 +1,14 @@
 <div class="camerasettingstabsbtns">
-<div class="notavailable linkbutton active">Video</div>
+<div class="notavailable linkbutton active" data-i18n="common.video">Video</div>
 <!--<div class="notavailable mdbtn linkbutton" noback ifscreen="camerasettingsgrid" onclick_toscreen="camerasettingsgrid">Motion detection</div>-->
 </div>
 <cameraeditsettings hidesubmit access_token="" class="maxwidth"></cameraeditsettings>
 <br/>
 <div class="settabbtn">
-<button class="vxgbutton" onclick_toscreen="back">Back</button>&nbsp;&nbsp;&nbsp;&nbsp;
-<button type="button" class="notavailable vxgbutton apply">Apply</button>
+<button class="vxgbutton" onclick_toscreen="back" data-i18n="action.back">Back</button>&nbsp;&nbsp;&nbsp;&nbsp;
+<button type="button" class="notavailable vxgbutton apply" data-i18n="action.apply">Apply</button>
 </div>
+
+<script>
+    localize();
+</script>

@@ -4,7 +4,7 @@ var path = window.core.getPath('archieve.js');
 
 window.screens['archive'] = {
     'menu_weight':52,
-    'menu_name':'Archive',
+	'menu_name': $.t('archive.title'),
     'get_args':function(){
     },
 //  TODO:

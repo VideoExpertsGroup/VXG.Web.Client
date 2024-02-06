@@ -3,7 +3,7 @@ window.controls = window.controls || {};
 var path = window.core.getPath('add_dvr.js');
 
 window.screens['add_dvr'] = {
-    'header_name': 'Add Recorder',
+    'header_name': $.t('recorders.addRecorder'),
     'html': path+'add_dvr.html',
     'css': [path+'dvr_nvr.css'],
     'commonjs':[],
@@ -12,7 +12,7 @@ window.screens['add_dvr'] = {
     'on_before_show':function(){
         var self = this;
         this.reset();
-        this.wrapper.find('.sarea').html('<button class="vxgbutton" onclick_toscreen="back">Back</button>');
+        this.wrapper.find('.sarea').html(`<button class="vxgbutton" onclick_toscreen="back">${$.t('action.back')}</button>`);
 
         var tzList = createTimezonesList();
         $("#tz-select").html(tzList);
@@ -20,7 +20,7 @@ window.screens['add_dvr'] = {
 
         self.editingDvr = sessionStorage.getItem('editingDvr');
         if (self.editingDvr) {
-            $('#add-dvr').html("Modify Recorder");
+            $('#add-dvr').html($.t('recorders.modifyRecorder'));
             sessionStorage.removeItem('editingDvr');
             return vxg.api.cloud.getCamerasList({"meta": self.editingDvr, "detail":'detail'}).then(function(cameras){
                 self.cameras = cameras.objects;
@@ -28,8 +28,8 @@ window.screens['add_dvr'] = {
                 self.loadDvrInfo();
             });
         } else {
-            $('#add-dvr').html("Add Recorder");
-            $('.header-center').html("Add Recorder");
+            $('#add-dvr').html($.t('recorders.addRecorder'));
+            $('.header-center').html($.t('recorders.addRecorder'));
             self.editing = false;
         }
 
@@ -37,7 +37,7 @@ window.screens['add_dvr'] = {
     },
     'on_show':function(){
         var self = this;
-        if (self.editing) $('.header-center').html("Edit Recorder");
+        if (self.editing) $('.header-center').html($.t('recorders.editRecorder'));
     },
     'on_hide':function(){
     },
@@ -221,7 +221,7 @@ window.screens['add_dvr'] = {
         }
 
         if (inputError) {
-            $("#dvr-error-message").html('All highlighted fields are required.');
+            $("#dvr-error-message").html($.t('toast.allHighlightedFieldsAreRequired'));
             core.elements['global-loader'].hide();
             return false;
         } else {

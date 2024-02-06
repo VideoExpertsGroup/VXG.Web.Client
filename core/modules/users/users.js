@@ -3,7 +3,7 @@ var path = window.core.getPath('users.js');
 
 window.screens['users'] = {
     'menu_weight': 20,
-    'menu_name':'Users',
+    'menu_name': $.t('users.title'),
     'get_args':function(){
     },
     'menu_icon': '<i class="fa fa-user-o" aria-hidden="true"></i>',
@@ -47,11 +47,10 @@ window.screens['users'] = {
     'show_users':function(archive_channel_id){
         let self=this;
         return vxg.users.getList(100).then(function(users){
-            let table='<table><thead><tr class="header"><th scope="col">#</th><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Role</th><th scope="col">Cameras</th><th scope="col">Action</th></tr></thead><tbody>';
+            let table='<table><thead><tr class="header"><th scope="col">#</th><th scope="col">${$.t('common.name')}</th><th scope="col">${$.t('common.email')}</th><th scope="col">${$.t('users.role')}</th><th scope="col">${$.t('common.cameras')}</th><th scope="col">${$.t('common.action')}</th></tr></thead><tbody>';
             let c=1;
-            for (let i in users){
-
-                  let archive_channel_id = vxg.user.src.allCamsTokenMeta && vxg.user.src.allCamsTokenMeta.storage_channel_id ? parseInt(vxg.user.src.allCamsTokenMeta.storage_channel_id) : 0;
+            for (let i in users) {
+                let archive_channel_id = vxg.user.src.allCamsTokenMeta && vxg.user.src.allCamsTokenMeta.storage_channel_id ? parseInt(vxg.user.src.allCamsTokenMeta.storage_channel_id) : 0;
                 let totalcameras = users[i].src.totalCameras - (archive_channel_id && users[i].src.cameras.indexOf(archive_channel_id)>=0 ? 1 : 0);
                 let user = vxg.users.getUserByID(users[i].src.id);
                 let archive_enable = user.src.cameras.indexOf(archive_channel_id)>=0;
@@ -77,20 +76,20 @@ window.screens['users'] = {
                 $(self.wrapper).find('.userlist').empty().append(table);
             else {
                 self.wrapper.addClass('nouser');
-                $(self.wrapper).find('.userlist').empty().append('No users. <a href="javascript:void(0)" ifscreen="edituser" onclick_toscreen="edituser">Add user</a>');
+                $(self.wrapper).find('.userlist').empty().append(`${$.t('users.noUsers')}. <a href="javascript:void(0)" ifscreen="edituser" onclick_toscreen="edituser">${$.t('users.addUser')}</a>`);
             }
             self.wrapper.removeClass('loader');
             self.wrapper.find('.userarchive').click(function(){
 
                 if (!archive_channel_id){
-                    dialogs['mdialog'].activate('<h7>Error</h7><p>You cannot create an archive. Your limit has been exceeded.</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
+                    dialogs['mdialog'].activate(`<h7>${$.t('common.error')}</h7><p>${$.t('toast.createArchiveFailed')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
                     return;
                 }
 
                 let userid = this.getAttribute('userid');
                 let username = this.getAttribute('username');
                 let archive_enable = this.classList.contains('active');
-                dialogs['mdialog'].activate('<h7>Do you want to assign archive ?</h7><p><br/><label><input type="checkbox" class="userarchive" '+(archive_enable?'checked="checked"':'')+' name="enable">Assign archive for user '+username+'?</label></p><p><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="apply" class="vxgbutton">Apply</button></p>').then(function(r){
+                dialogs['mdialog'].activate(`<h7>${$.t('users.assignArchiveConfirm.title')}</h7><p><br/><label><input type="checkbox" class="userarchive" ${archive_enable ? 'checked="checked"' : ''} name="enable">${$.t('users.assignArchiveConfirm.content', { user: username })}</label></p><p><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="apply" class="vxgbutton">${$.t('action.apply')}</button></p>`).then(function(r){
                     if (r.button!='apply') return;
                     let checked = r.form.enable=="on";
 
@@ -109,7 +108,7 @@ window.screens['users'] = {
                         if (r && r.responseJSON && r.responseJSON.errorDetail)
                             alert(r.responseJSON.errorDetail);
                         else
-                            alert('Falied to update user cameras');
+                            alert($.t('toast.updateUserCameraFailed'));
                         core.elements['global-loader'].hide();
                     });
                 });
@@ -117,7 +116,7 @@ window.screens['users'] = {
             self.wrapper.find('.deleteuser').click(function(){
                 let userid = this.getAttribute('userid');
                 let username = this.getAttribute('username');
-                dialogs['mdialog'].activate('<h7>Do you want to delete '+username+'?</h7><p>It can\'t be cancelled </p><p><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">Delete</button></p>').then(function(r){
+                dialogs['mdialog'].activate(`<h7>${$.t('users.deleteConfirm.title', { user: username })}</h7><p>${$.t('users.deleteConfirm.content')} </p><p><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.delete')}</button></p>`).then(function(r){
                     if (r.button!='delete') return;
                     core.elements['global-loader'].show();
                     vxg.api.cloudone.user.del(userid).then(function(){
@@ -125,16 +124,16 @@ window.screens['users'] = {
                         return self.on_show();
                     },function(r){
                         core.elements['global-loader'].hide();
-                        let err_text = 'Failed to delete user';
+                        let err_text = $.t('toast.deleteUserFailed');
                         if (r && r.responseJSON && r.responseJSON.errorDetail) err_text = r.responseJSON.errorDetail;
-                        dialogs['mdialog'].activate('<h7>Error</h7><p>'+err_text+'</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
+                        dialogs['mdialog'].activate(`<h7>${$.t('common.error')}</h7><p>${err_text}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
                     });
                 });
             });
             self.filter();
         }, function(){
             self.wrapper.addClass('nouser');
-            $(self.wrapper).find('.userlist').empty().append('Failed load users list');
+            $(self.wrapper).find('.userlist').empty().append($.t('toast.loadUsersFailed'));
             self.wrapper.removeClass('loader');
         });
     },
@@ -143,7 +142,7 @@ window.screens['users'] = {
     'on_ready':function(){
     },
     'on_init':function(){
-        core.elements['header-right'].prepend('<div class="transparent-button adduser" ifscreen="edituser" onclick_toscreen="edituser"><span class="add-icon">+</span>Add user</div>');
+        core.elements['header-right'].prepend(`<div class="transparent-button adduser" ifscreen="edituser" onclick_toscreen="edituser"><span class="add-icon">+</span>${$.t('users.addUser')}</div>`);
 
         return defaultPromise();
     }
@@ -174,7 +173,7 @@ window.screens['edituser'] = {
             return defaultPromise();
         }
         $(this.wrapper).find('.invite').show();
-        core.elements['header-center'].text('Edit user: '+this.user.src.name);
+        core.elements['header-center'].text(`${$.t('users.editUser')}: ${this.user.src.name}`);
         this.wrapper.find('[name="username"]').val(this.user.src.name);
         this.wrapper.find('[name="email"]').val(this.user.src.email).attr('disabled','disabled');
 //        this.wrapper.find('.pass').hide();
@@ -203,10 +202,10 @@ window.screens['edituser'] = {
                 self.wrapper.find('.invite').attr('disabled','disabled');
                 window.firebase.auth().sendPasswordResetEmail(self.wrapper.find('form [name="email"]').val(), actionCodeSettings).then(function(){
                     self.wrapper.find('.invite').removeAttr('disabled');
-                    dialogs['idialog'].activate('Password recovery email has been sent')
+                    dialogs['idialog'].activate($.t('toast.passwordRecoveryEmailSendSuccess'));
                 },function(){
                     self.wrapper.find('.invite').removeAttr('disabled');
-                    alert('Fail to send password recovery email');
+                    alert($.t('toast.passwordRecoveryEmailSendFailed'));
                 });
                 
             }
@@ -255,7 +254,7 @@ window.screens['edituser'] = {
                 if (r && r.responseJSON && r.responseJSON.errorDetail)
                     alert(r.responseJSON.errorDetail);
                 else
-                    alert('Falied to add user');
+                    alert($.t('toast.addUserFailed'));
                 core.elements['global-loader'].hide();
             });
         });
@@ -265,7 +264,7 @@ window.screens['edituser'] = {
 };
 
 window.screens['deleteuser'] = {
-    'header_name': 'Delete user',
+    'header_name': $.t('users.deleteUser'),
     'html': path+'deleteuser.html',
     'on_before_show':function(r){
         delete this.user;
@@ -299,7 +298,7 @@ window.screens['deleteuser'] = {
                 if (r && r.responseJSON && r.responseJSON.errorDetail)
                     alert(r.responseJSON.errorDetail);
                 else
-                    alert('Falied to add user');
+                    alert($.t('toast.addUserFailed'));
                 core.elements['global-loader'].hide();
             });
         });
@@ -309,7 +308,7 @@ window.screens['deleteuser'] = {
 };
 
 window.screens['usercameras'] = {
-    'header_name': 'Assign camera to user',
+    'header_name': $.t('users.assignCameraToUser'),
     'html': path+'usercameras.html',
     'on_before_show':function(r){
         delete this.user;
@@ -328,7 +327,7 @@ window.screens['usercameras'] = {
         $(self.wrapper).find('.usercameralist').empty().addClass('spinner');
         return window.vxg.cameras.getCameraListPromise(100,0, null, "isstorage").then(function(list){
             if (!list.length){
-                $(self.wrapper).find('.usercameralist').empty().removeClass('spinner').append('No cameras available');
+                $(self.wrapper).find('.usercameralist').empty().removeClass('spinner').append($.t('cameras.noCamerasAvailable'));
                 return;
             }
 
@@ -443,7 +442,7 @@ window.screens['usercameras'] = {
                   if (r && r.responseJSON && r.responseJSON.errorDetail)
                       alert(r.responseJSON.errorDetail);
                   else
-                      alert('Falied to update user cameras');
+                      alert($.t('toast.updateUserCameraFailed'));
                   core.elements['global-loader'].hide();
               });
         });
@@ -629,7 +628,7 @@ function getUserFromElement(element){
 }
 
 window.screens['userarchive'] = {
-    'header_name': 'Assign archive to user',
+    'header_name': $.t('users.assignArchiveToUser'),
     'html': path+'userarchive.html',
     'on_before_show':function(r){
         delete this.user;
@@ -650,7 +649,7 @@ window.screens['userarchive'] = {
             $(self.wrapper).find('.userarchive input')[0].checked = false;
         else
             $(self.wrapper).find('.userarchive input')[0].checked = true;
-        core.elements['header-center'].html("Assign archive to user " + this.user.src.email);
+        core.elements['header-center'].html($.t('users.assignArchiveToUser') + ' ' + this.user.src.email);
 
         return defaultPromise();
     },
@@ -679,7 +678,7 @@ window.screens['userarchive'] = {
                 if (r && r.responseJSON && r.responseJSON.errorDetail)
                     alert(r.responseJSON.errorDetail);
                 else
-                    alert('Falied to update user cameras');
+                    alert($.t('toast.updateUserCameraFailed'));
                 core.elements['global-loader'].hide();
             });
 

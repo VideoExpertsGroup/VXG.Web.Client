@@ -2,9 +2,13 @@
 <div class="time">
   <input type="text" class="time_from" placeholder="DD/MM/YYYY hh:mm">
   <input type="text" class="time_to" placeholder="DD/MM/YYYY hh:mm">
-  <button style="" class="download vxgbutton">Download</button>&nbsp;&nbsp;	
-  <button title="View images in the defined period" type="button" class="show vxgbutton" data-attr="camera">Refresh</button>
+  <button style="" class="download vxgbutton" data-i18n="action.download">Download</button>&nbsp;&nbsp;
+  <button title="View images in the defined period" type="button" class="show vxgbutton" data-attr="camera" data-i18n="action.refresh">Refresh</button>
 </div>
 <div class="tablearea"></div>
-<button class="vxgbutton" onclick_toscreen="back">Back</button>&nbsp;&nbsp;<button type="button" class="vxgbutton more" data-attr="camera" style="display:none">More</button>
+<button class="vxgbutton" onclick_toscreen="back" data-i18n="action.back">Back</button>&nbsp;&nbsp;<button type="button" class="vxgbutton more" data-attr="camera" style="display:none" data-i18n="common.more">More</button>
 </div>
+
+<script>
+  localize();
+</script>

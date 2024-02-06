@@ -78,7 +78,7 @@ window.screens['login'] = {
             setTimeout(function(){self.wrapper.find('[name="username"]').focus();},1000);
         core.elements['header-right'].append('<span class="signout" style="white-space: nowrap;" onclick_logout><svg class="inline-svg-icon icon-signout">' +
             '       <use xlink:href="#mouseout"></use>' +
-            '    </svg><span>Sign Out</span></span>');
+            '    </svg><span>' + $.t('auth.signOut') + '</span></span>');
         this.wrapper.find('form').submit(function(e){
             e.preventDefault();
             let username = $(e.target).find('[name="username"]').val();
@@ -132,7 +132,7 @@ window.screens['login'] = {
                         if (r && r.responseJSON && r.responseJSON.errorDetail)
                             alert(r.responseJSON.errorDetail);
                         else
-                            alert('Login failed');
+                            alert($.t('toast.loginFailed'));
 
                         core.elements['global-loader'].hide();
                         $('body').removeClass('loginprocess');

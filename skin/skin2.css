@@ -23,7 +23,7 @@
 }
 
 /* Rename the first item in the left menu*/
-.leftblock .home .menu-name{font-size:0px;}
-.leftblock .home .menu-name:after{content:"Home";font-size:12px;}
+/*.leftblock .home .menu-name{font-size:0px;}*/
+/*.leftblock .home .menu-name:after{content:"Home";font-size:12px;}*/
 /* body.home .rightblock .headerBlock .header-center{font-size: 0px;} */
 /* body.home .header-center:after{content:"Home";font-size: 16px;} */

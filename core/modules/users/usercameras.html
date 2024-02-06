@@ -1,7 +1,6 @@
-
 <div class="assignment-tabs">
-    <div class="tab active" id="assign-cameras-tab">Cameras</div>
-    <div class="tab" id="assign-locations-tab">Locations</div>
+    <div class="tab active" id="assign-cameras-tab" data-i18n="common.cameras">Cameras</div>
+    <div class="tab" id="assign-locations-tab" data-i18n="common.locations">Locations</div>
 </div> 
 <div class="user-assignment tabcontent assign-cameras">
     <div class="usercameralist"></div>
@@ -13,6 +12,9 @@
     <input type="hidden" name="detach_locations">
 </div>
 <div class="bottom-btns-cont">
-    <button class="vxgbutton" onclick_toscreen="back">Back</button>
-    <button class="vxgbutton apply">Apply</button>
+    <button class="vxgbutton" onclick_toscreen="back" data-i18n="action.back">Back</button>
+    <button class="vxgbutton apply" data-i18n="action.apply">Apply</button>
 </div>
+<script>
+    localize();
+</script>

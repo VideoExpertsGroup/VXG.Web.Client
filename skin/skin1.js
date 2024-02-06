@@ -18,5 +18,7 @@ window.fillTitle = () => {
 $( document ).ready(function() {
     $('title').text(window.skin.pageTitle);
 //    $('.logo-container').attr('href', window.skin.logourl);
-    $('.bottom-global-menu').prepend('<a class="vxgbutton-rounded upgrade" target="_blank" href="'+window.skin.contactUs+'">Contact us</a><span style="color: lightgray;"><br><br>Please contact us to enable recording control and integration tools.</span>');
+    setTimeout(() => {
+        $('.bottom-global-menu').prepend(`<a class="vxgbutton-rounded upgrade" target="_blank" href="${window.skin.contactUs}">${$.t('action.contactUs')}</a><span style="color: lightgray;"><br><br>${$.t('layout.contactUsDescription')}</span>`);
+    }, 500)
 });

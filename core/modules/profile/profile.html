@@ -1,72 +1,78 @@
 <div class="prifiletabs">
-<div class="tab1">Notification</div>
-<div class="tab2">Password</div>
-<div class="tab3">Storage</div>
-<div class="tab4">Subscriptions</div>
+    <div class="tab1" data-i18n="common.notification">Notification</div>
+    <div class="tab2" data-i18n="common.password">Password</div>
+    <div class="tab3" data-i18n="common.storage">Storage</div>
+    <div class="tab4" data-i18n="common.subscriptions">Subscriptions</div>
 </div>
-<div class="wtab1 maxwidth"  style="position:relative">
-<label>Phone</label><br>
-<div class="phoneprefix">+1</div>
-<input type="number" class="" name="phone" placeholder="9876543210"><br/><br/>
-<label class="week_shedule">Week shedule: set hours for nighttime notifications</label><br/>
-<week-sheduler name="sheduler"></week-sheduler>
-<br><i>you will receive automated phone calls if your cameras detect people during these hours</i>
-<br/><br/><button class="submit2 vxgbutton">Apply</button>
+<div class="wtab1 maxwidth" style="position:relative">
+    <label data-i18n="common.phone">Phone</label><br>
+    <div class="phoneprefix">+1</div>
+    <input type="number" class="" name="phone" placeholder="9876543210"><br/><br/>
+    <label class="week_shedule" data-i18n="profile.weekScheduleLabel">Week schedule: set hours for nighttime notifications</label><br/>
+    <week-sheduler name="sheduler"></week-sheduler>
+    <br><i data-i18n="profile.weekScheduleDescription">you will receive automated phone calls if your cameras detect people during these hours</i>
+    <br/><br/>
+    <button class="submit2 vxgbutton" data-i18n="action.apply">Apply</button>
 </div>
 <div class="wtab2 maxwidth">
-<label>Current Password *</label><br>
-<input type="password" class="pwd" name="current_password"><i class="showhidepass"></i><br><br>
+    <label><span data-i18n="profile.currentPassword">Current Password</span> *</label><br>
+    <input type="password" class="pwd" name="current_password"><i class="showhidepass"></i><br><br>
 
-<label>New Password *</label><br>
-<input type="password" class="pwd" name="new_password"><i class="showhidepass"></i><br><br>
+    <label><span data-i18n="profile.newPassword">New Password</span> *</label><br>
+    <input type="password" class="pwd" name="new_password"><i class="showhidepass"></i><br><br>
 
-<label>Confirm New Password *</label><br>
-<input type="password" class="pwd" name="reenter_new_password"><i class="showhidepass"></i>
+    <label><span data-i18n="profile.confirmNewPassword">Confirm New Password</span> *</label><br>
+    <input type="password" class="pwd" name="reenter_new_password"><i class="showhidepass"></i>
 
-<br/><br/><button class="submit vxgbutton">Change password</button>
+    <br/><br/>
+    <button class="submit vxgbutton" data-i18n="action.changePassword">Change password</button>
 </div>
 
 <div class="wtab3 maxwidth">
 
-<div class="strg_type">
-<label>Storage *</label>
-<select name="storage_type" class="storage_type">
-</select>
-<br><br>
-</div>
+    <div class="strg_type">
+        <label><span data-i18n="common.storage">Storage</span> *</label>
+        <select name="storage_type" class="storage_type">
+        </select>
+        <br><br>
+    </div>
 
-<div class="strg_ep">
-<label>End-point *</label><br>
-<input type="text" class="pwd" name="endpoint"><br><br>
-</div>
-<div class="strg_nm">
-<label>Name *</label><br>
-<input type="text" class="pwd" name="name"><br><br>
-</div>
-<div class="strg_ak">
-<label>Access key *</label><br>
-<input type="text" class="pwd" name="access_key"><br/><br/>
-</div>
-<div class="strg_sk">
-<label>Secret key *</label><br>
-<input type="password" class="pwd" name="secret_key"><br><br>
-</div>
-<div class="strg_usn">
-<label">Upload SQS-name *</label><br>
-<input type="text" class="pwd" name="upload_sqs_name"><br><br>
-</div>
-<div class="strg_usr">
-<label>Upload SQS-region *</label><br>
-<input type="text" class="pwd" name="upload_sqs_region"><br/><br/>
-</div>
+    <div class="strg_ep">
+        <label><span data-i18n="profile.endPoint">End-point</span> *</label><br>
+        <input type="text" class="pwd" name="endpoint"><br><br>
+    </div>
+    <div class="strg_nm">
+        <label><span data-i18n="common.name">Name</span> *</label><br>
+        <input type="text" class="pwd" name="name"><br><br>
+    </div>
+    <div class="strg_ak">
+        <label><span data-i18n="profile.accessKey">Access key</span> *</label><br>
+        <input type="text" class="pwd" name="access_key"><br/><br/>
+    </div>
+    <div class="strg_sk">
+        <label><span data-i18n="profile.secretKey">Secret key</span> *</label><br>
+        <input type="password" class="pwd" name="secret_key"><br><br>
+    </div>
+    <div class="strg_usn">
+        <label><span data-i18n="profile.uploadSqsName">Upload SQS-name</span> *</label><br>
+        <input type="text" class="pwd" name="upload_sqs_name"><br><br>
+    </div>
+    <div class="strg_usr">
+        <label><span data-i18n="profile.uploadSqsRegion">Upload SQS-region</span> *</label><br>
+        <input type="text" class="pwd" name="upload_sqs_region"><br/><br/>
+    </div>
 
-<div class="storage_buttons">
-    <button class="submit_storage vxgbutton">Apply</button>
-    <button class="remove_storage vxgbutton"  style="display: none;">Return to Default Storage</button>
-</div>
+    <div class="storage_buttons">
+        <button class="submit_storage vxgbutton" data-i18n="action.apply">Apply</button>
+        <button class="remove_storage vxgbutton" style="display: none;" data-i18n="action.returnToDefaultStorage">Return to Default Storage</button>
+    </div>
 
 </div>
 
 <div class="wtab4">
-<div class="planlist"></div>
+    <div class="planlist"></div>
 </div>
+
+<script>
+    localize();
+</script>

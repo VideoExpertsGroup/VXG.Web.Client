@@ -3,7 +3,7 @@ window.controls = window.controls || {};
 var path = window.core.getPath('add_gateway.js');
 
 window.screens['add_gateway'] = {
-    'header_name': 'Add Gateway',
+    'header_name': $.t('gateways.addGateway'),
     'html': path+'add_gateway.html',
     'css': [path+'gateway.css'],
     'commonjs':[],
@@ -12,11 +12,11 @@ window.screens['add_gateway'] = {
     'on_before_show':function(){
         var self = this;
         this.reset();
-        this.wrapper.find('.sarea').html('<button class="vxgbutton" onclick_toscreen="back">Back</button>');
+        this.wrapper.find('.sarea').html(`<button class="vxgbutton" onclick_toscreen="back">${$.t('action.back')}</button>`);
 
         self.editingGateway = sessionStorage.getItem('editingGateway');
         if (self.editingGateway) {
-            $('#add-gateway').html("Modify Gateway");
+            $('#add-gateway').html($.t('gateways.modifyGateway'));
             sessionStorage.removeItem('editingGateway');
             return vxg.api.cloud.getCamerasList({"meta": self.editingGateway, "detail":'detail'}).then(function(cameras){
                 self.cameras = cameras.objects;
@@ -29,8 +29,8 @@ window.screens['add_gateway'] = {
             })
         } else {
             self.editing = false;
-            $('#add-gateway').html("Add Gateway");
-            $('.header-center').html("Add Recorder");
+            $('#add-gateway').html($.t('gateways.addGateway'));
+            $('.header-center').html($.t('recorders.addRecorder'));
             $('.hide-edit-cont').show();
             $('.hide-edit').attr("disabled", false);
         }
@@ -39,7 +39,7 @@ window.screens['add_gateway'] = {
     },
     'on_show':function(){
         var self = this;
-        if (self.editing) $('.header-center').html("Edit Gateway");
+        if (self.editing) $('.header-center').html($.t('gateways.editGateway'));
     },
     'on_hide':function(){
     },
@@ -138,7 +138,7 @@ window.screens['add_gateway'] = {
         }
 
         if (inputError) {
-            $("#gateway-error-message").html('All highlighted fields are required.');
+            $("#gateway-error-message").html($.t('toast.allHighlightedFieldsAreRequired'));
             core.elements['global-loader'].hide();
             return false;
         } else {

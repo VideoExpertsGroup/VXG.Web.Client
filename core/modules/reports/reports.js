@@ -147,7 +147,7 @@ function chartPointCB ( data ) {
 
 window.screens['home'] = {
     'menu_weight': 10,
-    'menu_name':'Home',
+	'menu_name': $.t('home.title'),
     'get_args':function(){
     },
 //  TODO:

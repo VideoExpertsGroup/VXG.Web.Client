@@ -12,7 +12,7 @@ var path = window.core.getPath('integration.js');
 
 window.screens['integration'] = {
     'menu_weight': 1000,
-    'menu_name':'Integrations',
+    'menu_name': $.t('integration.title'),
     'menu_icon': '<i class="fa fa-cogs" aria-hidden="true"></i>',
 
     // URL link to script page
@@ -36,26 +36,26 @@ window.screens['integration'] = {
     // When the screen is "activated" - for example, by pressing a menu
     'on_show':function(r){		
 		$("#rest_api").html("");
-		$("#rest_api").append( "<a href='"+vxg.api.cloud.apiSrc + "/docs/v2.html' target='_blank'>"+vxg.api.cloud.apiSrc+"/docs/v2.html</a><span> (Legacy API, Authorization: LKey 'cloud key')</span><br><br>");
-		$("#rest_api").append( "<a href='"+vxg.api.cloud.apiSrc + "/docs/v3.html' target='_blank'>"+vxg.api.cloud.apiSrc+"/docs/v3.html</a><span> (Authorization: LKey 'cloud key')</span>&nbsp&nbsp&nbsp<button onclick='myFunction()'>Request LKey 'cloud key'</button> <br><br>");
-		$("#rest_api").append( "<a href='"+vxg.api.cloud.apiSrc + "/docs/v4.html' target='_blank'>"+vxg.api.cloud.apiSrc+"/docs/v4.html</a><span> (Authorization: Acc 'camera access token')</span><br><br>");
-		$("#rest_api").append( "<a href='"+vxg.api.cloud.apiSrc + "/docs/v5.html' target='_blank'>"+vxg.api.cloud.apiSrc+"/docs/v5.html</a><span> (Authorization: SI 'group access token')</span><br><br>");
-		$("#rest_api").append( "<p>To authorize the above API calls. click on 'Authorize' button, insert the value of the 'Authorization' header and then click 'Authorize' in the pop-up dialog. For example,<br>\
-			<ul><li>For v3 API the value will look like 'LKey co.3289a20cf73bf94a1fc9'<br><br></li>\
-			<li>For v4 API the value will look like 'Acc eyJjYW1pZCI6IDMwNDA.....tIn0='</li></ul></p><br><br>");
+		$("#rest_api").append( "<a href='"+vxg.api.cloud.apiSrc + "/docs/v2.html' target='_blank'>"+vxg.api.cloud.apiSrc+`/docs/v2.html</a><span> (${$.t('integration.restApi.legacyApi')})</span><br><br>`);
+		$("#rest_api").append( "<a href='"+vxg.api.cloud.apiSrc + "/docs/v3.html' target='_blank'>"+vxg.api.cloud.apiSrc+`/docs/v3.html</a><span> (${$.t('integration.restApi.cloudKeyAuthorization')})</span>&nbsp&nbsp&nbsp<button onclick='myFunction()'>${$.t('integration.restApi.requestLKey')}</button> <br><br>`);
+		$("#rest_api").append( "<a href='"+vxg.api.cloud.apiSrc + "/docs/v4.html' target='_blank'>"+vxg.api.cloud.apiSrc+`/docs/v4.html</a><span> (${$.t('integration.restApi.accAuthorization')})</span><br><br>`);
+		$("#rest_api").append( "<a href='"+vxg.api.cloud.apiSrc + "/docs/v5.html' target='_blank'>"+vxg.api.cloud.apiSrc+`/docs/v5.html</a><span> (${$.t('integration.restApi.siAuthorization')})</span><br><br>`);
+		$("#rest_api").append( `<p>${$.t('integration.restApi.authorizeDescription')}<br>
+			<ul><li>${$.t('integration.restApi.authorizeExample1')}<br><br></li>
+			<li>${$.t('integration.restApi.authorizeExample2')}</li></ul></p><br><br>`);
 		
 		
 		
 
 		$("#admin_api").html("");
-		$("#admin_api").append( "<a href='"+vxg.api.cloud.apiSrc + "/docs/v2_admin.html' target='_blank'>"+vxg.api.cloud.apiSrc+"/docs/v2_admin.html</a><span> (Authorization requires SSL key and certificate)</span><br><br>");
+		$("#admin_api").append( "<a href='"+vxg.api.cloud.apiSrc + "/docs/v2_admin.html' target='_blank'>"+vxg.api.cloud.apiSrc+`/docs/v2_admin.html</a><span> (${$.t('integration.adminApi.authorizationDescription')})</span><br><br>`);
 
 		$("#web_sdk").html("");
-		$("#web_sdk").append( "<a href='./core/common/sdk/' target='_blank'>Web SDK samples</a><br><br>");
+		$("#web_sdk").append( `<a href='./core/common/sdk/' target='_blank'>${$.t('integration.webSdk.examples')}</a><br><br>`);
 
 
 		$("#camera_at").html("");
-		$("#camera_at").append( "<p><span>Group access token: </span><br><span class='acc_token'>" + vxg.api.cloud.allCamsToken + "</span></p>");
+		$("#camera_at").append( `<p><span>${$.t('integration.cameraAccessTokens.groupAccessToken')}: </span><br><span class='acc_token'>` + vxg.api.cloud.allCamsToken + "</span></p>");
 
 /*		
 		fetch(vxg.api.cloud.apiSrc + '/api/v5/channels/', {
@@ -129,16 +129,16 @@ function myFunction()
 {
 	vxg.api.cloudone.license().then(function(obj){
 		if (Object.keys(obj).length === 0)
-			alert("An e-mail was sent to your registered e-mail address!");
+			alert($.t('toast.emailSentToRegisteredEmailAddress'));
 		else		
-			dialogs['mdialog'].activate('<h7>Your LKey is</h7><p><br/>\
-						' +obj.data+'\
-						</p><p style="padding-top: 15px;">\
-						<button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;\
-						</p>').then(function(r){});
+			dialogs['mdialog'].activate(`<h7>${$.t('integration.yourLKeyIs')}</h7><p><br/>${obj.data}</p>
+				<p style="padding-top: 15px;">
+				<button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;</p>`
+			).then(function(r){});
 
 	}, function(){
-		alert("An e-mail was sent to your registered e-mail address");});
+		alert($.t('toast.emailSentToRegisteredEmailAddress'));
+	});
 }
 
 function button_more(el)
@@ -162,13 +162,13 @@ function button_more(el)
 		$(".more_acc_tok").remove();
 		if (r.objects){
 			r.objects.forEach(function(item){
-				$("#camera_at").append( "<p><span>Camera "+ item.name + " id: </span>\
-										<span class='acc_token'>" + item.id + "</span><span> access token:</span><br>\
-										<span class='acc_token'>"+ item.token + "</span></p>");
+				$("#camera_at").append( `<p><span>${$.t('common.camera')} ${item.name} id: </span>
+										<span class='acc_token'> ${item.id} </span><span> ${$.t('integration.accessToken')}:</span><br>
+										<span class='acc_token'> ${item.token} </span></p>`);
 			});
 		}
 		if (r.meta.next) {
-			$("#camera_at").append( "<button type='button' class='vxgbutton more_acc_tok' data-attr="+r.meta.next+" onclick='button_more(this)'>More</button>" );
+			$("#camera_at").append( `"<button type='button' class='vxgbutton more_acc_tok' data-attr="+r.meta.next+" onclick='button_more(this)'>${$.t('common.more')}</button>"` );
 		}
 	});
 }

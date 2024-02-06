@@ -40,11 +40,11 @@ CameraGsEditControl = function(){
 `+camera_finder_link+`
 </div>
 <div class="form-group">
-    <label>Name</label>
+    <label>${$.t('common.name')}</label>
     <input autofocus="autofocus" class="name" name="name" >
 </div>
 <div class="form-group">
-    <label>Location</label>
+    <label>${$.t('common.location')}</label>
     <input name="location" >
 </div>
 <!--
@@ -57,85 +57,85 @@ CameraGsEditControl = function(){
 </div>
 -->
 <div class="form-group type" style="display:none">
-    <label>Type</label>&nbsp;&nbsp;&nbsp;<a target="_blank" rel="noopener noreferrer" href="`+vxg.links.error+`">How to add a camera?</a> 
+    <label>${$.t('common.type')}</label>&nbsp;&nbsp;&nbsp;<a target="_blank" rel="noopener noreferrer" href="`+vxg.links.error+`">${$.t('cameras.howtoAddACamera')}</a> 
     <select class="url_protocol">
-        <option value="onvif" selected>ONVIF camera</option>
-        <option value="rtsp">Video URL</option>
+        <option value="onvif" selected>${$.t('common.onvifCamera')}</option>
+        <option value="rtsp">${$.t('common.videoUrl')}</option>
     </select>
 </div>
 <div class="form-group rtspOnly notincloud" style="display:none">
-    <label>URL</label>
+    <label>${$.t('common.url')}</label>
     <input name="url" class="anccsUrl">
 </div>
 
 <div class="form-group rtspOnly notincloud" style="display:none">
-    <div class="anccsUrlOptions">OPTIONS</div>
+    <div class="anccsUrlOptions">${$.t('common.options').toUpperCase()}</div>
 </div>
 
 <div class="form-group rtspOnly options notincloud" style="display:none">
-    <label for="url_prot">Protocol&nbsp;</label>
+    <label for="url_prot">${$.t('common.protocol')}&nbsp;</label>
     <input type="text" class="url_prot form-control input500" value="">
 </div>
 <div class="form-group options notincloud" style="display:none">
-    <label for="url_ip">IP address or domain name&nbsp;</label>
+    <label for="url_ip">${$.t('common.ipAddressOrDomainName')}&nbsp;</label>
     <input type="text" class="url_ip form-control input500" value="">
-    <div class="iperror">Invalid domain name or ip address</div>
+    <div class="iperror">${$.t('newCamera.invalidDomainOrIpAddress')}</div>
 </div>
 <div class="form-group options notincloud" style="display:none">
-    <label for="url_http_port" class="onvifOnly">HTTP port&nbsp;</label>
-    <label for="url_http_port" class="rtspOnly">Port&nbsp;</label>
+    <label for="url_http_port" class="onvifOnly">${$.t('common.httpPort')}&nbsp;</label>
+    <label for="url_http_port" class="rtspOnly">${$.t('common.port')}&nbsp;</label>
     <input type="number" class="url_http_port form-control input500" value="">
 </div>
 <div class="form-group options notincloud" style="display:none">
-    <label class="onvifOnly" for="url_rtsp_port">RTSP port&nbsp;</label>
+    <label class="onvifOnly" for="url_rtsp_port">${$.t('common.rtspPort')}&nbsp;</label>
     <input type="number" class="onvifOnly url_rtsp_port form-control input500" name="onvif_rtsp_port_fwd">
     <i class="onvifOnly"></i>
 </div>
 <div class="form-group options notincloud" style="display:none">
-  <label for="deviceLogin">Username&nbsp;</label>
+  <label for="deviceLogin">${$.t('common.username')}&nbsp;</label>
   <input type="text" class="form-control input500 url_user_name" name="username" >
 </div>
 <div class="form-group options notincloud" style="position: relative;display:none">
-  <label for="devicePassword">Password&nbsp;</label>
+  <label for="devicePassword">${$.t('common.password')}&nbsp;</label>
   <input type="password" class="password form-control input500 url_password" autocomplete="new-password" name="password"><i class="showhidepass show-password"></i>
 </div>
 <div class="form-group options notincloud" style="display:none">
-    <label class="" for="url_path">Path&nbsp;</label>
+    <label class="" for="url_path">${$.t('common.path')}&nbsp;</label>
     <input type="text" class="url_path form-control input500" value="">
 </div>
 
 <div class="form-group">
-    <label>Timezone</label>
+    <label>${$.t('common.timezone')}</label>
     <select name="tz">
     </select>
 </div>
 <div class="form-group" style="display:none">
-    <label>Latitude</label>
+    <label>${$.t('common.latitude')}</label>
     <input name="lat" value="0">
 </div>
 <div class="form-group" style="display:none">
-    <label>Longitude</label>
+    <label>${$.t('common.longitude')}</label>
     <input name="lon" value="0">
 </div>
 
 <div class="form-group" style="display:none">
-    <label>Description</label>
+    <label>${$.t('common.description')}</label>
     <textarea name="desc" rows="5"></textarea>
 </div>
 <div class="form-group">
-    <label>Serial number</label>
+    <label>${$.t('common.serialNumber')}</label>
     <input autofocus="autofocus" class="serialnumber" name="serialnumber">
 </div>
 <div class="form-group">
-    <label>Password</label>
+    <label>${$.t('common.password')}</label>
     <input type="password" autofocus="autofocus" class="gspassword" name="gspassword">
 </div>
 
 </form>
 <div class="sbt"><br/><br/>
-<div class="wait"><span>Wait</span>&nbsp;&nbsp;<div class="spinner"></div></div>
+<div class="wait"><span>${$.t('common.wait')}</span>&nbsp;&nbsp;<div class="spinner"></div></div>
             `+
-            ($(self).attr('hidesubmit')!==undefined ? '' : '<button class="apply vxgbutton">Apply</button>') +
+            ($(self).attr('hidesubmit')!==undefined ? '' : `<button class="apply vxgbutton">${$.t('action.apply')}</button>`) +
             '</div>');
 
         $(this).find('.apply').click(function(){
@@ -189,12 +189,12 @@ CameraGsEditControl = function(){
         $(this).removeClass('newcamera');
         if (parseInt(access_token)>0){
             $(this).addClass('nodata').removeClass('ready');
-            this.showwait('Loading');
+            this.showwait($.t('common.loading'));
             return window.vxg.cameras.getCameraByIDPromise(parseInt(access_token)).then(function(camera){self.onCameraLoaded(camera);}, function(){self.onCameraLoadedFail();});
         }
         if (access_token) {
             $(this).addClass('nodata').removeClass('ready');
-            this.showwait('Loading');
+            this.showwait($.t('common.loading'));
             return window.vxg.cameras.getCameraByTokenPromise(access_token).then(function(camera){self.onCameraLoaded(camera);}, function(){self.onCameraLoadedFail();});
         }
         $(this).removeClass('nodata');
@@ -270,7 +270,7 @@ CameraGsEditControl = function(){
 
         }
         if (isCloud) data.url='';
-        this.showwait('Saving');
+        this.showwait($.t('common.saving'));
         let res;
         if (!this.camera)
             res = vxg.cameras.createCameraPromise(data);
@@ -288,7 +288,7 @@ CameraGsEditControl = function(){
             if (r && r.responseJSON && r.responseJSON.errorDetail)
                 self.showerror(r.responseJSON.errorDetail);
             else
-                self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #2</a>');
+                self.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #2</a>`);
             setTimeout(function(){self.hidewait();},2000);
             self.defferedDispatchEvent(self.error_event);
         });
@@ -296,7 +296,7 @@ CameraGsEditControl = function(){
     },
     this.onCameraLoadedFail = function(r){
         $(this).addClass('nodata');
-        this.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
+        this.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #3</a>`);
         this.defferedDispatchEvent(this.error_event);
         return r;
     }
@@ -306,10 +306,10 @@ CameraGsEditControl = function(){
         $(this).removeClass('nodata');
         this.camera = camera;
 
-        this.showwait('Loading');
+        this.showwait($.t('common.loading'));
         this.camera.getConfig().then(function(bsrc){
             if (!bsrc){
-                self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
+                self.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #3</a>`);
                 self.defferedDispatchEvent(self.error_event);
                 return;
             }
@@ -317,7 +317,7 @@ CameraGsEditControl = function(){
             $(self).removeClass('rtsp').removeClass('onvif').removeClass('cloud');
 
             if (!bsrc.url && !$(self).find('.url_protocol [value="cloud"]').length)
-                $(self).find('.url_protocol').append('<option value="cloud">Cloud camera'); 
+                $(self).find('.url_protocol').append(`<option value="cloud">${$.t('common.cloudCamera')}`);
 
             if (bsrc.url.substr(0,5)=='onvif') {
                 $(self).find('.url_protocol').val('onvif');
@@ -352,7 +352,7 @@ CameraGsEditControl = function(){
             self.hidewait();
             self.defferedDispatchEvent(self.loaded_event);
         }, function(){
-            self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
+            self.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #3</a>`);
             self.defferedDispatchEvent(self.error_event);
         });
 
@@ -385,7 +385,7 @@ CameraGsEditControl = function(){
             selector.append(o.html(tz));
         }
         if (selectedIndex < 0)
-            selector.prepend($('<option selected>').html('Select a Timezone').val(''));
+            selector.prepend($('<option selected>').html($.t('newCamera.selectTimezonePlaceholder')).val(''));
         else
             selector[0].selectedIndex = selectedIndex;
     }

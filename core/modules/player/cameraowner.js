@@ -4,7 +4,7 @@ var path = window.core.getPath('cameraowner.js');
 
 
 window.screens['addcamera'] = {
-    'header_name': 'Add camera',
+    'header_name': $.t('newCamera.title'),
     'html': path+'editcamera.html',
     'css': [path+'editcamera.css'],
     'commonjs':[],
@@ -14,7 +14,7 @@ window.screens['addcamera'] = {
         if (this.from_back) return defaultPromise();
         delete this.camera;
         let self=this;
-        this.wrapper.find('.sarea').html('<button class="vxgbutton" onclick_toscreen="back">Back</button>');
+        this.wrapper.find('.sarea').html(`<button class="vxgbutton" onclick_toscreen="back">${$.t('action.back')}</button>`);
         if (!access_token)
             access_token = $(this.src).getNearParentAtribute('access_token');
         if (!access_token) access_token='';
@@ -33,7 +33,7 @@ window.screens['addcamera'] = {
         core.elements['global-loader'].show();
         this.wrapper.find('cameraedit').attr('access_token',this.access_token);
         return this.camera.getName().then(function(name){
-            core.elements['header-center'].text('Edit camera: '+name);
+            core.elements['header-center'].text(`${$.t('cameras.editCamera')}: ${name}`);
         });
     },
     'on_hide':function(){
@@ -63,14 +63,14 @@ window.screens['addcamera'] = {
 };
 
 window.screens['removecamera'] = {
-    'header_name': 'Remove camera',
+    'header_name': $.t('cameras.removeCamera'),
     'html': path+'removecamera.html',
     'css': [path+'removecamera.css'],
     'stablecss':[],
     'js':[],
     'on_before_show':function(access_token){
         let self=this;
-        this.wrapper.find('.sarea').html('<button class="vxgbutton" onclick_toscreen="back">Back</button>');
+        this.wrapper.find('.sarea').html(`<button class="vxgbutton" onclick_toscreen="back">${$.t('action.back')}</button>`);
         if (!access_token)
             access_token = $(this.src).getNearParentAtribute('access_token');
         if (!access_token) return defaultPromise();
@@ -110,7 +110,7 @@ window.screens['removecamera'] = {
 };
 
 window.screens['camerasettings'] = {
-    'header_name': 'Camera settings',
+    'header_name': $.t('cameras.cameraSettings'),
     'html': path+'camerasettings.html',
     'css': [path+'camerasettings.css'],
     'stablecss':[],
@@ -129,14 +129,14 @@ window.screens['camerasettings'] = {
     'on_show':function(){
         let self = this;
         $(this.wrapper).find('.settabbtn .apply').hide();
-        core.elements['header-center'].html('Camera settings');
+        core.elements['header-center'].html($.t('cameras.cameraSettings'));
         $(this.wrapper).find('cameraeditsettings').attr('access_token',this.access_token);
         $(this.wrapper).find('.mdbtn').attr('access_token',this.access_token);
 
         vxg.cameras.getCameraFrom(this.access_token).then(function(camera){
             self.camera = camera;
             self.camera.getName().then(function(name){
-                core.elements['header-center'].html('Settings for camera '+name);
+                core.elements['header-center'].html(`${$.t('cameras.settingsForCamera')} ${name}`);
             });
         });
 
@@ -148,7 +148,7 @@ window.screens['camerasettings'] = {
     },
     'on_hide':function(){
         delete self.camera;
-//        this.wrapper.find('.sarea').html('<button class="vxgbutton" onclick_toscreen="back">Back</button>');
+//        this.wrapper.find('.sarea').html(`<button class="vxgbutton" onclick_toscreen="back">${$.t('action.back')}</button>`);
     },
     'on_ready':function(){
         return defaultPromise();
@@ -177,7 +177,7 @@ window.screens['camerasettings'] = {
 
 
 window.screens['camerasettingsgrid'] = {
-    'header_name': 'Camera motion detection settings',
+    'header_name': $.t('cameras.cameraMotionDetectionSettings'),
     'html': path+'camerasettingsgrid.html',
     'css': [path+'camerasettingsgrid.css'],
     'stablecss':[],
@@ -197,9 +197,9 @@ window.screens['camerasettingsgrid'] = {
     },
     'on_show':function(){
         if (!this.camera) return defaultPromise();
-        core.elements['header-center'].html('Camera settings');
+        core.elements['header-center'].html($.t('cameras.cameraSettings'));
         this.camera.getName().then(function(name){
-            core.elements['header-center'].html('Settings for camera '+name);
+            core.elements['header-center'].html(`${$.t('cameras.settingsForCamera')} ${name}`);
         });
     },
     'on_hide':function(){

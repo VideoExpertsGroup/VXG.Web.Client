@@ -41,7 +41,7 @@ function camGrid(size /* 2,3,4 */){
     let p = $('.screens .cameras .camgrid2 player').off('dblclick').on('dblclick',function(){
         if (!$(this).attr('access_token')) return;
         let the = this;
-        dialogs['mdialog'].activate('<p>Do you want to remove this camera from the grid?</p><p><button name="cancel" class="vxgbutton">No</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">Yes</button></p>').then(function(r){
+        dialogs['mdialog'].activate(`<p>${$.t('cameras.deleteConfirm.title')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.no')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.yes')}</button></p>`).then(function(r){
             if (r.button!='delete') return;
             $(the).attr('access_token','');
             $(the)[0].on_access_token_change('');
@@ -97,12 +97,12 @@ function camGrid(size /* 2,3,4 */){
 
         var menu =  $(`
         <div class="simplemenu">
-        <div class="listmenu-item cam-menu mcamera dvrcam" onclick_toscreen="tagsview" channelID='${channelID}'><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>
-        <div class="listmenu-item cam-menu msetting subuser-hide" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Stream Settings </span></div>
-        <div class="listmenu-item cam-menu mchart dvrcam" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>
-        <a class="listmenu-item cam-menu mwebui subuser-hide" id="ui-link" href="" target="_blank" style="display: none"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> Camera UI </span></a>
-        <div class="listmenu-item cam-menu mconfigure dvrcam subuser-hide" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
-        <div class="listmenu-item cam-menu mtrash subuser-hide" onclick="onCameraDelete('${channelID}', '${gatewayId}', '${gatewayToken}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
+        <div class="listmenu-item cam-menu mcamera dvrcam" onclick_toscreen="tagsview" channelID='${channelID}'><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.timeline')} </span> </div>
+        <div class="listmenu-item cam-menu msetting subuser-hide" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.streamSettings')} </span></div>
+        <div class="listmenu-item cam-menu mchart dvrcam" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.metadata')} </span></div>
+        <a class="listmenu-item cam-menu mwebui subuser-hide" id="ui-link" href="" target="_blank" style="display: none"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.cameraUI')} </span></a>
+        <div class="listmenu-item cam-menu mconfigure dvrcam subuser-hide" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.config')} </span></div>
+        <div class="listmenu-item cam-menu mtrash subuser-hide" onclick="onCameraDelete('${channelID}', '${gatewayId}', '${gatewayToken}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>
         </div>`);
         
         var userType = vxg.user.src.role;
@@ -209,11 +209,11 @@ function onEventsSet(e){
         return camera.getEventTypes().then(function(r){
             core.elements['global-loader'].hide();
             let event_types = r.event_types?r.event_types:[];
-            let types = {'motion':'Motion','post_object_and_scene_detection':'Scene detection'};
+            let types = {'motion': $.t('common.eventTypes.motion'),'post_object_and_scene_detection': $.t('common.eventTypes.sceneDetection')};
             let text='';
             for (let i in types)
                 text += (text?'<br/>':'') + '<label><input class="svgbtnbefore" type="checkbox" name="'+i+'" '+(event_types.indexOf(i)!=-1?'checked':'')+'><span>'+types[i]+'</span></label>';
-            dialogs['mdialog'].activate('<h7>Select event types</h7><p></p>'+text+'<br/><p><br/><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="set" class="vxgbutton">Set</button></p>').then(function(r){
+            dialogs['mdialog'].activate(`<h7>${$.t('cameras.selectEventTypes')}</h7><p></p>${text}<br/><p><br/><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="set" class="vxgbutton">${$.t('action.set')}</button></p>`).then(function(r){
                 if (r.button!='set') return;
                 core.elements['global-loader'].show();
                 let data = [];
@@ -233,7 +233,7 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null){
 
     vxg.cameras.getCameraByIDPromise(channel_id).then(function(camera){
 
-        dialogs['mdialog'].activate('<h7>Do you want to delete camera '+camera.src.name+'?</h7><p>It can\'t be cancelled </p><p><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">Delete</button></p>').then(function(r){
+        dialogs['mdialog'].activate(`<h7>${$.t('cameras.deleteConfirm.shortTitle')} ${camera.src.name}?</h7><p>${$.t('cameras.deleteConfirm.content')} </p><p><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.delete')}</button></p>`).then(function(r){
             if (r.button!='delete') return;
             core.elements['global-loader'].show();
             var oldsubid = camera.src.meta ? camera.src.meta.subid : -1;
@@ -251,7 +251,7 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null){
                     vxg.api.cloud.getCameraConfig(gatewayId, gatewayToken).then(function(config) {
                         return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
                             if (!urlinfo.id && !urlinfo.url) {
-                                alert('Error finding url to remove camera from gateway');
+                                alert($.t('toast.findRemovingCameraUrlFailed'));
                                 return;
                             } else {
                                 cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
@@ -308,9 +308,9 @@ function doCameraDelete(camera, oldsubid, gatewayUrl = null) {
         //return screens['cameras'].on_show();
     }, function(r){
         core.elements['global-loader'].hide();
-        let err_text = 'Failed to delete camera';
+        let err_text = $.t('toast.deleteCameraFailed');
         if (r && r.responseJSON && r.responseJSON.errorDetail) err_text = r.responseJSON.errorDetail;
-        dialogs['mdialog'].activate('<h7>Error</h7><p>'+err_text+'</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
+        dialogs['mdialog'].activate(`<h7>${$.t('common.error')}</h7><p>${err_text}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
     });
 }
 
@@ -324,39 +324,20 @@ function onCameraScreenResize(){
         $('.screens .cameras').removeClass('gridtop');
 }
 
-
-				  function buttons () {
+function buttons () {
     return {
       btnUsersAdd: {
-        text: 'Highlight Users',
+        text: $.t('users.highlightUsers.title'),
         icon: 'bi-arrow-clockwise',
         event: function () {
-          alert('Do some stuff to e.g. search all users which has logged in the last week')
+          alert($.t('users.highlightUsers.alert'))
         },
         attributes: {
-          title: 'Search all users which has logged in the last week'
+          title: $.t('users.highlightUsers.description')
         }
       },
     }
   }
-
-
-
-				  function buttons () {
-    return {
-      btnUsersAdd: {
-        text: 'Highlight Users',
-        icon: 'bi-arrow-clockwise',
-        event: function () {
-          alert('Do some stuff to e.g. search all users which has logged in the last week')
-        },
-        attributes: {
-          title: 'Search all users which has logged in the last week'
-        }
-      },
-    }
-  }
-
 
 
   $(function() {
@@ -364,7 +345,7 @@ function onCameraScreenResize(){
 
 window.screens['cameras'] = {
     'menu_weight':30,
-    'menu_name':'Cameras',
+    'menu_name': $.t('cameras.title'),
     'get_args':function(){
     },
 //  TODO:
@@ -458,7 +439,7 @@ window.screens['cameras'] = {
                 if (list[i].src && list[i].src.meta && list[i].src.meta.isstorage) continue;
                 if (!list[i].src || list[i].src.status===undefined) continue;
                 let captured = list[i].src && list[i].src.meta && list[i].src.meta.capture_id && vxg.user.src.capture_id == list[i].src.meta.capture_id ? ' captured' : '';
-                let statusBlock = '<div class="caminfo tablecaminfo '+list[i].src.status+' '+(list[i].src.status=='active'?' online':'')+'">'+ (list[i].src.status=='active'?'Online':'Offline')+'</div>';
+                let statusBlock = '<div class="caminfo tablecaminfo '+list[i].src.status+' '+(list[i].src.status=='active'?' online':'')+'">'+ (list[i].src.status=='active'?$.t('common.online'):$.t('common.offline'))+'</div>';
                 var channelID = list[i].getChannelID();
                 channelIdList.push(channelID.toString());
                 var camGroup = "";
@@ -489,7 +470,7 @@ window.screens['cameras'] = {
                     id: `<div class="camerablock${captured}" access_token="${channelID}" id="scrollto${channelID}">
                     <campreview onclick_toscreen="tagsview"></campreview>`,
                     status: statusBlock,
-                    recording: list[i].src.recording?'yes':'no',
+                    recording: list[i].src.recording ? $.t('action.yes') : $.t('action.no'),
                     name: list[i].src.name,
                     location: list[i].src.meta && list[i].src.meta.location ? list[i].src.meta.location : "",
                     group: list[i].src.meta && list[i].src.meta.group ? list[i].src.meta.group : "",
@@ -522,45 +503,45 @@ window.screens['cameras'] = {
                     {
                         field: "id",
                         width: "140",
-                        title: "Camera",
+                        title: $.t('common.camera'),
                     },
                     {
                         field: "status",
-                        title: "Status",
+                        title: $.t('common.status'),
                         filterControl: "select",
                         sortable: true,
                         cardVisible: false,
                     },
                     {
                         field: "recording",
-                        title: "Recording",
+                        title: $.t('common.recording'),
                         filterControl: "select",
                         sortable: true,
                         cardVisible: false
                     },
                     {
                         field: "name",
-                        title: "Name",
+                        title: $.t('common.name'),
                         filterControl: "input",
                         sortable: true
                     },
                     {
                         field: "location",
-                        title: "Location",
+                        title: $.t('common.location'),
                         filterControl: "select",
                         sortable: true,
                         cardVisible: false
                     },
                     {
                         field: "group",
-                        title: "Group",
+                        title: $.t('common.group'),
                         filterControl: "select",
                         sortable: true,
                         cardVisible: false
                     },
                     {
                         field: "action",
-                        title: "Action"
+                        title: $.t('common.action')
                     },
                 ]
 
@@ -637,7 +618,7 @@ window.screens['cameras'] = {
                     })
     
                     if (camIdList.length == 0) {
-                        alert("Please select at least one camera from the list to group.");
+                        alert($.t('toast.selectAtLeastOneCamera'));
                         return;
                     }
     
@@ -657,13 +638,13 @@ window.screens['cameras'] = {
                         })
                         
                         dialogs['mdialog'].activate(`
-                            <h7>Select group</h7>
+                            <h7>${$.t('action.selectGroup')}</h7>
                             <div>
                                 <p>${camNameList}</p>
                                 <ul class="groupslist">						
                                 <li>    
                                     <label class="filter-label custom-checkbox">
-                                        <span> Remove From Group</span>
+                                        <span> ${$.t('action.removeFromGroup')}</span>
                                         <input class="groupCheck" type="radio" name="groupRadio" value="noGroup">
                                         <span class="checkmark"></span>	
                                     </label>
@@ -677,7 +658,7 @@ window.screens['cameras'] = {
                                     </label>
                                 </li>  
                                 </ul>  
-                                <button name="apply" class="vxgbutton-transparent" style="width:192px">Set</button>
+                                <button name="apply" class="vxgbutton-transparent" style="width:192px">${$.t('action.set')}</button>
                             </div>`).then(function(r){
                                 if (r.button!='apply') return;
                                 var groupName = r.form.newGroupName != '' ? r.form.newGroupName : $('input[name=groupRadio]:checked').val() == "noGroup" ? "" : $('input[name=groupRadio]:checked').val();
@@ -782,7 +763,7 @@ window.screens['cameras'] = {
         },function(){
             self.camera_list_promise=undefined;
             self.wrapper.addClass('nocameras');
-            el.html('Failed to load list of cameras');
+            el.html($.t('toast.loadCamerasFailed'));
             self.wrapper.removeClass('loader');
         });
 		
@@ -1031,7 +1012,7 @@ window.screens['cameras'] = {
             let counter = 0;
             let checkedCount = 0;
             $.each(locations, function (name, hash) {
-                let locationShowName = name ? name :'No location';
+                let locationShowName = name ? name : $.t('cameras.noLocation');
                 let checked = (savedLocations.includes(hash) || savedLocations.length == 0)? 'checked': '';
                 if (checked) checkedCount++;
                 let item = `
@@ -1051,7 +1032,7 @@ window.screens['cameras'] = {
 
             var htmlret = `
             <label class="filter-label custom-checkbox allloc">
-                <span>Select/deselect all</span>
+                <span>${$.t('action.selectDeselectAll')}</span>
                 <input type="checkbox" id="locctrl" ${(!filterset ? "checked" : "")} onchange="toggleAllLoc()">
                 <span class="checkmark"></span>	
             </label>
@@ -1077,24 +1058,24 @@ window.screens['cameras'] = {
     'on_init':function(){
         let self=this;
         let statesArray = [];
-        statesArray[0] = 'List';
-        statesArray[1] = 'Locations';
+        statesArray[0] = $.t('common.list');
+        statesArray[1] = $.t('common.locations');
         statesArray[2] = '2 x 2';
         statesArray[3] = '3 x 3';
         statesArray[4] = '4 x 4';
-        statesArray[-1] = 'Map';
+        statesArray[-1] = $.t('common.map');
 
         let curState = self.getState();
         core.elements['header-right'].prepend('<div tabindex="0" class="gridmenu hide transparent-button"><span>'+statesArray[curState.grid]+'</span><i class="fa fa-angle-down" aria-hidden="true"></i>' +
             '    <ul class="menu-dropdown">' +
-            '        <li class="cam-dropdown-item nogrid"><a href="javascript:;"> List </a></li>' +
-            '        <li class="cam-dropdown-item location"><a href="javascript:;"> Locations </a></li>' +
+            '        <li class="cam-dropdown-item nogrid"><a href="javascript:;"> ' + $.t('common.list') + ' </a></li>' +
+            '        <li class="cam-dropdown-item location"><a href="javascript:;"> ' + $.t('common.locations') + ' </a></li>' +
             '        <li class="cam-dropdown-item grid22"><a href="javascript:;">2 x 2</a></li>' +
             '        <li class="cam-dropdown-item grid33"><a href="javascript:;">3 x 3</a></li>' +
             '        <li class="cam-dropdown-item grid44"><a href="javascript:;">4 x 4</a></li>' +
-            '        <li class="cam-dropdown-item gridmap"><a href="javascript:;">Map</a></li>' +
+            '        <li class="cam-dropdown-item gridmap"><a href="javascript:;">' + $.t('common.map') + '</a></li>' +
             '    </ul>' +
-            '</div><div class="transparent-button active addcamera" ifscreen="newcamera" onclick_toscreen="newcamera"><span class="add-icon">+</span><span>Add camera</span></div>');
+            `</div><div class="transparent-button active addcamera" ifscreen="newcamera" onclick_toscreen="newcamera"><span class="add-icon">+</span><span>${$.t('cameras.addCamera')}</span></div>`);
 
         core.elements['header-right'].find('.nogrid').click(function(){
             if (self.getState().grid == 1) location.reload();

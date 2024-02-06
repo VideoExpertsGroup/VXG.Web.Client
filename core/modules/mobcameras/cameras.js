@@ -2,18 +2,11 @@ window.screens = window.screens || {};
 var path = window.core.getPath('cameras.js');
 
 var menu =  `
-        <div class="listmenu-item mcamera" onclick_toscreen="player"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>'
-        <div class=" listmenu-item msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Camera </span></div>'
-        <div class=" listmenu-item mchart" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>'
-        <div class=" listmenu-item mconfigure" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>'
-        <div class=" listmenu-item mtrash" ifscreen="removecamera" onclick_toscreen="removecamera"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>`
-
-var old_menu = ''
-    + '<div class="mcamera" onclick_toscreen="player">Timeline</div>'
-    + '<div class="msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings">Camera</div>'
-    + '<div class="mchart" ifscreen="camerameta" onclick_toscreen="camerameta">Metadata</div>'
-    + '<div class="mconfigure" ifscreen="addcamera" onclick_toscreen="addcamera">Config</div>'
-    + '<div class="mtrash" ifscreen="removecamera" onclick_toscreen="removecamera">Remove</div>';
+        <div class="listmenu-item mcamera" onclick_toscreen="player"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.timeline')} </span> </div>'
+        <div class=" listmenu-item msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.camera')} </span></div>'
+        <div class=" listmenu-item mchart" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.metadata')} </span></div>'
+        <div class=" listmenu-item mconfigure" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.config')} </span></div>'
+        <div class=" listmenu-item mtrash" ifscreen="removecamera" onclick_toscreen="removecamera"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>`
 
 (function( $ ){
 

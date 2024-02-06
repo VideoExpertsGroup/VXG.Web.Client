@@ -62,7 +62,7 @@ VXGArchieveModel.prototype.deleteClip = function deleteClip( params, deleteClipF
     let clipid = params.clipid;
 
     if (token === undefined || clipid === undefined) {
-	controller.apiWrongFunc('DeleteClip: wrong parameters');
+	controller.apiWrongFunc($.t('toast.deleteChipWrongParameters'));
 	return;
     }
     controller.showWait(true);
@@ -85,7 +85,7 @@ VXGArchieveModel.prototype.getMeta = function getMeta( getmetaFunc, params, view
 	let clipid = params.clipid;
 	
 	if (token === undefined || clipid === undefined) {
-		viewInstance.infoError('invalid parameters');
+		viewInstance.infoError($.t('toast.invalidParameters'));
 		viewInstance.showWaitInfo(false);
 		return;
 	}
@@ -111,7 +111,7 @@ VXGArchieveModel.prototype.createMeta = function createMeta( createmetaFunc, par
 	let clipincident = params.clipincident;
 	
 	if (token === undefined || clipid === undefined || note === undefined || time === undefined) {
-		viewInstance.infoError('invalid parameters');
+		viewInstance.infoError($.t('toast.invalidParameters'));
 		viewInstance.showWaitInfo(false);
 		return;
 	}
@@ -136,7 +136,7 @@ VXGArchieveModel.prototype.updateMeta = function updateMeta( updatemetaFunc, par
 	let clipincident = params.clipincident;
 	
 	if (token === undefined || id === undefined || note === undefined ) {
-		viewInstance.infoError('invalid parameters');
+		viewInstance.infoError($.t('toast.invalidParameters'));
 		viewInstance.showWaitInfo(false);
 		return;
 	}
@@ -159,7 +159,7 @@ VXGArchieveModel.prototype.shareClip = function shareClip( shareclipFunc, getcli
 	let expire = params.expire;
 
 	if (token === undefined || clipid === undefined || expire === undefined ) {
-		viewInstance.shareError('invalid parameters');
+		viewInstance.shareError($.t('toast.invalidParameters'));
 		viewInstance.showWaitShare(false);
 		return;
 	}
@@ -206,72 +206,72 @@ VXGArchieveView.prototype.capitalizeFirstLetter = function(string) {
 
 VXGArchieveView.prototype.initDraw = function initDraw(controller) {
 
-    this.element.innerHTML =
-    	'<div class= "VXGArchieveContainer">'
-    +	'	<div class= "VXGArchieveContainer2">'
-    +	'		<div class="Archieve-content">'
-    +	'			<div class="feed-Archieve-list"></div>'
-    +	'			<div class="d-flex w-100"><div class="VXGArchieveMore vxgbutton-transparent">More...</div></div>'
-    +	'		</div>'
-    +	'		<div class="VXGArchieveNoData"><span>No clips</span></div>'
-    +	'		<div class="VXGArchieveWaiter"></div>'
-    +	'	</div>'
-    +	'	<div class="VXGArchieveCurtain"></div>'
-    +	'	<div class="VXGArchieveDeleteDialog">'
-    +	'		<div class="VXGArchieveInfoHeader"><div class="VXGArchieveDeleteTitle">Delete clip</div></div>'
-    +	'		<table class="VXGArchiveDeleteTable">'
-    +	'			<tr><td colspan=2>Deleting clip&nbsp;<span class="VXGArchieveDeleteClipname">%clipname%</span></td></tr>'
-    +	'			<tr><td colspan=2><span>Are you sure?</span></td></tr>'
-    +	' 			<tr style="height: 50px; vertical-align: bottom;"><td style="text-align: right;"><div class="VXGArchieveDeleteConfirm vxgbutton-transparent">Delete</div></td>'
-    +	'				<td style="text-align: left;"><div class="VXGArchieveDeleteCancel vxgbutton-transparent">Cancel</div></td></tr>'
-    +	'		</table>'
-    +	'	</div>'
-    +	'	<div class="VXGArchieveInfo">'
-    +	'		<div class="VXGArchieveInfoHeader"><div class="VXGArchieveInfoClose"></div><div class="VXGArchieveInfoTitle"><span>Notes</span></div></div>'
-    +	'		<div class="VXGArchieveInfoContent">'
-    +	'			<table class="VXGArchiveInfoTable">'
-    +	'				<tr><td>Name:</td><td><div class="VXGArchieveInfoNameValue"></div></td></tr>'
-    +	'				<tr><td>Camera:</td><td><div class="VXGArchieveInfoCamnameValue"></div></td></tr>'
-    +	'				<tr><td>Time:</td><td><div class="VXGArchieveInfoDateValue"></div></td>	</tr>'
-    +	'				<tr><td>Incident:</td><td><div class="VXGArchieveInfoIncidentValue"></div></td></tr>'
-    +	'				<tr><td>Case:</td><td><input class="VXGArchieveInfoCaseValue"></name></td></tr>'
-    +	'				<tr style="height:100%;"><td colspan=2>	<textarea maxlength=300 class="VXGArchieveInfoDesc" placeholder="Enter note text..."></textarea></td></tr>'
-    +	'			</table>'
-    +	'		</div>'
-    +	'		<div class="VXGArchieveInfoError"></div>'
-    +	'		<div class="VXGArchieveInfoControls"><div class="VXGArchieveInfoApply vxgbutton-transparent">Apply</div></div>'
-    +	'		<div class="VXGArchieveInfoWaiter"></div>'
-    +	'	</div>'
-    +	'	<div class="VXGArchieveShare">'
-    +	'		<div class="VXGArchieveInfoHeader"><div class="VXGArchieveShareClose"></div><div class="VXGArchieveInfoTitle"><span>Share</span></div></div>'
-    +	'		<div class="VXGArchieveInfoContent">'
-    +	'			<table class="VXGArchiveShareTable">'
-    +	'				<tr><td>Name:</td><td colspan=2><div class="VXGArchieveShareNameValue">TODO</div></td></tr>'
-    +	'				<tr><td>Camera:</td><td colspan=2><div class="VXGArchieveShareCamnameValue">TODO</div></td></tr>'
-    +	'				<tr><td colspan=3><div class="VXGArchieveShareGroup">'
-    +	'					<div class="VXGArchieveShare30m vxgbutton-transparent">30 mins</div>'
-    +	'					<div class="VXGArchieveShare1h vxgbutton-transparent">1 hour</div>'
-    +	'					<div class="VXGArchieveShare12h vxgbutton-transparent">12 hours</div></div></td></tr>'
-    +	'				<tr style="height:100%;"><td colspan=3><textarea maxlength=300 class="VXGArchieveShareLink" placeholder="Link will be here..."></textarea></td></tr>'
-    +	'			</table>'
-    +	'		</div>'
-    +	'		<div class="VXGArchieveShareError"></div>'
-    +	'		<div class="VXGArchieveInfoControls"><div class="VXGArchieveShareCopyLink vxgbutton-transparent">Copy link</div></div>'
-    +	'		<div class="VXGArchieveShareWaiter"></div>'
-    +	'	</div>'
-    +	'	<div class="VXGArchievePlayer">'
-    +	'		<div class="VXGArchieveInfoHeader"><div class="VXGArchievePlayerClose"></div><div class="VXGArchieveInfoTitle"><span>Player</span></div></div>'
-    +	'		<div class="VXGArchieveInfoContent">'
-    +	'			<table class="VXGArchiveInfoTable">'
-    +	'				<tr><td>Name:</td><td><div class="VXGArchievePlayerNameValue">TODO</div></td></tr>'
-    +	'				<tr><td>Camera:</td><td><div class="VXGArchievePlayerCamnameValue">TODO</div></td></tr>'
-    +	'				<tr><td colspan=2>'
-    +	'					<video controls class="VXGArchievePlayerVideo" style="width:100%;height:32vw;"><source class="VXGArchievePlayerSourceValue"/></video>'
-    +	'				</td></tr>'
-    +	'			</table>'
-    +	'		</div>'
-    +	'	</div>'
-    +	'</div>';
+	this.element.innerHTML =
+		`<div class= "VXGArchieveContainer">
+            <div class= "VXGArchieveContainer2">
+                  <div class="Archieve-content">
+                        <div class="feed-Archieve-list"></div>
+                        <div class="d-flex w-100"><div class="VXGArchieveMore vxgbutton-transparent"><span data-i18n="common.more">${$.t('common.more')}</span>...</div></div>
+                  </div>
+                  <div class="VXGArchieveNoData"><span data-i18n="archive.noClips">${$.t('archive.noClips')}</span></div>
+                  <div class="VXGArchieveWaiter"></div>
+            </div>
+            <div class="VXGArchieveCurtain"></div>
+            <div class="VXGArchieveDeleteDialog">
+                  <div class="VXGArchieveInfoHeader"><div class="VXGArchieveDeleteTitle" data-i18n="archive.deleteClip">${$.t('archive.deleteClip')}</div></div>
+                  <table class="VXGArchiveDeleteTable">
+                        <tr><td colspan=2><span data-i18n="archive.deleteConfirm.title">${$.t('archive.deleteConfirm.title')}</span>&nbsp;<span class="VXGArchieveDeleteClipname">%clipname%</span></td></tr>
+                        <tr><td colspan=2><span data-i18n="archive.deleteConfirm.content">${$.t('archive.deleteConfirm.content')}</span></td></tr>
+                        <tr style="height: 50px; vertical-align: bottom;"><td style="text-align: right;"><div class="VXGArchieveDeleteConfirm vxgbutton-transparent" data-i18n="action.delete">${$.t('action.delete')}</div></td>
+                              <td style="text-align: left;"><div class="VXGArchieveDeleteCancel vxgbutton-transparent" data-i18n="action.cancel">${$.t('archive.cancel')}</div></td></tr>
+                  </table>
+            </div>
+            <div class="VXGArchieveInfo">
+                  <div class="VXGArchieveInfoHeader"><div class="VXGArchieveInfoClose"></div><div class="VXGArchieveInfoTitle"><span data-i18n="common.notes">${$.t('common.notes')}</span></div></div>
+                  <div class="VXGArchieveInfoContent">
+                        <table class="VXGArchiveInfoTable">
+                              <tr><td><span data-i18n="common.name">${$.t('common.name')}</span>:</td><td><div class="VXGArchieveInfoNameValue"></div></td></tr>
+                              <tr><td><span data-i18n="common.camera">${$.t('common.camera')}</span>:</td><td><div class="VXGArchieveInfoCamnameValue"></div></td></tr>
+                              <tr><td><span data-i18n="common.tile">${$.t('common.time')}</span>:</td><td><div class="VXGArchieveInfoDateValue"></div></td>      </tr>
+                              <tr><td><span data-i18n="common.incident">${$.t('common.incident')}</span>:</td><td><div class="VXGArchieveInfoIncidentValue"></div></td></tr>
+                              <tr><td><span data-i18n="common.case">${$.t('common.case')}</span>:</td><td><input class="VXGArchieveInfoCaseValue"></name></td></tr>
+                              <tr style="height:100%;"><td colspan=2>   <textarea maxlength=300 class="VXGArchieveInfoDesc" placeholder="${$.t('archive.form.notePlaceholder')}"></textarea></td></tr>
+                        </table>
+                  </div>
+                  <div class="VXGArchieveInfoError"></div>
+                  <div class="VXGArchieveInfoControls"><div class="VXGArchieveInfoApply vxgbutton-transparent" data-i18n="action.apply">${$.t('action.apply')}</div></div>
+                  <div class="VXGArchieveInfoWaiter"></div>
+            </div>
+            <div class="VXGArchieveShare">
+                  <div class="VXGArchieveInfoHeader"><div class="VXGArchieveShareClose"></div><div class="VXGArchieveInfoTitle"><span data-i18n="action.share">${$.t('action.share')}</span></div></div>
+                  <div class="VXGArchieveInfoContent">
+                        <table class="VXGArchiveShareTable">
+                              <tr><td><span data-i18n="common.name">${$.t('common.name')}</span>:</td><td colspan=2><div class="VXGArchieveShareNameValue" data-i18n="common.todo">${$.t('common.todo')}</div></td></tr>
+                              <tr><td><span data-i18n="common.camera">${$.t('common.camera')}</span>:</td><td colspan=2><div class="VXGArchieveShareCamnameValue" data-i18n="common.todo">${$.t('common.todo')}</div></td></tr>
+                              <tr><td colspan=3><div class="VXGArchieveShareGroup">
+                                    <div class="VXGArchieveShare30m vxgbutton-transparent">30 mins</div>
+                                    <div class="VXGArchieveShare1h vxgbutton-transparent">1 hour</div>
+                                    <div class="VXGArchieveShare12h vxgbutton-transparent">12 hours</div></div></td></tr>
+                              <tr style="height:100%;"><td colspan=3><textarea maxlength=300 class="VXGArchieveShareLink" placeholder="${$.t('archive.form.linkPlaceholder')}"></textarea></td></tr>
+                        </table>
+                  </div>
+                  <div class="VXGArchieveShareError"></div>
+                  <div class="VXGArchieveInfoControls"><div class="VXGArchieveShareCopyLink vxgbutton-transparent" data-i18n="action.copyLink">${$.t('action.copyLink')}</div></div>
+                  <div class="VXGArchieveShareWaiter"></div>
+            </div>
+            <div class="VXGArchievePlayer">
+                  <div class="VXGArchieveInfoHeader"><div class="VXGArchievePlayerClose"></div><div class="VXGArchieveInfoTitle"><span data-i18n="common.player">${$.t('common.player')}</span></div></div>
+                  <div class="VXGArchieveInfoContent">
+                        <table class="VXGArchiveInfoTable">
+                              <tr><td>${$.t('common.name')}:</td><td><div class="VXGArchievePlayerNameValue">${$.t('common.todo')}</div></td></tr>
+                              <tr><td>${$.t('common.camera')}:</td><td><div class="VXGArchievePlayerCamnameValue">${$.t('common.todo')}</div></td></tr>
+                              <tr><td colspan=2>
+                                    <video controls class="VXGArchievePlayerVideo" style="width:100%;height:32vw;"><source class="VXGArchievePlayerSourceValue"/></video>
+                              </td></tr>
+                        </table>
+                  </div>
+            </div>
+        </div>`;
     let element = this.element;
 
     let self		= this;
@@ -410,7 +410,7 @@ VXGArchieveView.prototype.render = function render(controller, params, VXGArchie
 
     if (offset == 0 && (VXGArchievedata === undefined || VXGArchievedata.length == 0)) {
 	let span = $(this.nodata).find("span")[0];
-        $(span).text("No clips");
+        $(span).text($.t('archive.noClips'));
 	$(this.nodata).addClass("visible");
     } else {
 	$(this.nodata).removeClass("visible");
@@ -479,7 +479,7 @@ VXGArchieveView.prototype.render = function render(controller, params, VXGArchie
 		if(this.status == "error") {
 			clipError = "clip-error";
 			clipLength = "ERROR";
-			errorInfo = '<div class="error-info">The selected time contains no recorded data</div>';
+			errorInfo = `<div class="error-info">${$.t('toast.selectedTimeContainsNoRecordedData')}</div>`;
 			disable = "disabled";
 		}
 
@@ -509,16 +509,16 @@ VXGArchieveView.prototype.render = function render(controller, params, VXGArchie
 	    +	'				<div class="VXGArchieveCreated"><div class="VXGArchieveCardInfoCreatedValue">' + timeCreated + '</div></div>'
 	    +	'				<div class="VXGArchieveCardInfoTitle">' + ((this.title.length > 0)? this.title : '&nbsp;') + '</div>'
 	    +	'				<div class="VXGArchieveCardInfoCamera">' + cameraInfo  + '</div>'
-//	    +	'				<div class="VXGArchieveIncident"><div class="VXGArchieveCardInfoIncident">Incident:</div><div class="VXGArchieveCardInfoIncidentValue">' + timeIncident + '</div></div>'
+//	    +	'				<div class="VXGArchieveIncident"><div class="VXGArchieveCardInfoIncident">' + $.t('common.incident') + ':</div><div class="VXGArchieveCardInfoIncidentValue">' + timeIncident + '</div></div>'
 //	    +	'				<div class="VXGArchieveCreated"><div class="VXGArchieveCardInfoCreated">Created:</div><div class="VXGArchieveCardInfoCreatedValue">' + timeCreated + '</div></div>'
 	    +	'			</div>'
 	    +	'			<div class="VXGArchieveSettings"></div>'
 	    +	'		</div>'
 	    +	'		<div class="VXGArchieveMenu" style="pointer-events: all !important;">'
-	    +	'			<div class="VXGArchieveClipMeta '+disable+'">Notes</div>'
-	    +	'			<div class="VXGArchieveClipDownload '+disable+'">Download</div>'
-	    +	'			<div class="VXGArchieveClipShare '+disable+'">Share</div>'	    
-	    +	'			<div class="VXGArchieveClipDelete">Delete</div>'
+	    +	'			<div class="VXGArchieveClipMeta '+disable+'">' + $.t('common.notes') + '</div>'
+	    +	'			<div class="VXGArchieveClipDownload '+disable+'">' + $.t('action.download') + '</div>'
+	    +	'			<div class="VXGArchieveClipShare '+disable+'">' + $.t('action.share') + '</div>'
+	    +	'			<div class="VXGArchieveClipDelete">' + $.t('action.delete') + '</div>'
 	    +	'		</div>'
 	    +	'	</div>'
 	    +	'</div>';

@@ -124,7 +124,7 @@ window.screens['admin'] = {
                         if (r && r.responseJSON && r.responseJSON.errorDetail)
                             alert(r.responseJSON.errorDetail);
                         else
-                            alert('Falied to delete setting');
+                            alert($.t('toast.deleteSettingFailed'));
                         core.elements['global-loader'].hide();
                     });                    
 											

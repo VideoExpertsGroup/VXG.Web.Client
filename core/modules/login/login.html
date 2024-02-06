@@ -1,23 +1,23 @@
 <div class="wrp">
 <div class="logo"></div>
-<div class="title">VSaaS</div>
+<div class="title" data-i18n="head.title">VSaaS</div>
 <div class="bod">
-<div class="before">Sign in</div>
+<div class="before" data-i18n="auth.signIn">Sign in</div>
 <form action="/api/login/">
-<div class="ltitle">E-mail</div>
-<input class="notlast" type="email" name="username" placeholder="Email" required value="" autocomplete="email">
-<div class="ltitle">Password</div>
-<input class="last" type="password" name="password" placeholder="Password" required value="" autocomplete="current-password">
-<span class="block-additional-control span" onclick_toscreen="forgot">Forgot password ?</span>
+<div class="ltitle" data-i18n="common.email">E-mail</div>
+<input class="notlast" type="email" name="username" placeholder="common.email" required value="" autocomplete="email">
+<div class="ltitle" data-i18n="common.password">Password</div>
+<input class="last" type="password" name="password" placeholder="common.password" required value="" autocomplete="current-password">
+<span class="block-additional-control span" onclick_toscreen="forgot" data-i18n="auth.forgotPassword">Forgot password ?</span>
 <div style="text-align:center;">
-<button type="submit" class="button-ext" vxgsubmit>Sign In</button><br/>
-<span class="block-additional-control2 span" onclick_toscreen="signup">Sign Up</span>
+<button type="submit" class="button-ext" vxgsubmit data-i18n="auth.signIn">Sign In</button><br/>
+<span class="block-additional-control2 span" onclick_toscreen="signup" data-i18n="auth.signUp">Sign Up</span>
 </div>
 </form>
-<button class="add-pwa-button">Install App</button>
+<button class="add-pwa-button" data-i18n="action.installApp">Install App</button>
 </div>
-<div class="loginbottomline"><div style=""><a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/Privacy_Statement.html">Privacy Policy</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/EULA.html">Term of Use</a></div>
-<div>(c) 2017-2022, VXG Inc. All right reserved.</div>
+<div class="loginbottomline"><div style=""><a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/Privacy_Statement.html" data-i18n="common.privacyPolicy">Privacy Policy</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/EULA.html" data-i18n="common.termOfUse">Term of Use</a></div>
+<div data-i18n="footer.copyright">(c) 2017-2022, VXG Inc. All right reserved.</div>
 </div>
 <span class="version">
     <p id="cloudone-version"></p>
@@ -26,5 +26,9 @@
 <div class="customAlert">
 <div class="alertHeader"><span class="alertHeaderSpan"></span></div>
 <div class="alertBody">Install this application on your home screen for quick and easy access when you're on the go. Just tap the <img class="alertBodyImg" src="core/modules/login/share.png"></img> then <img  class="alertBodyImg" src="core/modules/login/addToHome.png"></img>(Add to Home Screen)</div>
-<div class="alertSolution"><span class="alertButton">OK</span></div>
+<div class="alertSolution"><span class="alertButton" data-i18n="action.ok">OK</span></div>
 </div>
+
+<script>
+    localize();
+</script>

@@ -13,19 +13,19 @@
                 </div>
                 -->
                 <div class="gateway-input-wrapper">
-                    <label class="gateway-label name-label" for="name">Name</label>
+                    <label class="gateway-label name-label" for="name" data-i18n="common.name">Name</label>
                     <input class="gateway-input required" name="name" type="text" >
                 </div>
                 <div class="gateway-input-wrapper">
-                    <label class="gateway-label group-label" for="group">Group</label>
+                    <label class="gateway-label group-label" for="group" data-i18n="common.group">Group</label>
                     <input class="gateway-input" name="group" type="text" > 
                 </div>
                 <div class="gateway-input-wrapper">
-                    <label class="gateway-label location-label" for="location">Location</label>
+                    <label class="gateway-label location-label" for="location" data-i18n="common.location">Location</label>
                     <input class="gateway-input" name="location" type="text" >
                 </div>
                 <div class="gateway-input-wrapper hide-edit-cont">
-                    <label class="gateway-label guid-label" for="guid">Gateway ID</label>
+                    <label class="gateway-label guid-label" for="guid" data-i18n="common.gatewayID">Gateway ID</label>
                     <input class="gateway-input required hide-edit" name="guid" type="text" >
                 </div>
             </div>
@@ -34,7 +34,7 @@
             <p id="error-message"></p>
         </div>
         <div class="action-btns">
-            <button class="vxgbutton" onclick_toscreen="back" style="margin-right: 10px;">Back</button>
+            <button class="vxgbutton" onclick_toscreen="back" style="margin-right: 10px;" data-i18n="action.back">Back</button>
             <button name="add" class="vxgbutton add-btn" id="add-gateway"></button> 
         </div>
     </form>
@@ -42,3 +42,7 @@
     </div>
 
 </div>
+
+<script>
+    localize();
+</script>

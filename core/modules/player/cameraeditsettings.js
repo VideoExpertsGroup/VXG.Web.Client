@@ -31,7 +31,7 @@ CameraeditsettingsControl = function(){
         let self = this;
         access_token = $(this).getNearParentAtribute('access_token');
         $(this).html('<div id="profileeditingform"></div><form></form><div class="wait"><span></span>&nbsp;&nbsp;<div class="spinner"></div></div>'+
-            ($(self).attr('hidesubmit')!==undefined ? '' : '<button class="apply vxgbutton">Apply</button>') );
+            ($(self).attr('hidesubmit')!==undefined ? '' : `<button class="apply vxgbutton">${$.t('action.apply')}</button>`) );
 
         $(this).find('.apply').click(function(){
             self.submit_event = new Event('submit',{cancelable: true, bubbles: true});
@@ -47,22 +47,22 @@ CameraeditsettingsControl = function(){
         if (name!='access_token') return defaultPromise();
         if (!(parseInt(access_token)>0 || typeof access_token ==="string")) {
             $(this).addClass('nodata');
-            this.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #1</a>');
+            this.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #1</a>`);
             return defaultPromise();
         }
         delete this.camera;
 //        this.reset();
         if (parseInt(access_token)>0){
             $(this).addClass('nodata');
-            this.showwait('Loading');
+            this.showwait($.t('common.loading'));
             return window.vxg.cameras.getCameraByIDPromise(parseInt(access_token)).then(function(camera){self.onCameraLoaded(camera);}, function(){self.onCameraLoadedFail();});
         }
         if (access_token) {
             $(this).addClass('nodata');
-            this.showwait('Loading');
+            this.showwait($.t('common.loading'));
             return window.vxg.cameras.getCameraByTokenPromise(access_token).then(function(camera){self.onCameraLoaded(camera);}, function(){self.onCameraLoadedFail();});
         }
-        this.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #1</a>');
+        this.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #1</a>`);
         $(this).addClass('nodata');
         return defaultPromise();
     }
@@ -99,7 +99,7 @@ CameraeditsettingsControl = function(){
         }
 
         data = Object.assign(this.source_data,data);
-        this.showwait('Saving');
+        this.showwait($.t('common.saving'));
 
         if (data['caps']) delete data['caps'];
         if (data['httpcode']) delete data['httpcode'];
@@ -119,7 +119,7 @@ CameraeditsettingsControl = function(){
                     if (r && r.responseJSON && r.responseJSON.errorDetail)
                     self.showerror(r.responseJSON.errorDetail);
                     else
-                        self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #2</a>');
+                        self.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #2</a>`);
                     setTimeout(function(){self.hidewait();},2000);
                     self.dispatchEvent(self.error_event);
                 });
@@ -132,14 +132,14 @@ CameraeditsettingsControl = function(){
             if (r && r.responseJSON && r.responseJSON.errorDetail)
                 self.showerror(r.responseJSON.errorDetail);
             else
-                self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #2</a>');
+                self.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #2</a>`);
             setTimeout(function(){self.hidewait();},2000);
             self.dispatchEvent(self.error_event);
         });
     }
     this.onCameraLoadedFail = function(r){
         $(this).addClass('nodata');
-        this.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
+        this.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #3</a>`);
         this.dispatchEvent(this.nosubmit_event);
         return r;
     }
@@ -149,11 +149,11 @@ CameraeditsettingsControl = function(){
         this.camera = camera;
         $("#profileeditingform").html("");
 
-        this.showwait('Loading');
+        this.showwait($.t('common.loading'));
         return this.camera.getToken().then(function(token){
             return vxg.api.cloud.getCameraSettings(self.camera.camera_id, token).then(function(data){
                 if (!data){
-                    self.showerror('Video settings are not available for this camera');
+                    self.showerror($.t('toast.videoSettingsNovAvailableForCamera'));
                     self.dispatchEvent(self.nosubmit_event);
                     return;
                 }
@@ -172,8 +172,8 @@ CameraeditsettingsControl = function(){
                         var streamCount = 1;
                         data.mstreams_supported.forEach(stream => {
                             if (validStreams.includes(stream.vs_id)) {
-                                live_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.live_ms_id? 'selected' : ''}>Profile #${streamCount}</option>`;
-                                rec_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.rec_ms_id? 'selected' : ''}>Profile #${streamCount}</option>`;
+                                live_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.live_ms_id? 'selected' : ''}>${$.t('common.profile')} #${streamCount}</option>`;
+                                rec_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.rec_ms_id? 'selected' : ''}>${$.t('common.profile')} #${streamCount}</option>`;
                                 streamCount++;
                             }
                         });
@@ -181,13 +181,13 @@ CameraeditsettingsControl = function(){
                         topForm += `
                             <div class="form-container">
                                 <div class="form-group profile-form" style="padding-right: 10px;">
-                                    <label>Main Stream</label>
+                                    <label>${$.t('common.mainStream')}</label>
                                     <select class="form-control" name="rec_profile" id="rec_profile_select" value="${data.rec_ms_id}">
                                         ${rec_ele}
                                     </select>
                                 </div>
                                 <div class="form-group profile-form">
-                                    <label>Live Stream</label>
+                                    <label>${$.t('common.liveStream')}</label>
                                     <select class="form-control" name="live_profile" id="live_profile_select" value="${data.live_ms_id}">
                                         ${live_ele}
                                     </select>
@@ -195,11 +195,11 @@ CameraeditsettingsControl = function(){
                             </div>
 
                             <div class="form-label">
-                                <p class="streamedit-title">Edit Stream Settings</p>
+                                <p class="streamedit-title">${$.t('cameras.editStreamSettings')}</p>
                             </div>
             
                             <div class="form-group header-form">
-                                <label>Stream</label>
+                                <label>${$.t('common.stream')}</label>
                                 <select class="form-control" name="editing_profile" id="editing_profile_select" value="${data.rec_ms_id}">
                                     ${rec_ele}
                                 </select>
@@ -221,12 +221,12 @@ CameraeditsettingsControl = function(){
                     self.source_data = data;
                     return self.onDataLoaded(data);
                 }, function(err) {
-                    self.showerror('Error getting video streams: ' + err.message);
+                    self.showerror(`${$.t('toast.gettingVideoStreamError')}: ${err.message}`);
                     self.dispatchEvent(self.nosubmit_event);
                 })
        
             },function(){
-                self.showerror('Video settings are not available for this camera');
+                self.showerror($.t('toast.videoSettingsNovAvailableForCamera'));
                 self.dispatchEvent(self.nosubmit_event);
             });
         });
@@ -263,7 +263,7 @@ CameraeditsettingsControl = function(){
             if (max>=min) {
                 is_data = true;
                 html+='  <div class="form-group">';
-                html+='    <label>Max Bitrate&nbsp;('+min+'-'+max+' Kbps)</label>'
+                html+=`    <label>${$.t('common.maxBitrate')}&nbsp;(${min}-${max} Kbps)</label>`
                 html+='    <input type="number" class="form-control input500" autofocus="autofocus" name="cbr_bitrate" value="'+val+'" min="'+min+'" max="'+max+'" '+(min==max?'disabled="disabled"	':'')+'>' 
                 html+='  </div>';
                 if (min<max) allDisabled=false;
@@ -283,7 +283,7 @@ CameraeditsettingsControl = function(){
                     if (arr.indexOf(i)==-1) arr.push(i);
             arr = arr.sort();
             html+='  <div class="form-group">'
-                + '    <label for="deviceUrl">VBR Quality</label>'
+                + `    <label for="deviceUrl">${$.t('common.vbrQuality')}</label>`
                 + '    <select class="vbr_quality form-control input500" name="vbr_quality" '+(arr.length<2?'disabled="disabled"':'')+'>';
             for (i=0;i<arr.length;i++)
                 html+='<option value="'+arr[i]+'" '+(arr[i]==val?'selected':'')+'>'+arr[i]+'</option>';
@@ -320,7 +320,7 @@ CameraeditsettingsControl = function(){
             }
             arr = arr.sort();
             html+='  <div class="form-group">'
-                + '    <label for="deviceUrl">Resolution</label>'
+                + `    <label for="deviceUrl">${$.t('common.resolution')}</label>`
                 + '    <select class="resolution form-control input500" name="resolution" '+(arr.length<2?'disabled="disabled"':'')+'>';
             for (i=0;i<arr.length;i++)
                 html+='<option value="'+arr[i]+'" '+(arr[i]==val?'selected':'')+'>'+arr[i]+'</option>';
@@ -346,7 +346,7 @@ CameraeditsettingsControl = function(){
             $(this).find('.apply').show();
         this.hidewait();
         if (!is_data)
-            this.showerror('Video settings are not available for this camera');
+            this.showerror($.t('toast.videoSettingsNovAvailableForCamera'));
         return defaultPromise();
     }
     this.hidewait = function(text){

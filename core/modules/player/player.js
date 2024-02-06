@@ -3,7 +3,7 @@ window.controls = window.controls || {};
 var path = window.core.getPath('player.js');
 
 window.screens['player'] = {
-    'header_name': 'Player',
+    'header_name': $.t('common.player'),
     'html': path+'player.html',
     'css': [],
     'stablecss':[path+'player.css'],
@@ -20,7 +20,7 @@ window.screens['player'] = {
     },
 */
     'on_before_show':function(camtoken, timestamp){
-        core.elements['header-center'].text('Camera');
+        core.elements['header-center'].text($.t('common.camera'));
         this.start_camtoken = camtoken;
         this.start_timestamp = parseInt(timestamp);
         let self=this;
@@ -58,7 +58,7 @@ window.screens['player'] = {
         let self = this;
         if (camtoken && isNaN(parseInt(camtoken))){
             if (this.camera && this.camera.src && this.camera.src.name) {
-                core.elements['header-center'].text('Camera: '+ this.camera.src.name);
+                core.elements['header-center'].text($.t('common.camera') + ': '+ this.camera.src.name);
             }
             this.player.setSource(camtoken);
             if (timestamp>0) setTimeout(function(){self.player.setPosition(self.start_timestamp)},100);
@@ -66,7 +66,7 @@ window.screens['player'] = {
             return defaultPromise();
         } else if (this.camera){
             this.camera.getName().then(function(name){
-                core.elements['header-center'].text('Camera: '+ name);
+                core.elements['header-center'].text($.t('common.camera') + ': '+ name);
             });
         }
 
@@ -76,7 +76,7 @@ window.screens['player'] = {
         else setTimeout(function(){self.player.setPosition(-1)},100);
         if (this.camera)
             return this.camera.getName().then(function(name){
-                core.elements['header-center'].text('Camera: '+name);
+                core.elements['header-center'].text($.t('common.camera') + ': '+name);
             });
         return defaultPromise();
     },

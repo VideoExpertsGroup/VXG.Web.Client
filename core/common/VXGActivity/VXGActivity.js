@@ -39,20 +39,20 @@ VXGActivityView.prototype.initDraw = function initDraw(controller) {
     +	'	<div class= "VXGActivityContainer2">'    	
     +	'		<div class="activity-content">'
     +	'			<div class="feed-activity-list"></div>'
-    +	'			<div class="d-flex w-100"><div class="VXGActivityMore vxgbutton-transparent">More...</div></div>'
+    +	`			<div class="d-flex w-100"><div class="VXGActivityMore vxgbutton-transparent">${$.t('common.more')}...</div></div>`
     +	'		</div>'
     +	'		<div class="VXGActivityFilter">'
     +	'			<div class="VXGActivityFilterTable">'
-    +	'			<h6>Filters</h6><br>'
+    +	`			<h6>${$.t('common.filters')}</h6><br>`
     +	'				<div class="table-row filter-setting">'
-    +	'					<div class="filter-label">Motion</div>'
+    +	`					<div class="filter-label">${$.t('common.motion')}</div>`
     +	'					<div><input id="filter-motion" type="checkbox" class="VXGActivityFilterCheckbox VXGActivityFilterMotion" checked> <label for="filter-motion"></label></div>'
     +	'				</div>'
     +	'				<div class="table-row filter-setting">'
-    +	'					<div class="filter-label">Meta</div>'
+    +	`					<div class="filter-label">${$.t('common.meta')}</div>`
     +	'					<div><input id="filter-meta" type="checkbox" class="VXGActivityFilterCheckbox VXGActivityFilterMeta" checked> <label for="filter-meta"></label></div>'
     +	'				</div>'
-    +	'				<div class="filter-setting flex"><div class="filter-label">People threshold</div>'
+    +	`				<div class="filter-setting flex"><div class="filter-label">${$.t('activity.peopleThreshold')}</div>`
     +	'					<div>'
     +	'						<div class="VXGActivityDropMenu btn-group count-type" >'
     +	'							<div tabindex="0" data-solution="-1" class="VXGActivityFilterPersonSolution menu" style="width:50px;"><span></span>' 
@@ -64,9 +64,9 @@ VXGActivityView.prototype.initDraw = function initDraw(controller) {
     +	'</div>'
     +	'						</div>'
     +	'					</div>'
-    +	'					<div><input type="number" class="VXGActivityFilterPersonVal" placeholder="enter person count"/></div>'
+    +	`					<div><input type="number" class="VXGActivityFilterPersonVal" placeholder="${$.t('activity.peopleThresholdPlaceholder')}"/></div>`
     +	'				</div>'
-    +	'				<div class="filter-setting flex"><div class="filter-label">Cars threshold</div>'
+    +	`				<div class="filter-setting flex"><div class="filter-label">${$.t('activity.carsThreshold')}</div>`
     +	'					<div>'
     +	'						<div class="VXGActivityDropMenu btn-group count-type">'
     +	'							<div tabindex="0" data-solution="-1" class="VXGActivityFilterCarSolution menu" style="width:50px;"><span></span>' +
@@ -78,18 +78,18 @@ VXGActivityView.prototype.initDraw = function initDraw(controller) {
 		'</div>'
     +	'						</div>'
     +	'					</div>'
-    +	'					<div><input type="number" class="VXGActivityFilterCarVal" placeholder="enter car count"/></div>'
+    +	`					<div><input type="number" class="VXGActivityFilterCarVal" placeholder="${$.t('activity.carsThresholdPlaceholder')}"/></div>`
     +	'				</div>'
 /*    +	'				<div class="filter-setting"><div class="filter-label">Label</div><div><input type="text" class="VXGActivityFilterLabelVal" placeholder="enter label"></div></div>'
 */
     +	'				<div><div><center style="padding-top: 20px;">'
-    +	'					<span class="VXGActivityFilterAccept vxgbutton-transparent">Apply</span>'
-    +	'					<span class="VXGActivityFilterCancel vxgbutton-transparent">Cancel</span>'
-    +	'					<span class="VXGActivityFilterClear vxgbutton-transparent">Default</span>'
+    +	`					<span class="VXGActivityFilterAccept vxgbutton-transparent">${$.t('action.apply')}</span>`
+    +	`					<span class="VXGActivityFilterCancel vxgbutton-transparent">${$.t('action.cancel')}</span>`
+    +	`					<span class="VXGActivityFilterClear vxgbutton-transparent">${$.t('common.default')}</span>`
     +	'				</center></div></div>'
     +	'			</div>'
     +	'		</div>'
-    +	'		<div class="VXGActivityNoEvents"><span>No events</span></div>'
+    +	`		<div class="VXGActivityNoEvents"><span>${$.t('activity.noEvents')}</span></div>`
     +	'		<div class="VXGActivityWaiter"></div>'
     +	'	</div>'
     +	'</div>';
@@ -226,25 +226,25 @@ VXGActivityView.prototype.ActivitiesList_resolve_name = function ActivitiesList_
     switch(event_name) {
 	case "yolov4_detection":
 	case "object_and_scene_detection":
-	    name="Object detection";break;
+	    name=$.t('common.eventTypes.objectDetection');break;
 	case "post_object_and_scene_detection":
-	    name="People detection";break;
+	    name=$.t('common.eventTypes.peopleDetection');break;
 	case "facial_analysis":
-	    name="AWS image facial analysis";break;
+	    name=$.t('common.eventTypes.awsImageFacialAnalysis');break;
 	case "motion":
-	    name="Motion";break;
+	    name=$.t('common.eventTypes.motion');break;
 	case "sound":
-	    name="Sound";break;
+	    name=$.t('common.eventTypes.sound');break;
 	case "linecross":
-	    name="Line cross";break;
+	    name=$.t('common.eventTypes.lineCross');break;
 	case "network":
-		name="Network";break;
+		name=$.t('common.eventTypes.network');break;
 	case "vehicle_stopped_detection":
-		name="Vehicle Stopped";break;
+		name=$.t('common.eventTypes.vehicleStopped');break;
 	case "crowd_detection":
-		name="Crowd";break;
+		name=$.t('common.eventTypes.crowd');break;
 	case "plate_recognition":
-		name="LPR";break;
+		name=$.t('common.eventTypes.LPR');break;
 	default:
 	    name=event_name;break;
     }
@@ -255,11 +255,11 @@ VXGActivityView.prototype.ActivitiesList_resolve_status = function ActivitiesLis
 	var status = "";
 	switch(event_status) {
 	case "not_handled":
-		status="New";break;
+		status=$.t('common.eventStatuses.new');break;
 	case "in_progress":
-		status="In Progress";break;
+		status=$.t('common.eventStatuses.inProgress');break;
 	case "processed":
-		status="Completed";break;
+		status=$.t('common.eventStatuses.completed');break;
 	default:
 		status=event_status;break;
 	}
@@ -273,9 +273,9 @@ VXGActivityView.prototype.ActivitiesList_get_meta = function ActivitiesList_get_
     var output = ""; 
     if (event.name === "object_and_scene_detection" || event.name === "yolov4_detection") {   
 	if (event.meta.hasOwnProperty('Person') && event.meta.Person > 0)
-	    output += "persons: " +event.meta.Person + " ";
+	    output += `${$.t('common.persons').toLowerCase()}: ` + event.meta.Person + " ";
 	if (event.meta.hasOwnProperty('Car') && event.meta.Car > 0)
-	    output += "cars: " +event.meta.Car + " ";
+	    output += `${$.t('common.cars').toLowerCase()}: ` + event.meta.Car + " ";
 
 	if ( additional_search !== undefined  
 	&& event.meta.hasOwnProperty(additional_search)
@@ -433,9 +433,9 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
     if (offset == 0 && (VXGActivitydata === undefined || VXGActivitydata.length == 0)) {
 	let span = $(this.noevents).find("span")[0];
 	if (this.filter !== undefined && this.filter != null) {
-	    $(span).text("No events found for such filter");
+	    $(span).text($.t('activity.noEventsFoundForSuchFilter'));
 	} else {
-	    $(span).text("No events");
+	    $(span).text($.t('activity.noEvents'));
 	}
 	$(this.noevents).addClass("visible");
     } else {

@@ -29,11 +29,11 @@ CameraMotionDetectionControl = function(){
         let self = this;
         access_token = $(this).getNearParentAtribute('access_token');
         this.newid = Math.floor(Math.random() * Math.floor(1000000000));
-        $(this).html('<div class="mdwrap"><div class="wait"><span>Wait</span>&nbsp;&nbsp;<div class="spinner"></div></div><div id="cameramd'+this.newid+'"></div><div class="dgrid"></div></div>' +
+        $(this).html(`<div class="mdwrap"><div class="wait"><span>${$.t('common.wait')}</span>&nbsp;&nbsp;<div class="spinner"></div></div><div id="cameramd${this.newid}"></div><div class="dgrid"></div></div>` +
             '<div class="barea">' +
-            '<label class="en"><input type="checkbox" class="enable"><span class="cameramd-checkbox-enabled">Enable</span></label>'+
+            `<label class="en"><input type="checkbox" class="enable"><span class="cameramd-checkbox-enabled">${$.t('action.enable')}</span></label>`+
             '<span>Sensitivity</span><input class="sens" type="number" min="0" max="100" value="0"/>' +
-            ($(self).attr('hidesubmit')!==undefined ? '' : '<button class="apply vxgbutton">Apply</button>') +
+            ($(self).attr('hidesubmit')!==undefined ? '' : `<button class="apply vxgbutton">${$.t('action.apply')}</button>`) +
             '</div>');
         window.controls['cameramd'].players = window.controls['cameramd'].players || {};
         var playerOptions = {timeline: false, timelineampm: true, mute: true, alt_protocol_names:true, calendar: false, autohide:-1}
@@ -72,7 +72,7 @@ CameraMotionDetectionControl = function(){
             }
 
         }
-        this.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #1</a>');
+        this.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #1</a>`);
         return this.attributeChangedCallback('access_token', access_token);
     }
     this.attributeChangedCallback = function(name, access_token){
@@ -84,13 +84,13 @@ CameraMotionDetectionControl = function(){
         if (!(parseInt(access_token)>0 || typeof access_token ==="string")) return defaultPromise();
         if (this.dgrid) this.dgrid.setMatrix();
         $(this).removeClass('partially');
-        this.showwait('Loading');
+        this.showwait($.t('common.loading'));
         $(this).find('.dgrid').addClass('disabled');
         if (parseInt(access_token)>0)
             return window.vxg.cameras.getCameraByIDPromise(parseInt(access_token)).then(function(camera){self.onCameraLoaded(camera);}, function(){self.onCameraLoadedFail();});
         if (access_token) return window.vxg.cameras.getCameraByTokenPromise(access_token).then(function(camera){self.onCameraLoaded(camera);}, function(){self.onCameraLoadedFail();});
         this.stop();
-        this.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #1</a>');
+        this.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #1</a>`);
         return defaultPromise();
     }
     this.disconnectedCallback = function(){
@@ -116,17 +116,17 @@ CameraMotionDetectionControl = function(){
             this.regions[0].sensitivity = parseInt($(this).find('.barea input.sens').val());
         }
         this.regions[0].enabled = $(this).find('.barea input.enable').prop('checked');
-        this.showwait('Saving');
+        this.showwait($.t('common.saving'));
         this.camera.setMotionDetectionRegions(this.regions).then(function(){
             self.hidewait();
         }, function(){
-            self.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #2</a>');
+            self.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #2</a>`);
             setTimeout(function(){self.hidewait();},2000);
         });
     },
     this.onCameraLoadedFail = function(r){
         window.controls['cameramd'].players['cameramd'+this.newid].stop();
-        this.showerror('<a target="_blank" href="'+vxg.links.error+'">Error #3</a>');
+        this.showerror(`<a target="_blank" href="${vxg.links.error}">${$.t('common.error')} #3</a>`);
         return r;
     }
     this.onCameraLoaded = function(camera){
@@ -142,11 +142,11 @@ CameraMotionDetectionControl = function(){
                 window.controls['cameramd'].players['cameramd'+self.newid].setSource(t);
             },100);
         });
-        this.showwait('Loading');
+        this.showwait($.t('common.loading'));
         return this.camera.getMotionDetectionInfo().then(function(info){
             self.info = info;
 
-            self.showwait('Loading');
+            self.showwait($.t('common.loading'));
             return self.camera.getMotionDetectionRegions().then(function(regions){
                 self.regions = regions.objects;
 //self.info.caps.columns=1;
@@ -154,7 +154,7 @@ CameraMotionDetectionControl = function(){
                     self.dgrid = new ClassDgrid($(self).find('.dgrid')[0],self.info.caps.columns,self.info.caps.rows);
                     self.dgrid.update(self.regions && self.regions[0] ? self.regions[0].map : undefined);
                     if (!self.regions || !self.regions[0] || !self.regions[0].map)
-                        self.showerror('This camera does not support motion detection');
+                        self.showerror($.t('toast.cameraNotSupportMotionDetection'));
                     if (self.regions && self.regions[0] && self.regions[0].sensitivity!==undefined)
                         $(self).find('.barea input.sens').val(self.regions[0].sensitivity);
                     $(self).find('.barea input.enable').prop('checked',self.regions[0].enabled);
@@ -163,18 +163,18 @@ CameraMotionDetectionControl = function(){
                     self.hidewait();
                 } else {
                     if (self.regions[0]!==undefined){
-                        self.showerror('This camera does not support changing the motion grid');
+                        self.showerror($.t('toast.cameraNotSupportChangingMotionGrid'));
                         $(self).addClass('partially');
                         $(self).find('.barea input.enable').prop('checked',self.regions[0].enabled);
                         setTimeout(function(){self.dispatchEvent(self.submitenable_event);},0);
                     } else
-                        self.showerror('Motion detector are not available for this camera');
+                        self.showerror($.t('toast.motionDetectorNotAvailableForCamera'));
                 }
             }, function(){
-                self.showerror('Motion detector are not available for this camera');
+                self.showerror($.t('toast.motionDetectorNotAvailableForCamera'));
             });
         },function(){
-            self.showerror('Motion detector are not available for this camera');
+            self.showerror($.t('toast.motionDetectorNotAvailableForCamera'));
         });
     }
     this.checksize = function(){

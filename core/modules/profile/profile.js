@@ -6,16 +6,16 @@ window.screens['profile'] = {
     storage_config: {},
     'get_args':function(){
     },
-    'header_name': 'User profile',
+    'header_name': $.t('profile.title'),
     'html': path+'profile.html',
     'stablecss':[path+'profile.css'],
     'on_show':function(){
         if (vxg.user.src.plans.length != 0) {
             planTable = `
                 <tr class="plan-header">
-                    <th>Plan</th>
-                    <th>Count</th>
-                    <th>Used</th>
+                    <th>${$.t('common.plan')}</th>
+                    <th>${$.t('common.count')}</th>
+                    <th>${$.t('common.used')}</th>
                 </tr>
             `;
             vxg.user.src.plans.forEach(plan => {
@@ -37,7 +37,7 @@ window.screens['profile'] = {
             `;
             $(this.wrapper).find('.planlist').html(planlist);
         } else {
-            $(this.wrapper).find('.planlist').html("<p>No subscriptions found for this account.</p>");
+            $(this.wrapper).find('.planlist').html(`<p>${$.t('profile.noSubscriptionsFound')}</p>`);
         }
         $(this.wrapper).find('[name="phone"]').val(vxg.user.src.phone ? vxg.user.src.phone:'' );
         $(this.wrapper).find('[name="sheduler"]').val(vxg.user.src.sheduler ? vxg.user.src.sheduler:'' );
@@ -96,7 +96,7 @@ window.screens['profile'] = {
 	 if (vxg.user.src.role == "user") $(".prifiletabs > .tab3").hide();
      if (vxg.user.src.role != "partner") $(".prifiletabs > .tab4").hide();
 	 $(self.wrapper).addClass('tab2');
-        core.elements['header-center'].text('User '+vxg.user.src.email+' profile');
+        core.elements['header-center'].text(`${$.t('common.user')} ${vxg.user.src.email} ${$.t('common.profile').toLowerCase()}`);
         this.wrapper.find('.prifiletabs > div').click(function(){
             if ($(this).hasClass('tab1')) $(self.wrapper).addClass('tab1').removeClass('tab2').removeClass('tab3').removeClass('tab4');
             if ($(this).hasClass('tab2')) $(self.wrapper).addClass('tab2').removeClass('tab1').removeClass('tab3').removeClass('tab4');
@@ -192,7 +192,7 @@ window.screens['profile'] = {
                 if (r && r.responseJSON && r.responseJSON.errorDetail)
                     alert(r.responseJSON.errorDetail);
                 else
-                    alert('Falied to update user data');
+                    alert($.t('toast.uploadUserDataFailed'));
                 core.elements['global-loader'].hide();
             });
         });
@@ -204,11 +204,11 @@ window.screens['profile'] = {
                 reenter_new_password: self.wrapper.find('[name="reenter_new_password"]').val(),
             };
             if (!obj.password || !obj.new_password) {
-                alert('Password empty');
+                alert($.t('toast.passwordEmpty'));
                 return;
             }
             if (obj.new_password != obj.reenter_new_password) {
-                alert('Password mismatch');
+                alert($.t('toast.passwordMismatch'));
                 return;
             }
             core.elements['global-loader'].show();
@@ -219,12 +219,12 @@ window.screens['profile'] = {
                     firebase.auth().currentUser.updatePassword(obj.new_password).then(function(){
                         core.elements['global-loader'].hide();
                     }, function(r){
-                        alert('Error on change password. '+(r.message?r.message:''));
+                        alert($.t('toast.changePasswordError') + ' ' + (r.message ? r.message : ''));
                         core.elements['global-loader'].hide();
                     });
                 }).catch(function(error) {
                     core.elements['global-loader'].hide();
-                    alert('Invalid password');
+                    alert($.t('toast.invalidPassword'));
                 });
                 return;
             }
@@ -249,7 +249,7 @@ window.screens['profile'] = {
             };
 
             if (!obj.endpoint ) {
-                alert('Necessary fields are empty');
+                alert($.t('toast.necessaryFieldsEmpty'));
                 return;
             }
             if (self.bucket && self.bucket.id ) {
@@ -259,7 +259,7 @@ window.screens['profile'] = {
                   core.elements['global-loader'].hide();
                 },function(r){
                   core.elements['global-loader'].hide();
-                  alert('Cant change storage settings')
+                  alert($.t('toast.changeStorageSettingsFailed'))
                 });
             } else {
                 core.elements['global-loader'].show();
@@ -279,7 +279,7 @@ window.screens['profile'] = {
                 location.reload();
             }, function(r) {
                 core.elements['global-loader'].hide();
-                alert('Error removing storage')
+                alert($.t('toast.removeStorageFailed'))
             });
         });
         return defaultPromise();

@@ -3,7 +3,7 @@ var path = window.core.getPath('reportspage.js');
 
 window.screens['reports'] = {
     'menu_weight':51,
-    'menu_name':'Reports',
+    'menu_name': $.t('reports.title'),
     'get_args':function(){
     },
     'menu_icon': '<i class="fa fa-file-text" aria-hidden="true"></i>',
@@ -37,7 +37,7 @@ window.screens['reports'] = {
         let self = this;
         core.elements['header-right'].prepend(`<div class="reportsfilterContainer">
 													<div class="transparent-button reportsfilter">
-														<span id="reportsfilter-btn"> Generate Reports </span>
+														<span id="reportsfilter-btn"> ${$.t('reports.generateReports')} </span>
 													</div>
 												</div>`);
         
@@ -109,7 +109,7 @@ window.screens['reports'] = {
 
             if (startTime && startTime > endTime) {
                 $(".error-message").empty();
-                $(".error-message").text("Start time must be before end time");
+                $(".error-message").text($.t('toast.startTimeMustBeBeforeEndTime'));
                 $(".error-message").show();
                 $("#startTimeFilter").css("background-color", "#ffcece");
                 setTimeout(function() {
@@ -119,7 +119,7 @@ window.screens['reports'] = {
             }
             if (startTime && startTime > now) {
                 $(".error-message").empty();
-                $(".error-message").text("Start time must be before current time");
+                $(".error-message").text($.t('toast.startTimeMustBeBeforeCurrentTime'));
                 $(".error-message").show();
                 $("#startTimeFilter").css("background-color", "#ffcece");
                 setTimeout(function() {
@@ -143,37 +143,37 @@ window.screens['reports'] = {
                 $(".reportslist").removeClass("noreports");
                 $(".reportslist").empty();
                 var eventsTable = `
-                        <button class="vxgbutton-transparent download-report" onClick="downloadReport('reportsTable')">Download Report as CSV</button>
+                        <button class="vxgbutton-transparent download-report" onClick="downloadReport('reportsTable')">${$.t('action.downloadReportAsCsv')}</button>
                         <table id="reportsTable">
                             <tr>
-                                <th>Event ID</th>
-                                <th>Event Time</th>
-                                <th>Processing Status</th>
-                                <th>Started</th>
-                                <th>Completed</th>
-                                <th>Result</th>
-                                <th>Description</th>
-                                <th>User Email</th>
-                                <th>User IP</th>
+                                <th>${$.t('common.eventID')}</th>
+                                <th>${$.t('common.eventTime')}</th>
+                                <th>${$.t('common.precessingStatus')}</th>
+                                <th>${$.t('common.started')}</th>
+                                <th>${$.t('common.completed')}</th>
+                                <th>${$.t('common.result')}</th>
+                                <th>${$.t('common.description')}</th>
+                                <th>${$.t('common.userEmail')}</th>
+                                <th>${$.t('common.userIp')}</th>
                             </tr>
                 `;
 
                 events.forEach(event => {
                     
-                    var status = "Not Handled";
+                    var status = $.t('common.eventStatuses.notHandled');
                     if (event.meta && event.meta.process) {
-                        if (event.meta.process == "in_progress") status = "In Progress";
-                        if (event.meta.process == "processed") status = "Processed";
+                        if (event.meta.process == "in_progress") status = $.t('common.eventStatuses.inProgress');
+                        if (event.meta.process == "processed") status = $.t('common.eventStatuses.precessed');
                     }
 
-                    var startTime = event.meta && event.meta.start_time ? new Date(event.meta.start_time).toLocaleString().replace(",", "") : "Not Started";
-                    var endTime = event.meta && event.meta.end_time ? new Date(event.meta.end_time).toLocaleString().replace(",", "") : "Not Completed";
+                    var startTime = event.meta && event.meta.start_time ? new Date(event.meta.start_time).toLocaleString().replace(",", "") : $.t('common.eventStatuses.notStarted');
+                    var endTime = event.meta && event.meta.end_time ? new Date(event.meta.end_time).toLocaleString().replace(",", "") : $.t('common.eventStatuses.notCompleted');
                     
-                    var result = event.meta && event.meta.result ? event.meta.result : "No Result";
-                    var description = event.meta && event.meta.description ? event.meta.description : "No Description";
+                    var result = event.meta && event.meta.result ? event.meta.result : $.t('reports.noResult');
+                    var description = event.meta && event.meta.description ? event.meta.description : $.t('reports.noDescription');
 
-                    var user_id = event.meta && event.meta.user_id ? event.meta.user_id.replaceAll("_AT_", "@").replaceAll("_DOT_", ".") : "No User Assigned";
-                    var user_ip = event.meta && event.meta.ip_address ? event.meta.ip_address : "No User Assigned";
+                    var user_id = event.meta && event.meta.user_id ? event.meta.user_id.replaceAll("_AT_", "@").replaceAll("_DOT_", ".") : $.t('reports.notUserAssigned');
+                    var user_ip = event.meta && event.meta.ip_address ? event.meta.ip_address : $.t('reports.notUserAssigned');
 
                     eventsTable += `
                         <tr>

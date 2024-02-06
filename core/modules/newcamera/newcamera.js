@@ -3,7 +3,7 @@ window.controls = window.controls || {};
 var path = window.core.getPath('newcamera.js');
 
 window.screens['newcamera'] = {
-    'header_name': 'Add camera',
+    'header_name': $.t('newCamera.title'),
     'html': path+'newcamera.html',
     'css': [path+'newcamera.css'],
     'commonjs':[],
@@ -13,7 +13,7 @@ window.screens['newcamera'] = {
         if (this.from_back) return defaultPromise();
         delete this.camera;
         let self=this;
-        this.wrapper.find('.sarea').html('<button class="vxgbutton" onclick_toscreen="back">Back</button>');
+        this.wrapper.find('.sarea').html(`<button class="vxgbutton" onclick_toscreen="back">${$.t('action.back')}</button>`);
         if (!access_token)
             access_token = $(this.src).getNearParentAtribute('access_token');
         if (!access_token) access_token='';
@@ -47,13 +47,13 @@ window.screens['newcamera'] = {
                 return vxg.api.cloud.getCameraConfig(this.gatewayCamId, this.gatewayCamToken).then(function(cam) {
                     self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add3').removeClass('add4').addClass('add5');
                     self.wrapper.find('.newcameratabs').addClass("gatewayCamera");
-                    $('.headerBlock .header-center').text("Add Camera to " + cam.name);
+                    $('.headerBlock .header-center').text(`${$.t('newCamera.addCameraTo')} ${cam.name}`);
                     $('[name="location"]').addClass("disabled");
-                    $('[name="group"').addClass("disabled");
+                    $('[name="group"]').addClass("disabled");
                     // gateway unique_id ?
                     $('[name="gatewayId"]').val(cam.meta.gateway_id);
-                    if(cam.meta && cam.meta.location) self.wrapper.find('[name="location"').val(cam.meta.location);
-                    if(cam.meta && cam.meta.group) self.wrapper.find('[name="group"').val(cam.meta.group);
+                    if(cam.meta && cam.meta.location) self.wrapper.find('[name="location"]').val(cam.meta.location);
+                    if(cam.meta && cam.meta.group) self.wrapper.find('[name="group"]').val(cam.meta.group);
                     $('[name="url_http_port"]').val(80);
                     $('[name="onvif_rtsp_port_fwd"]').val(554);
                     $('#prov-server-input').attr('checked', false);
@@ -82,7 +82,7 @@ window.screens['newcamera'] = {
                 });
             } else {
                 $('[name="location"]').removeClass("disabled");
-                $('[name="group"').removeClass("disabled");
+                $('[name="group"]').removeClass("disabled");
                 $('[name="gatewayId"]').val("");
                 $('[name="gatewayUrl"]').val("");
                 $(['[name="url_http_port"']).val('');
@@ -99,7 +99,7 @@ window.screens['newcamera'] = {
         this.wrapper.find('cameraedit').attr('access_token',this.access_token);
 
         return this.camera.getName().then(function(name){
-            core.elements['header-center'].text('Edit camera: '+name);
+            core.elements['header-center'].text(`${$.t('cameras.editCamera')}: ${name}`);
         });
     },
     'on_hide':function(){
@@ -110,7 +110,7 @@ window.screens['newcamera'] = {
     'on_init':function(){
         let self = this;
 
-        core.elements['header-right'].prepend('' + '<a class="helpurl" target="_blank" href='+vxg.links.camera_help+'>How to add cameras</a>');
+        core.elements['header-right'].prepend(`<a class="helpurl" target="_blank" href="${vxg.links.camera_help}">${$.t('cameras.howToAddCameras')}</a>`);
 
         this.wrapper.find('cameraedit').off('loaded').on('loaded',function(e){
              core.elements['global-loader'].hide();

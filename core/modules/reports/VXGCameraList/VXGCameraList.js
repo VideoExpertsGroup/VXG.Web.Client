@@ -220,19 +220,19 @@ VXGCameraListView.prototype.initDraw = function initDraw(controller, cameraName,
     +	'		<table class="table-hover no-margins with-images cameras-list" id="VXGCameraListTableSuper" style="border-collapse: collapse; width:100%;">'
     +	'		<thead>'
     +	'			<tr>'
-    +	'				<th>Preview</th>'
-    //+	'				<th>Name</th>'
-    +	'				<th>Location</th>'
-    +	'				<th>Meta</th>'
-    +	'				<th ifscreen="plan2camera">Plan</th>'
-    +	'				<th>Action</th>'
+    +	`				<th>${$.t('common.preview')}</th>`
+    //+	`				<th>${$.t('common.name')}</th>`
+    +	`				<th>${$.t('common.location')}</th>`
+    +	`				<th>${$.t('common.meta')}</th>`
+    +	`				<th ifscreen="plan2camera">${$.t('common.plan')}</th>`
+    +	`				<th>${$.t('common.action')}</th>`
     +	'			</tr>'
     +	'		</thead>'
     +	'		<tbody class="VXGCameraListTable">'
     +	'		</tbody>'
-    +	'		</table><div style="text-align:center;margin: 10px 0;"><button type="button" class="vxgbutton more" data-attr="camera">More</button></div>'
+    +	`		</table><div style="text-align:center;margin: 10px 0;"><button type="button" class="vxgbutton more" data-attr="camera">${$.t('common.more')}</button></div>`
     +	'	</div>'
-    +	'	<span class="VXGCameraListEmpty invisible"> No camera found. <a ifscreen="addcamera" href="javascript:void(0)" class="VXGCameraListAdd">Add a camera</a></span>'
+    +	`	<span class="VXGCameraListEmpty invisible"> ${$.t('cameras.noCameraFound')} <a ifscreen="addcamera" href="javascript:void(0)" class="VXGCameraListAdd">${$.t('cameras.addCamera')}</a></span>`
     +	'</div>';
     let element = this.element;
 
@@ -284,7 +284,7 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
     var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id === cam.camera_id) : "";
 
     var urlMenuItem = savedCam && savedCam.url && savedCam.url != "nourl" ? 
-        `<a class="listmenu-item mwebui" href="${savedCam.url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> Camera UI </span></a>` :
+        `<a class="listmenu-item mwebui" href="${savedCam.url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.cameraUI')} </span></a>` :
         "";
 
     var userType = vxg.user.src.role;
@@ -323,12 +323,12 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
 
 	let menu = `
         <div class="VXGCameraListMenu">
-        	<div class="listmenu-item mcamera" ifscreen="tagsview" onclick_toscreen="tagsview"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> Timeline </span> </div>
-        	<div class="listmenu-item msetting subuser-hide" ifscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> Stream Settings </span></div>
-        	<div class="listmenu-item mchart" ifscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> Metadata </span></div>
-        	<div class="listmenu-item mconfigure subuser-hide" ifscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
+        	<div class="listmenu-item mcamera" ifscreen="tagsview" onclick_toscreen="tagsview"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.timeline')} </span> </div>
+        	<div class="listmenu-item msetting subuser-hide" ifscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.streamSettings')} </span></div>
+        	<div class="listmenu-item mchart" ifscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.metadata')} </span></div>
+        	<div class="listmenu-item mconfigure subuser-hide" ifscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.config')} </span></div>
         	${(userType != "user" ? urlMenuItem : "")}
-        	<div class="listmenu-item mtrash subuser-hide"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
+        	<div class="listmenu-item mtrash subuser-hide"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>
         </div>
     `;
 
@@ -380,7 +380,7 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
 			let index = $(indexCarrier).data('index');
 			let camera = controller.objByIndex(index);		
 
-                        dialogs['mdialog'].activate('<h7>Do you want to delete camera '+camera.src.name+'?</h7><p>It can\'t be cancelled </p><p><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">Delete</button></p>').then(function(r){
+                        dialogs['mdialog'].activate(`<h7>${$.t('cameras.deleteConfirm.shortTitle')} ${camera.src.name}?</h7><p>${$.t('cameras.deleteConfirm.content')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.delete')}</button></p>`).then(function(r){
                             if (r.button!='delete') return;
                             core.elements['global-loader'].show();
                             if (camera) camera.deleteCameraPromise().then(function(){
@@ -412,9 +412,9 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
                                 return screens['home'].on_show();
                             }, function(r){
                                 core.elements['global-loader'].hide();
-                                let err_text = 'Failed to delete camera';
+                                let err_text = $.t('toast.deleteCameraFailed');
                                 if (r && r.responseJSON && r.responseJSON.errorDetail) err_text = r.responseJSON.errorDetail;
-                                dialogs['mdialog'].activate('<h7>Error</h7><p>'+err_text+'</p><p><button name="cancel" class="vxgbutton">Ok</button></p>');
+                                dialogs['mdialog'].activate(`<h7>${$.t('common.error')}</h7><p>${err_text}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
                             });
                 
                         });
@@ -483,7 +483,7 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
                 var aiCamString_local = "";
                 aiEnabledCameras.ai_cameras.forEach(camid => {
                     aiCamString_local += "," + camid;
-                    $("#ai_" + camid).html('<button class="vxgbutton-transparent" access_token="'+camid+'">Show AI</button>');
+                    $("#ai_" + camid).html('<button class="vxgbutton-transparent" access_token="'+camid+'">' + $.t('action.showAI') + '</button>');
                     //Clicks on any column of row except camera preview and actions -> update chart
                     $("#ai_" + camid).find('button').off('click').on('click',function(){
                         let index = $("#ai_" + camid).parent().data('index');	    
@@ -592,13 +592,13 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
             if (vxgcameralistdata[index].src.meta && vxgcameralistdata[index].src.meta.subid && vxgcameralistdata[index].src.meta.subid != "") {
                 // camera has a plan, show dialog to unassign on click
                 var camid = vxgcameralistdata[index].camera_id;
-                $("#planbtn_" + camid).html('<button class="vxgbutton-transparent plan-btn" access_token="'+camid+'">View Plan</button>');
+                $("#planbtn_" + camid).html(`<button class="vxgbutton-transparent plan-btn" access_token="${camid}">${$.t('action.viewPlan')}</button>`);
                 $("#planbtn_" + camid).find('button').off('click').on('click', function() {
                     var camName = $("#name_" + camid).text();
                     var subDialog = `
                         <h1 id="plans-title">Unassign Subscription from Camera ${camName}</h1>
                         <p class="curr-sub"> ${vxgcameralistdata[index].src.meta.subname} </p>
-                        <button name="apply" class="vxgbutton assign-btn unsub" id="unsubscribe">Unsubscribe</button>
+                        <button name="apply" class="vxgbutton assign-btn unsub" id="unsubscribe">${$.t('action.unsubscribe')}</button>
                     `;
                     dialogs['mdialog'].activate(subDialog).then(function(r){
                         if (r.button!='apply') return;
@@ -630,7 +630,7 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
                             if (r && r.responseJSON && r.responseJSON.errorDetail)
                                 alert(r.responseJSON.errorDetail);
                             else
-                                alert('Falied to remove subscription');
+                                alert($.t('toast.removeSubscriptionFailed'));
                             core.elements['global-loader'].hide();
                         });                  
                                         
@@ -643,14 +643,14 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
                 if (vxg.user.src.plans && vxg.user.src.plans.length != 0) {
                     var camid = vxgcameralistdata[index].camera_id;
                     var meta = vxgcameralistdata[index].src.meta; 
-                    $("#planbtn_" + camid).html('<button class="vxgbutton plan-btn" access_token="'+camid+'">Assign Plan</button>');
+                    $("#planbtn_" + camid).html(`<button class="vxgbutton plan-btn" access_token="${camid}">${$.t('action.assignPlan')}</button>`);
                     $("#planbtn_" + camid).find('button').off('click').on('click', function() {
                         var camName = $("#name_" + camid).text();
                         planTable = `
                             <tr class="plan-header">
-                                <th>Plan</th>
-                                <th>Count</th>
-                                <th>Used</th>
+                                <th>${$.t('common.plan')}</th>
+                                <th>${$.t('common.count')}</th>
+                                <th>${$.t('common.used')}</th>
                                 <th></th>
                             </tr>
                         `;
@@ -672,11 +672,11 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
                         });
         
                         var plansDialog = `
-                            <h1 id="plans-title">Assign Subscription to Camera ${camName}</h1>
+                            <h1 id="plans-title">${$.t('cameras.assignSubscription.title')} ${camName}</h1>
                             <table class="plansTable">
                                 ${planTable}
                             </table>
-                            <button name="apply" class="vxgbutton assign-btn">Assign</button>
+                            <button name="apply" class="vxgbutton assign-btn">${$.t('action.assign')}</button>
                         `;
                         dialogs['mdialog'].activate(plansDialog).then(function(r){
                             if (r.button!='apply') return;
@@ -721,7 +721,7 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
                                 if (r && r.responseJSON && r.responseJSON.errorDetail)
                                     alert(r.responseJSON.errorDetail);
                                 else
-                                    alert('Falied to delete setting');
+                                    alert($.t('toast.deleteSettingFailed'));
                                 core.elements['global-loader'].hide();
                             });                       
                         });		
@@ -736,7 +736,7 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
             var aiCameras_array = aiCameras_local.split(",").filter(e => e);
             if (aiCameras_array.includes(vxgcameralistdata[index].camera_id.toString())) {
                 var camid = vxgcameralistdata[index].camera_id;
-                $("#ai_" + camid).html('<button class="vxgbutton-transparent" access_token="'+camid+'">Show AI</button>');
+                $("#ai_" + camid).html('<button class="vxgbutton-transparent" access_token="'+camid+'">' + $.t('action.showAI') + '</button>');
                 //Clicks on any column of row except camera preview and actions -> update chart
                 $("#ai_" + camid).find('button').off('click').on('click',function(){
                     let index = $("#ai_" + camid).parent().data('index');	    

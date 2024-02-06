@@ -27,7 +27,7 @@ function listActivityCB2( operation,  obj ) {
 
 window.screens['activity'] = {
     'menu_weight':50,
-    'menu_name':'Activity',
+    'menu_name': $.t('activity.title'),
     'get_args':function(){
     },
 //  TODO:
@@ -113,7 +113,7 @@ window.screens['activity'] = {
         let self = this;
         core.elements['header-right'].prepend(`<div class="activityfilterContainer">
 													<div class="transparent-button activityfilter">
-														<span id="activityfilter-btn"> Filter</span>
+														<span id="activityfilter-btn"> ${$.t('action.filter')}</span>
 													</div>
 												</div>`);
 		
@@ -144,66 +144,66 @@ window.screens['activity'] = {
 			customFiltersList.forEach(c => { customFilterString += (customFilterString?', ':'')+c; });
 
             dialogs['mdialog'].activate(`
-				<h7>Select motion filter</h7>
+				<h7 data-i18n="activity.selectMotionFilter">${$.t('activity.selectMotionFilter')}</h7>
 				<div>
 					<ul class="activitylist">
 						<li>
 							<label class="filter-label custom-checkbox">
-								<span>Motion</span>
+								<span>${$.t('common.eventTypes.motion')}</span>
 								<input type="checkbox" `+(savedFilters.indexOf('motion')!==-1?'checked':'')+` name="motion">
 								<span class="checkmark"></span>	
 							</label>
 						</li>
 						<li>
 							<label class="filter-label custom-checkbox">
-								<span>Object detection</span>
+								<span>${$.t('common.eventTypes.objectDetection')}</span>
 								<input type="checkbox" `+(savedFilters.indexOf('object_and_scene_detection')!==-1?'checked':'')+` name="object_and_scene_detection">
 								<span class="checkmark"></span>	
 							</label>
 						</li>
 						<li>
 							<label class="filter-label custom-checkbox">
-								<span>People detection</span>
+								<span>${$.t('common.eventTypes.peopleDetection')}</span>
 								<input type="checkbox" `+(savedFilters.indexOf('post_object_and_scene_detection')!==-1?'checked':'')+` name="post_object_and_scene_detection">
 								<span class="checkmark"></span>		
 							</label>
 						</li>
 						<li>
 							<label class="filter-label custom-checkbox">
-								<span>Network</span>
+								<span>${$.t('common.eventTypes.network')}</span>
 								<input type="checkbox" `+(savedFilters.indexOf('network')!==-1?'checked':'')+` name="network">
 								<span class="checkmark"></span>		
 							</label>
 						</li>
 						<li>
 							<label class="filter-label custom-checkbox">
-								<span>Vehicle Stopped</span>
+								<span>${$.t('common.eventTypes.vehicleStopped')}</span>
 								<input type="checkbox" `+(savedFilters.indexOf('vehicle_stopped_detection')!==-1?'checked':'')+` name="vehicle_stopped_detection">
 								<span class="checkmark"></span>		
 							</label>
 						</li>
 						<li>
 							<label class="filter-label custom-checkbox">
-								<span>LPR</span>
+								<span>${$.t('common.eventTypes.LPR')}</span>
 								<input type="checkbox" `+(savedFilters.indexOf('plate_recognition')!==-1?'checked':'')+` name="plate_recognition">
 								<span class="checkmark"></span>		
 							</label>
 						</li>
 						<li>
 							<label class="filter-label custom-checkbox">
-								<span>Crowd</span>
+								<span>${$.t('common.eventTypes.crowd')}</span>
 								<input type="checkbox" `+(savedFilters.indexOf('crowd_detection')!==-1?'checked':'')+` name="crowd_detection">
 								<span class="checkmark"></span>		
 							</label>
 						</li>
 						<li>
-							<p class="custom-input-label">Custom event list (seperated by commas)</p>
+							<p class="custom-input-label">${$.t('activity.customEventList')}</p>
 							<input type="text" class="custom-filter-input" name="custom_filter_list" value="${customFilterString}">
 						</li>
 					</ul>
 				</div>
 				<div>
-					<button name="apply" class="vxgbutton-transparent" style="width:100%">Set</button>
+					<button name="apply" class="vxgbutton-transparent" style="width:100%">${$.t('action.set')}</button>
 				</div>`).then(function(r){
                 if (!r || r.button!='apply') return;
 				let f='';

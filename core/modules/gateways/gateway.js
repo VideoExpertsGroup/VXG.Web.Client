@@ -4,7 +4,7 @@ window.dialogs = window.dialogs || {};
 var path = window.core.getPath('gateway.js');
 window.screens['gateway'] = {
     'menu_weight': 22,
-    'menu_name':'Gateways',
+    'menu_name': $.t('gateways.title'),
     'get_args':function(){
     },
     'menu_icon': '<i class="fa fa-upload" aria-hidden="true"></i>',
@@ -26,8 +26,7 @@ window.screens['gateway'] = {
     },
     'on_init':function(){
         let self = this;
-        core.elements['header-right'].prepend('' +
-            '<div class="transparent-button active addgateway" ifscreen="add_gateway" onclick_toscreen="add_gateway"><span class="add-icon">+</span><span>Add Gateway</span></div>');
+        core.elements['header-right'].prepend(`<div class="transparent-button active addgateway" ifscreen="add_gateway" onclick_toscreen="add_gateway"><span class="add-icon">+</span><span>${$.t('gateways.addGateway')}</span></div>`);
         return defaultPromise();
     },
     loadGateways: function() {
@@ -63,31 +62,31 @@ window.screens['gateway'] = {
             {
                 field: "id",
                 width: "140",
-                title: "Gateway",
+                title: $.t('common.gateway'),
             },
             {
                 field: "name",
-                title: "Name",
+                title: $.t('common.name'),
                 filterControl: "input",
                 sortable: true,
             },
             {
                 field: "location",
-                title: "Location",
+                title: $.t('common.location'),
                 filterControl: "select",
                 sortable: true,
                 cardVisible: false
             },
             {
                 field: "group",
-                title: "Group",
+                title: $.t('common.group'),
                 filterControl: "select",
                 sortable: true,
                 cardVisible: false
             },
             {
                 field: "action",
-                title: "Action"
+                title: $.t('common.action')
             },
         ];
 
@@ -111,7 +110,7 @@ window.screens['gateway'] = {
 
         if (count == 0) {
             self.wrapper.addClass('nogateways');
-            $('#gateway-table').html('<div class="no-recorders"><p>No Gateways</p></div>');
+            $('#gateway-table').html(`<div class="no-recorders"><p>${$.t('gateways.noGateways')}</p></div>`);
             self.wrapper.removeClass('loader');
             return;
         } 
@@ -148,9 +147,9 @@ window.screens['gateway'] = {
 
         var menu =  $(`
         <div class="simplemenu">
-        <div class="listmenu-item gateway-menu mwebui_gateway"> <a id="ui-link" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> Gateway UI </span></a></div>
-        <div class="listmenu-item gateway-menu mconfigure_gateway" ifscreen="add_gateway" onclick_toscreen="add_gateway" editGateway="${gatewayid}"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> Config </span></div>
-        <div class="listmenu-item gateway-menu mtrash_gateway" onclick="onGatewayDelete('${gatewayid}', '${camid}', '${access_token}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> Remove </span></div>
+        <div class="listmenu-item gateway-menu mwebui_gateway"> <a id="ui-link" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.gatewayUI')} </span></a></div>
+        <div class="listmenu-item gateway-menu mconfigure_gateway" ifscreen="add_gateway" onclick_toscreen="add_gateway" editGateway="${gatewayid}"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.config')} </span></div>
+        <div class="listmenu-item gateway-menu mtrash_gateway" onclick="onGatewayDelete('${gatewayid}', '${camid}', '${access_token}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>
         </div>`);
 
         var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
@@ -194,7 +193,7 @@ function addCameraNamesInput(cameraInfo = null) {
 
         camerasHtml += `
             <div class="gateway-input-wrapper">
-                <label class="gateway-label cameras-label" for="cameraName${i}">Camera Name ${i}</label>
+                <label class="gateway-label cameras-label" for="cameraName${i}">${$.t('common.cameraName')} ${i}</label>
                 <input class="gateway-input cameras-input required" name="cameraName${i}" type="text" value="${camName}"> 
                 <input name="cameraId${i}" type="hidden" value="${camId}"> 
             </div>
@@ -225,7 +224,7 @@ function createTimezonesList () {
 
 function onGatewayDelete(gateway_id, channel_id, access_token){
     setTimeout(function(){$('.simplemenu').remove();},10);
-    dialogs['mdialog'].activate('<h7>Do you want to delete this Gateway and all cameras connected to it?</h7><p>It can\'t be cancelled </p><div class="action-btns modal-actions"><button name="cancel" class="vxgbutton">Cancel</button><button name="delete" class="vxgbutton delete-btn bg-danger">Delete</button></div>').then(function(r){
+    dialogs['mdialog'].activate(`<h7>${$.t('gateways.deleteConfirm.title')}</h7><p>${$.t('gateways.deleteConfirm.content')} </p><div class="action-btns modal-actions"><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button><button name="delete" class="vxgbutton delete-btn bg-danger">${$.t('action.delete')}</button></div>`).then(function(r){
         if (r.button!='delete') return;
         core.elements['global-loader'].show();
 
@@ -239,7 +238,7 @@ function onGatewayDelete(gateway_id, channel_id, access_token){
                     if (!urlinfo.id && !urlinfo.url) {
                         cameraUrls.push({id: config.id, url: "nourl"});
                         sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
-                        alert('Error finding url for gateway.');
+                        alert($.t('toast.findGatewayUrlFailed'));
                         return;
                     } else {
                         cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
