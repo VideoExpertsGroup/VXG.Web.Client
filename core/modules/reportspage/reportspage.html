@@ -1,13 +1,13 @@
 
-<div class="dialogs filterDialog" style="display: none;">
+<div class="dialogs filterDialog eventDialog" style="display: none;">
     <div class="filterElement">
-        <h5 class="filter-title" data-i18n="reports.reportFilters">Report Filters</h5>
+        <h5 class="filter-title" data-i18n="reports.reportFilters">Event Report Filters</h5>
         <p class="error-message" style="display: none;"></p>
         <div class="filter-inputs-cont">
             <div class="input-cont cameraid-input-cont">
-                <label for="cameraIds" data-i18n="common.cameras"> Cameras </label>
-                <input name="cameraIds" id="cameraIds"> 
-                <div class="chosenCameraList"></div>
+                <label for="eventCameraIds" data-i18n="common.cameras"> Cameras </label>
+                <input name="eventCameraIds" id="eventCameraIds"> 
+                <div class="eventChosenCameraList chosenCameraList"></div>
             </div>
             <div class="input-cont user-input-cont">
                 <label for="userid" data-i18n="common.userEmail"> User Email </label>
@@ -58,14 +58,128 @@
                     </div>
                 </div>
             </div>
-            <button class="vxgbutton generate-button" id="generateReport" data-i18n="action.generateReport">Generate Report</button>
+            <button class="vxgbutton generate-button" id="generateEventReport">Generate Events Report</button>
+        </div>
+    </div>
+</div>
+
+<div class="dialogs filterDialog opDialog" style="display: none;">
+    <div class="opFilterElement">
+        <h5 class="filter-title">Camera Operation Report Filters</h5>
+        <p class="error-message" style="display: none;"></p>
+        <div class="filter-inputs-cont">
+            <div class="input-cont cameraid-input-cont">
+                <label for="opCameraIds"> Cameras </label>
+                <input name="opCameraIds" id="opCameraIds"> 
+                <div class="opChosenCameraList chosenCameraList"></div>
+            </div>
+            <!-- <div class="input-cont user-input-cont">
+                <label for="userid"> User Email </label>
+                <input type="text" name="userid" id="userid"> 
+            </div> -->
+            <div class="input-cont user-input-cont">
+                <label class="time-label"> Time Range </label>
+                <div class="time-inputs-cont">
+                    <div class="start-time-cont">
+                        <label for="starttime"> Start Time </label>
+                        <input type="datetime-local" name="starttime" id="opStartTimeFilter" class="timefilter">
+                    </div>
+                    <div class="end-time-cont">
+                        <label for="endtime"> End Time </label>
+                        <input type="datetime-local" name="endtime" id="opEndTimeFilter" class="timefilter">
+                    </div>
+                </div>
+            </div>
+            <div class="input-cont op-status-result-cont">
+                <div class="op-status-cont">
+                    <label class="checkbox-input-label">Operations</label>
+                    <div class="opstatuses">
+                        <!-- create_camera, delete_camera, update_camera, ptz_camera, update_media_stream, update_osd, update_video, update_video_stream, update_audio, update_audio_stream -->
+                        <label class="filter-label custom-checkbox">
+                            <!-- create_camera -->
+                            <span>camera created</span>
+                            <input type="checkbox" class="status_checkbox" name="create_camera" value="op_create_camera">
+                            <span class="checkmark"></span>	
+                        </label>
+                        <label class="filter-label custom-checkbox">
+                            <!-- delete_camera -->
+                            <span>camera deleted</span>
+                            <input type="checkbox" class="status_checkbox" name="delete_camera" value="op_delete_camera">
+                            <span class="checkmark"></span>	
+                        </label>
+                        <label class="filter-label custom-checkbox">
+                            <!-- update_camera -->
+                            <span>camera updated</span>
+                            <input type="checkbox" class="status_checkbox" name="update_camera" value="op_update_camera">
+                            <span class="checkmark"></span>	
+                        </label>
+                        <label class="filter-label custom-checkbox">
+                            <!-- ptz_camera -->
+                            <span>PTZ command executed</span>
+                            <input type="checkbox" class="status_checkbox" name="ptz_camera" value="op_ptz_camera">
+                            <span class="checkmark"></span>	
+                        </label>
+                        <label class="filter-label custom-checkbox">
+                            <!-- update_media_stream -->
+                            <span>media stream updated</span>
+                            <input type="checkbox" class="status_checkbox" name="update_media_stream" value="op_update_media_stream">
+                            <span class="checkmark"></span>	
+                        </label>
+                        <label class="filter-label custom-checkbox">
+                            <!-- update_osd -->
+                            <span>on screen display updated</span>
+                            <input type="checkbox" class="status_checkbox" name="update_osd" value="op_update_osd">
+                            <span class="checkmark"></span>	
+                        </label>
+                        <label class="filter-label custom-checkbox">
+                            <!-- update_video -->
+                            <span>video settings updated</span>
+                            <input type="checkbox" class="status_checkbox" name="update_video" value="op_update_video">
+                            <span class="checkmark"></span>	
+                        </label>
+                        <label class="filter-label custom-checkbox">
+                            <!-- update_video_stream -->
+                            <span>video stream settings updated</span>
+                            <input type="checkbox" class="status_checkbox" name="update_video_stream" value="op_update_video_stream">
+                            <span class="checkmark"></span>	
+                        </label>
+                        <label class="filter-label custom-checkbox">
+                            <!-- update_audio -->
+                            <span>audio settings updated</span>
+                            <input type="checkbox" class="status_checkbox" name="update_audio" value="op_update_audio">
+                            <span class="checkmark"></span>	
+                        </label>
+                        <label class="filter-label custom-checkbox">
+                            <!-- update_audio_stream -->
+                            <span>audio stream settings updated</span>
+                            <input type="checkbox" class="status_checkbox" name="update_audio_stream" value="op_update_audio_stream">
+                            <span class="checkmark"></span>	
+                        </label>
+                    </div>  
+                </div>
+                <!-- <div class="result-cont">
+                    <label class="checkbox-input-label">Processing Result</label>
+                    <div class="results">
+                        <label class="filter-label custom-checkbox">
+                            <span>True</span>
+                            <input type="checkbox" name="result_true">
+                            <span class="checkmark"></span>	
+                        </label>
+                    </div>
+                </div> -->
+            </div>
+            <button class="vxgbutton generate-button" id="generateCameraReport">Generate Camera Report</button>
         </div>
     </div>
 </div>
 
 <div class="reportslist noreports">
     <div class="noreports">
-        <h5> <span data-i18n="reports.noReportsToView">No reports to view.</span> <span class="show-report-filter" data-i18n="reports.generateReport"> Generate a Report. </span> </h5>
+        <h5> No reports to view.  Generate an 
+            <span class="show-report show-event-report-filter"> Events Report, </span> a 
+            <span class="show-report show-camera-report-filter"> Cameras Report, </span> or an 
+            <span class="show-report show-access-report-filter"> Access Report. </span> 
+        </h5>
     </div>
 </div>
 

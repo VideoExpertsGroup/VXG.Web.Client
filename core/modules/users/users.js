@@ -611,7 +611,7 @@ function removeLoc(current, locToRemove, currentLocs) {
     current.remove();
     if (currentLocs.includes(locToRemove)) {
         var currentDetach = $('[name="detach_locations"]').val();
-        var newDetach = currentDetach ? "," + locToRemove : locToRemove;
+        var newDetach = currentDetach ? currentDetach + "," + locToRemove : locToRemove;
         $('[name="detach_locations"]').val(newDetach);
     }
     $('[name="location_strs"]').val(removed);

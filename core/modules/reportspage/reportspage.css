@@ -24,17 +24,17 @@
     display: block !important;
 }
 
-.show-report-filter {
+.show-report {
     color: var(--main-color);
 }
 
-.show-report-filter:hover {
+.show-report:hover {
     cursor: pointer;
 }
 
 .header-right .reportsfilter{
-    width: 75px;
     display: flex;
+    justify-content: flex-end;
 }
 
 .header-right .reportsfilter:after {
@@ -45,6 +45,10 @@ margin-left: 6px;
 
 .header-right .reportsfilterContainer{
     display: block;
+}
+
+.header-right .report-type {
+    width: 30%;
 }
 
 .filter-title {

@@ -37,11 +37,13 @@ $( document ).ready(function() {
     }
     
     getEventVideo(token, eventTime).then(function(ret) {
-        var videoSources = "";
-        ret.objects.forEach(video => {
-            videoSources += `<source src="${video.url}" type="video/mp4"> `;
-        })
-        $('#event-video').html(videoSources);
+        // var videoSource = "";
+        // ret.objects.forEach(video => {
+        //     if (eventTime > video.start && eventTime < video.end)
+        //         videoSource = `<source src="${video.url}" type="video/mp4"> `;
+        // })
+        var videoSource = `<source src="${ret.objects[ret.objects.length-1].url}" type="video/mp4"> `;
+        $('#event-video').html(videoSource);
     }, function(err) {
         console.log(err.responseText);
     });
@@ -299,14 +301,19 @@ async function getFileMeta(filemeta_download) {
     });
 }
 
-async function getEventVideo(access_token, startTime) {
+async function getEventVideo(access_token, eventTime) {
     let base_url = getBaseURLFromToken(access_token);
     if (!base_url) 
         return new Promise(function(resolve, reject){setTimeout(function(){reject();}, 0);});
     let args = {};
 
-    var endTimeInt = new Date(startTime).getTime() + 1*60*1000;
+    var endTimeInt = new Date(eventTime).getTime() + 1*30*1000;
     var endTime = new Date(endTimeInt).toISOString();
+
+    
+    var startTimeInt = new Date(eventTime).getTime() - 1*40*1000;
+    var startTime = new Date(startTimeInt).toISOString();
+
     var storageUrl = `${base_url}/api/v2/storage/data/?start=${startTime}&end=${endTime}&order_by=-time`;
 
     return $.ajax({

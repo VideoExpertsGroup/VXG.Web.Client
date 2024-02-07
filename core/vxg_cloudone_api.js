@@ -574,6 +574,19 @@ vxg.api.cloudone.license = function(obj){
     });
 };
 
+vxg.api.cloudone.access_reports = function(obj){
+    var data = obj || {};
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/access_reports/',
+            contentType: "application/json",
+			data: JSON.stringify(data)
+        });
+    });
+};
+
 vxg.api.cloudone.partner.list = function (obj) {
     return $.ajax({
         type: 'POST',

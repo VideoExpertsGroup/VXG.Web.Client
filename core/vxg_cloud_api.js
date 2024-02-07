@@ -491,6 +491,39 @@ vxg.api.cloud.getEventslist = function(access_token, limit, offset, args = undef
     });
 };
 
+/** Get camera operations
+ *
+ * @param lkey string license key for user
+ * @param limit integer Max count of items in result
+ * @param offset integer Offset of items in result
+ * @param starttime string
+ * @param endtime string
+ * @return Promise
+ */
+vxg.api.cloud.getCameraLogsFilter = function(lkey, access_token, limit, offset, args = undefined, starttime, endtime) {
+    var headers = {}
+    headers['Authorization'] = 'LKey ' + lkey;
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+
+    if (args === undefined) {
+        args={'order_by':'-time'};
+    }
+
+    if (limit!==undefined) args['limit'] = limit;
+    if (offset!==undefined) args['offset'] = offset;
+    if (starttime!==undefined) args['start'] = starttime;
+    if (endtime!==undefined) args['end'] = endtime;
+
+    return $.ajax({
+        type: 'GET',
+        url: vxg.api.cloud.getBaseURLFromToken(access_token) + '/api/v3/logs/filter/',
+        headers: headers,
+        contentType: "application/json",
+        data: args
+    });
+};
+
 /** Get event info
  *
  * @param event_id integer Event ID

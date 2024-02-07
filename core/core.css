@@ -1149,6 +1149,9 @@ body .vxgbutton-rounded {
 .header-right > .reportsfilterContainer {
     display: none;
 }
+.header-right > .opreportsfilterContainer {
+    display: none;
+}
 
 body:not(.profile) .header-right .signout{
 display:none;

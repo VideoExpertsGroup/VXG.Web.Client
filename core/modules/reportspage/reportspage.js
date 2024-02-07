@@ -37,22 +37,37 @@ window.screens['reports'] = {
         let self = this;
         core.elements['header-right'].prepend(`<div class="reportsfilterContainer">
 													<div class="transparent-button reportsfilter">
-														<span id="reportsfilter-btn"> ${$.t('reports.generateReports')} </span>
+														<span class="report-type" id="event_reportsfilter_btn"> Events Report </span>
+														<span class="report-type" id="camera_reportsfilter_btn"> Cameras Report </span>
+														<span class="report-type" id="access_reportsfilter_btn"> Access Report </span>
 													</div>
 												</div>`);
         
         $('.filterDialog').click(function(e){
             let el = document.elementFromPoint(e.pageX, e.pageY);
-            if ($('.filterDialog')[0]!==el) return;
+            if (!$(el).hasClass("filterDialog")) return;
             $(this).hide();
         });
 
-        $(".show-report-filter").click(function() {
-            self.show_reports_filter();
+        $(".show-event-report-filter").click(function() {
+            self.show_reports_filter("event");
+        })
+        core.elements['header-right'].find('.reportsfilterContainer .reportsfilter #event_reportsfilter_btn').click(function(){
+           self.show_reports_filter("event");
         })
 
-        core.elements['header-right'].find('.reportsfilterContainer .reportsfilter').click(function(){
-           self.show_reports_filter();
+        $(".show-camera-report-filter").click(function() {
+            self.show_reports_filter("op");
+        })
+        core.elements['header-right'].find('.reportsfilterContainer .reportsfilter #camera_reportsfilter_btn').click(function(){
+           self.show_reports_filter("op");
+        })
+
+        $(".show-access-report-filter").click(function() {
+            self.open_access_reports();
+        })
+        core.elements['header-right'].find('.reportsfilterContainer .reportsfilter #access_reportsfilter_btn').click(function(){
+            self.open_access_reports();
         })
         
         var timeNow = new Date();
@@ -62,8 +77,10 @@ window.screens['reports'] = {
 
         $("#startTimeFilter").val(minus24Hours.toISOString().slice(0,16));
         $("#endTimeFilter").val(timeNow.toISOString().slice(0,16));
+        $("#opStartTimeFilter").val(minus24Hours.toISOString().slice(0,16));
+        $("#opEndTimeFilter").val(timeNow.toISOString().slice(0,16));
 
-        $("#generateReport").click(function() {
+        $("#generateEventReport").click(function() {
             var args = {'include_meta':true,'order_by':'-time'};
             var meta = "";
             var meta_not = "";
@@ -201,39 +218,218 @@ window.screens['reports'] = {
             });
 
         });
+
+        $("#generateCameraReport").click(function() {
+            // var args = {'include_meta':true,'order_by':'-time'};
+            var args = {'order_by':'-time'};
+            var operations = "";
+            // var meta_not = "";
+
+            var chosenCameraEles = $(".opChosenCamera");
+            var cameraIds = [];
+            if (chosenCameraEles) {
+                chosenCameraEles.each(function() {
+                    var id = $(this).attr("camid");
+                    cameraIds.push(id);
+                })
+            }
+            if (cameraIds.length > 0) args.camids = cameraIds.join(",");
+
+            // var userIdStr = $("#userid").val();
+            // var userId = userIdStr ? userIdStr.replaceAll("@", "_AT_").replaceAll(".", "_DOT_") : null;
+            // if (userId) meta = "user_" + userId;
+
+            var statuses = [];
+            // if ($("[name='not_handled']").is(':checked')) statuses.push($("[name='not_handled']").val());
+            // if ($("[name='in_progress']").is(':checked')) statuses.push($("[name='in_progress']").val());
+            // if ($("[name='processed']").is(':checked')) statuses.push($("[name='processed']").val());
+            // if (statuses.includes("status_not_handled")) {
+            //     if (statuses.includes("status_processed") && !statuses.includes("status_in_progress"))
+            //         meta_not = "status_in_progress";
+            //     else if (statuses.includes("status_in_progress") && !statuses.includes("status_processed"))
+            //         meta_not = "status_processed";
+            //     else if (!statuses.includes("status_in_progress") && !statuses.includes("status_processed"))
+            //         meta_not = "status_in_progress,status_processed";
+            // } else if (statuses) {
+            //     meta += meta ? "," + statuses.join(",") : statuses.join(",");
+            // }
+            // create_camera, delete_camera, update_camera, ptz_camera, update_media_stream, update_osd, update_video, update_video_stream, update_audio, update_audio_stream
+            if ($("[name='create_camera']").is(':checked')) statuses.push($("[name='create_camera']").val());
+            if ($("[name='delete_camera']").is(':checked')) statuses.push($("[name='delete_camera']").val());
+            if ($("[name='update_camera']").is(':checked')) statuses.push($("[name='update_camera']").val());
+            if ($("[name='ptz_camera']").is(':checked')) statuses.push($("[name='ptz_camera']").val());
+            if ($("[name='update_media_stream']").is(':checked')) statuses.push($("[name='update_media_stream']").val());
+            if ($("[name='update_osd']").is(':checked')) statuses.push($("[name='update_osd']").val());
+            if ($("[name='update_video']").is(':checked')) statuses.push($("[name='update_video']").val());
+            if ($("[name='update_video_stream']").is(':checked')) statuses.push($("[name='update_video_stream']").val());
+            if ($("[name='update_audio']").is(':checked')) statuses.push($("[name='update_audio']").val());
+            if ($("[name='update_audio_stream']").is(':checked')) statuses.push($("[name='update_audio_stream']").val());
+            if (statuses) {
+                operations += operations ? "," + statuses.join(",") : statuses.join(",");
+            }
+
+            // var onlyTrueResults = $("[name='result_true']").is(':checked') ? true : false;
+            // if (onlyTrueResults) meta += meta ? ",result_true" : "result_true";
+
+            var startTimeStr = $("#opStartTimeFilter").val();
+            var endTimeStr = $("#opEndTimeFilter").val();
+
+            var startTime = startTimeStr ? new Date(startTimeStr).toISOString() : null;
+            var endTime = endTimeStr ? new Date(endTimeStr).toISOString() : null;
+            var now = new Date().toISOString();
+
+            if (startTime && startTime > endTime) {
+                $(".error-message").empty();
+                $(".error-message").text("Start time must be before end time");
+                $(".error-message").show();
+                $("#opStartTimeFilter").css("background-color", "#ffcece");
+                setTimeout(function() {
+                    $(".error-message").hide();
+                    $("#opStartTimeFilter").css("background-color", "white");
+                }, 5000)
+            }
+            if (startTime && startTime > now) {
+                $(".error-message").empty();
+                $(".error-message").text("Start time must be before current time");
+                $(".error-message").show();
+                $("#opStartTimeFilter").css("background-color", "#ffcece");
+                setTimeout(function() {
+                    $(".error-message").hide();
+                    $("#opStartTimeFilter").css("background-color", "white");
+                }, 5000)
+            }
+
+            if (endTime && endTime > now) endTime = now; 
+
+            if (startTime) args.start = startTime;
+            if (endTime) args.end = endTime;
+            if (operations) args.operations = operations;
+            // if (meta_not) args.meta_not = meta_not
+
+            sessionStorage.setItem("event_report_args", args); // maybe change event_report_args
+            core.elements['global-loader'].show();
+            
+            vxg.api.cloudone.license().then(function(response){
+                var lkey = response.data;
+                vxg.api.cloud.getCameraLogsFilter(lkey, vxg.api.cloud.allCamsToken, 200, undefined, args).then(function(ret) {
+                    var events = ret.objects;
+                    $(".reportslist").removeClass("noreports");
+                    $(".reportslist").empty();
+                    var eventsTable = `
+                            <button class="vxgbutton-transparent download-report" onClick="downloadReport('reportsTable')">Download Report as CSV</button>
+                            <table id="reportsTable">
+                                <tr>
+                                    <th>Operation ID</th>
+                                    <th>Camera ID</th>
+                                    <th>Owner ID</th>
+                                    <th>Time</th>
+                                    <th>Operation Type</th>
+                                    <th>Operation Data</th>
+                                </tr>
+                    `;
+
+                    events.forEach(event => {
+                        
+                        // var status = "Not Handled";
+                        // if (event.meta && event.meta.process) {
+                        //     if (event.meta.process == "in_progress") status = "In Progress";
+                        //     if (event.meta.process == "processed") status = "Processed";
+                        // }
+
+                        // var startTime = event.meta && event.meta.start_time ? new Date(event.meta.start_time).toLocaleString().replace(",", "") : "Not Started";
+                        // var endTime = event.meta && event.meta.end_time ? new Date(event.meta.end_time).toLocaleString().replace(",", "") : "Not Completed";
+                        
+                        // var result = event.meta && event.meta.result ? event.meta.result : "No Result";
+                        // var description = event.meta && event.meta.description ? event.meta.description : "No Description";
+
+                        // var user_id = event.meta && event.meta.user_id ? event.meta.user_id.replaceAll("_AT_", "@").replaceAll("_DOT_", ".") : "No User Assigned";
+                        // var user_ip = event.meta && event.meta.ip_address ? event.meta.ip_address : "No User Assigned";
+                        
+                        var operation_id = event._id;
+                        var cam_id = event._source.cam_id;
+                        var owner_id = event._source.owner_id;
+                        var operation_time = new Date(event._source.created).toLocaleString().replace(",", "");
+                        var operation_type = event._source.operation;
+                        var operation_data = JSON.stringify(event._source.operation_data); // .toLocaleString();
+
+                        eventsTable += `
+                            <tr>
+                                <td>${operation_id}</td>
+                                <td>${cam_id}</td>
+                                <td>${owner_id}</td>
+                                <td>${operation_time}</td>
+                                <td>${operation_type}</td>
+                                <td>${operation_data}</td>
+                            </tr>
+                        `;
+                    });
+
+                    eventsTable += "</table>";
+                    $(".reportslist").append(eventsTable);
+                    core.elements['global-loader'].hide();
+                    $('.filterDialog').hide();
+
+                }, function(err) {
+                    core.elements['global-loader'].hide();
+                    console.log(err.responseText);
+                });
+            });
+        });
     },
     'on_init':function(){
         return defaultPromise();
     }, 
-    'show_reports_filter':function() {
+    'show_reports_filter':function(reportType) {
+        var self = this;
         var cameraNameIds = [];
 
-        var cahcedCameras = localStorage.cameraList;
-        if (cahcedCameras) {
-            JSON.parse(cahcedCameras).objects.forEach(cam => {
+        var cachedCameras = localStorage.cameraList;
+        if (cachedCameras) {
+            JSON.parse(cachedCameras).objects.forEach(cam => {
                 cameraNameIds.push(cam.name + " - " + cam.id);
             });
+            self.create_autocomplete(cameraNameIds, reportType, self);
+        } else {
+            return vxg.cameras.getFullCameraList(500,0).then(function(fullList) {
+                var cameras = fullList.filter(cam => {if (cam.src.meta) return cam.src.meta.gateway == undefined; else return cam;});
+                cameras.forEach(cam => {
+                    cameraNameIds.push(cam.src.name + " - " + cam.src.id);
+                });
+                self.create_autocomplete(cameraNameIds, reportType, self);
+            })
         }
-        
-        $( "#cameraIds" ).autocomplete({
+    },
+    'create_autocomplete': function(cameraNameIds, reportType, self) {
+        $( "#"+reportType+"CameraIds" ).autocomplete({
             source: cameraNameIds,
             minLength: 0,
             autoFocus: true,
             select: function( event, ui ) {
                 var nameId = ui.item.value.split(" - ");
-                var chosenCameraEle = `<span class="chosenCamera" id="chosenCam${nameId[1]}" onClick="remove_element(${nameId[1]})" camid="${nameId[1]}">${nameId[0]}</span>`;
-                $(".chosenCameraList").append(chosenCameraEle);
+                var chosenCameraEle = `<span class="chosenCamera" id="${reportType}ChosenCam${nameId[1]}" onClick="remove_element(${nameId[1]}, '${reportType}')" camid="${nameId[1]}">${nameId[0]}</span>`;
+                $("."+reportType+"ChosenCameraList").append(chosenCameraEle);
             }
           }).focus(function() {
             $(this).autocomplete('search', $(this).val())
         });
 
-        $('.filterDialog').show();
+        $('.'+reportType+'Dialog').show();
+    },
+    'open_access_reports': function() {
+        if (sessionStorage.access_reports) window.open(sessionStorage.access_reports, '_blank');
+        else {
+            core.elements['global-loader'].show();
+            vxg.api.cloudone.access_reports().then(function(ret) {
+                sessionStorage.access_reports = ret.access_reports_link;
+                window.open(ret.access_reports_link, '_blank');
+                core.elements['global-loader'].hide();
+            })
+        }
     }
 };
 
-function remove_element(camid) {
-    $("#chosenCam" + camid).remove();
+function remove_element(camid, reportType) {
+    $("#"+reportType+"ChosenCam" + camid).remove();
 }
 
 function downloadReport(tableId) {
