@@ -1,8 +1,55 @@
 <div class="block1">
 	<div class="block2">
+		<div class="block4_1">
+			<div class="content stat-content">
+				<div class="stat-section">
+					<h6 class="section-title">CAMERAS</h6>
+					<div class="loader section-loader camera-loader"></div>
+					<div class="section-content camera-content" style="display: none">
+						<div class="list-stats-cont">
+							<p class="list-stats total"><span class="number-stat total-cams"></span> Total Cameras</p>
+							<p class="list-stats online"><span class="number-stat online-cams"></span> Cameras Online</p>
+							<p class="list-stats recording"><span class="number-stat recording-cams"></span> Cameras Recording to Cloud</p>
+						</div>
+						<div class="cameras-graph">
+							<canvas id="cameras-graph" style="width:100%;max-width:700px"></canvas>
+						</div>
+					</div>
+				</div>
+				<div class="stat-section">
+					<h6 class="section-title">EVENTS</h6>
+					<div class="loader section-loader event-loader"></div>
+					<div class="section-content event-content" style="display: none">
+						<h1 class="bignumber event-total"></h1>
+						<span class="events-title">Total Events</span>
+						<p class="events-sub">in the last 24 hours</p>
+					</div>
+				</div>
+				<div class="stat-section">
+					<h6 class="section-title">STORAGE</h6>
+					<div class="loader section-loader storage-loader"></div>
+					<div class="section-content storage-content" style="display: none">
+						<div class="numbergroup">
+							<div class="bignumber-cont">
+								<h1 class="bignumber storagesize-total"></h1>
+								<p class="bignumber-unit">GB</p>
+							</div>
+							<p class="storage-title">Of Storage Used</p>
+						</div>
+						<div class="numbergroup">
+							<div class="bignumber-cont">
+								<h1 class="bignumber storagedur-total"></h1>
+								<p class="bignumber-unit">Hours</p>
+							</div>
+							<p class="storage-title">Of Records</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="block4">
 			<div class="title">
-			    <div class="block-title" data-i18n="cameras.title">Cameras</div>
+			    <div class="block-title">Favourites</div>
 			    <div class="block-additional-control">
 					<div class="view-wrapper cameras-view-wrapper" style="display: none;">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list cameras-view cameras-list" viewBox="0 0 16 16">

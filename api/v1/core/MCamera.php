@@ -444,8 +444,12 @@ class MCamera{
         $meta = isset($response_cloud['meta']) ? $response_cloud['meta'] : [];
 
         unset($meta['group']);
+        unset($meta['favCam']);
         if ($group){
             $meta['group'] = $group;
+            if (strtolower($group) == "favourite" || strtolower($group) == "favorite") {
+                $meta['favCam'] = "";
+            }
         }
 
         if (!$meta) $meta = null;

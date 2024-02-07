@@ -263,7 +263,11 @@ CloudCamera.updateCameraPromise = function(camera_struct){
         }
     }
     //if (this.src.meta && (this.src.meta.location || (!this.src.meta.location && camera_struct['location']))) this.src.meta.location = camera_struct['location'] ? camera_struct['location'] : "";
-    if (this.src.meta && (this.src.meta.group || (!this.src.meta.group && camera_struct['group']))) this.src.meta.group = camera_struct['group'] ? camera_struct['group'] : "";
+    if (this.src.meta && (this.src.meta.group || (!this.src.meta.group && camera_struct['group']))) {
+        this.src.meta.group = camera_struct['group'] ? camera_struct['group'] : "";
+        if (camera_struct['group'].toLowerCase() == "favourite" || camera_struct['group'].toLowerCase() == "favorite") this.src.meta.favCam = "";
+        else if (this.src.meta.favCam != undefined) delete this.src.meta.favCam;
+    }
     if (this.src.meta) config.meta = this.src.meta;
 
     return vxg.api.cloud.updateCameraConfig(this.camera_id, this.token, config).then(function(){
@@ -442,6 +446,9 @@ vxg.cameras.getCameraFilterListPromise = function(limit, offset, filterarray, na
         }
     }
 
+    // quick way to do this because how filterarray is written makes absolutely no sense
+    if (filterarray.includes('favCam')) metafilter += metafilter ? ",favCam" : "favCam";
+ 
     let req = {limit:limit, offset:offset};
     if (metafilter) req.meta = metafilter;
     if (metanotfilter) req.meta_not = metanotfilter;

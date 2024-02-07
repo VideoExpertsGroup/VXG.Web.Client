@@ -26,7 +26,7 @@ function wrapRequest_cameraList_vxcore_to_vsapi (obj){
 // TODO: get all cals token from vxg.api.cloud
     let allCamToken	= vxg.user.src.allCamsToken;
     
-    return window.vxg.cameras.getCameraFilterListPromise(limit, offset).then(function (answer) {
+    return window.vxg.cameras.getCameraFilterListPromise(limit, offset, ['favCam']).then(function (answer) {
 	var data = [];
 	for(i = 0; i < answer.length; i++) {
 	    data.push(answer[i]);
@@ -147,7 +147,7 @@ function chartPointCB ( data ) {
 
 window.screens['home'] = {
     'menu_weight': 10,
-	'menu_name': $.t('home.title'),
+    'menu_name':'Dashboard',
     'get_args':function(){
     },
 //  TODO:
@@ -196,6 +196,8 @@ window.screens['home'] = {
 	    targetElement = this.wrapper.find('.report_activitylist')[0];
 	    //simulate loading process, so start activity loader by calling function w/o params
 	    targetElement.showActivityList();
+
+		this.get_account_stats();
 	    
         return defaultPromise();
     },
@@ -257,6 +259,80 @@ window.screens['home'] = {
 		})
 	
         return defaultPromise();
-    }
-    
+    },
+	'get_account_stats': function() {
+		var self = this;
+		return self.get_camera_stats().then(function() {
+			$('.camera-loader').hide();
+			$('.camera-content').show();
+			return self.get_event_stats().then(function() {
+				$('.event-loader').hide();
+				$('.event-content').show();
+				return self.get_storage_stats().then(function() {
+					$('.storage-loader').hide();
+					$('.storage-content').show();
+				})
+			})
+		})
+
+		// events
+		// storage
+	},
+	'get_camera_stats': function() {
+		return vxg.cameras.getFullCameraList(500, 0).then(function(cameras) {
+			var total = cameras.length;
+			$('.total-cams').html(total);
+			var online = 0, recording = 0; 
+			cameras.forEach(cam => {
+				if (cam.src.status == "active") online += 1;
+				if (cam.src.recording) recording += 1;
+			})
+			$('.online-cams').html(online);
+			$('.recording-cams').html(recording);
+
+			var xValues = ["Online", "Offline"];
+			var offline = total - online;
+			var yValues = [online, offline];
+			var barColors = [
+			"#43b0de",
+			"#f5e049"
+			];
+
+			new Chart("cameras-graph", {
+			type: "pie",
+			data: {
+				labels: xValues,
+				datasets: [{
+					backgroundColor: barColors,
+					data: yValues
+				}]
+			},
+			options: {   
+				legend: {
+				display: true,
+				position: 'left'
+				}
+			  }
+			});
+		})
+	},
+	'get_event_stats': function() {
+		var access_token = vxg.user.src.allCamsToken;
+		var now = new Date();
+		var endTime = now.toISOString();
+		now.setDate(now.getDate() - 1);
+		var startTime = now.toISOString();
+		return vxg.api.cloud.getEventslist(access_token, 20, 0, undefined, undefined, startTime, endTime).then(function(ret) {
+			var total = ret.meta.total_count;
+			$('.event-total').html(total);
+		})
+	},
+	'get_storage_stats': function() {
+		return vxg.api.cloudone.user.getAccountStats().then(function(accountStats) {
+			var recordSize = parseInt(accountStats.stats.records_size).toLocaleString();
+			var recordsDur = parseInt(accountStats.stats.records_duration);
+			$('.storagesize-total').html(recordSize)
+			$('.storagedur-total').html(recordsDur)
+		})
+	}
 };

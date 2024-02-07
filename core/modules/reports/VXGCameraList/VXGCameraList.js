@@ -232,7 +232,7 @@ VXGCameraListView.prototype.initDraw = function initDraw(controller, cameraName,
     +	'		</tbody>'
     +	`		</table><div style="text-align:center;margin: 10px 0;"><button type="button" class="vxgbutton more" data-attr="camera">${$.t('common.more')}</button></div>`
     +	'	</div>'
-    +	`	<span class="VXGCameraListEmpty invisible"> ${$.t('cameras.noCameraFound')} <a ifscreen="addcamera" href="javascript:void(0)" class="VXGCameraListAdd">${$.t('cameras.addCamera')}</a></span>`
+    +	'	<span class="VXGCameraListEmpty invisible"> No Favourited cameras. Add a camera to the group "Favourite" to see it on the dashboard.</span>'
     +	'</div>';
     let element = this.element;
 

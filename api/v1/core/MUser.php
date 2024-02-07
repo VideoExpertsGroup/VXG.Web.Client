@@ -1412,6 +1412,16 @@ class MUser{
         return fetchOne('select count(*) from (select "location" from camera where "userID"=? group by "location") v',[$this->id]);
     }
 
+    public function getAccountStats() {
+        $server = $this->getServerData();
+        if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+            error(555, 'Failed creating camera channel. reason: generateServicesURLs');
+        
+        $accountStats = StreamLandAPI::getAccountStats();
+        if (!$accountStats) error(555, 'Failed getting account statistics');
+        return $accountStats;
+    }
+
     /**
      * Check for user is child for the this user
      */

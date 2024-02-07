@@ -17,7 +17,7 @@
     align-items: center;
     display: flex;
     justify-content: center;
-    height: 360px;    
+    /* height: 360px;     */
 }
 
 .VXGCameraListContainer.nocameras.waitdata > .VXGCameraListEmpty {

@@ -184,7 +184,21 @@ vxg.api.cloudone.user.getPlans = function(obj){
     });
 };
 
-
+vxg.api.cloudone.user.getAccountStats = function(obj){
+    var data = obj || {};
+//    data.uid = vs_api.uid;
+//    if (vs_api.manage_uid)
+//        data.manage_uid = vs_api.manage_uid;
+    return vxg.user.getToken().then(function(r){
+        data.token = r;
+        return $.ajax({
+            type: 'POST',
+            url: vxg.api.cloudone.apiSrc+'/api/v1/user/get_stats/',
+            contentType: "application/json",
+            data: JSON.stringify(data)
+        });
+    });
+};
 
 //////////////////////////////////////////////////
 // Storage api

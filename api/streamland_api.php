@@ -171,6 +171,15 @@ class StreamLandAPI {
 			'get_params' => $paramsArray,
 		));
     }
+
+	static function getAccountStats($streamland_key=false, $paramsArray=array()){
+	//        $streamland_key = $streamland_key ? $streamland_key : StaticLib::getSett('streamland_key');
+		return StreamLandAPI::requestGet(array(
+			'path' => 'api/v3/statistics/',
+			'lkey' => StreamLandAPI::$streamland_key,
+			'get_params' => $params,
+		));
+	}
 	
 	static function getChannelEvents($streamland_key=false, $paramsArray){
 //        $streamland_key = $streamland_key ? $streamland_key : StaticLib::getSett('streamland_key');
