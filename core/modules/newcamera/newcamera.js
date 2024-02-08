@@ -25,6 +25,7 @@ window.screens['newcamera'] = {
         if (gatewayCamId && gatewayCamToken) {
             this.gatewayCamId = gatewayCamId;
             this.gatewayCamToken = gatewayCamToken;
+            $('.rtsp-only-label').attr('hidden', false);
         } else {
             this.wrapper.find('.newcameratabs').removeClass("gatewayCamera");
             this.gatewayCamId = null;
@@ -57,10 +58,11 @@ window.screens['newcamera'] = {
                     $('[name="url_http_port"]').val(80);
                     $('[name="onvif_rtsp_port_fwd"]').val(554);
                     $('#prov-server-input').attr('checked', false);
+                    $('#rtsp-only-input').attr('checked', false);
                     $('.uplink-wrapper').hide();
                     $('.loc-dropdown').hide();
                     $('.gatewayinput').show();
-
+                    
                     var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
                     var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : [];
                     var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id == this.gatewayCamId) : "";
@@ -81,6 +83,7 @@ window.screens['newcamera'] = {
                     }
                 });
             } else {
+                $('.url_http_port').removeClass("disabled");
                 $('[name="location"]').removeClass("disabled");
                 $('[name="group"]').removeClass("disabled");
                 $('[name="gatewayId"]').val("");
@@ -90,6 +93,7 @@ window.screens['newcamera'] = {
                 self.wrapper.find('[name="location"').val("");
                 self.wrapper.find('[name="group"').val("");
                 $('#prov-server-input').attr('checked', true);
+                $('#rtsp-only-input').attr('checked', false);
                 $('.uplink-wrapper').show();
                 $('.gatewayinput').hide();
             }
@@ -183,6 +187,21 @@ window.screens['newcamera'] = {
                 $(".mac-address-input").val("");
                 $(".serial-number-input").val("");
             }
+        });
+
+        this.wrapper.find('#rtsp-only-input').click(function(e) {
+            if ($("#rtsp-only-input").is(':checked')) {
+                $('.url_http_port').addClass("disabled");
+            }
+            else {
+                $('.url_http_port').removeClass("disabled");
+            }
+            // $('.url_http_port').toggle();
+            // $('rtspOnly').toggle();
+            // if ($(".mac-address-input").val() && $(".serial-number-input").val()) {
+            //     $(".mac-address-input").val("");
+            //     $(".serial-number-input").val("");
+            // }
         });
 
         this.wrapper.find('.uplinkapply').click(function(e) {

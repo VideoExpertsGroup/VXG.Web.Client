@@ -22,7 +22,7 @@ list($location,
      $serialnumber, $macAddress, $uplink, 
      $dvrName, $channel_number, $uuid, $isFirst, 
      $gatewayId, $max_num_cameras,
-     $gatewayCam, $gatewayUrl, $cameraIp, $path) = 
+     $gatewayCam, $gatewayUrl, $cameraIp, $path, $rtspOnly) = 
     MCore::getInputParameters(['location'=>'',
                                'location_str'=>'',
                                'group'=>'',
@@ -35,7 +35,7 @@ list($location,
                                'serialnumber'=>'','macAddress'=>'', 'uplink'=>'',
                                'dvrName'=>'','channel_number'=>'','uuid' =>'','isFirst'=>false,
                                'gatewayId'=>'','max_num_cameras'=>'',
-                               'gatewayCam' => false, 'gatewayUrl' => '', 'url_ip' => '', 'path' => '']);
+                               'gatewayCam' => false, 'gatewayUrl' => '', 'url_ip' => '', 'path' => '', 'rtspOnly' => false]);
 
 $password = strval($password);
 $username = strval($username);
@@ -111,13 +111,15 @@ if ($gatewayCam) {
     $gatewayAuthToken = $camera->getGatewayAuthToken($gatewayUrl);
     $http = $http_port ? $http_port : 80;
     $rtsp = $onvif_rtsp_port_fwd ? $onvif_rtsp_port_fwd : 554;
+    $rtspOnly = $rtspOnly ? $rtspOnly : false;
 
     $params = [ 'ip'=>$cameraIp,
                 'http_port'=>$http,
                 'rtsp_port'=>$rtsp,
                 'is_active'=>false,
                 'pid'=>null,
-                'access_token'=>$camera->camera['rwToken']
+                'access_token'=>$camera->camera['rwToken'],
+                'rtsp_only'=>$rtspOnly
             ];
 
     if ($serialnumber && $macAddress) {

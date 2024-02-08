@@ -325,6 +325,7 @@ CameraCloudEditControl = function(){
         let isOnvif = $(this).hasClass('onvif');
         let serverSerial = $(".serial-number-input").val();
         let macAddress = $(".mac-address-input").val();
+        var rtspOnly = $("#rtsp-only-input").is(':checked');
         var pass = $(".password-input").val();
         var username = $(".username-input").val();
         var path = $(".path-input").val();
@@ -388,6 +389,10 @@ CameraCloudEditControl = function(){
         if (macAddress && serverSerial) {
             data.serialnumber = String(serverSerial).toUpperCase();
             data.macAddress = String(macAddress).toUpperCase();
+        }
+
+        if (rtspOnly) {
+            data.rtspOnly = true;
         }
 
         if (isCloud) data.url='';
