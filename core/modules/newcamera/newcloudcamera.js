@@ -354,7 +354,7 @@ CameraCloudEditControl = function(){
         if (data.url!==undefined && data.url){
             var purl = this.parseUrl(data.url);
         
-            if (!this.checkDomainName(purl.host)){
+            if (!this.checkDomainName(purl.host) & !this.checkDomainOrIP(purl.host)) {
                 if (isOnvif)
                     core.flashInputBackgroundColor($(this).find('.url_ip'));
                 else {
