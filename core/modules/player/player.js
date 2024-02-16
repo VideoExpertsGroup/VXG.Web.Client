@@ -168,8 +168,17 @@ window.controls['campreview'] = {
             if (typeof pl[0].on_access_token_change === "function") pl[0].on_access_token_change(el.channeltoken);
             pl[0].play();
         }
-        el.addEventListener('dragstart', this.dragstart);
-        el.addEventListener('dragend', this.dragend);
+
+        $(el).on('dragstart',function(event){
+            // event.preventDefault();
+            this.dragstart();
+        });
+        $(el).on('dragend',function(event){
+            // event.preventDefault();
+            this.dragend();
+        });
+        // el.addEventListener('dragstart', this.dragstart);
+        // el.addEventListener('dragend', this.dragend);
         document.addEventListener('drop', this.drop);
 
         return getCameraFromElement(this).then(function(camera){

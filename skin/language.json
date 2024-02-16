@@ -272,6 +272,9 @@
       "title": "Assign Subscription to Camera"
     }
   },
+  "monitoring": {
+    "title": "Monitoring"
+  },
   "newCamera": {
     "title": "Add camera",
     "installer": "Installer",

@@ -2,84 +2,84 @@ window.screens = window.screens || {};
 var path = window.core.getPath('cameras.js');
 //const locTypes = ["Province", "City", "Zone", "Circuit", "Subcircuit"];
 
-function camGrid(size /* 2,3,4 */){
-    let el = $('.screens .cameras .camgrid2')
-    el.removeClass('grid3').removeClass('grid4');
-    if (size==3) el.addClass('grid3');
-    if (size==4) el.addClass('grid4');
-    let td = $('.screens .cameras .camgrid2 > div');
-    let state = window.screens['cameras'].getState();
-    if (!window.screens['cameras'].playerList) {
-        try {
-            //window.screens['cameras'].playerList = new CloudPlayerList("single-timeline", {timeline: true, calendar: true});
-        } catch(e) {
-            window.screens['cameras'].playerList = null;
-        }
-    }
-    var preferredPlayerFormat = (window.skin.grid && window.skin.grid.preferredPlayerFormat)?(' preferredPlayerFormat="' + window.skin.grid.preferredPlayerFormat + '" ' ):('') ;
+// function camGrid(size /* 2,3,4 */){
+//     let el = $('.screens .cameras .camgrid2')
+//     el.removeClass('grid3').removeClass('grid4');
+//     if (size==3) el.addClass('grid3');
+//     if (size==4) el.addClass('grid4');
+//     let td = $('.screens .cameras .camgrid2 > div');
+//     let state = window.screens['cameras'].getState();
+//     if (!window.screens['cameras'].playerList) {
+//         try {
+//             //window.screens['cameras'].playerList = new CloudPlayerList("single-timeline", {timeline: true, calendar: true});
+//         } catch(e) {
+//             window.screens['cameras'].playerList = null;
+//         }
+//     }
+//     var preferredPlayerFormat = (window.skin.grid && window.skin.grid.preferredPlayerFormat)?(' preferredPlayerFormat="' + window.skin.grid.preferredPlayerFormat + '" ' ):('') ;
     
-    for (let i=0; i<td.length; i++){
-        let access_token = state.cams['player'+i] ? ' access_token="'+state.cams['player'+i]+'"' : '';
-        if ($(td[i]).hasClass('grid3')){
-            if (size>=3 && td[i].innerHTML=='')
-                $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
-            if (size<=2)
-                $(td[i]).empty();
-        } else if ($(td[i]).hasClass('grid4')){
-            if (size>=4 && td[i].innerHTML=='')
-                $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
-            if (size<=3)
-                $(td[i]).empty();
-        } else {
-            if (size<2)
-                $(td[i]).empty();
-            else if (td[i].innerHTML=='')
-               $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
-        }
-    }
+//     for (let i=0; i<td.length; i++){
+//         let access_token = state.cams['player'+i] ? ' access_token="'+state.cams['player'+i]+'"' : '';
+//         if ($(td[i]).hasClass('grid3')){
+//             if (size>=3 && td[i].innerHTML=='')
+//                 $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
+//             if (size<=2)
+//                 $(td[i]).empty();
+//         } else if ($(td[i]).hasClass('grid4')){
+//             if (size>=4 && td[i].innerHTML=='')
+//                 $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
+//             if (size<=3)
+//                 $(td[i]).empty();
+//         } else {
+//             if (size<2)
+//                 $(td[i]).empty();
+//             else if (td[i].innerHTML=='')
+//                $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
+//         }
+//     }
 
-    let p = $('.screens .cameras .camgrid2 player').off('dblclick').on('dblclick',function(){
-        if (!$(this).attr('access_token')) return;
-        let the = this;
-        dialogs['mdialog'].activate(`<p>${$.t('cameras.deleteConfirm.title')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.no')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.yes')}</button></p>`).then(function(r){
-            if (r.button!='delete') return;
-            $(the).attr('access_token','');
-            $(the)[0].on_access_token_change('');
-            let id = $(the).attr('id');
-            let state = window.screens['cameras'].getState();
-            state.cams = state.cams || {};
-            delete state.cams[id];
-            window.screens['cameras'].setState(state);
-        });
+//     let p = $('.screens .cameras .camgrid2 player').off('dblclick').on('dblclick',function(){
+//         if (!$(this).attr('access_token')) return;
+//         let the = this;
+//         dialogs['mdialog'].activate(`<p>${$.t('cameras.deleteConfirm.title')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.no')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.yes')}</button></p>`).then(function(r){
+//             if (r.button!='delete') return;
+//             $(the).attr('access_token','');
+//             $(the)[0].on_access_token_change('');
+//             let id = $(the).attr('id');
+//             let state = window.screens['cameras'].getState();
+//             state.cams = state.cams || {};
+//             delete state.cams[id];
+//             window.screens['cameras'].setState(state);
+//         });
 
-    });
-    $('.screens .cameras .camgrid2 player').each(function(){
-        this.on_access_token_change = function(){
-            let access_token = $(this).attr('access_token');
-            let id = $(this).attr('id');
-            let state = window.screens['cameras'].getState();
-            state.cams = state.cams || {};
-            state.cams[id]=access_token;
-            window.screens['cameras'].setState(state);
+//     });
+//     $('.screens .cameras .camgrid2 player').each(function(){
+//         this.on_access_token_change = function(){
+//             let access_token = $(this).attr('access_token');
+//             let id = $(this).attr('id');
+//             let state = window.screens['cameras'].getState();
+//             state.cams = state.cams || {};
+//             state.cams[id]=access_token;
+//             window.screens['cameras'].setState(state);
 
-            if (window.screens['cameras'].playerList) {
-                let cloudPlayerId = this.newid;
-                var cloudPlayerObj = window.controls['player'].players['player'+cloudPlayerId];
-                if (access_token == '') {
-                    window.screens['cameras'].playerList.removePlayerFromList(cloudPlayerObj)
-                }
-                window.screens['cameras'].playerList.killSyncPromise(true).then(() => {
-                    setTimeout(() => {
-                        window.screens['cameras'].playerList.killSyncPromise(false).then(() => {
-                            window.screens['cameras'].playerList.synchronize([], true)
-                        })
-                    }, 1500);
-                })
-            }           
-        };        
-    });
-    onCameraScreenResize();
-}
+//             if (window.screens['cameras'].playerList) {
+//                 let cloudPlayerId = this.newid;
+//                 var cloudPlayerObj = window.controls['player'].players['player'+cloudPlayerId];
+//                 if (access_token == '') {
+//                     window.screens['cameras'].playerList.removePlayerFromList(cloudPlayerObj)
+//                 }
+//                 window.screens['cameras'].playerList.killSyncPromise(true).then(() => {
+//                     setTimeout(() => {
+//                         window.screens['cameras'].playerList.killSyncPromise(false).then(() => {
+//                             window.screens['cameras'].playerList.synchronize([], true)
+//                         })
+//                     }, 1500);
+//                 })
+//             }           
+//         };        
+//     });
+//     onCameraScreenResize();
+// }
 
 (function( $ ){
 
@@ -201,32 +201,32 @@ function addSimpleMenu(_menu, settingsEle, e, isSubuser = false) {
         el.css('bottom',hh-e.clientY-10);
 }
 
-function onEventsSet(e){
-    let t = $(e).getNearParentAtribute('access_token');
-    setTimeout(function(){$('.simplemenu').remove();},10);
-    core.elements['global-loader'].show();
-    vxg.cameras.getCameraByIDPromise(t).then(function(camera){
-        return camera.getEventTypes().then(function(r){
-            core.elements['global-loader'].hide();
-            let event_types = r.event_types?r.event_types:[];
-            let types = {'motion': $.t('common.eventTypes.motion'),'post_object_and_scene_detection': $.t('common.eventTypes.sceneDetection')};
-            let text='';
-            for (let i in types)
-                text += (text?'<br/>':'') + '<label><input class="svgbtnbefore" type="checkbox" name="'+i+'" '+(event_types.indexOf(i)!=-1?'checked':'')+'><span>'+types[i]+'</span></label>';
-            dialogs['mdialog'].activate(`<h7>${$.t('cameras.selectEventTypes')}</h7><p></p>${text}<br/><p><br/><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="set" class="vxgbutton">${$.t('action.set')}</button></p>`).then(function(r){
-                if (r.button!='set') return;
-                core.elements['global-loader'].show();
-                let data = [];
-                for (let i in r.form) if (r.form[i]=='on') data.push(i);
-                camera.setEventTypes(data).finally(function(r){
-                    core.elements['global-loader'].hide();
-                });
-            });
-        });
-    }).catch(function(){
-        core.elements['global-loader'].hide();
-    });;
-}
+// function onEventsSet(e){
+//     let t = $(e).getNearParentAtribute('access_token');
+//     setTimeout(function(){$('.simplemenu').remove();},10);
+//     core.elements['global-loader'].show();
+//     vxg.cameras.getCameraByIDPromise(t).then(function(camera){
+//         return camera.getEventTypes().then(function(r){
+//             core.elements['global-loader'].hide();
+//             let event_types = r.event_types?r.event_types:[];
+//             let types = {'motion': $.t('common.eventTypes.motion'),'post_object_and_scene_detection': $.t('common.eventTypes.sceneDetection')};
+//             let text='';
+//             for (let i in types)
+//                 text += (text?'<br/>':'') + '<label><input class="svgbtnbefore" type="checkbox" name="'+i+'" '+(event_types.indexOf(i)!=-1?'checked':'')+'><span>'+types[i]+'</span></label>';
+//             dialogs['mdialog'].activate(`<h7>${$.t('cameras.selectEventTypes')}</h7><p></p>${text}<br/><p><br/><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="set" class="vxgbutton">${$.t('action.set')}</button></p>`).then(function(r){
+//                 if (r.button!='set') return;
+//                 core.elements['global-loader'].show();
+//                 let data = [];
+//                 for (let i in r.form) if (r.form[i]=='on') data.push(i);
+//                 camera.setEventTypes(data).finally(function(r){
+//                     core.elements['global-loader'].hide();
+//                 });
+//             });
+//         });
+//     }).catch(function(){
+//         core.elements['global-loader'].hide();
+//     });;
+// }
 
 function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null){
     setTimeout(function(){$('.simplemenu').remove();},10);
@@ -1043,13 +1043,13 @@ window.screens['cameras'] = {
       });
     },
     setState: function(state){
-        let newstate = localStorage['vxggrid'] ? JSON.parse(localStorage['vxggrid']) : [];
+        let newstate = localStorage['vxglist'] ? JSON.parse(localStorage['vxglist']) : [];
         if (newstate.cams!==undefined) newstate = [];
         newstate[vxg.user.src.uid] = state;
-        localStorage['vxggrid'] = JSON.stringify(newstate);
+        localStorage['vxglist'] = JSON.stringify(newstate);
     },
     getState: function(){
-        let state = localStorage['vxggrid'] ? JSON.parse(localStorage['vxggrid']) : [];
+        let state = localStorage['vxglist'] ? JSON.parse(localStorage['vxglist']) : [];
         if (state.cams!==undefined) state = [];
         state = state[vxg.user.src.uid];
         if (!state || state.cams===undefined || state.grid===undefined) return {cams:{},grid:0};
@@ -1060,19 +1060,19 @@ window.screens['cameras'] = {
         let statesArray = [];
         statesArray[0] = $.t('common.list');
         statesArray[1] = $.t('common.locations');
-        statesArray[2] = '2 x 2';
-        statesArray[3] = '3 x 3';
-        statesArray[4] = '4 x 4';
+        // statesArray[2] = '2 x 2';
+        // statesArray[3] = '3 x 3';
+        // statesArray[4] = '4 x 4';
         statesArray[-1] = $.t('common.map');
 
         let curState = self.getState();
-        core.elements['header-right'].prepend('<div tabindex="0" class="gridmenu hide transparent-button"><span>'+statesArray[curState.grid]+'</span><i class="fa fa-angle-down" aria-hidden="true"></i>' +
+        core.elements['header-right'].prepend('<div tabindex="0" class="listmenu hide transparent-button"><span>'+statesArray[curState.grid]+'</span><i class="fa fa-angle-down" aria-hidden="true"></i>' +
             '    <ul class="menu-dropdown">' +
             '        <li class="cam-dropdown-item nogrid"><a href="javascript:;"> ' + $.t('common.list') + ' </a></li>' +
             '        <li class="cam-dropdown-item location"><a href="javascript:;"> ' + $.t('common.locations') + ' </a></li>' +
-            '        <li class="cam-dropdown-item grid22"><a href="javascript:;">2 x 2</a></li>' +
-            '        <li class="cam-dropdown-item grid33"><a href="javascript:;">3 x 3</a></li>' +
-            '        <li class="cam-dropdown-item grid44"><a href="javascript:;">4 x 4</a></li>' +
+            // '        <li class="cam-dropdown-item grid22"><a href="javascript:;">2 x 2</a></li>' +
+            // '        <li class="cam-dropdown-item grid33"><a href="javascript:;">3 x 3</a></li>' +
+            // '        <li class="cam-dropdown-item grid44"><a href="javascript:;">4 x 4</a></li>' +
             '        <li class="cam-dropdown-item gridmap"><a href="javascript:;">' + $.t('common.map') + '</a></li>' +
             '    </ul>' +
             `</div><div class="transparent-button active addcamera" ifscreen="newcamera" onclick_toscreen="newcamera"><span class="add-icon">+</span><span>${$.t('cameras.addCamera')}</span></div>`);
@@ -1099,7 +1099,7 @@ window.screens['cameras'] = {
             self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=0; state.list=true; self.setState(state);
             camGrid(0);
-            core.elements['header-right'].find('.gridmenu span').text($(this).text());
+            core.elements['header-right'].find('.listmenu span').text($(this).text());
         });
 
         core.elements['header-right'].find('.location').click(function(){
@@ -1124,7 +1124,7 @@ window.screens['cameras'] = {
             } else {
                 self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
                 camGrid(2);
-                core.elements['header-right'].find('.gridmenu span').text($(this).text());
+                core.elements['header-right'].find('.listmenu span').text($(this).text());
             }
         });
         core.elements['header-right'].find('.grid33').click(function(){
@@ -1140,7 +1140,7 @@ window.screens['cameras'] = {
             } else {
                 self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
                 camGrid(3);
-                core.elements['header-right'].find('.gridmenu span').text($(this).text());
+                core.elements['header-right'].find('.listmenu span').text($(this).text());
             }
         });
         core.elements['header-right'].find('.grid44').click(function(){
@@ -1156,7 +1156,7 @@ window.screens['cameras'] = {
             } else {
                 self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
                 camGrid(4);
-                core.elements['header-right'].find('.gridmenu span').text($(this).text());
+                core.elements['header-right'].find('.listmenu span').text($(this).text());
             }
         });
         core.elements['header-right'].find('.gridmap').click(function(){
@@ -1165,7 +1165,7 @@ window.screens['cameras'] = {
             self.wrapper.find('.cambd').hide();self.wrapper.find('.cammap').show();
             self.wrapper.addClass('grid');
             let state = self.getState(); state.grid=-1; self.setState(state);
-            core.elements['header-right'].find('.gridmenu span').text($(this).text());
+            core.elements['header-right'].find('.listmenu span').text($(this).text());
         });
 
         $( window ).resize(onCameraScreenResize);

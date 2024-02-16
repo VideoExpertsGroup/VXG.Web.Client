@@ -27,6 +27,7 @@ $skin["scripts"]["partner"]=[
     "core/modules/gateways/gateway_cams.js",
 //    "core/modules/servers/servers.js",
     "core/modules/cameras/cameras.js",
+    "core/modules/monitoring/monitoring.js",
     "core/modules/mdialog/mdialog.js",
     "core/modules/activity/activity.js",
     "core/modules/profile/profile.js",

@@ -55,6 +55,7 @@ window.core.isIos = function () {
 window.core.globalmenu = {
     init : function(){
         $('.global-menu').on("click","li",function(){
+            $('.headerBlock').show();
             window.screens[$(this).attr('screen_id')].activate();
         });
     },
@@ -718,6 +719,28 @@ window.core.init= function (elements) {
 }
 
 $( document ).ready(function() {
+    $('.close-menu').on("click", function() {
+        if ($(this).hasClass('open')) {
+            $(this).removeClass('open');
+            $(this).addClass('closed');
+            $(this).html('<i class="fa fa-angle-right" aria-hidden="true"></i>');
+            $('.leftblock').css('width', '100px');
+            $('.left-top .username').css('visibility', 'hidden');
+            $('.profile-img').css({"margin-left": "22px", "width": "45px"})
+            $('.left-bottom').css('visibility', 'hidden');
+            $('.bottom-global-menu').css('visibility', 'hidden');
+        } else {
+            $(this).removeClass('closed');
+            $(this).addClass('open');
+            $(this).html('<i class="fa fa-angle-left" aria-hidden="true"></i>');
+
+            $('.leftblock').css('width', '200px');
+            $('.left-top .username').css('visibility', 'visible');
+            $('.profile-img').css({"margin-left": "0", "width": "71px"})
+            $('.left-bottom').css('visibility', 'visible');
+            $('.bottom-global-menu').css('visibility', 'visible');
+        }
+    })
     setTimeout(function(){
         if (window.core.initialized) return;
         let screens_element = $('.screens');

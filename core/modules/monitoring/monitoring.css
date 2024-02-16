@@ -1,0 +1,946 @@
+.ratio2 {
+    width: 100%;
+}
+
+.ratio2-inner {
+    position: relative;
+    height: 0;
+    border: none;
+}
+
+.ratio2-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: #eee;
+}
+
+.ratio2-4-3 {
+    padding-top: 56%;
+}
+
+.screens > .monitoring{
+width: 100%;
+    height: 100%;
+}
+body.mobile .screens > .monitoring{
+padding-top:12px;
+}
+
+.screens > .monitoring .cambd{
+width: 100%;
+display:flex;
+}
+
+.screens > .monitoring .camlist-monitoring{
+    display: flex;
+    margin: 0 0 0 0;
+    min-height: 30px;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+
+.screens .monitoring .camlist-monitoring .camerablock campreview{
+    background-image: url(camera.svg);
+}
+
+
+.screens > .monitoring .wrapper{
+display:none;
+}
+.screens > .monitoring.grid .wrapper{
+    display:block;
+}
+
+.screens > .monitoring.grid .camlist-monitoring {
+flex-direction: column;
+    flex-wrap: nowrap;
+    width: 350px;
+    height: 100%;
+    padding-right: 10px;
+    overflow-y: auto;
+    margin-left: 13px;
+    min-width: 334px;
+position: relative;
+}
+
+.screens > .monitoring.grid .camlist-monitoring:not(.nobloor):after {
+    content: "";
+    width: 100%;
+    background: linear-gradient(0deg, rgb(244, 246, 250), transparent);
+    position: fixed;
+    bottom: 0;
+}
+/*.screens > .monitoring.grid .camlist-monitoring .camerablock {
+    margin: 0 0 1em 1em;
+}*/
+
+.screens > .monitoring.grid{
+height:100%;
+overflow-y: hidden;
+}
+
+.screens > .monitoring .gridmenu:focus:after {
+    transform: rotateX(180deg);
+}
+
+.header-right .gridmenu:focus { pointer-events:none; }
+.header-right .gridmenu:focus .menu-dropdown { opacity:1; visibility:visible; }
+.gridmenu-dropdown a {width: unset;}
+.menu-dropdown a:hover {width: unset;}
+
+body.mobile .header-right .gridmenu span, body.mobile .header-right .camerafilter span, body.mobile .header-right .addcamera span{
+display:none;
+}
+/*body.mobile .header-right .gridmenu:after{
+content:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KPHBhdGggZD0iTTMwLDhIMTBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjEwQzMyLDguOSwzMS4xLDgsMzAsOHogTTI4LDI4SDEyVjEyaDE2VjI4eiBNOTAsOEg3MCAgYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMlYxMEM5Miw4LjksOTEuMSw4LDkwLDh6IE04OCwyOEg3MlYxMmgxNlYyOHogTTYwLDhINDBjLTEuMSwwLTIsMC45LTIsMnYyMCAgYzAsMS4xLDAuOSwyLDIsMmgyMGMxLjEsMCwyLTAuOSwyLTJWMTBDNjIsOC45LDYxLjEsOCw2MCw4eiBNNTgsMjhINDJWMTJoMTZWMjh6IE0zMCwzOEgxMGMtMS4xLDAtMiwwLjktMiwydjIwYzAsMS4xLDAuOSwyLDIsMmgyMCAgYzEuMSwwLDItMC45LDItMlY0MEMzMiwzOC45LDMxLjEsMzgsMzAsMzh6IE0yOCw1OEgxMlY0MmgxNlY1OHogTTkwLDM4SDcwYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMiAgVjQwQzkyLDM4LjksOTEuMSwzOCw5MCwzOHogTTg4LDU4SDcyVjQyaDE2VjU4eiBNNjAsMzhINDBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjQwICBDNjIsMzguOSw2MS4xLDM4LDYwLDM4eiBNNTgsNThINDJWNDJoMTZWNTh6IE0zMCw2OEgxMGMtMS4xLDAtMiwwLjktMiwydjIwYzAsMS4xLDAuOSwyLDIsMmgyMGMxLjEsMCwyLTAuOSwyLTJWNzAgIEMzMiw2OC45LDMxLjEsNjgsMzAsNjh6IE0yOCw4OEgxMlY3MmgxNlY4OHogTTkwLDY4SDcwYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMlY3MCAgQzkyLDY4LjksOTEuMSw2OCw5MCw2OHogTTg4LDg4SDcyVjcyaDE2Vjg4eiBNNjAsNjhINDBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjcwICBDNjIsNjguOSw2MS4xLDY4LDYwLDY4eiBNNTgsODhINDJWNzJoMTZWODh6IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=)!important;
+}*/
+
+.header-right .camerafilter{
+width:100%;
+}
+
+.filterset {
+    padding: 2px 4px;
+    border-bottom: solid thin var(--main-color);
+}
+
+
+camera-map{width:100%;height:100%;display: block;}
+
+.screens > .monitoring .cammap{
+    height: 100%;
+    width: 100%;
+}
+
+.screens > .monitoring .camgrid2{
+display:none;
+display:flex;
+flex-wrap:wrap;
+    height: 92%;
+    width: 100%;
+justify-content: space-between;
+}
+
+.screens > .monitoring .camgrid2 > div{
+width:50%;
+height:50%;
+background:black;
+    border-right: 3px solid white;
+    box-sizing: border-box;
+    border-bottom: 3px solid white;
+}
+.screens > .monitoring .camgrid2.grid3 > div{
+width: 33.333333%;
+    height: 33.333333%;
+}
+.screens > .monitoring .camgrid2.grid4 > div{
+width:25%;
+height:25%;
+}
+
+.screens > .monitoring .camgrid2 > div.grid3, .screens > .monitoring .camgrid2 > div.grid4{
+display:none;
+}
+.screens > .monitoring .camgrid2.grid3 > div.grid3{
+display:block;
+}
+.screens > .monitoring .camgrid2.grid4 > div.grid3, .screens > .monitoring .camgrid2.grid4 > div.grid4{
+display:block;
+}
+
+
+.c2ameras.gridtop .wrapper{
+max-height:calc(100vh - 300px);
+}
+.c2ameras.gridtop .camgrid2{
+    max-height: calc(100vh - 300px);
+}
+
+.monitoring-cont {
+    display: flex;
+}
+.screens > .monitoring .camlist-monitoring {
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+.screens > .monitoring.gridtop .cambd{
+    flex-direction: column;
+}
+.screens > .monitoring.gridtop player{
+}
+
+.screens > .monitoring.gridtop .camgrid{
+height: auto;
+}
+.screens > .monitoring.gridtop .camlist-monitoring{
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: auto!important;
+    min-height: 100%;
+    margin-left: -10px;
+}
+body.mobile .screens > .monitoring.gridtop .camlist-monitoring{
+justify-content: center;
+}
+
+.screens > .monitoring.grid .cambd{
+height:100%;
+}
+.screens > .monitoring.grid .camgrid{
+height:100%;
+}
+
+.screens > .monitoring .camlist-monitoring .camerablock .caminfo{
+font-size: 10px;
+    background: gray;
+    right: 10px;
+    float: right;
+    width: auto;
+    margin: 10px 0px 0 0;
+    height: auto;
+    color: white;
+    padding: 5px 12px 4px;
+    border-radius: 8px;
+    position: relative;
+    font-weight: normal;
+}
+
+.tablecaminfo {
+    font-size: 10px;
+    background: gray;
+    padding: 5px 10px;
+    border-radius: 8px;
+    text-align: center;
+    width: max-content;
+    color: white;
+    margin: 0 auto;
+}
+
+.screens > .monitoring .camlist-monitoring .camerablock .caminfo.rec{
+    padding-right: 13px;
+}
+.screens > .monitoring .camlist-monitoring .camerablock .caminfo.online, .tablecaminfo.online{
+background-color:var(--main-color);
+}
+.screens > .monitoring .camlist-monitoring .camerablock .caminfo.rec:after{
+content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 5px;
+    background-color: red;
+    position: absolute;
+    margin-top: 2px;
+    margin-left: 4px;
+}
+
+.screens > .monitoring .camlist-monitoring .camerablock{
+width: calc(100% - 4px);
+    height: 216px;
+    min-height: 216px;
+    display: flex;
+    flex-direction: column;
+    margin: 0 1em 1em 0;
+    box-shadow: 0 0 6px rgb(0 0 0 / 10%);
+    max-width: 322px;
+}
+body.mobile .screens > .monitoring .camlist-monitoring .camerablock{
+    margin: 0 0 10px 10px;
+}
+.screens > .monitoring .camlist-monitoring .camerablock:last-child{
+    margin-bottom: 0;
+}
+.screens > .monitoring.gridtop .camlist-monitoring .camerablock {
+}
+.screens > .monitoring .camlist-monitoring .camerablock campreview{
+width: 100%;
+    height: calc(100% - 30px);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: auto;
+    background-color: white;
+    cursor: pointer;
+}
+.screens > .monitoring .camlist-monitoring .camerablock campreview img{
+width:100%;
+height:100%;
+object-fit: cover;
+}
+.screens > .monitoring .camlist-monitoring .camerablock > div{
+    height: 46px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: 600;
+background:white;
+border-top: 1px solid var(--main-color);
+}
+
+.screens > .monitoring .camlist-monitoring .camerablock .settings{
+    width:40px;
+    height:40px;
+    /*background-repeat: no-repeat;*/
+    /*background-position: 0 center;*/
+    /*background-image: url(action.svg);*/
+    cursor:pointer;
+    display: flex;
+    align-items: center;
+    margin: auto;
+    justify-content: center;
+}
+
+.screens > .monitoring .camlist-monitoring .camerablock .name{
+padding: 8px 10px 5px 4px;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: calc(100% - 66px);
+    max-height: 36px;
+}
+.screens > .monitoring .camlist-monitoring .camerablock .loc{
+font-size:8px;
+font-weight:400;
+color: #676A6C;
+padding: 0px 0px 0px 16px;
+}
+/* body.screens > .monitoring .header-right .addcamera,body.screens > .monitoring .header-right .nogrid, body.screens > .monitoring .header-right .grid22, body.screens > .monitoring .header-right .grid33, body.screens > .monitoring .header-right .grid44, body.screens > .monitoring .header-right .gridmap { */
+body.screens > .monitoring .header-right .addcamera, body.screens > .monitoring .header-right .cam-dropdown-item {
+    background-size: 75%;
+    background-repeat: no-repeat;
+    background-position: center;
+    display:flex;
+}
+
+body.screens > .monitoring .header-right .nogrid, body.screens > .monitoring .header-right .grid22, body.screens > .monitoring .header-right .grid33, body.screens > .monitoring .header-right .grid44, body.screens > .monitoring .header-right .gridmap {
+    margin-left: 0;
+    padding: 0 5px;
+}
+
+.screens > .monitoring .camgrid table{
+width:100%;
+}
+
+.screens > .monitoring .camgrid table td{
+}
+.screens > .monitoring .camgrid table td player{
+width:100%;
+height:100%;
+display:inline-block;
+}
+
+.screens > .monitoring .camgrid{
+display:none;
+    width: 100%;
+}
+.screens > .monitoring .camgrid.grid22, .screens > .monitoring .camgrid.grid33, .screens > .monitoring .camgrid.grid44{
+display:block;
+}
+.screens > .monitoring .camgrid.grid22 td{
+width:50%;
+}
+.screens > .monitoring .camgrid.grid22 tr:nth-child(3) td, .screens > .monitoring .camgrid.grid22 tr:nth-child(4) td{
+display:none;
+}
+.screens > .monitoring .camgrid.grid33 td{
+width:33%;
+}
+.screens > .monitoring .camgrid.grid33 tr:nth-child(4) td{
+display:none;
+}
+.screens > .monitoring .camgrid.grid44 td{
+width:25%;
+}
+
+.simplemenu{
+    position: fixed;
+    background: white;
+border-radius: 3px;
+    box-shadow: 0 0 3px rgba(86, 96, 117, 0.7);
+    font-size: 12px;
+    font-weight: 400;
+    z-index: 10;
+}
+.simplemenu > .listmenu-item{
+line-height: 25px;
+    padding: 7px 10px;
+    padding-left: 41px;
+}
+.simplemenu > .listmenu-item:hover{
+background-color: #f5f5f5;
+cursor:pointer;
+color:var(--main-color);
+}
+
+a.listmenu-item.mwebui {
+    display: block;
+}
+
+.header-right .gridmenu:after {
+    padding: 0;
+    display: inline-block;
+margin-left: 6px;
+
+}
+
+.screens > .monitoring.nocameras .cambd{
+width:100%;
+height:100%;
+}
+
+.screens > .monitoring.nocameras .cambd .camlist-monitoring{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.screens > .monitoring.nocameras .cambd .camlist-monitoring a {
+    margin-left: 5px;
+    color: var(--main-color);
+}
+.screens > .monitoring.nocameras .cambd .camlist-monitoring a:hover {
+    color: var(--main-color);
+}
+
+
+.camerafilterContainer {
+    position: relative;
+}
+
+.locationContainer {
+    width: 250px;
+    background-color: #ffffff;
+    position: absolute;
+    top: 30px;
+    border: 1px solid #EFEFEF;
+    padding-bottom: 15px;
+    z-index: 10;
+}
+
+.locationContainer .locHeader {
+text-align: left;
+    font-size: 14px;
+    color: var(--main-color);
+    border-bottom: 1px solid #EFEFEF;
+    padding: 15px 0px;
+    margin: 0 20px;
+}
+
+.locationContainer .locList {
+min-height: 100px;
+    max-height: 300px;
+    overflow: auto;
+    padding: 5px 20px 15px;
+    position: relative;
+}
+
+ul.locationlist, ul.groupslist {
+padding: 0 0 14px 0;
+    margin-bottom: 0;
+    max-height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-bottom: 1px solid #E6E6E6;
+}
+
+ul.locationlist li {
+    list-style: none;
+    overflow: hidden;
+    position: relative;
+cursor:pointer;
+margin-top: 16px;
+}
+
+input.svgbtnbefore {
+    position: absolute;
+    height: 0;
+    width: 0;
+}
+ul.locationlist label {
+padding-left: 26px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #676A6C;
+    font-weight: 400;
+}
+
+.locationContainer .locList input + label {
+    display: flex;
+    align-items: center;
+    height: 20px;
+    position: relative;
+cursor:pointer;
+}
+
+.locationContainer .locList input + label span {
+padding-left: 33px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #676A6C;
+    font-weight: 400;
+}
+
+input:before {
+    cursor: pointer;
+    content: '';
+    width: 20px;
+    height: 20px;
+    align-items: center;
+    margin-left: -26px;
+    margin-top: 0px;
+    display: inline-block;
+background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIj48cmVjdCB4PSIwLjQiIHk9IjAuNCIgd2lkdGg9IjE5LjIiIGhlaWdodD0iMTkuMiIgcng9IjUuNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiLz48L3N2Zz4=) bottom no-repeat;
+background-size: cover!important;
+}
+input:checked:before {
+background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMiAyIDIwIDIwIiBmaWxsPSJub25lIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDJDNC42ODYyOSAyIDIgNC42ODYyOSAyIDhWMTZDMiAxOS4zMTM3IDQuNjg2MjkgMjIgOCAyMkgxNkMxOS4zMTM3IDIyIDIyIDE5LjMxMzcgMjIgMTZWOEMyMiA0LjY4NjI5IDE5LjMxMzcgMiAxNiAySDhaTTcuNzE3MTYgMTIuMjgzTDEwLjU0NTYgMTUuMTExNEMxMC43MDE4IDE1LjI2NzYgMTAuOTU1MSAxNS4yNjc2IDExLjExMTMgMTUuMTExNEwxNi43NjgxIDkuNDU0NTNMMTYuMjAyNCA4Ljg4ODg1TDEwLjgyODQgMTQuMjYyOUw4LjI4Mjg1IDExLjcxNzNMNy43MTcxNiAxMi4yODNaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=) bottom no-repeat;
+}
+
+.locationContainer .locFooter {
+    text-align: left;
+    padding: 15px 0px 0;
+    border-top: 1px solid #EFEFEF;
+    margin: 0 20px;
+}
+
+.locationContainer .locFooter #setLocations {
+    display: inline-block;
+}
+
+.header-right .gridmenu {
+    order: 2;
+    flex: 3 1 50px;
+    min-width: 25px;
+    max-width: 100px;
+}
+
+.gridmenu i {
+    color: var(--main-color);
+    margin-left: 5px;
+}
+
+.gridmenu span {
+    width: 70px;
+}
+
+.header-right .addcamera {
+order: 10;
+    flex: 3 3 110px;
+    width: 100px;
+}
+body.mobile .header-right .addcamera {
+    flex: 1 1 30px;
+min-width:30px;
+}
+.monitoring .header-right .camerafilterContainer {
+    display: block;
+order:1;
+flex: 3 1 50px;
+min-width: 40px;
+max-width: 100px;
+margin-right: 35px;
+}
+body:not(.monitoring) .camerafilter{
+display:none;
+}
+
+.header-right .signout {
+    order: 100;
+    white-space: nowrap;
+}
+
+body.monitoring .screens > .monitoring .ratio2.wrapper .cloudplayer{
+box-shadow: none;
+}
+
+body.monitoring.mobile .screens{
+    margin-top: 0!important;
+    margin-right: 0!important;
+    padding-left:0!important;
+}
+.monitoring .header-right .gridmenu{
+display: inline-flex;
+}
+body.mobile.monitoring .header-right .gridmenu{
+display: none!important;
+}
+
+body.mobile.monitoring .mdialog{
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+body.mobile.monitoring .mdialog h7{
+color: #7BB247;
+font-style: normal;
+font-weight: normal;
+font-size: 12px;
+border-bottom:1px solid #E6E6E6;
+    padding-bottom: 12px;
+}
+
+.screens > .monitoring button.more{
+width: 90px;
+    margin: 15px auto;
+}
+.screens > .monitoring .wmore{
+text-align: center;
+    margin: 0 0 1em 1em;
+    width: calc(100% - 4px);
+}
+
+.groupCamCheck:hover {
+    cursor: pointer;
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 200;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.filter-label input:not(#newGroupName){
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.newGroupName {
+    width: 80%;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    border: thin solid #a7a7a7;
+    border-radius: 4px;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.filter-label input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.filter-label .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.allloc {
+    margin-top: 5px;
+}
+
+.bootstrap-table.bootstrap5 {
+	width:100%;
+}
+
+.screens > .monitoring .camlist-monitoring .bootstrap-table .camerablock{
+	width: calc(100% - 4px);
+    height: 76px;
+    min-height: 76px;
+    max-width: 112px;
+}
+
+.screens > .monitoring .camlist-monitoring .bootstrap-table .camerablock campreview {
+	height:100%;
+
+}
+
+.monitoring .bootstrap-table .settings {
+    height: 18px;
+    background-repeat-x: no-repeat;
+}
+
+.screens > .monitoring .camlist-monitoring .bootstrap-table .has-card-view .camerablock{
+	width: calc(100% - 4px);
+    height: 108px;
+    min-height: 216px;
+    max-width: 322px;
+}
+
+.card-view-title {
+	 display:none;
+}
+
+.bootstrap-table .fixed-table-container .table tbody tr .card-view .card-view-title {
+	 display:none;
+
+}
+
+.bootstrap-table .fixed-table-container .table tbody tr .card-view > label {
+	 display:none;
+}
+
+.bootstrap-table .fixed-table-container.has-card-view .table tbody {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 316px));
+    grid-gap: 20px;
+}
+
+.bootstrap-table .fixed-table-container.has-card-view .table tbody tr td {
+	width: 322px;
+}#groupingButton {
+    background-color: var(--main-color);
+    padding: 5px 20px;
+}
+
+.mwebui {
+    text-decoration: none;
+}
+
+.card-view-value .settings {
+    float: right;
+}
+
+.bootstrap-table.bootstrap5 {
+	width:100%;
+}
+
+.screens > .monitoring .camlist-monitoring .bootstrap-table .camerablock{
+	width: calc(100% - 4px);
+    height: 76px;
+    min-height: 76px;
+    max-width: 112px;
+}
+
+.screens > .monitoring .camlist-monitoring .bootstrap-table .camerablock campreview {
+    width: 130px !important;
+    height: 73px !important;
+}
+
+.screens > .monitoring .camlist-monitoring .bootstrap-table .card-view .camerablock campreview {
+    width: unset !important;
+    height: 100% !important;
+}
+
+
+/*.monitoring .bootstrap-table .settings {
+    height: 18px;
+    background-repeat-x: no-repeat;
+}*/
+
+.screens > .monitoring .camlist-monitoring .bootstrap-table .has-card-view .camerablock{
+	width: calc(100% - 4px);
+    height: 108px;
+    min-height: 216px;
+    max-width: 322px;
+}
+
+/* .card-view-title {
+	 display:none;
+}
+
+.bootstrap-table .fixed-table-container .table tbody tr .card-view .card-view-title {
+	 display:none;
+
+}
+
+.bootstrap-table .fixed-table-container .table tbody tr .card-view > label {
+	 display:none;
+}
+
+.bootstrap-table .fixed-table-container.has-card-view .table tbody {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 316px));
+    grid-gap: 20px;
+}
+
+.bootstrap-table .fixed-table-container.has-card-view .table tbody tr td {
+	width: 322px;
+}
+
+.loc-cont {
+    width: 100%;
+}
+
+.loclist {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.loclist > div {
+    margin-right: 15px;
+    margin-bottom: 15px
+}
+
+.card-body.location-body {
+    display: flex;
+    justify-content: space-between;
+    font-size: 17px;
+}
+
+.location-prev {
+    width: 100%;
+    height: 150px;
+}
+
+.location-tools {
+    display: flex;
+}
+
+.backToLocations {
+    margin-right: 10px;
+    height: 30px;
+    background-color: var(--main-color);
+    border: 2px solid var(--main-color);
+    border-radius: 15px;
+    font-size: 16px !important;
+    font-weight: 600;
+    padding: 0 10px;
+}
+
+.backToLocations:hover {
+    cursor: pointer;
+    background-color: white;
+    color: var(--main-color);
+} */
+
+
+.card-buttons {
+    width: 25%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.card-buttons i:hover {
+    cursor:pointer;
+}
+
+.nocamsloc {
+    text-align: center;
+    margin-top: 15%;
+    color: #4a4a4a;
+    width: 100%;
+}
+
+.nocamsloc span {
+    color:#6e6d6d;
+}
+
+.nocamsloc span:hover {
+    cursor: pointer;
+    color:#7d7d7d;
+}
+
+.user-input {
+    display: flex;
+    align-items: center;
+    padding: 15px 0 15px 15px;
+}
+
+.token-label {
+    font-weight: 600;
+}
+
+input.token-input {
+    margin-left: 10px;
+    padding: 5px;
+    width: 75%;
+}
+
+.getcameras-btn {
+    padding: 5px 30px;
+    margin-left: 10px;
+    background-color: #7bb247;
+    color: white;
+    border: 2px solid #7bb247;
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+.getcameras-btn:hover {
+    cursor: pointer;
+    background-color: #6b9d3c;
+}
+
+.cams-container {
+    width: 20%;
+    max-height: 86vh;
+    overflow-y: auto;
+}
+
+.title {
+    margin-top: 0;
+}
+
+.players-container {
+    width:80%;
+    display: flex;
+    flex-direction: column;
+    height: 86.5vh;
+}
+
+.row {
+    height: 32%;
+    margin: 0 0 1% 0 !important;
+}
+
+.camera, .node-dropdown {
+    padding: 12px 20px 12px 3px;
+    border-bottom: thin solid #d1d1d1;
+}
+
+.node-cam {
+    margin-top: 10px !important;
+}
+
+.control-container {
+    display: flex;
+    padding: 5px 15px;
+}
+
+.node-name {
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.camera:hover, .node-dropdown:hover {
+    cursor: pointer;
+    background-color: #dfdfdf;
+}
+
+button.vxgbutton.hidecameras.open {
+    width: 95%;
+    margin-left: 10px;
+    margin-bottom: 12px;
+    height: 27px;
+}
+button.vxgbutton.hidecameras.closed {
+    padding: 15px;
+}
+.hidecameras.open i {
+    margin-left: 10px;
+}

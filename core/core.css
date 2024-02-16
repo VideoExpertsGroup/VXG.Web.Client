@@ -237,6 +237,31 @@ body .screens > div{
 display:none;
 }
 
+.close-menu {
+    position: absolute;
+    background-color: var(--main-color);
+    padding: 4px 11px;
+    border: 2px solid var(--main-color);
+    border-radius: 15px;
+    font-size: 20px;
+    top: 50vh;
+}
+
+.close-menu.open {
+    left: 181px;
+}
+
+.close-menu.closed {
+    left: 81px;
+}
+
+.close-menu:hover {
+    cursor: pointer;
+    background-color: #333333;
+    color: var(--main-color);
+    border: 2px solid var(--main-color);
+}
+
 body .body .leftblock{
 width:200px;
 height:100%;

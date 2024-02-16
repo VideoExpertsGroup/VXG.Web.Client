@@ -2,7 +2,7 @@
     background-image: url(camera.svg);
 }
 
-.header-right .addcamera, .header-right .nogrid, .header-right .grid22, .header-right .grid33, .header-right .grid44{
+.header-right .addcamera{
     display:none;
 }
 
