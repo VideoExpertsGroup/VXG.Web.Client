@@ -319,10 +319,10 @@ window.screens['home'] = {
 	'get_event_stats': function() {
 		var access_token = vxg.user.src.allCamsToken;
 		var now = new Date();
-		var endTime = now.toISOString();
+		var endTime = now.toISOString().replace('Z', '');
 		now.setDate(now.getDate() - 1);
-		var startTime = now.toISOString();
-		return vxg.api.cloud.getEventslist(access_token, 20, 0, undefined, undefined, startTime, endTime).then(function(ret) {
+		var startTime = now.toISOString().replace('Z', '');
+		return vxg.api.cloud.getEventslist(access_token, 20, 0, {'order_by':'-time'}, undefined, startTime, endTime).then(function(ret) {
 			var total = ret.meta.total_count;
 			$('.event-total').html(total);
 		})
