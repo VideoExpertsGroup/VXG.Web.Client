@@ -207,6 +207,14 @@ TODO: add auth without firebase
                             localStorage.removeItem('from_tagsview');
                       }
                       
+                      let url = window.location.href;
+                      let regex = /#camera=%22(\d+)%22/;
+                      const match = url.match(regex);
+                      if (match && match[1]) {
+                        p = 'tagsview';
+                        token = match[1];
+                      }
+                      
                       return window.core.activateFirstScreen(p, token).then(function(){
                           for (let i in window.core.screen_order)
                               if (window.core.screen_order[i]=="login" || window.core.screen_order[i]=="signup" || window.core.screen_order[i]=="forgot") 

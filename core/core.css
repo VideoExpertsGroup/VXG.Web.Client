@@ -245,6 +245,7 @@ display:none;
     border-radius: 15px;
     font-size: 20px;
     top: 50vh;
+    z-index: 1;
 }
 
 .close-menu.open {

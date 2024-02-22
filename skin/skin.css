@@ -5,6 +5,7 @@
 /* the background for the pages:  sign in, sign up and forgot password    */
 .screens-wrapper.screens > .login, .screens-wrapper.screens > .signup, .screens-wrapper.screens > .forgot {
     background-image: url(img/background.jpg);
+    z-index: 2;
 }
 
 /* the logo on the  pages:  sign in, sign up and forgot password    */

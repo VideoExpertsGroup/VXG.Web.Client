@@ -32,11 +32,17 @@ window.screens['tagsview'] = {
         let self=this;
         $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
         return vxg.cameras.getCameraFrom(self.access_token).then(function(camera){
+            window.location.hash = `camera="${camera.camera_id}"`;
             self.access_token = camera.token;
             if (!self.camera) self.camera = camera;
+        }, () => {
+            window.screens['home'].activate();
         });
     },
     'on_show':function(access_token, timestamp){
+        if ($('.close-menu').hasClass('open')) {
+            $('.close-menu').trigger('click');
+        }
         let self =this;
 	$("#sd_wrapper").hide();
 	$("#backup-ctrl").hide();

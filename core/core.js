@@ -725,8 +725,10 @@ $( document ).ready(function() {
             $(this).addClass('closed');
             $(this).html('<i class="fa fa-angle-right" aria-hidden="true"></i>');
             $('.leftblock').css('width', '100px');
+            $('.left-top').css('width', '100px');
             $('.left-top .username').css('visibility', 'hidden');
-            $('.profile-img').css({"margin-left": "22px", "width": "45px"})
+            $('.profile-img').css("width", "40px")
+            $('.global-menu .menu-icon').css("margin-right", "200px")
             $('.left-bottom').css('visibility', 'hidden');
             $('.bottom-global-menu').css('visibility', 'hidden');
         } else {
@@ -735,8 +737,10 @@ $( document ).ready(function() {
             $(this).html('<i class="fa fa-angle-left" aria-hidden="true"></i>');
 
             $('.leftblock').css('width', '200px');
+            $('.left-top').css('width', '200px');
             $('.left-top .username').css('visibility', 'visible');
-            $('.profile-img').css({"margin-left": "0", "width": "71px"})
+            $('.profile-img').css("width", "71px")
+            $('.global-menu .menu-icon').css("margin-right", "25px")
             $('.left-bottom').css('visibility', 'visible');
             $('.bottom-global-menu').css('visibility', 'visible');
         }
