@@ -194,7 +194,7 @@ TODO: add auth without firebase
 
               //core.elements['global-loader'].show();
               return vxg.user.getAllCamsTokenMeta().then(function(){
-                  return window.core.loadControls(r['scripts']).then(function(){
+                  return window.core.loadControls(r['scripts']).then(async function(){
                       let p;
                       var token = null;
                       if (!core.isMobile()) p = 'home'; else p='cameras';
@@ -208,11 +208,21 @@ TODO: add auth without firebase
                       }
                       
                       let url = window.location.href;
-                      let regex = /#camera=%22(\d+)%22/;
-                      const match = url.match(regex);
-                      if (match && match[1]) {
+                      let regexCameraId = /#camera\?camera_id=(\d+)/;
+                      let regexMetaId = /#camera\?meta=(\d+)/;
+                      let matchCameraId = url.match(regexCameraId);
+                      let matchMetaId = url.match(regexMetaId);
+                      if (matchCameraId && matchCameraId[1]) {
+                        let cameraId = matchCameraId[1];
                         p = 'tagsview';
-                        token = match[1];
+                        token = cameraId;
+                      } else if (matchMetaId && matchMetaId[1]) {
+                        let metaId = matchMetaId[1];
+                        let camera = await vxg.cameras.getCameraFromMetaid(metaId);
+                        if (camera?.objects.length > 0) {
+                          p = 'tagsview';
+                          token = camera?.objects[0].id;
+                        }
                       }
                       
                       return window.core.activateFirstScreen(p, token).then(function(){

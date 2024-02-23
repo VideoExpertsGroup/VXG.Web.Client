@@ -752,3 +752,19 @@ vxg.cameras.getCameraFrom = function(token_or_channel_id){
         return window.vxg.cameras.getCameraByTokenPromise(token_or_channel_id);
     else return defaultPromise();
 }
+
+vxg.cameras.getCameraFromMetaid = function (metaId) {
+    let headers = vxg.api.cloud.getHeader();
+    if (!headers)
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          reject("No token for access");
+        }, 0);
+      });
+    return $.ajax({
+      type: "GET",
+      url: vxg.api.cloud.apiSrc + "/api/v5/channels/?meta=" + metaId,
+      headers: headers,
+      contentType: "application/json",
+    });
+  };

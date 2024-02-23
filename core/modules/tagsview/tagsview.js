@@ -32,7 +32,7 @@ window.screens['tagsview'] = {
         let self=this;
         $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
         return vxg.cameras.getCameraFrom(self.access_token).then(function(camera){
-            window.location.hash = `camera="${camera.camera_id}"`;
+            window.location.hash = `camera?${camera.src.meta.id ? 'meta=' + camera.src.meta.id : 'camera_id=' + camera.camera_id}`;
             self.access_token = camera.token;
             if (!self.camera) self.camera = camera;
         }, () => {
@@ -181,7 +181,7 @@ window.screens['tagsview'] = {
     },
     'on_hide':function(){
         $("#backup-ctrl").hide();
-        this.player.stop();
+        if (this.player) this.player.stop();
         return defaultPromise();
     },
     'on_ready':function(){
