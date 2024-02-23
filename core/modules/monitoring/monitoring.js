@@ -176,7 +176,6 @@ window.screens['monitoring'] = {
         cameraListCall.then(function(fullList) {
             //var gatewaysList = fullList.filter(cam => {return cam.src.meta && cam.src.meta.gateway});
             var cameras = fullList.filter(cam => {if (cam.src.meta) return cam.src.meta.gateway == undefined; else return cam;});
-            let captured = cameras[i].src && cameras[i].src.meta && cameras[i].src.meta.capture_id && vxg.user.src.capture_id == cameras[i].src.meta.capture_id ? ' captured' : '';
             var camNodes = {};
             var noNodes = {"noNode": []};
             cameras.forEach(cam => {
@@ -199,6 +198,7 @@ window.screens['monitoring'] = {
                 if (nodeName != "noNode") {
                     camNodes_Ele += `<div class="node-dropdown draggable" draggable="true" id="node${count}" nodeName="${nodeName}"><span class="node-name">${nodeName.replaceAll("_SP_", " ").replaceAll("_COL_", ":")}</span></div>`;
                     allCamNodes[nodeName].forEach(cam => {
+                        let captured = cam.src && cam.src.meta && cam.src.meta.capture_id && vxg.user.src.capture_id == cam.src.meta.capture_id ? ' captured' : '';
                         count++;
                         camNodes_Ele += `<div class="node-cam camerablock${captured} ${nodeName}-cam" id="cam${count}" access_token="${cam.camera_id}" channel_token="${cam.token}" style="display: none">
                                     <campreview onclick_toscreen="tagsview"></campreview><span class="name">${cam.src.name}</span>
@@ -206,6 +206,7 @@ window.screens['monitoring'] = {
                     });
                 } else {
                     allCamNodes[nodeName].forEach(cam => {
+                        let captured = cam.src && cam.src.meta && cam.src.meta.capture_id && vxg.user.src.capture_id == cam.src.meta.capture_id ? ' captured' : '';
                         count++;
                         camNodes_Ele += `<div class="camerablock${captured}" id="cam${count}" access_token="${cam.camera_id}">
                                     <campreview onclick_toscreen="tagsview"></campreview><span class="name">${cam.src.name}</span>
