@@ -295,6 +295,35 @@ window.screens['monitoring'] = {
         self.wrapper.addClass('grid');
         setTimeout(function(){onCameraScreenResize();},100);
         self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
+        
+        var hash = window.location.hash;
+        var telconetIdStr = hash.replaceAll("%22", "").substring(hash.indexOf("=")+1);
+        if (telconetIdStr.length > 0) {
+            var telconetIdArr = telconetIdStr.split(",");
+
+            var gridType = 3;
+            if (telconetIdArr.length <= 4) gridType = 2;
+            if (telconetIdArr.length > 9) gridType = 4
+            let state = self.getState(); state.grid=gridType; self.setState(state);
+            var playerNumber = 1;
+            return vxg.cameras.getCameraListPromise(telconetIdArr.length, 0, telconetIdStr, undefined, undefined).then((cameras) => {
+                if (camera.length == 0) return;
+
+                cameras.forEach(cam => {
+                    var pl = $('[playernumber='+playerNumber+']').find('player');
+                    if (!pl.length) return;
+                    pl.attr('access_token',cam.token);
+                    if (typeof pl[0].on_access_token_change === "function") pl[0].on_access_token_change(cam.token, true);
+                    pl[0].play();
+                    playerNumber++;
+                })
+                $('.hidecameras').trigger( "click" );
+                $('.hidecameras').attr('disabled', true);
+                $('.close-menu').trigger( "click" );
+
+                return true;
+            })
+        }
     },
     setState: function(state){
         let newstate = localStorage['vxggrid'] ? JSON.parse(localStorage['vxggrid']) : [];
@@ -312,45 +341,24 @@ window.screens['monitoring'] = {
     'on_init':function(){
         let self=this;
 
-        var hash = window.location.hash;
-        var queryStr = hash.replaceAll("%22", "").substring(hash.indexOf("=")+1);
-        if (queryStr.length > 0) {
-            var telconetIds = queryStr.split(",");
+        $('.hidecameras').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+                $(this).addClass('closed');
+                $(this).html('<i class="fa fa-angle-left" aria-hidden="true"></i>');
+                $('#cameras-list').hide();
+                $('.headerBlock').hide();
 
-            var gridType = 3;
-            if (telconetIds.length <= 4) gridType = 2;
-            if (telconetIds.length > 9) gridType = 4
-            let state = self.getState(); state.grid=gridType; self.setState(state);
-            var playerNumber = 1;
-            let currentTelId;
-            let promiseChain = Promise.resolve();
-            $('.close-menu').trigger( "click" );
-            for (let i = 0; i < telconetIds.length; i++) { 
-                currentTelId = telconetIds[i];
-
-                const makeNextPromise = (currentTelId) => () => {
-                    return vxg.cameras.getCameraListPromise(1, 0, currentTelId, undefined, undefined)
-                        .then((camera) => {
-                            $('.hidecameras').removeClass('open');
-                            $('.hidecameras').addClass('closed');
-                            $('.hidecameras').attr('disabled', true);
-                            $('.hidecameras').html('<i class="fa fa-angle-left" aria-hidden="true"></i>');
-                            $('#cameras-list').hide();
-                            $('.headerBlock').hide();
-                            if (camera.length == 0) return;
-
-                            var pl = $('[playernumber='+playerNumber+']').find('player');
-                            if (!pl.length) return;
-                            pl.attr('access_token',camera[0].token);
-                            if (typeof pl[0].on_access_token_change === "function") pl[0].on_access_token_change(camera[0].token, true);
-                            pl[0].play();
-                            playerNumber++;
-                            return true;
-                        });
-                }
-                promiseChain = promiseChain.then(makeNextPromise(currentTelId))
+            } else {
+                $(this).removeClass('closed');
+                $(this).addClass('open');
+                $(this).html('Hide Cameras <i class="fa fa-angle-right" aria-hidden="true"></i>');
+                $('#cameras-list').show();
+                $('.headerBlock').show();
             }
-        }
+        })
 
         let gridStateArray = [];
         gridStateArray[2] = '2 x 2';
@@ -374,25 +382,6 @@ window.screens['monitoring'] = {
             if ($(el).children().length > 0) {
                 $(el).attr('playerNumber', playerCount);
                 playerCount++;
-            }
-        })
-
-        $('.hidecameras').on('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if ($(this).hasClass('open')) {
-                $(this).removeClass('open');
-                $(this).addClass('closed');
-                $(this).html('<i class="fa fa-angle-left" aria-hidden="true"></i>');
-                $('#cameras-list').hide();
-                $('.headerBlock').hide();
-
-            } else {
-                $(this).removeClass('closed');
-                $(this).addClass('open');
-                $(this).html('Hide Cameras <i class="fa fa-angle-right" aria-hidden="true"></i>');
-                $('#cameras-list').show();
-                $('.headerBlock').show();
             }
         })
 

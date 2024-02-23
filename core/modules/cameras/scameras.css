@@ -18,6 +18,7 @@ background-size: 75%;
     background-repeat: no-repeat;
     background-position: center;
     display: flex;
+    justify-content: center;
 }
 
 /*.header-right .grid22{*/

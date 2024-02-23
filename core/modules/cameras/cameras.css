@@ -302,6 +302,7 @@ body.screens > .cameras .header-right .addcamera, body.screens > .cameras .heade
     background-repeat: no-repeat;
     background-position: center;
     display:flex;
+    justify-content: center;
 }
 
 body.screens > .cameras .header-right .nogrid, body.screens > .cameras .header-right .grid22, body.screens > .cameras .header-right .grid33, body.screens > .cameras .header-right .grid44, body.screens > .cameras .header-right .gridmap {

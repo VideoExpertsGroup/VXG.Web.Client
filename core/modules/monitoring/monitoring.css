@@ -313,6 +313,7 @@ body.screens > .monitoring .header-right .addcamera, body.screens > .monitoring 
     background-repeat: no-repeat;
     background-position: center;
     display:flex;
+    justify-content: center;
 }
 
 body.screens > .monitoring .header-right .nogrid, body.screens > .monitoring .header-right .grid22, body.screens > .monitoring .header-right .grid33, body.screens > .monitoring .header-right .grid44, body.screens > .monitoring .header-right .gridmap {
@@ -484,7 +485,7 @@ padding-left: 33px;
     font-weight: 400;
 }
 
-input:before {
+/* input:before {
     cursor: pointer;
     content: '';
     width: 20px;
@@ -498,7 +499,7 @@ background-size: cover!important;
 }
 input:checked:before {
 background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMiAyIDIwIDIwIiBmaWxsPSJub25lIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04IDJDNC42ODYyOSAyIDIgNC42ODYyOSAyIDhWMTZDMiAxOS4zMTM3IDQuNjg2MjkgMjIgOCAyMkgxNkMxOS4zMTM3IDIyIDIyIDE5LjMxMzcgMjIgMTZWOEMyMiA0LjY4NjI5IDE5LjMxMzcgMiAxNiAySDhaTTcuNzE3MTYgMTIuMjgzTDEwLjU0NTYgMTUuMTExNEMxMC43MDE4IDE1LjI2NzYgMTAuOTU1MSAxNS4yNjc2IDExLjExMTMgMTUuMTExNEwxNi43NjgxIDkuNDU0NTNMMTYuMjAyNCA4Ljg4ODg1TDEwLjgyODQgMTQuMjYyOUw4LjI4Mjg1IDExLjcxNzNMNy43MTcxNiAxMi4yODNaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=) bottom no-repeat;
-}
+} */
 
 .locationContainer .locFooter {
     text-align: left;
