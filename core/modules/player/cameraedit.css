@@ -269,6 +269,11 @@ option.dvr-disabled:disabled {
 }
 
 .clear-location.vxgbutton {
-    width: 5%;
     margin-left: 5px;
+    background-color: #d9534f;
+    border-color: #d9534f;
+}
+
+.clear-location.vxgbutton:hover {
+    color: #d9534f !important;
 }

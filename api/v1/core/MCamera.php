@@ -452,7 +452,7 @@ class MCamera{
             }
         }
 
-        if (!$meta) $meta = null;
+        if (!$meta) $meta['group'] = "";
         $response_cloud = StreamLandAPI::updateChannel($channel_id, ['meta'=>$meta]);
         if (isset($response_cloud['errorDetail'])) 
             error(556, 'Failed to update channel: '. $response_cloud['errorDetail']);

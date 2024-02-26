@@ -242,7 +242,7 @@ button.vxgbutton.assign-btn {
     background-color: transparent !important;
 }
 
-@media (min-width: 1420px) {
+/* @media (min-width: 1420px) {
     .VXGCameraList {
         position: absolute;
         top: 0;
@@ -252,7 +252,7 @@ button.vxgbutton.assign-btn {
         overflow: auto;
 height: auto!important;
     }
-}
+} */
 @media (max-width: 1529px) {
     .VXGCameraList {
         height: 300px;

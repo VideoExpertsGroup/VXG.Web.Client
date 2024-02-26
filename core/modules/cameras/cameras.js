@@ -598,8 +598,10 @@ window.screens['cameras'] = {
                     $('.bootstrap-table-filter-control-location').val(localStorage.getItem("camera_location" + userId));
                     $('.bootstrap-table-filter-control-group').val(localStorage.getItem("camera_group" + userId));
                     $('.bootstrap-table-filter-control-name').val(localStorage.getItem("camera_name" + userId));
-                    $("#table").show();
-                    $('.camlist').show();
+                    if (self.getState().grid == 0) {
+                        $("#table").show();
+                        $('.camlist').show();
+                    } 
                 }, 500);
 
                 if (isGridView) $('.fixed-table-toolbar').hide();
@@ -626,15 +628,17 @@ window.screens['cameras'] = {
                     vxg.cameras.getGroupsList().then(function(groupsList) {
                         var groupItems = "";
                         groupsList.forEach(group => {
-                            let item = `
-                            <li>    
-                                <label class="filter-label custom-checkbox">
-                                    <span>${group}</span>
-                                    <input class="groupCheck" type="radio" name="groupRadio" value="${group}">
-                                    <span class="checkmark"></span>	
-                                </label>
-                            </li>`
-                            groupItems += item;
+                            if (group && group.toLocaleLowerCase() != "favourite" && group.toLocaleLowerCase() != "favorite") {
+                                let item = `
+                                <li>    
+                                    <label class="filter-label custom-checkbox">
+                                        <span>${group}</span>
+                                        <input class="groupCheck" type="radio" name="groupRadio" value="${group}">
+                                        <span class="checkmark"></span>	
+                                    </label>
+                                </li>`
+                                groupItems += item;
+                            }
                         })
                         
                         dialogs['mdialog'].activate(`
@@ -649,6 +653,13 @@ window.screens['cameras'] = {
                                         <span class="checkmark"></span>	
                                     </label>
                                 </li>
+                                <li>    
+                                    <label class="filter-label custom-checkbox">
+                                        <span> Favorite </span>
+                                        <input class="groupCheck" type="radio" name="groupRadio" value="Favourite">
+                                        <span class="checkmark"></span>	
+                                    </label>
+                                </li>
                                 ${groupItems}
                                 <li style="display:flex;">    
                                     <label class="filter-label custom-checkbox" >
@@ -658,7 +669,7 @@ window.screens['cameras'] = {
                                     </label>
                                 </li>  
                                 </ul>  
-                                <button name="apply" class="vxgbutton-transparent" style="width:192px">${$.t('action.set')}</button>
+                                <button name="apply" class="vxgbutton-transparent" style="width:100%">${$.t('action.set')}</button>
                             </div>`).then(function(r){
                                 if (r.button!='apply') return;
                                 var groupName = r.form.newGroupName != '' ? r.form.newGroupName : $('input[name=groupRadio]:checked').val() == "noGroup" ? "" : $('input[name=groupRadio]:checked').val();
@@ -723,7 +734,8 @@ window.screens['cameras'] = {
                 });
 
             } else {
-                $(".camlist").show();
+                if (this.getState().grid > 0) $(".camlist").show();
+                else  $(".camlist").hide();
             }
 
             $('#table').bootstrapTable('load', tableData);
@@ -767,15 +779,7 @@ window.screens['cameras'] = {
             self.wrapper.removeClass('loader');
         });
 		
-		    
-
-/*    $('#button').click(function () {
-      alert(JSON.stringify($('#table').bootstrapTable('getData').map(function (row) {
-        return row.id
-      })))
-    })
-*/
-
+        self.wrapper.removeClass('loader');
         return this.camera_list_promise;
     },
     loadProvinces: function(fromShow = false) {
@@ -930,15 +934,12 @@ window.screens['cameras'] = {
                 self.wrapper.find('.camlist').removeClass('nobloor');
         });
        
-        if (this.getState().grid>1){
-            camGrid(this.getState().grid);
-            self.wrapper.addClass('grid');
-            setTimeout(function(){onCameraScreenResize();},100);
-            self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
-        } else if (this.getState().grid<0){
-            self.wrapper.find('.cambd').hide();self.wrapper.find('.cammap').show();
-        } else {
-            self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
+        if (this.getState().grid<0){
+            self.wrapper.find('.camlist').hide();self.wrapper.find('.cammap').show();
+        } else if (this.getState().grid==0){
+            self.wrapper.find('.camlist').show();self.wrapper.find('.cammap').hide();
+        } else if (this.getState().grid>0) {
+            self.wrapper.find('.camlist').hide();self.wrapper.find('.cammap').hide();
         }
 
         //core.elements['header-right'].prepend('<div class="camerafilterContainer"><div class="transparent-button camerafilter"><span id="filterbtn">Filter</span></div></div>');
@@ -1065,8 +1066,8 @@ window.screens['cameras'] = {
         // statesArray[4] = '4 x 4';
         statesArray[-1] = $.t('common.map');
 
-        let curState = self.getState();
-        core.elements['header-right'].prepend('<div tabindex="0" class="listmenu hide transparent-button"><span>'+statesArray[curState.grid]+'</span><i class="fa fa-angle-down" aria-hidden="true"></i>' +
+        let firstState = self.getState();
+        core.elements['header-right'].prepend('<div tabindex="0" class="listmenu hide transparent-button"><span>'+statesArray[firstState.grid]+'</span><i class="fa fa-angle-down" aria-hidden="true"></i>' +
             '    <ul class="menu-dropdown">' +
             '        <li class="cam-dropdown-item nogrid"><a href="javascript:;"> ' + $.t('common.list') + ' </a></li>' +
             '        <li class="cam-dropdown-item location"><a href="javascript:;"> ' + $.t('common.locations') + ' </a></li>' +
@@ -1076,9 +1077,9 @@ window.screens['cameras'] = {
             '        <li class="cam-dropdown-item gridmap"><a href="javascript:;">' + $.t('common.map') + '</a></li>' +
             '    </ul>' +
             `</div><div class="transparent-button active addcamera" ifscreen="newcamera" onclick_toscreen="newcamera"><span class="add-icon">+</span><span>${$.t('cameras.addCamera')}</span></div>`);
-
+        
         core.elements['header-right'].find('.nogrid').click(function(){
-            if (self.getState().grid == 1) location.reload();
+            if (self.getState().grid == 1 || firstState.grid == 1) location.reload();
             $('.fixed-table-toolbar').show();
             $('#table').show();
             $(".fixed-table-pagination").show();
@@ -1096,7 +1097,7 @@ window.screens['cameras'] = {
             $('#table').removeClass("table-bordered");
 
             self.wrapper.removeClass('grid');
-            self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
+            self.wrapper.find('.camlist').show();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=0; state.list=true; self.setState(state);
             camGrid(0);
             core.elements['header-right'].find('.listmenu span').text($(this).text());
@@ -1106,63 +1107,17 @@ window.screens['cameras'] = {
             $('#table').hide();
             $(".fixed-table-pagination").hide();
             self.wrapper.removeClass('grid');
-            self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
+            self.wrapper.find('.camlist').hide();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=1; self.setState(state);
             location.reload();
         });
 
-        core.elements['header-right'].find('.grid22').click(function(){
-            if (self.getState().grid == 1) location.reload();
-            var tableOpts = $('#table').bootstrapTable('getOptions');
-            if (tableOpts.reorderableRows) location.reload();
-            $('#table').show();
-            $(".fixed-table-pagination").show();
-            let state = self.getState(); state.grid=2; self.setState(state);
-            if (state.list && self.playerList) {
-                state.list = false; self.setState(state)
-                location.reload();
-            } else {
-                self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
-                camGrid(2);
-                core.elements['header-right'].find('.listmenu span').text($(this).text());
-            }
-        });
-        core.elements['header-right'].find('.grid33').click(function(){
-            if (self.getState().grid == 1) location.reload();
-            var tableOpts = $('#table').bootstrapTable('getOptions');
-            if (tableOpts.reorderableRows) location.reload();
-            $('#table').show();
-            $(".fixed-table-pagination").show();
-            let state = self.getState(); state.grid=3; self.setState(state);
-            if (state.list && self.playerList) {
-                state.list = false; self.setState(state)
-                location.reload();
-            } else {
-                self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
-                camGrid(3);
-                core.elements['header-right'].find('.listmenu span').text($(this).text());
-            }
-        });
-        core.elements['header-right'].find('.grid44').click(function(){
-            if (self.getState().grid == 1) location.reload();
-            var tableOpts = $('#table').bootstrapTable('getOptions');
-            if (tableOpts.reorderableRows) location.reload();
-            $('#table').show();
-            $(".fixed-table-pagination").show();
-            let state = self.getState(); state.grid=4; self.setState(state);
-            if (state.list && self.playerList) {
-                state.list = false; self.setState(state)
-                location.reload();
-            } else {
-                self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
-                camGrid(4);
-                core.elements['header-right'].find('.listmenu span').text($(this).text());
-            }
-        });
         core.elements['header-right'].find('.gridmap').click(function(){
-            if (self.getState().grid == 1) location.reload();
+            //if (self.getState().grid == 1) location.reload();
             camGrid(0);
-            self.wrapper.find('.cambd').hide();self.wrapper.find('.cammap').show();
+            self.wrapper.find('.camlist').hide();
+            self.wrapper.find('.loc-cont').hide();
+            self.wrapper.find('.cammap').show();
             self.wrapper.addClass('grid');
             let state = self.getState(); state.grid=-1; self.setState(state);
             core.elements['header-right'].find('.listmenu span').text($(this).text());

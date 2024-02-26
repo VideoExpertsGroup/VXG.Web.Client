@@ -879,11 +879,11 @@ CameraEditControl = function(){
             <h4 class="locations-title">Locations</h4>
             ${dropdownTreeStr}
             <div class="existing-loc-cont">
-                <label for="show_existing_loc">Exisiting Location:</label>
+                <label for="show_existing_loc">Existing Location:</label>
                 <div class="existing-input-cont">
                     <input name="show_existing_loc" class="disabled choosen-location" type="text" value="${showValue}"></input>
                     <input name="existing_loc" class="choosen-location" type="hidden" value="${existingValue}"></input>
-                    <span class="clear-location vxgbutton" onclick="clearLocationChoice()">Clear</span>
+                    <span class="clear-location vxgbutton" onclick="clearLocationChoice()">Remove</span>
                 </div>
             </div>
             <div class="new-loc-cont">
@@ -900,19 +900,18 @@ CameraEditControl = function(){
             if (locArr.length == locTypes.length) {
                 alert("Cannot add a new location to a "+ locTypes[locTypes.length - 1] +".");
             }
-            if (r.form.new_loc) {
-                var newLocArr = r.form.new_loc.split(",");
-                var newLocStr = [];
-                for (var i = 0; i < newLocArr.length; i++) {
-                    var newLocName = newLocArr[i].trim();
-                    if (existing_loc.length + i > 4) break;
-                    var newLoc = locTypes[existing_loc.length + i].toLocaleLowerCase() + "_" + newLocName.replaceAll(" ", "_");
-                    locArr.push(newLoc)
-                    newLocStr.push(newLoc);
-                }
-                $('[name="new_location_str"]').val(newLocStr.join(":"));
-                showLoc += showLoc ? ", " + r.form.new_loc : r.form.new_loc;
+            
+            var newLocArr = r.form.new_loc ? r.form.new_loc.split(",") : [];
+            var newLocStr = [];
+            for (var i = 0; i < newLocArr.length; i++) {
+                var newLocName = newLocArr[i].trim();
+                if (existing_loc.length + i > 4) break;
+                var newLoc = locTypes[existing_loc.length + i].toLocaleLowerCase() + "_" + newLocName.replaceAll(" ", "_");
+                locArr.push(newLoc)
+                newLocStr.push(newLoc);
             }
+            $('[name="new_location_str"]').val(newLocStr.length > 0 ? newLocStr.join(":") : "");
+            showLoc += showLoc ? ", " + r.form.new_loc : r.form.new_loc;
 
             $('[name="shownlocation"]').val(showLoc);
             $('[name="location_str"]').val(locArr.join(":"));

@@ -231,10 +231,9 @@ CloudCamera.updateCameraPromise = function(camera_struct){
     }
     if (camera_struct['url'].trim())
         config.url = camera_struct['url'].trim();
-
+ 
+    var locArr = camera_struct.location_str ? camera_struct.location_str.split(":") : [];
     if (this.src.meta) {
-        var locArr = camera_struct.location_str ? camera_struct.location_str.split(":") : [];
-
         var hasLocTypes = [];
         for (var i = 0; i < locArr.length; i++) {
             hasLocTypes.push(locTypes[i]);
@@ -250,6 +249,7 @@ CloudCamera.updateCameraPromise = function(camera_struct){
                 this.src.meta[locArr[i]] = "";
             } 
         }
+
         if (hasLocTypes.length > 0) {
             // removing any location fields that weren't included in the new location 
             // ie Ontario, Toronto, North York --> Ontario, Toronto (remove North York)
@@ -261,12 +261,36 @@ CloudCamera.updateCameraPromise = function(camera_struct){
                 }
             }
         }
+
+        if (locArr.length == 0) {
+            delete this.src.meta.location;
+            locTypes.forEach(locType => {
+                if (this.src.meta[locType] != undefined) {
+                    var currentLocName = locType.toLowerCase() + "_" + this.src.meta[locType].replaceAll(" ", "_");
+                    delete this.src.meta[currentLocName];
+                    delete this.src.meta[locType];
+                }
+            });
+        }
+    } else if (locArr.length > 0) {
+        this.src.meta = {};
+        for (var i = 0; i < locArr.length; i++) {
+            var locName = locArr[i].substring(locArr[i].indexOf("_") + 1).replaceAll("_", " ");
+            if (i == locArr.length - 1) this.src.meta.location = locName;
+            this.src.meta[locTypes[i]] = locName;
+            this.src.meta[locArr[i]] = "";
+        }
     }
     //if (this.src.meta && (this.src.meta.location || (!this.src.meta.location && camera_struct['location']))) this.src.meta.location = camera_struct['location'] ? camera_struct['location'] : "";
     if (this.src.meta && (this.src.meta.group || (!this.src.meta.group && camera_struct['group']))) {
-        this.src.meta.group = camera_struct['group'] ? camera_struct['group'] : "";
+        if ( camera_struct['group'] ) this.src.meta.group = camera_struct['group'];
+        else delete this.src.meta.group;
+
         if (camera_struct['group'].toLowerCase() == "favourite" || camera_struct['group'].toLowerCase() == "favorite") this.src.meta.favCam = "";
         else if (this.src.meta.favCam != undefined) delete this.src.meta.favCam;
+    } else if (!this.src.meta && camera_struct['group']) {
+        this.src.meta = {"group": camera_struct['group']};
+        if (camera_struct['group'].toLowerCase() == "favourite" || camera_struct['group'].toLowerCase() == "favorite") this.src.meta.favCam = "";
     }
     if (this.src.meta) config.meta = this.src.meta;
 

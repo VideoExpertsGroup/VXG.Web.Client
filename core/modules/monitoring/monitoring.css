@@ -439,15 +439,6 @@ min-height: 100px;
     position: relative;
 }
 
-ul.locationlist, ul.groupslist {
-padding: 0 0 14px 0;
-    margin-bottom: 0;
-    max-height: 200px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    border-bottom: 1px solid #E6E6E6;
-}
-
 ul.locationlist li {
     list-style: none;
     overflow: hidden;
