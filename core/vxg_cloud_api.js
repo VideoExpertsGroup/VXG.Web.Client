@@ -983,3 +983,33 @@ vxg.api.cloud.backupRecordedVideoStatus = function (channel_access_token, rid) {
         headers: headers
     });
 };
+
+vxg.api.cloud.getAllNotes = function(group_access_token) {
+    let headers = vxg.api.cloud.getHeader(group_access_token);
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+
+    var data = 
+            {
+                limit: 300,
+                sort: ["-timestamp"],
+                filter: {
+                    and: [
+                        {
+                            "field": "string.type",
+                            "words_in": "note",
+                        }
+                    ]
+                }
+            }
+    
+    var url = vxg.api.cloud.getBaseURLFromToken(group_access_token) + "/api/v2/storage/meta/filter/";
+    //"https://web.vxg.eks-dev.cloud-vms.com/api/v2/storage/meta/filter/"
+    return $.ajax({
+        type: 'POST',
+        url: url,
+        contentType: "application/json",
+        headers: headers,
+        data: JSON.stringify(data)
+    })
+}

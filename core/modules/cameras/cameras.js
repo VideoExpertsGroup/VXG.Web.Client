@@ -734,7 +734,7 @@ window.screens['cameras'] = {
                 });
 
             } else {
-                if (this.getState().grid > 0) $(".camlist").show();
+                if (self.getState().grid == 0) $(".camlist").show();
                 else  $(".camlist").hide();
             }
 

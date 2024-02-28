@@ -1,0 +1,27 @@
+.nonotes {
+    color: #626262;
+    text-align: center;
+    margin-top: 20%;
+}
+
+.noteslist {
+    max-height: 95%;
+    overflow-y: auto;
+}
+
+#notesTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+  
+#notesTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#notesTable th {
+    border: none;
+    padding: 8px;
+}
+
+#notesTable tbody tr:hover {background-color: #fff;}

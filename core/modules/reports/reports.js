@@ -56,6 +56,11 @@ function listActivityCB( operation,  obj ) {
 	} else if (operation === "meta") {
 	    let targetElement = this.wrapper.find('.cameralist')[0];
 	    let camera = targetElement.getCameraByCamid(camid);
+		if (!camera) {
+			var cameraList = JSON.parse(localStorage.cameraList);
+			camera = cameraList.objects.filter(cam => cam.id == camid)[0];
+		}
+		//var camToken = camera ? camera['token'] : $('[eventid='+obj['eventid']+']').attr('token');
 	    window.screens['camerametaview'].activate(camera['token'], obj['eventid'], obj['ai_type']);
 	} else if (operation === "filterChanged") {
 	    //TODO checkFilter-btn green dot

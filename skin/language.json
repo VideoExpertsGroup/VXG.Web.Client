@@ -275,6 +275,9 @@
   "monitoring": {
     "title": "Monitoring"
   },
+  "notes": {
+    "title": "Notes"
+  },
   "newCamera": {
     "title": "Add camera",
     "installer": "Installer",
@@ -313,6 +316,7 @@
   },
   "activity": {
     "title": "Activity",
+    "subtitle": "All Activity",
     "eventStartTimeLabel": "Event start time:",
     "selectMotionFilter": "Select motion filter",
     "customEventList": "Custom event list (seperated by commas)",
