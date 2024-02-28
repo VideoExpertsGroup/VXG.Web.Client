@@ -249,6 +249,15 @@ width: calc(100% - 4px);
     box-shadow: 0 0 6px rgb(0 0 0 / 10%);
     max-width: 322px;
 }
+
+.screens > .monitoring .camlist-monitoring .camerafield-block{
+    margin: 1em 1em 1em 3em;
+    cursor: pointer;
+}
+.screens > .monitoring .camlist-monitoring .camerafield-block.parent-cam{
+    margin-left: 3px;
+}
+
 body.mobile .screens > .monitoring .camlist-monitoring .camerablock{
     margin: 0 0 10px 10px;
 }

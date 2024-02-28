@@ -145,7 +145,7 @@ window.screens['monitoring'] = {
 
         $('.hidecameras').removeClass('closed');
         $('.hidecameras').addClass('open');
-        $('.hidecameras').html('Hide Cameras <i class="fa fa-angle-right" aria-hidden="true"></i>');
+        $('.hidecameras').html('<i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;Hide Cameras');
         $('#cameras-list').show();
         $('.headerBlock').show();
 
@@ -200,16 +200,16 @@ window.screens['monitoring'] = {
                     allCamNodes[nodeName].forEach(cam => {
                         let captured = cam.src && cam.src.meta && cam.src.meta.capture_id && vxg.user.src.capture_id == cam.src.meta.capture_id ? ' captured' : '';
                         count++;
-                        camNodes_Ele += `<div class="node-cam camerablock${captured} ${nodeName}-cam" id="cam${count}" access_token="${cam.camera_id}" channel_token="${cam.token}" style="display: none">
-                                    <campreview onclick_toscreen="tagsview"></campreview><span class="name">${cam.src.name}</span>
+                        camNodes_Ele += `<div class="node-cam camerafield-block${captured} ${nodeName}-cam" id="cam${count}" access_token="${cam.camera_id}" channel_token="${cam.token}" style="display: none">
+                                    <camfield field="name" onclick_toscreen="tagsview" access_token="${cam.camera_id}"></camfield>
                                     </div>`
                     });
                 } else {
                     allCamNodes[nodeName].forEach(cam => {
                         let captured = cam.src && cam.src.meta && cam.src.meta.capture_id && vxg.user.src.capture_id == cam.src.meta.capture_id ? ' captured' : '';
                         count++;
-                        camNodes_Ele += `<div class="camerablock${captured}" id="cam${count}" access_token="${cam.camera_id}">
-                                    <campreview onclick_toscreen="tagsview"></campreview><span class="name">${cam.src.name}</span>
+                        camNodes_Ele += `<div class="camerafield-block${captured} parent-cam" id="cam${count}" access_token="${cam.camera_id}">
+                                    <camfield field="name" onclick_toscreen="tagsview" access_token="${cam.camera_id}"></camfield>
                                     </div>`
                     });
                 }
@@ -347,14 +347,14 @@ window.screens['monitoring'] = {
             if ($(this).hasClass('open')) {
                 $(this).removeClass('open');
                 $(this).addClass('closed');
-                $(this).html('<i class="fa fa-angle-left" aria-hidden="true"></i>');
+                $(this).html('<i class="fa fa-angle-right" aria-hidden="true"></i>');
                 $('#cameras-list').hide();
                 $('.headerBlock').hide();
 
             } else {
                 $(this).removeClass('closed');
                 $(this).addClass('open');
-                $(this).html('Hide Cameras <i class="fa fa-angle-right" aria-hidden="true"></i>');
+                $(this).html('<i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;Hide Cameras');
                 $('#cameras-list').show();
                 $('.headerBlock').show();
             }
