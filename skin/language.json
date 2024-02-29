@@ -273,7 +273,16 @@
     }
   },
   "monitoring": {
-    "title": "Monitoring"
+    "title": "Monitoring",
+    "createNote": "Add Note",
+    "inctime": "Incident time",
+    "case": "Case",
+    "savebtn": "Save",
+    "errorText": {
+      "nogridcams": "Please set at least one camera in the grid to create a note for.",
+      "saveerror": "Error saving note.",
+      "missingfield": "Missing a field. Please ensure all fields are filled out"
+    }
   },
   "notes": {
     "title": "Notes"

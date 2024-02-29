@@ -34,6 +34,7 @@ window.screens['tagsview'] = {
         return vxg.cameras.getCameraFrom(self.access_token).then(function(camera){
             window.location.hash = `camera?${camera?.src?.meta?.id ? 'meta=' + camera?.src?.meta?.id : 'camera_id=' + camera?.camera_id}`;
             self.access_token = camera.token;
+            if (timestamp) self.notetime = timestamp;
             if (!self.camera) self.camera = camera;
         }, () => {
             window.screens['home'].activate();
@@ -264,7 +265,9 @@ window.screens['tagsview'] = {
                 <div class="transparent-button makeclip"><i class="fa fa-play-circle-o" aria-hidden="true"></i><span> Clip</span></div>
                 <div class="transparent-button makesnapshot"><i class="fa fa-camera" aria-hidden="true"></i><span> Snapshot</div></span>
                 <div class="transparent-button makeshare"><i class="fa fa-share-alt" aria-hidden="true"></i><span> Share</span></div>
-                <div class="transparent-button active edittag"><span class="add-icon">+</span><span> Add note</span></div></div>`);
+                </div>`);
+                // <div class="transparent-button active edittag"><span class="add-icon">+</span><span> Add note</span></div>
+
         /*if (vxg.user.src.role=='user')
            core.elements['header-right'].prepend('<div class="ncssbuttons"><div class="transparent-button makesnapshot"><img class="svgbtn" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuNzI0NDUgNC4zNTQ5Nkg1LjA0MzIzTDUuMTE0MzYgNC4wNDQyMkw1LjE3MTIzIDMuNzk1NzhDNS4xNzEzIDMuNzk1NDYgNS4xNzEzOCAzLjc5NTE1IDUuMTcxNDUgMy43OTQ4M0M1LjM2NDc2IDIuOTcxNSA2LjA4NzIzIDIuNCA2LjkyOTgyIDIuNEg5LjA2ODgxQzkuOTE1MTYgMi40IDEwLjYzNjggMi45NzIxNCAxMC44MjcxIDMuNzk0M0MxMC44MjcxIDMuNzk0NDIgMTAuODI3MSAzLjc5NDU1IDEwLjgyNzEgMy43OTQ2N0wxMC44ODQzIDQuMDQ0MjJMMTAuOTU1NCA0LjM1NDk2SDExLjI3NDJIMTMuNjc1NkMxNC40MDIgNC4zNTQ5NiAxNC45OTIzIDQuOTQ1MTkgMTQuOTkyMyA1LjY3MTU5VjEyLjE5NDJDMTQuOTkyMyAxMi45Njg4IDE0LjM2MjggMTMuNTk4MyAxMy41ODgyIDEzLjU5ODNIMi40MTM0OUMxLjYzODgyIDEzLjU5ODMgMS4wMDkzOCAxMi45Njg4IDEuMDA5MzggMTIuMTk0MlY1LjY3MTU5QzEuMDA5MzggNC45NDc3NSAxLjYwMDA2IDQuMzU0OTYgMi4zMjYgNC4zNTQ5Nkg0LjcyNDQ1WiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KPHBhdGggZD0iTTMuMTEwMDEgNi43NjY4OUMzLjM4MzI3IDYuNzY2ODkgMy42MDQ3OCA2LjU0NTM3IDMuNjA0NzggNi4yNzIxMkMzLjYwNDc4IDUuOTk4ODYgMy4zODMyNyA1Ljc3NzM0IDMuMTEwMDEgNS43NzczNEMyLjgzNjc1IDUuNzc3MzQgMi42MTUyMyA1Ljk5ODg2IDIuNjE1MjMgNi4yNzIxMkMyLjYxNTIzIDYuNTQ1MzcgMi44MzY3NSA2Ljc2Njg5IDMuMTEwMDEgNi43NjY4OVoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xMC43MDUzIDguOTk2NUMxMC43MDUzIDEwLjQ4NjIgOS40OTA1NyAxMS43MDA5IDguMDAwODkgMTEuNzAwOUM2LjUxMDk2IDExLjcwMDkgNS4yOTY0OCAxMC40ODg5IDUuMjk2NDggOC45OTY1QzUuMjk2NDggNy41MDQwNiA2LjUxMDk2IDYuMjkyMDkgOC4wMDA4OSA2LjI5MjA5QzkuNDkwNTcgNi4yOTIwOSAxMC43MDUzIDcuNTA2ODIgMTAuNzA1MyA4Ljk5NjVaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuOCIvPgo8L3N2Zz4K"><span>&nbsp;&nbsp;Snapshot</span></div></div>');
         else

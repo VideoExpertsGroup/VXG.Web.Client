@@ -353,7 +353,7 @@ window.core.loadScreens = function(){
             return defaultPromise();
         }
         $('body').addClass('dialog');
-        $('body > .dialogs > .active').removeClass('active');
+        $('body > .dialogs > .active').removeClass('active');arguments
         $('body .dialogs').click(function(e){
             let el = document.elementFromPoint(e.pageX, e.pageY);
             if ($('body > .dialogs')[0]!==el) return;
@@ -439,6 +439,10 @@ window.core.loadScreens = function(){
                 core.elements['screencss'].html(csshtml);
     
                 core.elements['screens'].find('> .'+self.id).show();
+
+                if (self.id == "tagsview") {
+                    if (self.src && self.src.notetime) args = [null, this.src.notetime];
+                }
 
                 if (typeof window.screens[self.id]['on_show'] === "function") 
                     return window.screens[self.id]['on_show'].apply(window.screens[self.id],args);

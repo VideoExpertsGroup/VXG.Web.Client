@@ -82,10 +82,11 @@ window.screens['notes'] = {
                     var cachedCams = localStorage.cameraList ? JSON.parse(localStorage.cameraList).objects : [];
                     var camera = cachedCams.filter(cam => cam.id == note.camid);
                     var cameraListed = note.camid;
+                    var timestamp = Math.floor(new Date(note.timestamp).getTime())
                     if (camera.length > 0) {
                         let captured = camera[0].meta &&  camera[0].meta.capture_id && vxg.user.src.capture_id ==  camera[0].meta.capture_id ? ' captured' : '';
-                        cameraListed = `<div class="camerablock${captured}" access_token="${note.camid}">
-                        <campreview onclick_toscreen="tagsview"></campreview>`
+                        cameraListed = `<div class="camerablock${captured}" notetime="${timestamp}" access_token="${note.camid}">
+                        <campreview onclick_toscreen="tagsview" notetime="${timestamp}"></campreview>`
                     }
 
                     tableData.push({

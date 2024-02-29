@@ -29,6 +29,10 @@ body.mobile .screens > .monitoring{
 padding-top:12px;
 }
 
+body:not(.monitoring) .header-right .edittag {
+    display: none;
+}
+
 .screens > .monitoring .cambd{
 width: 100%;
 display:flex;
@@ -59,12 +63,12 @@ display:none;
 .screens > .monitoring.grid .camlist-monitoring {
 flex-direction: column;
     flex-wrap: nowrap;
-    width: 350px;
+    width: 250px;
     height: 100%;
     padding-right: 10px;
     overflow-y: auto;
     margin-left: 13px;
-    min-width: 334px;
+    min-width: 250px;
 position: relative;
 }
 
@@ -933,15 +937,87 @@ input.token-input {
     background-color: #dfdfdf;
 }
 
-button.vxgbutton.hidecameras.open {
+button.vxgbutton.hidecameras.open, button.vxgbutton.hidenotes.open {
     width: 95%;
     margin-left: 10px;
     margin-bottom: 12px;
     height: 27px;
 }
-button.vxgbutton.hidecameras.closed {
+button.vxgbutton.hidecameras.closed, button.vxgbutton.hidenotes.closed {
     padding: 15px;
 }
 .hidecameras.open i {
     margin-left: 10px;
+}
+
+.note-input-cont {
+    margin: 25px 0;
+}
+
+.note-input-cont .title-label {
+    font-size: 12px;
+    color: #B3B3B3;
+}
+
+.note-input-cont .time-label {
+    padding-right: 15px;
+}
+
+.savetag {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.notes-list-cont {
+    width: 260px;
+    padding: 5px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.notes-title-cont {
+    width: 100%;
+    border-bottom: 2px solid var(--main-color);
+    font-size: 18px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.screens > .monitoring .monitoring-noteslist .onetag{
+    border-bottom: 1px solid #E7E7E7;
+    padding: 10px 10px;
+}
+.screens > .monitoring .monitoring-noteslist .onetag:hover{
+background-color: rgba(0,0,0,.075) !important;
+cursor:pointer;
+}
+.screens > .monitoring .monitoring-noteslist .datetime{
+    font-weight: normal;
+    color: var(--main-color);
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+.screens > .monitoring .monitoring-noteslist .case{
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+}
+.screens > .monitoring .monitoring-noteslist .desc{
+margin: 10px 0;
+    font-size: 14px;
+    word-break: break-word;
+}
+.screens > .monitoring .monitoring-noteslist .tags{
+    color: gray;
+    border-top: 1px dashed lightgray;
+    padding: 5px 0 0 0;
+width:100%;
+text-align:right;
+}
+
+.monitoring-nonotes {
+    color: #ababab;
+    margin-top: 30px;
+    text-align: center;
+    font-size: 16px;
 }

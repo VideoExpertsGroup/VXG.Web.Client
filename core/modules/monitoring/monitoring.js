@@ -154,7 +154,28 @@ window.screens['monitoring'] = {
                 self.playerList.synchronize();
             }
         }, 1500)
-        return this.loadCameras(filterarray, true)
+
+        return vxg.api.cloud.getAllNotes(vxg.user.src.allCamsToken).then(ret => {
+            var notesList = ret.objects;
+            if (notesList.length > 0) {
+                $('.nonotes').hide();
+                var notesEle = '';
+                notesList.forEach(note => {
+                    let timestamp = new Date(note['timestamp']+'Z').getTime();
+                    date = new Date(note['timestamp']+'Z');
+                    date = date.toLocaleString('en-CA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }).replace(/[,|.]/g,'').replace(' 24',' 00');
+                    notesEle += '<div class="onetag" timestamp="'+timestamp+'">';
+                    if (vxg.user.src.role!='user') notesEle += '<div class="edtag" meta="'+i+'"></div>';
+                    notesEle += '<div class="datetime">'+date+'</div><div class="case">'+(note['string']['case']?note['string']['case']:'')+'</div><div class="desc">'+(note['string']['description']?note['string']['description']:'')+'</div></div>';
+                })
+                $('.monitoring-noteslist').html(notesEle);
+                $('.monitoring-noteslist').show();
+            }
+            return self.loadCameras(filterarray, true)
+        }, function(err) {
+            console.log(err.responseText);
+            return self.loadCameras(filterarray, true)
+        });
     },
     playChannels: function(resolve) {
         if (this.camera_list_promise) return this.camera_list_promise;
@@ -172,7 +193,7 @@ window.screens['monitoring'] = {
             this.last_filterarray = filterarray;
             this.last_offset = 0;
         } else filterarray = this.last_filterarray;
-        var cameraListCall = forLocation ? window.vxg.cameras.getCameraListPromise(500,0,forLocation,undefined,undefined) :  vxg.cameras.getFullCameraList(500,this.last_offset);
+        var cameraListCall = forLocation ? window.vxg.cameras.getCameraListPromise(500,0,forLocation,"isstorage",undefined) :  vxg.cameras.getFullCameraList(500,this.last_offset);
         cameraListCall.then(function(fullList) {
             //var gatewaysList = fullList.filter(cam => {return cam.src.meta && cam.src.meta.gateway});
             var cameras = fullList.filter(cam => {if (cam.src.meta) return cam.src.meta.gateway == undefined; else return cam;});
@@ -341,6 +362,24 @@ window.screens['monitoring'] = {
     'on_init':function(){
         let self=this;
 
+        $('.hidenotes').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+                $(this).addClass('closed');
+                $(this).html('<i class="fa fa-angle-left" aria-hidden="true"></i>');
+                $('.notes-list-cont').hide();
+                //$('.noteslist').hide();
+            } else {
+                $(this).removeClass('closed');
+                $(this).addClass('open');
+                $(this).html('<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;Hide Notes');
+                $('.notes-list-cont').show();
+                //$('.noteslist').show();
+            }
+        });
+
         $('.hidecameras').on('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -367,6 +406,9 @@ window.screens['monitoring'] = {
 
         let curState = self.getState();
         core.elements['header-right'].prepend(`
+            <div class="transparent-button active edittag">
+                <span class="add-icon">+</span><span data-i18n="monitoring.createNote">${$.t('monitoring.createNote')}</span>
+            </div>
             <div tabindex="0" class="gridmenu hide transparent-button">
                 <span>${gridStateArray[curState.grid]}</span><i class="fa fa-angle-down" aria-hidden="true"></i>
                 <ul class="menu-dropdown gridmenu-dropdown">
@@ -446,6 +488,60 @@ window.screens['monitoring'] = {
                 core.elements['header-right'].find('.gridmenu span').text($(this).text());
             }
         });
+
+        $(".edittag").click(function() {
+            dialogs['mdialog'].activate(`
+            <h7 data-i18n="monitoring.createNote">${$.t('monitoring.createNote')}</h7>
+            <span class="error-text" style="display:none"></span>
+            <div class="note-input-cont">
+                <table border=0>
+                    <tr><td class="time-label" data-i18n="monitoring.inctime">${$.t('monitoring.inctime')}:</td><td class="inctime"><input type="datetime-local" name="inctime"></input></td></tr>
+                    <tr><td class="title-label" data-i18n="monitoring.case">${$.t('monitoring.case')}:</td><td></td></tr>
+                    <tr><td colspan=2 class="case"><input class="tagcase" type="text" name="case"/></td></tr>
+                </table>
+                <textarea class="tagdesc" name="desc" rows="5"></textarea>
+            </div>
+            <button name="apply" class="vxgbutton-transparent savetag" data-i18n="monitoring.savebtn">${$.t('monitoring.savebtn')}</button></div>  
+        `).then(function(r) {
+                if (!r || r.button!='apply') return;
+                if (!r.form.inctime || !r.form.case || !r.form.desc) {
+                    $(".error-text").text($.t('monitoring.errorText.missingfield'));
+                } else {
+                    core.elements['global-loader'].show();
+                    let date = new Date(r.form.inctime).toISOString().replace('Z','');
+                    let req = {"timestamp": date, "long": {"usermeta": 1},"string": {"type":"note", "case":r.form.case, "description": r.form.desc}};
+
+                    var firstGridCamToken = null;
+                    var gridcameras = $('[playernumber]');
+                    for (var i = 0; i < gridcameras.length; i++) {
+                        var token = $(gridcameras[i]).find('player').attr('access_token');
+                        if (token) {
+                            firstGridCamToken = token;
+                            break;
+                        }
+                    }
+
+                    if (!firstGridCamToken) {
+                        core.elements['global-loader'].hide();
+                        alert($.t('monitoring.errorText.nogridcams'));
+                        return;
+                    }
+
+                    core.elements['global-loader'].show();
+
+                    vxg.api.cloud.saveUserMeta(firstGridCamToken, req).then(function(){
+                        core.elements['global-loader'].hide();
+                        location.reload();
+                        return;
+                    },function(err){
+                        core.elements['global-loader'].hide();
+                        console.log(err.responseText);
+                        alert($.t('monitoring.errorText.saveerror'));
+                    });
+                }
+
+            })
+        })
 
         $( window ).resize(onCameraScreenResize);
 

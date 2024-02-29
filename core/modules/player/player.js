@@ -184,7 +184,8 @@ window.controls['campreview'] = {
         return getCameraFromElement(this).then(function(camera){
             if (!camera) return defaultPromise();
 
-
+            if($(el).attr('notetime')) el.notetime = $(el).attr('notetime');
+            
             el.channelID = camera.camera_id;
             el.channeltoken = camera.src&&camera.src.roToken ? camera.src.roToken : camera.token;
             return camera.getPreview().then(function(url){
@@ -238,8 +239,37 @@ window.controls['camfield'] = {
         if (typeof camfield !== "string") return defaultPromise();
 
         let el = this;
+        $(el).attr('draggable','true');
+
+        this.dragend = function(e) {
+            el.dragged=false;
+        }
+        this.dragstart = function(e) {
+            el.dragged=true;
+        }
+        this.drop = function(e) {
+            if (!el.dragged) return;
+            let pl = $(document.elementFromPoint(e.clientX, e.clientY)).parents('player');
+            if (!pl.length) return;
+            pl.attr('access_token',el.channeltoken);
+            if (typeof pl[0].on_access_token_change === "function") pl[0].on_access_token_change(el.channeltoken);
+            pl[0].play();
+        }
+
+        $(el).on('dragstart',function(event){
+            // event.preventDefault();
+            this.dragstart();
+        });
+        $(el).on('dragend',function(event){
+            // event.preventDefault();
+            this.dragend();
+        });
+        // el.addEventListener('dragstart', this.dragstart);
+        // el.addEventListener('dragend', this.dragend);
+        document.addEventListener('drop', this.drop);
         return getCameraFromElement(this).then(function(camera){
             if (camera && camera.src && camera.src[camfield])
+                el.channeltoken = camera.src&&camera.src.roToken ? camera.src.roToken : camera.token;
                 $(el).text(camera.src[camfield]);
         });
     },
