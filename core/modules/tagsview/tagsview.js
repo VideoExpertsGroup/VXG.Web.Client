@@ -32,7 +32,7 @@ window.screens['tagsview'] = {
         let self=this;
         $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
         return vxg.cameras.getCameraFrom(self.access_token).then(function(camera){
-            window.location.hash = `camera?${camera?.src?.meta?.id ? 'meta=' + camera?.src?.meta?.id : 'camera_id=' + camera?.camera_id}`;
+            // window.location.hash = `camera?${camera?.src?.meta?.id ? 'meta=' + camera?.src?.meta?.id : 'camera_id=' + camera?.camera_id}`;
             self.access_token = camera.token;
             if (timestamp) self.notetime = timestamp;
             if (!self.camera) self.camera = camera;
@@ -131,8 +131,10 @@ window.screens['tagsview'] = {
                     clip.setMeta("testingMeta", "", "", inc).then(function(readyclip){
                         console.log("meta is working, delete clip and camera just made");
                         self.metaEnabled = true;
+                        sessionStorage.setItem("notesMode", "enabled");
                     },function(){
                         self.metaEnabled = false;
+                        sessionStorage.setItem("notesMode", "disabled");
                         $(".clipcase").addClass("disabled clipdis");
                         $(".edittag").addClass("disabled")
                         $(".clip textarea").addClass("disabled clipdis")
@@ -265,6 +267,7 @@ window.screens['tagsview'] = {
                 <div class="transparent-button makeclip"><i class="fa fa-play-circle-o" aria-hidden="true"></i><span> Clip</span></div>
                 <div class="transparent-button makesnapshot"><i class="fa fa-camera" aria-hidden="true"></i><span> Snapshot</div></span>
                 <div class="transparent-button makeshare"><i class="fa fa-share-alt" aria-hidden="true"></i><span> Share</span></div>
+                <div class="transparent-button active edittag"><span class="add-icon">+</span><span> Add note</span></div>
                 </div>`);
                 // <div class="transparent-button active edittag"><span class="add-icon">+</span><span> Add note</span></div>
 

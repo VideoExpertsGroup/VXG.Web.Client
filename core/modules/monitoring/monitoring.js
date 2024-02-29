@@ -406,7 +406,7 @@ window.screens['monitoring'] = {
 
         let curState = self.getState();
         core.elements['header-right'].prepend(`
-            <div class="transparent-button active edittag">
+            <div class="transparent-button active addnote">
                 <span class="add-icon">+</span><span data-i18n="monitoring.createNote">${$.t('monitoring.createNote')}</span>
             </div>
             <div tabindex="0" class="gridmenu hide transparent-button">
@@ -418,6 +418,29 @@ window.screens['monitoring'] = {
                 </ul>
             </div>`);
         
+        var notesMode = sessionStorage.notesMode;
+        if (notesMode) {
+            if (notesMode == "disabled") $(".addnote").addClass("disabled");
+        } else {
+            try {
+                var inc = new Date().getTime() / 1000;
+                self.camera.createClip(inc - 10000, inc + 10000, "testingClip").then(function(clip){
+                    clip.setMeta("testingMeta", "", "", inc).then(function(readyclip){
+                        console.log("meta is working, delete clip and camera just made");
+                        sessionStorage.setItem("notesMode", "enabled");
+                    },function(){
+                        sessionStorage.setItem("notesMode", "disabled");
+                        $(".addnote").addClass("disabled");
+                    });
+                    vxg.api.cloud.deleteClipV2(clip.token, clip.src.id).then(function(r){ /* testing clip deleted */}, function(err) {console.log(err)})
+                },function(){
+                    console.log("Test clip isn't working, something bad has happened");
+                });
+            } catch(err) {
+                console.log(err);
+            }
+        }
+
         $('.grid-player').removeAttr('playerNumber');
         var playerCount = 1;
         $('.grid-player').each(function(i, el) {
@@ -489,7 +512,7 @@ window.screens['monitoring'] = {
             }
         });
 
-        $(".edittag").click(function() {
+        $(".addnote").click(function() {
             dialogs['mdialog'].activate(`
             <h7 data-i18n="monitoring.createNote">${$.t('monitoring.createNote')}</h7>
             <span class="error-text" style="display:none"></span>

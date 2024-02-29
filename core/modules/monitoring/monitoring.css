@@ -29,8 +29,13 @@ body.mobile .screens > .monitoring{
 padding-top:12px;
 }
 
-body:not(.monitoring) .header-right .edittag {
+body:not(.monitoring) .header-right .addnote {
     display: none;
+}
+
+.addnote.disabled {
+    color: #acacac;
+    pointer-events: none;
 }
 
 .screens > .monitoring .cambd{
