@@ -37,9 +37,9 @@ window.screens['reports'] = {
         let self = this;
         core.elements['header-right'].prepend(`<div class="reportsfilterContainer">
 													<div class="transparent-button reportsfilter">
-														<span class="report-type" id="event_reportsfilter_btn"> Events Report </span>
-														<span class="report-type" id="camera_reportsfilter_btn"> Cameras Report </span>
-														<span class="report-type" id="access_reportsfilter_btn"> Access Report </span>
+														<span class="report-type" id="event_reportsfilter_btn" data-i18n="reports.events.title"> ${$.t('reports.events.title')} </span>
+														<span class="report-type" id="camera_reportsfilter_btn" data-i18n="reports.operation.headerTitle" > ${$.t('reports.operation.headerTitle')} </span>
+														<span class="report-type" id="access_reportsfilter_btn" data-i18n="reports.access.title"> ${$.t('reports.access.title')} </span>
 													</div>
 												</div>`);
         
@@ -316,7 +316,7 @@ window.screens['reports'] = {
                     $(".reportslist").removeClass("noreports");
                     $(".reportslist").empty();
                     var eventsTable = `
-                            <button class="vxgbutton-transparent download-report" onClick="downloadReport('reportsTable')">Download Report as CSV</button>
+                            <button class="vxgbutton-transparent download-report" onClick="downloadReport('reportsTable')">${$.t('reports.downloadReport')}</button>
                             <table id="reportsTable">
                                 <tr>
                                     <th>Operation ID</th>

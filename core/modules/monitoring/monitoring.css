@@ -1026,3 +1026,7 @@ text-align:right;
     text-align: center;
     font-size: 16px;
 }
+
+.hide-section {
+    margin-left: 5px;
+}

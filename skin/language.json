@@ -10,7 +10,7 @@
     "termOfUse": "Term of Use",
     "timeline": "Timeline",
     "camera": "Camera",
-    "cameras": "Cameras",
+    "camerasTitle": "Cameras",
     "cameraName": "Camera Name",
     "preview": "Preview",
     "meta": "Meta",
@@ -19,10 +19,10 @@
     "metadata": "Metadata",
     "cameraUI": "Camera UI",
     "config": "Config",
-    "action": "Action",
+    "actionTitle": "Action",
     "error": "Error",
     "weekSchedule": "Week schedule",
-    "notes": "Notes",
+    "notesTitle": "Notes",
     "gateway": "Gateway",
     "location": "Location",
     "locations": "Locations",
@@ -50,6 +50,7 @@
     "unknown": "Unknown",
     "more": "More",
     "time": "Time",
+    "title": "Title",
     "incident": "Incident",
     "case": "Case",
     "todo": "TODO",
@@ -106,7 +107,8 @@
     "cloudCamera": "Cloud camera",
     "customParameters": "Custom Parameters",
     "currentPlan": "Current Plan",
-    "profile": "Profile",
+    "profileTitle": "Profile",
+    "user": "User",
     "stream": "Stream",
     "mainStream": "Main Stream",
     "liveStream": "Live Stream",
@@ -117,6 +119,17 @@
     "video": "Video",
     "notification": "Notification",
     "storage": "Storage",
+    "favourite": "Favorite",
+    "timeUnit": {
+      "min": "min",
+      "hour": "hour",
+      "day": "day"
+    },
+    "stats": {
+      "avg": "avg",
+      "min": "min",
+      "max": "max"
+    },
     "eventTypes": {
       "motion": "Motion",
       "sceneDetection": "Scene detection",
@@ -139,6 +152,17 @@
       "notStarted": "Not Started",
       "notCompleted": "Not Completed"
     }
+  },
+  "bootstrapTable": {
+    "camerasPerPage": "Cameras per Page",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "filteredTotal": "filtered from a total of ",
+    "clearFilters": "Clear filters",
+    "noMatches": "No matching records found.",
+    "cardViewOn": "Card view",
+    "cardViewOff": "List view"
   },
   "action": {
     "ok": "OK",
@@ -246,7 +270,36 @@
   },
   "home": {
     "title": "Home",
-    "statistics": "Statistics"
+    "statistics": {
+      "title": "Statistics",
+      "peopleCounting": "People Counting",
+      "carCounting": "Car Counting",
+      "counting": "counting"
+    },
+    "cameras": {
+      "title": "Cameras",
+      "total": "Total Cameras",
+      "online": "Cameras Online",
+      "recording": "Cameras Recording to Cloud"
+    },
+    "events": {
+      "title": "Events",
+      "total": "Total Events",
+      "unit": "in the last 24 hours"
+    },
+    "storage": {
+      "title": "Storage",
+      "subtitle": "Of Storage Used",
+      "hours": "Hours",
+      "ofRecords": "Of Records"
+    },
+    "favourites": {
+      "title": "Favorites",
+      "noFavourites": "No Favorited cameras. Add a camera to the group \"Favorite\" to see it on the dashboard."
+    },
+    "activity": {
+      "noFavourites": "No events in Favourited cameras"
+    }
   },
   "cameras": {
     "title": "Cameras",
@@ -282,10 +335,19 @@
       "nogridcams": "Please set at least one camera in the grid to create a note for.",
       "saveerror": "Error saving note.",
       "missingfield": "Missing a field. Please ensure all fields are filled out"
-    }
+    },
+    "hideCameras": "Hide Cameras",
+    "hideNotes": "Hide Notes",
+    "noNotes": "No notes created. If notes are enabled, go to the timeline view of a camera to create a note."
   },
   "notes": {
     "title": "Notes"
+  },
+  "servers": {
+    "title": "Servers",
+    "add": "Add Server",
+    "downloadPackage": "Download Package",
+    "noServers": "There are no servers."
   },
   "newCamera": {
     "title": "Add camera",
@@ -435,10 +497,41 @@
     "reportFilters": "Report Filters",
     "generateReport": "Generate a Report",
     "generateReports": "Generate Reports",
+    "downloadReport": "Download Report as CSV",
     "noResult": "No Result",
     "noDescription": "No Description",
     "noUserAssigned": "No User Assigned",
-    "noReportsToView": "No reports to view."
+    "noReports": {
+      "sent1" :"No reports to view.  Generate an ",
+      "sent2": "Events Report, ",
+      "sent21": "a",
+      "sent3": "Cameras Report, ",
+      "sent31": "or an",
+      "sent4": "Access Report."
+    },
+    "events": {
+      "title": "Events Report",
+      "generate": "Generate Events Report"
+    },
+    "operation": {
+      "title": "Operations",
+      "headerTitle": "Cameras Report",
+      "generate": "Generate Camera Report", 
+      "filtersTitle": "Camera Operation Report Filters",
+      "camCreated": "Camera created",
+      "camDeleted": "Camera deleted,",
+      "camUpdated": "Camera updated",
+      "ptz": "PTZ command executed",
+      "mediaStream": "Media stream updated",
+      "onScreenDisplay": "On screen display updated",
+      "videoSettings": "Video settings updated",
+      "videoStream": "Video stream settings updated",
+      "audioSettings": "Audio settings updated",
+      "audioStream": "Audio stream settings updated"
+    },
+    "access": {
+      "title": "Access Report"
+    }
   },
   "profile": {
     "title": "User profile",

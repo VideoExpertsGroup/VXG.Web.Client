@@ -227,7 +227,7 @@ VXGArchieveView.prototype.initDraw = function initDraw(controller) {
                   </table>
             </div>
             <div class="VXGArchieveInfo">
-                  <div class="VXGArchieveInfoHeader"><div class="VXGArchieveInfoClose"></div><div class="VXGArchieveInfoTitle"><span data-i18n="common.notes">${$.t('common.notes')}</span></div></div>
+                  <div class="VXGArchieveInfoHeader"><div class="VXGArchieveInfoClose"></div><div class="VXGArchieveInfoTitle"><span data-i18n="common.notesTitle">${$.t('common.notesTitle')}</span></div></div>
                   <div class="VXGArchieveInfoContent">
                         <table class="VXGArchiveInfoTable">
                               <tr><td><span data-i18n="common.name">${$.t('common.name')}</span>:</td><td><div class="VXGArchieveInfoNameValue"></div></td></tr>
@@ -515,7 +515,7 @@ VXGArchieveView.prototype.render = function render(controller, params, VXGArchie
 	    +	'			<div class="VXGArchieveSettings"></div>'
 	    +	'		</div>'
 	    +	'		<div class="VXGArchieveMenu" style="pointer-events: all !important;">'
-	    +	'			<div class="VXGArchieveClipMeta '+disable+'">' + $.t('common.notes') + '</div>'
+	    +	'			<div class="VXGArchieveClipMeta '+disable+'">' + $.t('common.notesTitle') + '</div>'
 	    +	'			<div class="VXGArchieveClipDownload '+disable+'">' + $.t('action.download') + '</div>'
 	    +	'			<div class="VXGArchieveClipShare '+disable+'">' + $.t('action.share') + '</div>'
 	    +	'			<div class="VXGArchieveClipDelete">' + $.t('action.delete') + '</div>'

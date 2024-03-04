@@ -5,7 +5,7 @@
         <p class="error-message" style="display: none;"></p>
         <div class="filter-inputs-cont">
             <div class="input-cont cameraid-input-cont">
-                <label for="eventCameraIds" data-i18n="common.cameras"> Cameras </label>
+                <label for="eventCameraIds" data-i18n="common.camerasTitle"> Cameras </label>
                 <input name="eventCameraIds" id="eventCameraIds"> 
                 <div class="eventChosenCameraList chosenCameraList"></div>
             </div>
@@ -58,18 +58,18 @@
                     </div>
                 </div>
             </div>
-            <button class="vxgbutton generate-button" id="generateEventReport">Generate Events Report</button>
+            <button class="vxgbutton generate-button" id="generateEventReport" data-i18n="reports.events.generate">Generate Events Report</button>
         </div>
     </div>
 </div>
 
 <div class="dialogs filterDialog opDialog" style="display: none;">
     <div class="opFilterElement">
-        <h5 class="filter-title">Camera Operation Report Filters</h5>
+        <h5 class="filter-title" data-i18n="reports.operation.filtersTitle">Camera Operation Report Filters</h5>
         <p class="error-message" style="display: none;"></p>
         <div class="filter-inputs-cont">
             <div class="input-cont cameraid-input-cont">
-                <label for="opCameraIds"> Cameras </label>
+                <label for="opCameraIds" data-i18n="common.camerasTitle"> Cameras </label>
                 <input name="opCameraIds" id="opCameraIds"> 
                 <div class="opChosenCameraList chosenCameraList"></div>
             </div>
@@ -78,80 +78,80 @@
                 <input type="text" name="userid" id="userid"> 
             </div> -->
             <div class="input-cont user-input-cont">
-                <label class="time-label"> Time Range </label>
+                <label class="time-label" data-i18n="common.timeRange"> Time Range </label>
                 <div class="time-inputs-cont">
                     <div class="start-time-cont">
-                        <label for="starttime"> Start Time </label>
+                        <label for="starttime" data-i18n="common.startTime"> Start Time </label>
                         <input type="datetime-local" name="starttime" id="opStartTimeFilter" class="timefilter">
                     </div>
                     <div class="end-time-cont">
-                        <label for="endtime"> End Time </label>
+                        <label for="endtime" data-i18n="common.endTime"> End Time </label>
                         <input type="datetime-local" name="endtime" id="opEndTimeFilter" class="timefilter">
                     </div>
                 </div>
             </div>
             <div class="input-cont op-status-result-cont">
                 <div class="op-status-cont">
-                    <label class="checkbox-input-label">Operations</label>
+                    <label class="checkbox-input-label" data-i18n="reports.operation.title">Operations</label>
                     <div class="opstatuses">
                         <!-- create_camera, delete_camera, update_camera, ptz_camera, update_media_stream, update_osd, update_video, update_video_stream, update_audio, update_audio_stream -->
                         <label class="filter-label custom-checkbox">
                             <!-- create_camera -->
-                            <span>camera created</span>
+                            <span data-i18n="reports.operation.camCreated">camera created</span>
                             <input type="checkbox" class="status_checkbox" name="create_camera" value="op_create_camera">
                             <span class="checkmark"></span>	
                         </label>
                         <label class="filter-label custom-checkbox">
                             <!-- delete_camera -->
-                            <span>camera deleted</span>
+                            <span data-i18n="reports.operation.camDeleted">camera deleted</span>
                             <input type="checkbox" class="status_checkbox" name="delete_camera" value="op_delete_camera">
                             <span class="checkmark"></span>	
                         </label>
                         <label class="filter-label custom-checkbox">
                             <!-- update_camera -->
-                            <span>camera updated</span>
+                            <span data-i18n="reports.operation.camUpdated">camera updated</span>
                             <input type="checkbox" class="status_checkbox" name="update_camera" value="op_update_camera">
                             <span class="checkmark"></span>	
                         </label>
                         <label class="filter-label custom-checkbox">
                             <!-- ptz_camera -->
-                            <span>PTZ command executed</span>
+                            <span data-i18n="reports.operation.ptz">PTZ command executed</span>
                             <input type="checkbox" class="status_checkbox" name="ptz_camera" value="op_ptz_camera">
                             <span class="checkmark"></span>	
                         </label>
                         <label class="filter-label custom-checkbox">
                             <!-- update_media_stream -->
-                            <span>media stream updated</span>
+                            <span data-i18n="reports.operation.mediaStream">media stream updated</span>
                             <input type="checkbox" class="status_checkbox" name="update_media_stream" value="op_update_media_stream">
                             <span class="checkmark"></span>	
                         </label>
                         <label class="filter-label custom-checkbox">
                             <!-- update_osd -->
-                            <span>on screen display updated</span>
+                            <span data-i18n="reports.operation.onScreenDisplay">on screen display updated</span>
                             <input type="checkbox" class="status_checkbox" name="update_osd" value="op_update_osd">
                             <span class="checkmark"></span>	
                         </label>
                         <label class="filter-label custom-checkbox">
                             <!-- update_video -->
-                            <span>video settings updated</span>
+                            <span data-i18n="reports.operation.videoSettings">video settings updated</span>
                             <input type="checkbox" class="status_checkbox" name="update_video" value="op_update_video">
                             <span class="checkmark"></span>	
                         </label>
                         <label class="filter-label custom-checkbox">
                             <!-- update_video_stream -->
-                            <span>video stream settings updated</span>
+                            <span data-i18n="reports.operation.videoStream">video stream settings updated</span>
                             <input type="checkbox" class="status_checkbox" name="update_video_stream" value="op_update_video_stream">
                             <span class="checkmark"></span>	
                         </label>
                         <label class="filter-label custom-checkbox">
                             <!-- update_audio -->
-                            <span>audio settings updated</span>
+                            <span data-i18n="reports.operation.audioSettings">audio settings updated</span>
                             <input type="checkbox" class="status_checkbox" name="update_audio" value="op_update_audio">
                             <span class="checkmark"></span>	
                         </label>
                         <label class="filter-label custom-checkbox">
                             <!-- update_audio_stream -->
-                            <span>audio stream settings updated</span>
+                            <span data-i18n="reports.operation.audioStream">audio stream settings updated</span>
                             <input type="checkbox" class="status_checkbox" name="update_audio_stream" value="op_update_audio_stream">
                             <span class="checkmark"></span>	
                         </label>
@@ -168,17 +168,20 @@
                     </div>
                 </div> -->
             </div>
-            <button class="vxgbutton generate-button" id="generateCameraReport">Generate Camera Report</button>
+            <button class="vxgbutton generate-button" id="generateCameraReport" data-i18n="reports.operation.generate">Generate Camera Report</button>
         </div>
     </div>
 </div>
 
 <div class="reportslist noreports">
     <div class="noreports">
-        <h5> No reports to view.  Generate an 
-            <span class="show-report show-event-report-filter"> Events Report, </span> a 
-            <span class="show-report show-camera-report-filter"> Cameras Report, </span> or an 
-            <span class="show-report show-access-report-filter"> Access Report. </span> 
+        <h5> 
+            <span data-i18n="reports.noReports.sent1"> No reports to view.  Generate an </span>
+            <span class="show-report show-event-report-filter" data-i18n="reports.noReports.sent2"> Events Report, </span> 
+            <span data-i18n="reports.noReports.sent21"> a </span>
+            <span class="show-report show-camera-report-filter" data-i18n="reports.noReports.sent3"> Cameras Report, </span> 
+            <span data-i18n="reports.noReports.sent31"> or an </span>
+            <span class="show-report show-access-report-filter" data-i18n="reports.noReports.sent4"> Access Report. </span> 
         </h5>
     </div>
 </div>

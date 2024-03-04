@@ -96,7 +96,7 @@ window.screens['profile'] = {
 	 if (vxg.user.src.role == "user") $(".prifiletabs > .tab3").hide();
      if (vxg.user.src.role != "partner") $(".prifiletabs > .tab4").hide();
 	 $(self.wrapper).addClass('tab2');
-        core.elements['header-center'].text(`${$.t('common.user')} ${vxg.user.src.email} ${$.t('common.profile').toLowerCase()}`);
+        core.elements['header-center'].text(`${$.t('common.user')} ${vxg.user.src.email} ${$.t('common.profileTitle').toLowerCase()}`);
         this.wrapper.find('.prifiletabs > div').click(function(){
             if ($(this).hasClass('tab1')) $(self.wrapper).addClass('tab1').removeClass('tab2').removeClass('tab3').removeClass('tab4');
             if ($(this).hasClass('tab2')) $(self.wrapper).addClass('tab2').removeClass('tab1').removeClass('tab3').removeClass('tab4');

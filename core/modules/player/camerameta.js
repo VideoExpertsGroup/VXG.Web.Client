@@ -157,7 +157,7 @@ window.screens['camerameta'] = {
                 return;
             }
             if (!_more)
-                $(self.wrapper).find('.tablearea').empty().append(`<table class="table"><tr><th>#</th><th>${$.t('common.time')}</th><th>${$.t('common.objects')}</th><th>${$.t('common.action')}</th></tr></table>`);
+                $(self.wrapper).find('.tablearea').empty().append(`<table class="table"><tr><th>#</th><th>${$.t('common.time')}</th><th>${$.t('common.objects')}</th><th>${$.t('common.actionTitle')}</th></tr></table>`);
             $(self.wrapper).find('.tablearea tbody').append(table);
             self.offset += r.length;
             if (self.offset < self.camera.events.total_count)

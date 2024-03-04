@@ -360,7 +360,7 @@ VXGChartView.prototype.initDraw = function initDraw(controller, cameraName, meta
     }
     
     
-    let metaselect = (meta == "Person")? "People counting" : (meta + " counting");
+    let metaselect = (meta == "Person")? $.t('home.statistics.peopleCounting') : (meta + " " + $.t('home.statistics.counting'));
 
     this.element.innerHTML = 
     	'<div class="VXGChart VXGChartContainer">'
@@ -370,8 +370,8 @@ VXGChartView.prototype.initDraw = function initDraw(controller, cameraName, meta
     +	'				<div class="VXGChartDropmenu">'
     +	'					<div class="VXGChart menu" tabindex="0"><span>' + metaselect + '</span>'
     +	'					    <ul id="count-type" class="menu-dropdown" x-placement="bottom-start" style="position: absolute; top: 19px; left: 0px; will-change: top, left;">'
-    +	'						    <li data-type="Person"><span>People counting</span></li>'
-    +	'					    	<li data-type="Car"><span>Car counting</span></li>'
+    +	`						    <li data-type="Person"><span>${$.t('home.statistics.peopleCounting')}</span></li>`
+    +	`					    	<li data-type="Car"><span>${$.t('home.statistics.carCounting')}</span></li>`
     +	'					    </ul>'
     +   '					</div>'
     +	'				</div>'
@@ -387,9 +387,9 @@ VXGChartView.prototype.initDraw = function initDraw(controller, cameraName, meta
     +	'				<a class="VXGDownloadAnchorElem" style="display:none"></a>'
         +	'					<div class="btn-group period" ' + ((!show_period_select)?(' style="display:none;"'):(''))  + ' >'
         +	'					<span class="shift-left"></span>'
-        +	'						<button data-period="600"   type="button" class="VXGChart btn btn-white btn-xs period10m" >10 min</button>'
-        +	'						<button data-period="3600"  type="button" class="VXGChart btn btn-white btn-xs period1h active">1 hour</button>'
-        +	'						<button data-period="86400" type="button" class="VXGChart btn btn-white btn-xs period1d">1 day</button>'
+        +	`						<button data-period="600"   type="button" class="VXGChart btn btn-white btn-xs period10m" >10 ${$.t('common.timeUnit.min')}</button>`
+        +	`						<button data-period="3600"  type="button" class="VXGChart btn btn-white btn-xs period1h active">1 ${$.t('common.timeUnit.hour')}</button>`
+        +	`						<button data-period="86400" type="button" class="VXGChart btn btn-white btn-xs period1d">1 ${$.t('common.timeUnit.day')}</button>`
         +	'					<span class="shift-right"></span>'
         +	'					</div>'
     +	'				<div>'
@@ -513,7 +513,7 @@ VXGChartView.prototype.render = function render(viewModel) {
 
     var dataset = [
             {
-                label: "avg",
+                label: $.t('common.stats.avg'),
                 backgroundColor: "rgba(123, 178, 71, 0)",
                 borderColor:  this.visualOptions.color_of_average_curve ,
                 pointBackgroundColor: this.visualOptions.color_of_average_curve,
@@ -525,7 +525,7 @@ VXGChartView.prototype.render = function render(viewModel) {
         
     if (viewModel['chartDataMax'] !== undefined) {
 	dataset.push ({
-		label: "max",
+		label: $.t('common.stats.max'),
                 backgroundColor: "rgba(123, 178, 71, 0)",
                 borderColor:  this.visualOptions.color_of_max_curve,
                 pointBackgroundColor:  this.visualOptions.color_of_max_curve,
@@ -536,7 +536,7 @@ VXGChartView.prototype.render = function render(viewModel) {
     }
     if (viewModel['chartDataMin'] !== undefined) {
 	dataset.push ({
-		label: "min",
+		label: $.t('common.stats.max'),
                 backgroundColor: "rgba(123, 178, 71, 0)",
                 borderColor:  this.visualOptions.color_of_min_curve,
                 pointBackgroundColor: this.visualOptions.color_of_min_curve,

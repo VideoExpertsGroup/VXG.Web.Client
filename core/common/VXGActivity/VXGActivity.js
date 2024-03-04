@@ -435,7 +435,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	if (this.filter !== undefined && this.filter != null) {
 	    $(span).text($.t('activity.noEventsFoundForSuchFilter'));
 	} else if ($(controller.clView.element).hasClass("report_activitylist")) {
-		$(span).text("No events in Favourited cameras");
+		$(span).text($.t('home.activity.noFavourites'));
 	} else {
 	    $(span).text($.t('activity.noEvents'));
 	}

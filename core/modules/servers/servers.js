@@ -75,7 +75,7 @@ function onServerDelete(e){
 
 window.screens['servers'] = {
     'menu_weight': 21,
-    'menu_name':'Servers',
+    'menu_name':$.t('servers.title'),
     'get_args':function(){
     },
     'stablecss':[path+'sserver.css'],
@@ -94,7 +94,7 @@ window.screens['servers'] = {
             self.wrapper.removeClass('loader');
             let html = '';
             if (!serverlist.data.length){
-                el.html('There are no servers.');
+                el.html($.t('servers.noServers'));
                 self.wrapper.addClass('noservers');
                 return;
             }
@@ -123,7 +123,7 @@ window.screens['servers'] = {
             });
 */
         },function(){
-            el.html('There are no servers.');
+            el.html($.t('servers.noServers'));
             self.wrapper.addClass('noservers');
             self.wrapper.removeClass('loader');
         });
@@ -136,9 +136,9 @@ window.screens['servers'] = {
     'on_init':function(){
         let self = this;
         core.elements['header-right'].prepend('' +
-            '<div class="transparent-button active addserver" ><span class="add-icon">+</span><span>Add server</span></div>');
+            '<div class="transparent-button active addserver" ><span class="add-icon">+</span><span data-i18n="servers.add">' + $.t('servers.add') + '</span></div>');
         core.elements['header-right'].prepend('' +
-            '<a class="server-download" href="https://dashboard.videoexpertsgroup.com/downloads/gateway/" target="_blank">Download Package</a>');
+            '<a class="server-download" href="https://dashboard.videoexpertsgroup.com/downloads/gateway/" target="_blank" data-i18n="servers.downloadPackage">' + $.t('servers.downloadPackage') + '</a>');
         core.elements['header-right'].find('.addserver').click(function(){
             dialogs['mdialog'].activate('<h7>Enter the server UUID</h7><p></p><p><input name="uuid"/><br/><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="add" class="vxgbutton">Add server</button></p>').then(function(r){
                 if (r.button!='add') return;

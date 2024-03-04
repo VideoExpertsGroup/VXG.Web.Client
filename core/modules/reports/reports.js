@@ -295,7 +295,7 @@ window.screens['home'] = {
 			$('.online-cams').html(online);
 			$('.recording-cams').html(recording);
 
-			var xValues = ["Online", "Offline"];
+			var xValues = [$.t('common.online'), $.t('common.offline')];
 			var offline = total - online;
 			var yValues = [online, offline];
 			var barColors = [

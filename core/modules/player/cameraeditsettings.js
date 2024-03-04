@@ -172,8 +172,8 @@ CameraeditsettingsControl = function(){
                         var streamCount = 1;
                         data.mstreams_supported.forEach(stream => {
                             if (validStreams.includes(stream.vs_id)) {
-                                live_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.live_ms_id? 'selected' : ''}>${$.t('common.profile')} #${streamCount}</option>`;
-                                rec_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.rec_ms_id? 'selected' : ''}>${$.t('common.profile')} #${streamCount}</option>`;
+                                live_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.live_ms_id? 'selected' : ''}>${$.t('common.profileTitle')} #${streamCount}</option>`;
+                                rec_ele+=`<option value="${stream.id}" data-vsid="${stream.vs_id}" ${stream.id == data.rec_ms_id? 'selected' : ''}>${$.t('common.profileTitle')} #${streamCount}</option>`;
                                 streamCount++;
                             }
                         });

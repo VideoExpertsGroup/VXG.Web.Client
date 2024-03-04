@@ -145,7 +145,7 @@ window.screens['monitoring'] = {
 
         $('.hidecameras').removeClass('closed');
         $('.hidecameras').addClass('open');
-        $('.hidecameras').html('<i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;Hide Cameras');
+        $('.hidecameras').html(`<i class="fa fa-angle-left" aria-hidden="true"></i><span class="hide-section">${$.t('monitoring.hideCameras')}</span>`);
         $('#cameras-list').show();
         $('.headerBlock').show();
 
@@ -374,7 +374,7 @@ window.screens['monitoring'] = {
             } else {
                 $(this).removeClass('closed');
                 $(this).addClass('open');
-                $(this).html('<i class="fa fa-angle-right" aria-hidden="true"></i>&nbsp;Hide Notes');
+                $(this).html(`<i class="fa fa-angle-right" aria-hidden="true"></i><span class="hide-section">${$.t('monitoring.hideNotes')}</span>`);
                 $('.notes-list-cont').show();
                 //$('.noteslist').show();
             }
@@ -393,7 +393,7 @@ window.screens['monitoring'] = {
             } else {
                 $(this).removeClass('closed');
                 $(this).addClass('open');
-                $(this).html('<i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;Hide Cameras');
+                $(this).html(`<i class="fa fa-angle-left" aria-hidden="true"></i><span class="hide-section">${$.t('monitoring.hideCameras')}</span>`);
                 $('#cameras-list').show();
                 $('.headerBlock').show();
             }

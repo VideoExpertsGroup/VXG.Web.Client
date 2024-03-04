@@ -108,7 +108,7 @@ window.screens['gateway_cams'] = {
             },
             {
                 field: "action",
-                title: $.t('common.action')
+                title: $.t('common.actionTitle')
             },
         ]
 
@@ -158,6 +158,30 @@ window.screens['gateway_cams'] = {
             sortName: 'order',
             sortOrder: localStorage.tableOrder,
             //cardView: isGridView,
+            formatRecordsPerPage (pageNumber) {
+                return `${pageNumber} ${$.t('bootstrapTable.camerasPerPage')}`
+            },
+            formatShowingRows (pageFrom, pageTo, totalRows, totalNotFiltered) {
+                const plural = totalRows > 1 ? 's' : ''
+            
+                if (totalNotFiltered !== undefined && totalNotFiltered > 0 && totalNotFiltered > totalRows) {
+                    return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.camera')}${plural} (${$.t('bootstrapTable.filteredTotal')}  ${totalNotFiltered} ${$.t('common.camera')}${plural})`
+                }
+                
+                return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.camera')}${plural}`
+            },
+            formatClearSearch () {
+                return $.t('bootstrapTable.clearFilters')
+            },
+            formatNoMatches () {
+                return $.t('bootstrapTable.noMatches')
+            },
+            formatToggleOn () {
+                return $.t('bootstrapTable.cardViewOn')
+            },
+            formatToggleOff () {
+                return $.t('bootstrapTable.cardViewOff')
+            },
             onColumnSearch: function (arg1, arg2) {
             var userId = vxg.user.src.uid;
             if (arg1 == 'status')

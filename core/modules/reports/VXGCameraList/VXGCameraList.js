@@ -225,14 +225,14 @@ VXGCameraListView.prototype.initDraw = function initDraw(controller, cameraName,
     +	`				<th>${$.t('common.location')}</th>`
     +	`				<th>${$.t('common.meta')}</th>`
     +	`				<th ifscreen="plan2camera">${$.t('common.plan')}</th>`
-    +	`				<th>${$.t('common.action')}</th>`
+    +	`				<th>${$.t('common.actionTitle')}</th>`
     +	'			</tr>'
     +	'		</thead>'
     +	'		<tbody class="VXGCameraListTable">'
     +	'		</tbody>'
     +	`		</table><div style="text-align:center;margin: 10px 0;"><button type="button" class="vxgbutton more" data-attr="camera">${$.t('common.more')}</button></div>`
     +	'	</div>'
-    +	'	<span class="VXGCameraListEmpty invisible"> No Favourited cameras. Add a camera to the group "Favourite" to see it on the dashboard.</span>'
+    +	`	<span class="VXGCameraListEmpty invisible"> ${$.t('home.favourites.noFavourites')} </span>`
     +	'</div>';
     let element = this.element;
 

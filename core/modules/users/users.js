@@ -47,7 +47,7 @@ window.screens['users'] = {
     'show_users':function(archive_channel_id){
         let self=this;
         return vxg.users.getList(100).then(function(users){
-            let table=`<table><thead><tr class="header"><th scope="col">#</th><th scope="col">${$.t('common.name')}</th><th scope="col">${$.t('common.email')}</th><th scope="col">${$.t('users.role')}</th><th scope="col">${$.t('common.cameras')}</th><th scope="col">${$.t('common.action')}</th></tr></thead><tbody>`;
+            let table=`<table><thead><tr class="header"><th scope="col">#</th><th scope="col">${$.t('common.name')}</th><th scope="col">${$.t('common.email')}</th><th scope="col">${$.t('users.role')}</th><th scope="col">${$.t('common.camerasTitle')}</th><th scope="col">${$.t('common.actionTitle')}</th></tr></thead><tbody>`;
             let c=1;
             for (let i in users) {
                 let archive_channel_id = vxg.user.src.allCamsTokenMeta && vxg.user.src.allCamsTokenMeta.storage_channel_id ? parseInt(vxg.user.src.allCamsTokenMeta.storage_channel_id) : 0;

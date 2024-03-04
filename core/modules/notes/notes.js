@@ -43,19 +43,18 @@ window.screens['notes'] = {
                 var columns = [
                     {
                         field: "order",
-                        title: "Order",
                         class: "ordering",
                         sortable: true,
                         width: "100"
                     },
                     {
                         field: "camera",
-                        title: "Camera",
+                        title: $.t('common.camera'),
                         width: "140",
                     },
                     {
                         field: "time",
-                        title: "Time",
+                        title: $.t('common.time'),
                         filterControl: "input",
                         sortable: true,
                         sorter: timeSorting(),
@@ -63,14 +62,14 @@ window.screens['notes'] = {
                     },
                     {
                         field: "title",
-                        title: "Title",
+                        title: $.t('common.title'),
                         filterControl: "input",
                         sortable: true,
                         width: "200"
                     },
                     {
                         field: "description",
-                        title: "Description",
+                        title: $.t('common.description'),
                         filterControl: "input",
                         sortable: true
                     }
@@ -107,6 +106,30 @@ window.screens['notes'] = {
                     uniqueId: "order",
                     columns: columns,
                     sortName: 'order',
+                    formatRecordsPerPage (pageNumber) {
+                        return `${pageNumber} ${$.t('bootstrapTable.camerasPerPage')}`
+                    },
+                    formatShowingRows (pageFrom, pageTo, totalRows, totalNotFiltered) {
+                        const plural = totalRows > 1 ? 's' : ''
+                    
+                        if (totalNotFiltered !== undefined && totalNotFiltered > 0 && totalNotFiltered > totalRows) {
+                            return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.camera')}${plural} (${$.t('bootstrapTable.filteredTotal')}  ${totalNotFiltered} ${$.t('common.camera')}${plural})`
+                        }
+                        
+                        return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.camera')}${plural}`
+                    },
+                    formatClearSearch () {
+                        return $.t('bootstrapTable.clearFilters')
+                    },
+                    formatNoMatches () {
+                        return $.t('bootstrapTable.noMatches')
+                    },
+                    formatToggleOn () {
+                        return $.t('bootstrapTable.cardViewOn')
+                    },
+                    formatToggleOff () {
+                        return $.t('bootstrapTable.cardViewOff')
+                    },
                     onColumnSearch: function (arg1, arg2) {
                     if (arg1 == 'title')
                         localStorage.setItem("title", arg2);
