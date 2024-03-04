@@ -552,7 +552,7 @@ window.screens['monitoring'] = {
 
                     core.elements['global-loader'].show();
 
-                    vxg.api.cloud.saveUserMeta(firstGridCamToken, req).then(function(){
+                    vxg.api.cloud.saveUserMeta(firstGridCamToken, [req]).then(function(){
                         core.elements['global-loader'].hide();
                         location.reload();
                         return;
