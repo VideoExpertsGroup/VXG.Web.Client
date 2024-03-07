@@ -2326,8 +2326,8 @@ class CCameraMap extends HTMLElement {
 
         let script = document.createElement('script');
         let gt = $(this).attr('google_map_token');
-//        script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyC0L42SfFlCgWi15F75bky6yQ6I6FPkeCA'; // debug
-        script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBxA5eSO46nMtgkPR1vt6MWrPygmcxTXHc';
+//        script.src = 'https://maps.googleapis.com/maps/api/js?key='; // debug
+        script.src = 'https://maps.googleapis.com/maps/api/js?key=';
 
         document.head.append(script);
         script.onload = function() {load_promise.resolve();}
