@@ -394,6 +394,7 @@ window.screens['cameras'] = {
             }
         }, 1500)
         if (this.getState().grid == 1) return this.loadProvinces(true); 
+        else if (this.getState().grid < 0) $('.cammap').show()
         else return this.loadCameras(filterarray, true)
     },
     playChannels: function(resolve) {
