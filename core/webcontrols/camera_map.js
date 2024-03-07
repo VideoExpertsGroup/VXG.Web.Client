@@ -149,13 +149,15 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
         let bounds = new google.maps.LatLngBounds();
         let marker;
 
-        let infowindow = new google.maps.InfoWindow();
+        let infowindow = new google.maps.InfoWindow({maxWidth: 360});
         let markers = locations.map(function (location, i) {
             bounds.extend(location);
             marker = new google.maps.Marker({
                 position: {lng: location.lng, lat: location.lat},
                 map: self.map,
                 icon: location.icon,
+                camera_id: location.data.camera_id,
+                camera_src_name: location.data.src.name,
                 markerType: location.markerType
             });
             marker.id = location.data.id;
@@ -196,7 +198,8 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
                         infowindow.open(self.map, marker);
                         let cameraPreview = self.getPreviewImg(location.data.camera_id);
                         cameraPreview.then(function(result){
-                            info = '<div class="preview-container img" style="background-image:url(' + result + ')"></div>' + info;
+                            let background = 'background: url(' + result + ') center center / cover no-repeat;';
+                            info = '<div access_token="' + location.data.camera_id + '" class="preview-container img"><campreview onclick="javascript:window.core.activateFirstScreen(`tagsview`, ' + location.data.camera_id + ');" onclick_toscreen="tagsview" style="' + background + '"></campreview></div>' + info;
                             infowindow.setContent(info);
                         });
                     }
@@ -217,7 +220,7 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
                 }
             })(marker, i));
             google.maps.event.addListener(marker, 'mouseout', function () {
-                infowindow.close(self.map);
+                // infowindow.close(self.map);
             });
             return marker;
         });
@@ -226,13 +229,25 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
 
         console.log(markers);
         self.markerCluster = new MarkerClusterer(self.map, markers, self.mcOptions);
-        google.maps.event.addListener(self.markerCluster, "mouseover", function (mCluster) {
+        google.maps.event.addListener(self.markerCluster, "mouseover", async function(mCluster) {
+            let clusterInfo = '<div class="multiple-preview-container">';
+            for(let i = 0; i < mCluster.markers_.length && i < 4; i++) {
+                let result = await self.getPreviewImg(mCluster.markers_[i].camera_id);
+                let background = 'background: url(' + result + ') center center / cover no-repeat;';
+                clusterInfo += '<div><div access_token="' + mCluster.markers_[i].camera_id + '" class="preview-container img"><campreview onclick="javascript:window.core.activateFirstScreen(`tagsview`, ' + mCluster.markers_[i].camera_id + ');" onclick_toscreen="tagsview" style="' + background + '"></campreview></div><div class="info-header">' + mCluster.markers_[i].camera_src_name + '</div></div>';
+            }
+            clusterInfo += '</div>';
+            infowindow.setContent(clusterInfo);
+            infowindow.open(self.map, self.markerCluster);
             infowindow.setPosition(mCluster.getCenter());
         });
         google.maps.event.addListener(self.markerCluster, "mouseout", function (mCluster) {
-            infowindow.close(self.map);
+            // infowindow.close(self.map);
         });
         google.maps.event.addListener(self.markerCluster, "click", function (mCluster) {
+            infowindow.close(self.map);
+        });
+        google.maps.event.addListener(self.map, "click", function () {
             infowindow.close(self.map);
         });
 
@@ -2420,6 +2435,19 @@ background-size: cover;
 background-position: center center;
 }
 
+.body .preview-container campreview{
+width: 160px;
+height: 120px;
+display: block;
+cursor: pointer;
+}
+
+.body .multiple-preview-container{
+display: grid;
+grid-template-columns: auto auto;
+gap: 0px 8px;
+}
+
 .body .info-header{
 padding: 10px 10px 10px 0px;
 font-size: 14px;
@@ -2435,6 +2463,15 @@ padding-right: 12px!important;
 overflow: hidden!important;
 }
 
+div.gm-style-iw {
+max-height: 400px!important;
+overflow: scroll;
+}
+
+div.gm-style-iw-d {
+max-height: 350px!important;
+overflow: scroll;
+}
 
 </style>`;
     }
