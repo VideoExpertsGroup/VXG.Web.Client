@@ -357,6 +357,8 @@ window.screens['cameras'] = {
     'js':[path.substr(0,path.length-16)+'webcontrols/camera_map.js'],
     'stablecss':[path+'scameras.css'],
     'playerList': null,
+    'provincesLoaded': false,
+    'allCamerasLoaded': false,
     'on_search':function(text){
         if (!text)
             delete this.search_text;
@@ -403,6 +405,18 @@ window.screens['cameras'] = {
 
         let self = this;
         let el = this.wrapper.find('.camlist');
+
+        if (self.allCamerasLoaded && !forLocation) {
+            $('.camlist').show();
+            $('.loc-cont').hide();
+            $('.cammap').hide();
+            return;
+        } else {
+            $('.loc-cont').hide();
+            $('.cammap').hide();
+            if (forLocation) self.allCamerasLoaded = false;
+            else self.allCamerasLoaded = true;
+        }
 		
         el.find('.wmore').remove();
         self.wrapper.addClass('loader');
@@ -622,7 +636,7 @@ window.screens['cameras'] = {
                     $('.bootstrap-table-filter-control-location').val(localStorage.getItem("camera_location" + userId));
                     $('.bootstrap-table-filter-control-group').val(localStorage.getItem("camera_group" + userId));
                     $('.bootstrap-table-filter-control-name').val(localStorage.getItem("camera_name" + userId));
-                    if (self.getState().grid == 0) {
+                    if (self.getState().grid == 0 || forLocation) {
                         $("#table").show();
                         $('.camlist').show();
                     } 
@@ -758,7 +772,10 @@ window.screens['cameras'] = {
                 });
 
             } else {
-                if (self.getState().grid == 0) $(".camlist").show();
+                if (self.getState().grid == 0 || forLocation) { 
+                    $(".camlist").show();
+                    $("#table").show();
+                }
                 else  $(".camlist").hide();
             }
 
@@ -809,6 +826,15 @@ window.screens['cameras'] = {
     loadProvinces: function(fromShow = false) {
         var self = this;
         if (localStorage.locPath && localStorage.locPath != "undefined" && fromShow) return;
+        if (self.provincesLoaded && fromShow) {
+            $('.camlist').hide();
+            $('.cammap').hide();
+            $('.loc-cont').show();
+            return;
+        } else {
+            $('.cammap').hide();
+            self.provincesLoaded = true;
+        }
         
         if (localStorage.locPath) localStorage.removeItem('locPath');
         $('.loclist').empty();
@@ -847,7 +873,7 @@ window.screens['cameras'] = {
         var self = this;
         var currentLocPath = localStorage.locPath;
         if (!currentLocPath || (currentLocPath && !currentLocPath.includes(prevLocation))) {
-            localStorage.locPath = currentLocPath ? currentLocPath + ":" + prevLocation : prevLocation; 
+            localStorage.locPath = currentLocPath ? currentLocPath + ":" + prevLocation : prevLocation == undefined ? "" : prevLocation; 
         }
         var currLocType = locTypes[locLevel];
         $('.loclist').empty();
@@ -1103,7 +1129,7 @@ window.screens['cameras'] = {
             `</div><div class="transparent-button active addcamera" ifscreen="newcamera" onclick_toscreen="newcamera"><span class="add-icon">+</span><span>${$.t('cameras.addCamera')}</span></div>`);
         
         core.elements['header-right'].find('.nogrid').click(function(){
-            if (self.getState().grid == 1 || firstState.grid == 1) location.reload();
+            //if (self.getState().grid == 1 || firstState.grid == 1) location.reload();
             $('.fixed-table-toolbar').show();
             $('#table').show();
             $(".fixed-table-pagination").show();
@@ -1121,27 +1147,40 @@ window.screens['cameras'] = {
             $('#table').removeClass("table-bordered");
 
             self.wrapper.removeClass('grid');
-            self.wrapper.find('.camlist').show();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=0; state.list=true; self.setState(state);
-            camGrid(0);
             core.elements['header-right'].find('.listmenu span').text($(this).text());
+            self.wrapper.find('.location-tools').hide();
+
+            if (self.allCamerasLoaded) {
+                $('.loc-cont').hide();
+                $('.camlist').show();
+                $('.cammap').hide();
+            } else {
+                self.loadCameras([], true);
+            }
         });
 
         core.elements['header-right'].find('.location').click(function(){
             $('#table').hide();
             $(".fixed-table-pagination").hide();
             self.wrapper.removeClass('grid');
-            self.wrapper.find('.camlist').hide();self.wrapper.find('.cammap').hide();
             let state = self.getState(); state.grid=1; self.setState(state);
-            location.reload();
+            core.elements['header-right'].find('.listmenu span').text($(this).text());
+            if (self.provincesLoaded) {
+                $('.loc-cont').show();
+                $('.camlist').hide();
+                $('.cammap').hide();
+            } else {
+                self.loadProvinces();
+            }
+            //location.reload();
         });
 
         core.elements['header-right'].find('.gridmap').click(function(){
             //if (self.getState().grid == 1) location.reload();
-            camGrid(0);
-            self.wrapper.find('.camlist').hide();
-            self.wrapper.find('.loc-cont').hide();
-            self.wrapper.find('.cammap').show();
+            $('.camlist').hide();
+            $('.loc-cont').hide();
+            $('.cammap').show();
             self.wrapper.addClass('grid');
             let state = self.getState(); state.grid=-1; self.setState(state);
             core.elements['header-right'].find('.listmenu span').text($(this).text());
