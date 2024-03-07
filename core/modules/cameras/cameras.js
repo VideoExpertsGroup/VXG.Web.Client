@@ -474,6 +474,11 @@ window.screens['cameras'] = {
                     })
                 }
 
+                var tableGroup = list[i].src.meta && list[i].src.meta.group ? list[i].src.meta.group : "";
+                if (tableGroup.toLocaleLowerCase() == "favorite" || tableGroup.toLocaleLowerCase() == "favourite") {
+                    tableGroup = $.t('common.favourite');
+                }
+
                 tableData.push({
                     camId: channelID,
                     order: count,
@@ -487,7 +492,7 @@ window.screens['cameras'] = {
                     recording: list[i].src.recording ? $.t('action.yes') : $.t('action.no'),
                     name: list[i].src.name,
                     location: list[i].src.meta && list[i].src.meta.location ? list[i].src.meta.location : "",
-                    group: list[i].src.meta && list[i].src.meta.group ? list[i].src.meta.group : "",
+                    group: tableGroup,
                     action: `<div class="settings" access_token="${list[i].token}" cam_id="${channelID}" gateway_id="${gatewayId}" gateway_token="${gatewayToken}">
                     <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
                 </div>`
@@ -666,7 +671,7 @@ window.screens['cameras'] = {
                     vxg.cameras.getGroupsList().then(function(groupsList) {
                         var groupItems = "";
                         groupsList.forEach(group => {
-                            if (group && group.toLocaleLowerCase() != "favourite" && group.toLocaleLowerCase() != "favorite") {
+                            if (group && group.toLocaleLowerCase() != "favorite" && group.toLocaleLowerCase() != "favourite") {
                                 let item = `
                                 <li>    
                                     <label class="filter-label custom-checkbox">

@@ -120,6 +120,8 @@
     "notification": "Notification",
     "storage": "Storage",
     "favourite": "Favorite",
+    "agoEN": "ago",
+    "agoES": "",
     "timeUnit": {
       "min": "min",
       "hour": "hour",
@@ -331,6 +333,7 @@
     "inctime": "Incident time",
     "case": "Case",
     "savebtn": "Save",
+    "confirmDelete": "Remove this camera from the grid?",
     "errorText": {
       "nogridcams": "Please set at least one camera in the grid to create a note for.",
       "saveerror": "Error saving note.",
@@ -546,5 +549,24 @@
     "uploadSqsName": "Upload SQS-name",
     "uploadSqsRegion": "Upload SQS-region",
     "noSubscriptionsFound": "No subscriptions found for this account."
+  },
+  "tagsview": {
+    "clip": "Clip",
+    "snapshot": "Snapshot",
+    "noNotes": "No notes for this camera.",
+    "loadingError": "Failed to load camera",
+    "alert": {
+      "selectPosition": "Select position on the timeline to set clip start time.",
+      "linkCopied": "Link Copied",
+      "clipCreated": "Clip Created",
+      "clipMetaError": "Error setting clip meta"
+    },
+    "backup": {
+      "title": "Backup",
+      "errorTitle": "Error can not handle the your request:",
+      "existingData": "There is data for the requested period",
+      "futureBackup": "Error: Currently unable to schedule future backups. Please enter a past time.",
+      "timeError": "Error: Start time should be after end time."
+    }
   }
 }

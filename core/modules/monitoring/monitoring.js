@@ -41,7 +41,7 @@ function camGrid(size, /* 2,3,4 */ telconet = false){
     let p = $('.screens .monitoring .camgrid2 player').off('dblclick').on('dblclick',function(){
         if (!$(this).attr('access_token')) return;
         let the = this;
-        dialogs['mdialog'].activate(`<p>${$.t('monitoring.deleteConfirm.title')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.no')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.yes')}</button></p>`).then(function(r){
+        dialogs['mdialog'].activate(`<p>${$.t('monitoring.confirmDelete')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.no')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.yes')}</button></p>`).then(function(r){
             if (r.button!='delete') return;
             $(the).attr('access_token','');
             $(the)[0].on_access_token_change('');

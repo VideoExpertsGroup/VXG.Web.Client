@@ -178,7 +178,7 @@ window.screens['tagsview'] = {
             self.updateActivity( self.access_token);
 
         }, function(){
-            alert('Fail load camera');
+            alert($.t('tagsview.loadingError'));
         });
         return defaultPromise();
     },
@@ -261,13 +261,13 @@ window.screens['tagsview'] = {
     'on_init':function(){
         let self = this;
         if (vxg.user.src.role=='user')
-            core.elements['header-right'].prepend('<div class="ncssbuttons"><div class="transparent-button makesnapshot"><i class="fa fa-camera" aria-hidden="true"></i><span> Snapshot</span></div></div>');
+            core.elements['header-right'].prepend('<div class="ncssbuttons"><div class="transparent-button makesnapshot"><i class="fa fa-camera" aria-hidden="true"></i><span> ' + $.t('tagsview.snapshot') + '</span></div></div>');
         else
             core.elements['header-right'].prepend(`<div class="ncssbuttons">
-                <div class="transparent-button makeclip"><i class="fa fa-play-circle-o" aria-hidden="true"></i><span> Clip</span></div>
-                <div class="transparent-button makesnapshot"><i class="fa fa-camera" aria-hidden="true"></i><span> Snapshot</div></span>
-                <div class="transparent-button makeshare"><i class="fa fa-share-alt" aria-hidden="true"></i><span> Share</span></div>
-                <div class="transparent-button active edittag"><span class="add-icon">+</span><span> Add note</span></div>
+                <div class="transparent-button makeclip"><i class="fa fa-play-circle-o" aria-hidden="true"></i><span> ${$.t('tagsview.clip')} </span></div>
+                <div class="transparent-button makesnapshot"><i class="fa fa-camera" aria-hidden="true"></i><span>  ${$.t('tagsview.snapshot')} </div></span>
+                <div class="transparent-button makeshare"><i class="fa fa-share-alt" aria-hidden="true"></i><span>  ${$.t('action.share')} </span></div>
+                <div class="transparent-button active edittag"><span class="add-icon">+</span><span> ${$.t('monitoring.createNote')} </span></div>
                 </div>`);
                 // <div class="transparent-button active edittag"><span class="add-icon">+</span><span> Add note</span></div>
 
@@ -354,18 +354,18 @@ window.screens['tagsview'] = {
             var endTime = $("#endTime").val();
             var speed = Number($("#speed").val());
             var overwrite = $("#overwrite").is(':checked') ? true : false;
-            $(".backup-status").html('Backup <span id="error-message"> </span>');
+            $(".backup-status").html($.t('tagsview.backup.title') + ' <span id="error-message"> </span>');
 
             var now = new Date();
 
 
             if (new Date(endTime).getTime() < new Date(startTime).getTime()) {
-                $(".backup-status").html('Backup <span id="error-message"> Error: Start time should be after end time. </span>');
+                $(".backup-status").html($.t('tagsview.backup.title') + ' <span id="error-message">' + $.t('tagsview.backup.timeError') + '</span>');
                 return;
             }
 
             if (new Date(startTime).getTime() > now.getTime() || new Date(endTime).getTime() > now.getTime()) {
-                $(".backup-status").html('Backup <span id="error-message">  Error: Currently unable to schedule future backups. Please enter a past time. </span>');
+                $(".backup-status").html($.t('tagsview.backup.title') + ' <span id="error-message">' + $.t('tagsview.backup.futureBackup') + '</span>');
                 return;
             }
 
@@ -403,7 +403,7 @@ window.screens['tagsview'] = {
             function loader()
             {
                 progress = ".";
-                $(".backup-status").html('Backup <span id="error-message">'+ '*'.repeat(counter)  +'</span>');
+                $(".backup-status").html($.t('tagsview.backup.title') + ' <span id="error-message">'+ '*'.repeat(counter)  +'</span>');
                 counter++;
                 if (counter == 10) counter=1;
             }
@@ -421,11 +421,11 @@ window.screens['tagsview'] = {
                         {
                             if (r.status != "error")
                             {
-                                $(".backup-status").html('Backup <span id="error-message">' + "Error can not handle the your request:" + r.error_code  + '</span>');
+                                $(".backup-status").html($.t('tagsview.backup.title') + ' <span id="error-message">' + $.t('tagsview.backup.errorTitle') + r.error_code  + '</span>');
                                 console.log("Error on getting status  backupRecordedVideo Error" + r.error_code );
                             }
 
-                            $(".backup-status").html('Backup <span id="error-message"></span>');
+                            $(".backup-status").html($.t('tagsview.backup.title') + ' <span id="error-message"></span>');
                             $("#start-backup").removeAttr('disabled');
                             // stop local loader here
                         }
@@ -433,7 +433,7 @@ window.screens['tagsview'] = {
                     },function(r){
                         $("#start-backup").removeAttr('disabled');
                         // stop local loader here
-                        $(".backup-status").html('Backup <span id="error-message">' + "Error can not handle the your request:" + r.responseText  + '</span>');
+                        $(".backup-status").html($.t('tagsview.backup.title') + ' <span id="error-message">' + $.t('tagsview.backup.errorTitle') + r.responseText  + '</span>');
                         console.log("Error on getting status  backupRecordedVideo Error" + r.responseText );
                     });
                 }
@@ -442,10 +442,10 @@ window.screens['tagsview'] = {
                 $("#start-backup").removeAttr('disabled');
                 error_message = r.responseText;
                 if (r.status == 409)  //CONFLICT
-                    error_message = "There is data for the requested period";
+                    error_message = $.t('tagsview.backup.existingData');
 
                  // stop local loader here
-                $(".backup-status").html('Backup <span id="error-message">' + "Error can not handle the your request:" + error_message  + '</span>');
+                $(".backup-status").html($.t('tagsview.backup.title') + '<span id="error-message">' + $.t('tagsview.backup.errorTitle') + error_message  + '</span>');
                 console.log("Can not create backup recorded video from " + startTime +  " to " + endTime +  " ERROR" + error_message);
             }
             )
@@ -594,7 +594,7 @@ window.screens['tagsview'] = {
         core.elements['header-right'].find('.ncssbuttons .makeclip').click(function(){
             let pos = self.player.getPosition();
             if (self.player.player.isLive() || typeof pos !== "number" || pos === 0){
-                alert('Select position firstly');
+                alert($.t('tagsview.alert.selectPosition'));
                 return;
             }
 
@@ -615,7 +615,7 @@ window.screens['tagsview'] = {
             self.camera.createClip(time - before*1000,time + after*1000, title).then(function(clip){
                 if (self.metaEnabled) {
                     return clip.setMeta(title, notes, clipcase, time).then(function(readyclip){
-                        dialogs['idialog'].activate('The clip<br/>successfully created',3000);
+                        dialogs['idialog'].activate($.t('tagsview.alert.clipCreated'),3000);
 
                         $(self.wrapper).find('.clip').removeClass('spinner').find('button').removeAttr('disabled');
                         $(self.wrapper).find('.clip .cancel:visible').click();
@@ -626,10 +626,10 @@ window.screens['tagsview'] = {
     */
                     },function(){
                         $(self.wrapper).find('.clip').removeClass('spinner').find('button').removeAttr('disabled');
-                        alert('Error on set clip meta');
+                        alert($.t('tagsview.alert.clipMetaError'));
                     });
                 } else {
-                    dialogs['idialog'].activate('The clip<br/>successfully created',3000);
+                    dialogs['idialog'].activate($.t('tagsview.alert.clipCreated'),3000);
                     $(self.wrapper).find('.clip').removeClass('spinner').find('button').removeAttr('disabled');
                     $(self.wrapper).find('.clip .cancel:visible').click();
                 }
@@ -675,12 +675,12 @@ window.screens['tagsview'] = {
         });
         $(this.wrapper).find('.toclipboard').click(function(){
             self.copyToClipboard($(self.wrapper).find('.shareurl').val());
-            dialogs['idialog'].activate('The link<br/>successfully copied');
+            dialogs['idialog'].activate($.t('tagsview.alert.linkCopied'));
         });
         core.elements['header-right'].find('.ncssbuttons .edittag').click(function(){
             let pos = self.player.getPosition();
             if (!self.editmeta && (self.player.player.isLive() || typeof pos !== "number" || pos === 0)){
-                alert('Select position firstly');
+                alert($.t('tagsview.alert.selectPosition'));
                 return;
             }
             if (self.editmeta){
@@ -777,7 +777,7 @@ window.screens['tagsview'] = {
                  if (r.objects.length>0)
                      tagslist.append(html);
                  else
-                     tagslist.append('<div class="noevents">No notes. <a href="javascript:void(0)" onclick="$(\'.tagsview .edittag\').click()">Add note</a></div>');
+                     tagslist.append('<div class="noevents">'+  $.t('tagsview.noNotes') +' <a href="javascript:void(0)" onclick="$(\'.tagsview .edittag\').click()"> ' + $.t('monitoring.createNote') + '</a></div>');
                  tagslist.find('.onetag').click(function(){
                      let timestamp = $(this).attr('timestamp');
                      self.player.setPosition(timestamp);

@@ -373,27 +373,27 @@ VXGActivityView.prototype.timeDifference = function timeDifference(current, prev
     let elapsed = current - previous;
 
     if (elapsed < msPerMinute) {
-        return Math.round(elapsed/1000) + ' s ago';
+        return $.t('common.agoES') + Math.round(elapsed/1000) + ' s ' + $.t('common.agoEN');
     }
 
     else if (elapsed < msPerHour) {
-        return Math.round(elapsed/msPerMinute) + ' m ago';
+        return $.t('common.agoES') + Math.round(elapsed/msPerMinute) + ' m ' + $.t('common.agoEN');
     }
 
     else if (elapsed < msPerDay ) {
-        return Math.round(elapsed/msPerHour ) + ' h ago';
+        return $.t('common.agoES') + Math.round(elapsed/msPerHour ) + ' h ' + $.t('common.agoEN');
     }
 
     else if (elapsed < msPerMonth) {
-        return Math.round(elapsed/msPerDay) + ' d ago';
+        return $.t('common.agoES') + Math.round(elapsed/msPerDay) + ' d ' + $.t('common.agoEN');
     }
 
     else if (elapsed < msPerYear) {
-        return Math.round(elapsed/msPerMonth) + ' mo ago';
+        return $.t('common.agoES') + Math.round(elapsed/msPerMonth) + ' mo ' + $.t('common.agoEN');
     }
 
     else {
-        return Math.round(elapsed/msPerYear ) + ' y ago';
+        return $.t('common.agoES') + Math.round(elapsed/msPerYear ) + ' y ' + $.t('common.agoEN');
     }
 }
 

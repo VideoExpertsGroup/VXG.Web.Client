@@ -282,15 +282,19 @@ CloudCamera.updateCameraPromise = function(camera_struct){
         }
     }
     //if (this.src.meta && (this.src.meta.location || (!this.src.meta.location && camera_struct['location']))) this.src.meta.location = camera_struct['location'] ? camera_struct['location'] : "";
+    var cameraGroup = camera_struct['group'];
+    if (cameraGroup.toLowerCase() == $.t("common.favourite").toLowerCase() || cameraGroup.toLowerCase() == "favourite") {
+        cameraGroup = "favorite";
+    }
     if (this.src.meta && (this.src.meta.group || (!this.src.meta.group && camera_struct['group']))) {
-        if ( camera_struct['group'] ) this.src.meta.group = camera_struct['group'];
+        if ( camera_struct['group'] ) this.src.meta.group = cameraGroup;
         else delete this.src.meta.group;
 
-        if (camera_struct['group'].toLowerCase() == "favourite" || camera_struct['group'].toLowerCase() == "favorite") this.src.meta.favCam = "";
+        if (cameraGroup == "favorite") this.src.meta.favCam = "";
         else if (this.src.meta.favCam != undefined) delete this.src.meta.favCam;
     } else if (!this.src.meta && camera_struct['group']) {
-        this.src.meta = {"group": camera_struct['group']};
-        if (camera_struct['group'].toLowerCase() == "favourite" || camera_struct['group'].toLowerCase() == "favorite") this.src.meta.favCam = "";
+        this.src.meta = {"group": cameraGroup};
+        if (cameraGroup == "favorite") this.src.meta.favCam = "";
     }
     if (this.src.meta) config.meta = this.src.meta;
 
