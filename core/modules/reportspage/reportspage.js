@@ -147,8 +147,8 @@ window.screens['reports'] = {
 
             if (endTime && endTime > now) endTime = now; 
 
-            if (startTime) args.start = startTime;
-            if (endTime) args.end = endTime;
+            if (startTime) args.start = startTime.replace("Z", "");
+            if (endTime) args.end = endTime.replace("Z", "");
             if (meta) args.meta = meta;
             if (meta_not) args.meta_not = meta_not
 
@@ -301,8 +301,8 @@ window.screens['reports'] = {
 
             if (endTime && endTime > now) endTime = now; 
 
-            if (startTime) args.start = startTime;
-            if (endTime) args.end = endTime;
+            if (startTime) args.start = startTime.replace("Z", "");
+            if (endTime) args.end = endTime.replace("Z", "");
             if (operations) args.operations = operations;
             // if (meta_not) args.meta_not = meta_not
 
