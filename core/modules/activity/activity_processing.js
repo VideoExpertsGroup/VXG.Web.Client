@@ -1,5 +1,6 @@
 $( document ).ready(function() {
     var activity_window = window.opener;
+    window.skin = {};
 
     var thumburl = activity_window.event_processing.thumb_url ? activity_window.event_processing.thumb_url : "core/modules/cameras/camera.svg";
     var cameraName = activity_window.event_processing.camera_name;
@@ -20,7 +21,14 @@ $( document ).ready(function() {
     $(".event-camera").html(cameraName);
     $(".event-loc").html(location);
     $(".event-type").html(eventDisplayName);
-    $(".event-status").html(eventStatus == "no_status" ? $.t('action.new') : eventStatus);
+    if (eventStatus == "no_status") {
+        $(".event-status-new").show();
+        $(".event-status").hide();
+    } else {
+        $(".event-status").html(eventStatus);
+        $(".event-status-new").hide();
+        $(".event-status").show();
+    }
 
     $(".event-thumbnail").attr("src", thumburl);
     $(".raw-data").text(atob(activity_window.event_processing.meta));
@@ -307,12 +315,11 @@ async function getEventVideo(access_token, eventTime) {
         return new Promise(function(resolve, reject){setTimeout(function(){reject();}, 0);});
     let args = {};
 
-    var endTimeInt = new Date(eventTime).getTime() + 1*30*1000;
-    var endTime = new Date(endTimeInt).toISOString();
-
+    var endTimeInt = new Date(eventTime).getTime()// + 1*60*1000;
+    var endTime = new Date(endTimeInt).toISOString().replace("Z", "");
     
-    var startTimeInt = new Date(eventTime).getTime() - 1*40*1000;
-    var startTime = new Date(startTimeInt).toISOString();
+    var startTimeInt = new Date(eventTime).getTime()// - 1*60*1000;
+    var startTime = new Date(startTimeInt).toISOString().replace("Z", "");
 
     var storageUrl = `${base_url}/api/v2/storage/data/?start=${startTime}&end=${endTime}&order_by=-time`;
 
