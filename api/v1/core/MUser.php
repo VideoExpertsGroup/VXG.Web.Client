@@ -1460,7 +1460,6 @@ class MUser{
     }
 
     public function detachLocationFromUser($location){
-        xdebug_break();
         MCore::$core->pdo->query('DELETE from "userCamera" where "userID"=? and "location"=?',[$this->id, $location]);
     }
 
