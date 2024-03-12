@@ -189,8 +189,8 @@ window.screens['reports'] = {
                     var result = event.meta && event.meta.result ? event.meta.result : $.t('reports.noResult');
                     var description = event.meta && event.meta.description ? event.meta.description : $.t('reports.noDescription');
 
-                    var user_id = event.meta && event.meta.user_id ? event.meta.user_id.replaceAll("_AT_", "@").replaceAll("_DOT_", ".") : $.t('reports.notUserAssigned');
-                    var user_ip = event.meta && event.meta.ip_address ? event.meta.ip_address : $.t('reports.notUserAssigned');
+                    var user_id = event.meta && event.meta.user_id ? event.meta.user_id.replaceAll("_AT_", "@").replaceAll("_DOT_", ".") : $.t('reports.noUserAssigned');
+                    var user_ip = event.meta && event.meta.ip_address ? event.meta.ip_address : $.t('reports.noUserAssigned');
 
                     eventsTable += `
                         <tr>
