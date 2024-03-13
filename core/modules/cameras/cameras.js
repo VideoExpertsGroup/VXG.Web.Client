@@ -496,7 +496,8 @@ window.screens['cameras'] = {
                     group: tableGroup,
                     action: `<div class="settings" access_token="${list[i].token}" cam_id="${channelID}" gateway_id="${gatewayId}" gateway_token="${gatewayToken}">
                     <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
-                </div>`
+                </div>`,
+                    hide: 1
                 })
 
                 count++;
@@ -563,6 +564,11 @@ window.screens['cameras'] = {
                         field: "action",
                         title: $.t('common.actionTitle')
                     },
+                    {
+                        field: "hide",
+                        title: "hide",
+                        filterControl: "input",
+                    }
                 ]
 
                 var isGridView = self.getState().grid>1 ? true : false;
@@ -642,6 +648,7 @@ window.screens['cameras'] = {
                     $('.bootstrap-table-filter-control-location').val(localStorage.getItem("camera_location" + userId));
                     $('.bootstrap-table-filter-control-group').val(localStorage.getItem("camera_group" + userId));
                     $('.bootstrap-table-filter-control-name').val(localStorage.getItem("camera_name" + userId));
+                    $('.bootstrap-table-filter-control-hide').val('1');
                     if (self.getState().grid == 0 || forLocation) {
                         $("#table").show();
                         $('.camlist').show();
