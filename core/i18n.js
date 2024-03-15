@@ -14,7 +14,7 @@ $(async function () {
         // init i18next
         // for all options read: https://www.i18next.com/overview/configuration-options
         .init({
-            debug: true,
+            debug: false,
             lng: 'en',
             fallbackLng: 'en',
             resources: {
@@ -42,10 +42,12 @@ function localize() {
     window.skin.bottom_line = `<div style="padding-bottom: 20px;text-align: center;"><a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/Privacy_Statement.html">${$.t('common.privacyPolicy')}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/EULA.html">${$.t('common.termOfUse')}</a></div><div style="color:#808080;text-align:center;line-height: 14px;padding-bottom: 15px;">(c) 2017-2022,<br>${$.t('footer.miniCopyright')}</div>`;
     window.skin.login_bottom_line = `<div style="padding-bottom: 20px;text-align: center;"><a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/Privacy_Statement.html">${$.t('common.privacyPolicy')}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="https://www.videoexpertsgroup.com/legal-docs/EULA.html">${$.t('common.termOfUse')}</a></div><div style="color:#808080;text-align:center;line-height: 14px;padding-bottom: 15px;">${$.t('footer.copyright')}</div>`;
 
-    $('body').localize();
+    try {
+      $('body').localize();
+    } catch {}
 
     $('title').text($.t('head.fullTitle'));
     $('input[placeholder]').each(function () {
-        $(this).attr('placeholder', $.t($(this).attr('placeholder')));
+      $(this).attr('placeholder', $.t($(this).attr('placeholder')));
     });
 }
