@@ -55,7 +55,7 @@ function camGrid(size, /* 2,3,4 */ telconet = false){
     });
     $('.screens .monitoring .camgrid2 player').each(function(){
         this.on_access_token_change = function(token, telconet = false){
-            let access_token = $(this).attr('access_token');
+            let access_token = $(this).attr('access_token') ? $(this).attr('access_token') : token;
             let id = $(this).attr('id');
             let state = window.screens['monitoring'].getState();
             if (telconet) {
@@ -103,7 +103,7 @@ window.screens['monitoring'] = {
     'menu_icon': '<i class="fa fa-th-large" aria-hidden="true"></i>',
     'html': path+'monitoring.html',
     'css':[path+'monitoring.css'],
-    'js':[path.substr(0,path.length-16)+'webcontrols/camera_map.js'],
+    'js':["core/webcontrols/camera_map.js"],
     'stablecss':[path+'monitoring.css'],
     'playerList': null,
     'on_search':function(text){
@@ -260,7 +260,9 @@ window.screens['monitoring'] = {
                     var channelToken = $(cam_el).attr("channel_token");
                     pl.attr('access_token',channelToken);
                     if (typeof pl[0].on_access_token_change === "function") pl[0].on_access_token_change(channelToken);
-                    pl[0].play();
+                    setTimeout(function() {
+                        pl[0].play();
+                    }, 200)
                     gridNum++;
                 })
             });
@@ -309,16 +311,14 @@ window.screens['monitoring'] = {
                 self.wrapper.find('.camlist-monitoring').removeClass('nobloor');
         });
         var hash = window.location.hash;
-        var queryStr = hash.replaceAll("%22", "").substring(hash.indexOf("=")+1);
-        var isTelconet = queryStr.length > 0 ? true : false;
+        var telconetIdStr = hash.includes("?camera_id=") ? hash.replaceAll("%22", "").substring(hash.indexOf("=")+1) : "";
+        var isTelconet = telconetIdStr.length > 0 ? true : false;
 
         camGrid(this.getState().grid, isTelconet);
         self.wrapper.addClass('grid');
         setTimeout(function(){onCameraScreenResize();},100);
         self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
         
-        var hash = window.location.hash;
-        var telconetIdStr = hash.replaceAll("%22", "").substring(hash.indexOf("=")+1);
         if (telconetIdStr.length > 0) {
             var telconetIdArr = telconetIdStr.split(",");
 
@@ -417,7 +417,7 @@ window.screens['monitoring'] = {
                     <li class="cam-dropdown-item grid44"><a href="javascript:;">4 x 4</a></li>
                 </ul>
             </div>`);
-        
+
         var notesMode = sessionStorage.notesMode;
         if (notesMode) {
             if (notesMode == "disabled") $(".addnote").addClass("disabled");

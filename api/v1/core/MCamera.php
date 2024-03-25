@@ -331,8 +331,8 @@ class MCamera{
             $channel = StreamLandAPI::getChannel($channel_id);
             if (isset($channel['errorDetail'])) 
                 error(556, 'Failed to get channel: '. $channel['errorDetail']);
-            if (substr($channel['source']['url'],0,4)=='onvi' || substr($channel['source']['url'],0,4)=='http')
-                $data = ['rec_mode'=>'server_by_event'];
+            //if (substr($channel['source']['url'],0,4)=='onvi' || substr($channel['source']['url'],0,4)=='http')
+            //    $data = ['rec_mode'=>'server_by_event'];
         }
 
         $channel = StreamLandAPI::updateChannel($channel_id,$data);

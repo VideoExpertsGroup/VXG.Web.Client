@@ -473,6 +473,30 @@ padding-left: 33px;
     font-weight: 400;
 }
 
+.location-hierarchy.locations-page.province-ul {
+    width: 55vw;
+    padding: 10px 10px 20px 10px;
+    background-color: white;
+    max-height: 80vh;
+    height: unset;
+}
+
+.loc-dropdown > .location-btn-cont:has(+ .EMPTY-ul) > .location-arrow {
+    visibility: hidden;
+    width: 0;
+}
+
+span.loc-name {
+    display: flex;
+    align-items: center;
+    width: max-content;
+}
+
+i.camera-view {
+    font-size: 12px;
+    padding-right: 7px;
+}
+
 input:before {
     cursor: pointer;
     content: '';

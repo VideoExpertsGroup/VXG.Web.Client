@@ -529,6 +529,38 @@ CameraCloudEditControl = function(){
                                 localStorage.cameraList = JSON.stringify(cameraList);
                             }
 
+                            var tableData = $("#table").bootstrapTable('getData');
+                            var insertIndex = tableData.length;
+                            var order = insertIndex + 1;
+                            let captured = newCam && newCam.meta && newCam.meta.capture_id && vxg.user.src.capture_id == newCam.meta.capture_id ? ' captured' : '';
+                            let statusBlock = '<div class="caminfo tablecaminfo '+newCam.status+' '+(newCam.status=='active'?' online':'')+'">'+ (newCam.status=='active'?$.t('common.online'):$.t('common.offline'))+'</div>';
+                            var tableGroup = newCam.meta && newCam.meta.group ? newCam.meta.group : "";
+                            if (tableGroup.toLocaleLowerCase() == "favorite" || tableGroup.toLocaleLowerCase() == "favourite") {
+                                tableGroup = $.t('common.favourite');
+                            }
+                            $("#table").bootstrapTable('insertRow', {
+                                index: insertIndex,
+                                row: {
+                                    camId: newCam.id,
+                                    order: order,
+                                    state: `<label class="filter-label custom-checkbox" style="margin-left: 25%;">
+                                    <input type="checkbox" class="groupCamCheck" cam_name="${newCam.name}" cam_id="${newCam.id}" cam_order="${order}">
+                                    <span class="checkmark"></span>	
+                                </label>`,
+                                    id: `<div class="camerablock${captured}" access_token="${newCam.id}" id="scrollto${newCam.id}">
+                                    <campreview onclick_toscreen="tagsview"></campreview>`,
+                                    status: statusBlock,
+                                    recording: newCam.recording ? $.t('action.yes') : $.t('action.no'),
+                                    name: newCam.name,
+                                    location: newCam.meta && newCam.meta.location ? newCam.meta.location : "",
+                                    group: tableGroup,
+                                    action: `<div class="settings" access_token="${newCam.token}" cam_order="${order}" cam_id="${newCam.id}" gateway_id="${null}" gateway_token="${null}">
+                                    <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
+                                </div>`,
+                                    hide: 1
+                                }
+                            })
+
                             self.hidewait();
                             $(".server-status").hide()
                             self.dispatchEvent(self.submited_event);

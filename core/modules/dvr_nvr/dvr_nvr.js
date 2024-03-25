@@ -98,8 +98,8 @@ window.screens['recorders'] = {
             let captured = camInfo.meta.capture_id && vxg.user.src.capture_id == camInfo.meta.capture_id ? ' captured' : '';
             tableData.push({
                 order: count + 1,
-                id: `<div class="camerablock${captured}" access_token="${camInfo.id}" id="scrollto${camInfo.id}">
-                <campreview onclick_toscreen="tagsview"></campreview>`,
+                id: `<div class="camerablock${captured}" dvr_id="${currentDvr.id}">
+                <campreview onclick_toscreen="dvr_cams"></campreview>`,
                 name: currentDvr.name,
                 location: camInfo.meta.location,
                 group: camInfo.meta.group,
@@ -128,16 +128,16 @@ window.screens['recorders'] = {
             columns: columns,
             sortName: 'order',
             formatRecordsPerPage (pageNumber) {
-                return `${pageNumber} ${$.t('bootstrapTable.camerasPerPage')}`
+                return `${pageNumber} ${$.t('bootstrapTable.recordersPerPage')}`
             },
             formatShowingRows (pageFrom, pageTo, totalRows, totalNotFiltered) {
                 const plural = totalRows > 1 ? 's' : ''
             
                 if (totalNotFiltered !== undefined && totalNotFiltered > 0 && totalNotFiltered > totalRows) {
-                    return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.camera')}${plural} (${$.t('bootstrapTable.filteredTotal')}  ${totalNotFiltered} ${$.t('common.camera')}${plural})`
+                    return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.recorder')}${plural} (${$.t('bootstrapTable.filteredTotal')}  ${totalNotFiltered} ${$.t('common.recorder')}${plural})`
                 }
                 
-                return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.camera')}${plural}`
+                return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.recorder')}${plural}`
             },
             formatClearSearch () {
                 return $.t('bootstrapTable.clearFilters')

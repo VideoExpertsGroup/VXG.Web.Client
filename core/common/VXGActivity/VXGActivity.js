@@ -540,7 +540,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 //	    +	'					<div>' + meta + '</div>' 	    
 	    +	'					<small class="text-muted">' + timeString + '</small>' 
 	    +	'				</div>'
-	    +	'				<div class="event-name ' + eventStatus + '">' 
+	    +	'				<div class="event-name ' + eventStatus + '"  id="status_'+ this.id + '">' 
 		+	'					<span>' + self.ActivitiesList_resolve_name(this.name)  + '</span>'
 		+	'				</div>' 
 	    +	'			</div>' 
@@ -583,6 +583,8 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 		window.event_processing.user_email = vxg.user.src.email.replaceAll("@", "_AT_").replaceAll(".", "_DOT_");
 
 		window.event_processing.metascreen = window.screens['camerametaview'];
+
+		window.event_processing.updateEvent = controller.updateEvent;
 
 		var url = window.location.origin + "/activity_processing.html";
 		window.open(url, '_blank').focus();
@@ -803,6 +805,13 @@ VXGActivityController.prototype.moreData = function moreData (params) {
 		}
 	}
     }
+}
+
+VXGActivityController.prototype.updateEvent = function updateEvent(event_id, event_status, args) {
+	var event = $('[eventid="'+event_id+'"]');
+	$(event).attr("event_status", event_status);
+	$('#status_'+event_id).removeClass("no_status").removeClass("processed").removeClass("in_progress").addClass(args.meta.process);
+	$(event).attr("meta", btoa(JSON.stringify(args.meta, null, 2)))
 }
 
 ///acceptVXGFilter - third method to get data, used previos parameters defined by showActivityList, but with new object-filter

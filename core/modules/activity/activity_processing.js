@@ -152,9 +152,22 @@ $( document ).ready(function() {
         updateMetaFunctions.push(createMetaTag(eventId, token, {"tag": "end_time", "data": end.toISOString()}));
 
         Promise.all(updateMetaFunctions).then(function() {
-            console.log("Changed event processing status to in_progress");
-            window.opener.location.reload(false);
-            window.close();
+            console.log("Changed event processing status to completed");
+            var args = {
+                event_status: "processed",
+                current_meta: meta
+            }
+
+            if (alarmStatus) args.alarm_status = alarmStatus;
+            if (description) args.description = description;
+            return getEventInfo(eventId, token).then(function(eventInfo) {
+                window.opener.event_processing.updateEvent(eventId, "Completed", eventInfo);
+                window.close();
+            }, function(err) {
+                console.log(err.responseText);
+                window.close();
+            })
+
         }, function(err) {
             console.log("Error changing processing status: " + err.responseText);
         });
@@ -176,9 +189,20 @@ $( document ).ready(function() {
         if (description) updateMetaFunctions.push(checkAndSaveTag(eventId, token, "description", meta.description, description));
 
         Promise.all(updateMetaFunctions).then(function() {
-            console.log("Changed event processing status to in_progress");
-            window.opener.location.reload(false);
-            window.close();
+            var args = {
+                event_status: "in_progress",
+                current_meta: meta
+            }
+
+            if (alarmStatus) args.alarm_status = alarmStatus;
+            if (description) args.description = description;
+            return getEventInfo(eventId, token).then(function(eventInfo) {
+                window.opener.event_processing.updateEvent(eventId, "In Progress", eventInfo);
+                window.close();
+            }, function(err) {
+                console.log(err.responseText);
+                window.close();
+            })
         }, function(err) {
             console.log("Error changing processing status: " + err.responseText);
         });
@@ -203,6 +227,20 @@ async function checkAndSaveTag(eventId, token, tagKey, currentTagVal, newTagVal)
             alert("Error updating tag: " + err.responseText)
         });
     }
+}
+
+async function getEventInfo(eventId, accessToken) {
+    let base_url = getBaseURLFromToken(accessToken);
+    if (!base_url) 
+        return new Promise(function(resolve, reject){setTimeout(function(){reject();}, 0);});
+
+    var storageUrl = `${base_url}/api/v2/storage/events/${eventId}/?include_meta=true`
+    return $.ajax({
+        type: 'GET',
+        url: storageUrl,
+        headers: {'Authorization': 'Acc ' + accessToken},
+        contentType: "application/json"
+    });
 }
 
 async function createMetaTag(eventId, accessToken, proccessingData) {

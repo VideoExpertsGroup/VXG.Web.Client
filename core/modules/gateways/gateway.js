@@ -26,7 +26,14 @@ window.screens['gateway'] = {
     },
     'on_init':function(){
         let self = this;
-        core.elements['header-right'].prepend(`<div class="transparent-button active addgateway" ifscreen="add_gateway" onclick_toscreen="add_gateway"><span class="add-icon">+</span><span>${$.t('gateways.addGateway')}</span></div>`);
+        core.elements['header-right'].prepend(`
+                                        <div class="transparent-button active addgateway" ifscreen="add_gateway" onclick_toscreen="add_gateway">
+                                            <span class="add-icon">+</span>
+                                            <span>${$.t('gateways.addGateway')}</span>
+                                        </div>`);
+        core.elements['header-right'].prepend('' +
+            '<a class="gateway-download" href="https://dashboard.videoexpertsgroup.com/downloads/uplink-gateway/" target="_blank" data-i18n="servers.downloadPackage">' + $.t('servers.downloadPackage') + '</a>');
+
         return defaultPromise();
     },
     loadGateways: function() {
@@ -127,16 +134,16 @@ window.screens['gateway'] = {
             columns: columns,
             sortName: 'order',
             formatRecordsPerPage (pageNumber) {
-                return `${pageNumber} ${$.t('bootstrapTable.camerasPerPage')}`
+                return `${pageNumber} ${$.t('bootstrapTable.gatewaysPerPage')}`
             },
             formatShowingRows (pageFrom, pageTo, totalRows, totalNotFiltered) {
                 const plural = totalRows > 1 ? 's' : ''
             
                 if (totalNotFiltered !== undefined && totalNotFiltered > 0 && totalNotFiltered > totalRows) {
-                    return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.camera')}${plural} (${$.t('bootstrapTable.filteredTotal')}  ${totalNotFiltered} ${$.t('common.camera')}${plural})`
+                    return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.gateway')}${plural} (${$.t('bootstrapTable.filteredTotal')}  ${totalNotFiltered} ${$.t('common.gateway')}${plural})`
                 }
                 
-                return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.camera')}${plural}`
+                return `${$.t('bootstrapTable.showing')} ${pageFrom} ${$.t('bootstrapTable.to')} ${pageTo} ${$.t('bootstrapTable.of')} ${totalRows} ${$.t('common.gateway')}${plural}`
             },
             formatClearSearch () {
                 return $.t('bootstrapTable.clearFilters')

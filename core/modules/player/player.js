@@ -162,11 +162,14 @@ window.controls['campreview'] = {
         }
         this.drop = function(e) {
             if (!el.dragged) return;
+            e.preventDefault();
             let pl = $(document.elementFromPoint(e.clientX, e.clientY)).parents('player');
             if (!pl.length) return;
             pl.attr('access_token',el.channeltoken);
             if (typeof pl[0].on_access_token_change === "function") pl[0].on_access_token_change(el.channeltoken);
-            pl[0].play();
+            setTimeout(function() {
+                pl[0].play();
+            }, 200)
         }
 
         $(el).on('dragstart',function(event){
@@ -249,11 +252,14 @@ window.controls['camfield'] = {
         }
         this.drop = function(e) {
             if (!el.dragged) return;
+            e.preventDefault();
             let pl = $(document.elementFromPoint(e.clientX, e.clientY)).parents('player');
             if (!pl.length) return;
             pl.attr('access_token',el.channeltoken);
             if (typeof pl[0].on_access_token_change === "function") pl[0].on_access_token_change(el.channeltoken);
-            pl[0].play();
+            setTimeout(function() {
+                pl[0].play();
+            }, 200)
         }
 
         $(el).on('dragstart',function(event){

@@ -229,10 +229,12 @@ TODO: add auth without firebase
                           for (let i in window.core.screen_order)
                               if (window.core.screen_order[i]=="login" || window.core.screen_order[i]=="signup" || window.core.screen_order[i]=="forgot") 
                                    delete window.core.screen_order[i];
+                          if (localStorage.menuState == "closed") $('.close-menu').trigger( "click" );
                           core.elements['global-loader'].hide();
                           $('body').removeClass('loginprocess');
                       }, function(){
                           if (window.core.screen_order[0]=="login") window.core.screen_order.shift();
+                          if (localStorage.menuState == "closed") $('.close-menu').trigger( "click" );
                           core.elements['global-loader'].hide();
                           $('body').removeClass('loginprocess');
                       });
@@ -260,6 +262,7 @@ TODO: add auth without firebase
         localStorage.removeItem("cameraList_expiry");
         localStorage.removeItem("locPath");
         localStorage.removeItem("locationHierarchy");
+        localStorage.removeItem("menuState");
 
 	    window.location.href = '/#';  
         });

@@ -1377,7 +1377,8 @@ body:not(.recorders) .header-right .adddvr {
     display: none;
 }
 
-body:not(.gateway) .header-right .addgateway {
+body:not(.gateway) .header-right .addgateway,
+body:not(.gateway) .header-right .gateway-download {
     display: none;
 }
 

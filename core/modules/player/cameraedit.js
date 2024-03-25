@@ -27,6 +27,13 @@ function showNextTier(event, clicked, currentLocType) {
     var locType = currentLocType.charAt(0).toUpperCase() + currentLocType.slice(1)
     var nextLocLevel = locTypes.indexOf(locType) + 1;
     $(clicked).parent().parent().find("." + locTypes[nextLocLevel].toLocaleLowerCase() + "-ul").toggle();
+    if ($(clicked).hasClass("fa-caret-up")) {
+        $(clicked).removeClass('fa-caret-up');
+        $(clicked).addClass('fa-caret-down');
+    } else {
+        $(clicked).addClass('fa-caret-up');
+        $(clicked).removeClass('fa-caret-down');
+    }
 }
 
 function chooseLocation(currentLocEle) {
@@ -545,6 +552,39 @@ CameraEditControl = function(){
 								cameraList.meta.total_count = total + 1;
 								localStorage.cameraList = JSON.stringify(cameraList);
 							}
+                            
+                            var tableData = $("#table").bootstrapTable('getData');
+                            var insertIndex = tableData.length;
+                            var order = insertIndex + 1;
+                            let captured = newCam && newCam.meta && newCam.meta.capture_id && vxg.user.src.capture_id == newCam.meta.capture_id ? ' captured' : '';
+                            let statusBlock = '<div class="caminfo tablecaminfo '+newCam.status+' '+(newCam.status=='active'?' online':'')+'">'+ (newCam.status=='active'?$.t('common.online'):$.t('common.offline'))+'</div>';
+                            var tableGroup = newCam.meta && newCam.meta.group ? newCam.meta.group : "";
+                            if (tableGroup.toLocaleLowerCase() == "favorite" || tableGroup.toLocaleLowerCase() == "favourite") {
+                                tableGroup = $.t('common.favourite');
+                            }
+                            $("#table").bootstrapTable('insertRow', {
+                                index: insertIndex,
+                                row: {
+                                    camId: newCam.id,
+                                    order: order,
+                                    state: `<label class="filter-label custom-checkbox" style="margin-left: 25%;">
+                                    <input type="checkbox" class="groupCamCheck" cam_name="${newCam.name}" cam_id="${newCam.id}" cam_order="${order}">
+                                    <span class="checkmark"></span>	
+                                </label>`,
+                                    id: `<div class="camerablock${captured}" access_token="${newCam.id}" id="scrollto${newCam.id}">
+                                    <campreview onclick_toscreen="tagsview"></campreview>`,
+                                    status: statusBlock,
+                                    recording: newCam.recording ? $.t('action.yes') : $.t('action.no'),
+                                    name: newCam.name,
+                                    location: newCam.meta && newCam.meta.location ? newCam.meta.location : "",
+                                    group: tableGroup,
+                                    action: `<div class="settings" access_token="${newCam.token}" cam_order="${order}" cam_id="${newCam.id}" gateway_id="${null}" gateway_token="${null}">
+                                    <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
+                                </div>`,
+                                    hide: 1
+                                }
+                            })
+
 
 						}, function(err) {
 							self.hidewait();
@@ -878,6 +918,10 @@ CameraEditControl = function(){
         var locationDialog = `
             <h4 class="locations-title">Locations</h4>
             ${dropdownTreeStr}
+            <p class="location-info"> 
+                To add a new location under an existing location, choose the existing location from the list above. 
+                Then add the name or list of names seperated by commas you want to add under that chosen location.
+            </p>
             <div class="existing-loc-cont">
                 <label for="show_existing_loc">Existing Location:</label>
                 <div class="existing-input-cont">

@@ -64,7 +64,7 @@
     "cars": "Cars",
     "eventID": "Event ID",
     "eventTime": "Event Time",
-    "precessingStatus": "Processing Status",
+    "processingStatus": "Processing Status",
     "started": "Started",
     "completed": "Completed",
     "result": "Result",
@@ -149,14 +149,28 @@
       "new": "New",
       "inProgress": "In progress",
       "completed": "Completed",
-      "precessed": "Processed",
+      "processed": "Processed",
       "notHandled": "Not Handled",
       "notStarted": "Not Started",
       "notCompleted": "Not Completed"
     }
   },
+  "locationsPage": {
+    "noLocations": "There are currently no locations set on this account.",
+    "noCams": "There are currently no cameras in {{genLoc}} for {{prevLoc}}",
+    "goBack": "Go Back",
+    "locationTier": {
+      "one": "Tier 1",
+      "two": "Tier 2",
+      "three": "Tier 3",
+      "four": "Tier 4",
+      "five": "Tier 5"
+    }
+  },
   "bootstrapTable": {
     "camerasPerPage": "Cameras per Page",
+    "gatewaysPerPage": "Gateways per Page",
+    "recordersPerPage": "Recorders per Page",
     "showing": "Showing",
     "to": "to",
     "of": "of",
@@ -255,8 +269,8 @@
     "fullTitle": "VXG Cloud One"
   },
   "footer": {
-    "copyright": "(c) 2017-2022, VXG Inc. All right reserved.",
-    "shortCopyright": "2022 Inc. | All Rights Reserved",
+    "copyright": "(c) 2017-2024, VXG Inc. All right reserved.",
+    "shortCopyright": "2024 Inc. | All Rights Reserved",
     "miniCopyright": "VXG Inc. All right reserved."
   },
   "layout": {
@@ -300,7 +314,7 @@
       "noFavourites": "No Favorited cameras. Add a camera to the group \"Favorite\" to see it on the dashboard."
     },
     "activity": {
-      "noFavourites": "No events in Favourited cameras"
+      "noFavourites": "No events in Favorited cameras"
     }
   },
   "cameras": {
@@ -435,7 +449,7 @@
     "addGateway": "Add Gateway",
     "editGateway": "Edit Gateway",
     "modifyGateway": "Modify Gateway",
-    "gatewayCams": "Gateway Cams",
+    "gatewayCams": "Gateway Cameras",
     "noCamerasOnThisGateway": "No Cameras on this Gateway",
     "addCameraToGateway": "Add Camera To Gateway",
     "deleteConfirm": {
@@ -449,6 +463,8 @@
     "addRecorder": "Add Recorder",
     "modifyRecorder": "Modify Recorder",
     "editRecorder": "Edit Recorder",
+    "noCamerasOnThisRecorder": "No Cameras on this Recorder",
+    "recorderCams": "Recorder Cameras",
     "deleteConfirm": {
       "title": "Do you want to delete all cameras connected via this Recorder?",
       "content": "It can't be cancelled"

@@ -2,8 +2,7 @@
 position:relative;
 }
 .camerasettings .settabbtn{
-position: absolute;
-    top: 545px;
+    margin-top: 15px;
 }
 
 .camerasettings cameraeditsettings{

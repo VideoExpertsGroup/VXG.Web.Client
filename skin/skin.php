@@ -23,6 +23,7 @@ $skin["scripts"]["partner"]=[
     "core/modules/users/users.js",
     "core/modules/dvr_nvr/dvr_nvr.js",
     "core/modules/dvr_nvr/add_dvr.js",
+    "core/modules/dvr_nvr/dvr_cams.js",
     "core/modules/gateways/gateway.js",
     "core/modules/gateways/add_gateway.js",
     "core/modules/gateways/gateway_cams.js",

@@ -203,7 +203,7 @@ option.dvr-disabled:disabled {
     background-color: #d0d0d0;
 }
 
-.disabled {
+.disabled :not(.cal-day) :not(.edittag) {
     pointer-events: none;
     background-color: #e4e4e4;
 }
@@ -220,6 +220,10 @@ option.dvr-disabled:disabled {
     cursor: pointer;
 }
 
+.loc-dropdown > .location-btn-cont:has(+ .EMPTY-ul) > .location-arrow {
+    visibility: hidden;
+}
+
 .location-border {
     padding-bottom: 25px;
     border-bottom: thin solid var(--main-color);
@@ -234,6 +238,12 @@ option.dvr-disabled:disabled {
 .location-hierarchy {
     list-style-type: none;
 }
+
+.location-info {
+    max-width: 620px;
+    margin-bottom: 5px;
+}
+
 .province-ul {
     padding-left: 0;
     min-width: 500px;
@@ -250,7 +260,7 @@ option.dvr-disabled:disabled {
 }
 
 .location-arrow {
-    width: 10%;
+    flex-grow: 1;
     text-align: end;
     padding: 5px 0;
 }

@@ -10,6 +10,7 @@ vxg.cameras.one_time_load_limit = vxg.cameras.one_time_load_limit || 1000; // ma
 vxg.cameras.random_list = vxg.cameras.random_list || {};         // random list of camera structures
 vxg.cameras.continuous_list = vxg.cameras.continuous_list || [];      // continuous list of camera structures
 const locTypes = ["Province", "City", "Zone", "Circuit", "Subcircuit"];
+const genLocTypes = ["Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"];
 
 ////////////////////////////////////////////
 // Helper functions

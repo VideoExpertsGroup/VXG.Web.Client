@@ -735,6 +735,7 @@ $( document ).ready(function() {
             $('.global-menu .menu-icon').css("margin-right", "200px")
             $('.left-bottom').css('visibility', 'hidden');
             $('.bottom-global-menu').css('visibility', 'hidden');
+            localStorage.menuState = "closed";
         } else {
             $(this).removeClass('closed');
             $(this).addClass('open');
@@ -747,6 +748,7 @@ $( document ).ready(function() {
             $('.global-menu .menu-icon').css("margin-right", "25px")
             $('.left-bottom').css('visibility', 'visible');
             $('.bottom-global-menu').css('visibility', 'visible');
+            localStorage.menuState = "open";
         }
     })
     setTimeout(function(){

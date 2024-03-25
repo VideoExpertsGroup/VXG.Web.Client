@@ -95,10 +95,6 @@ window.screens['reports'] = {
             }
             if (cameraIds.length > 0) args.camid = cameraIds.join(",");
 
-            var userIdStr = $("#userid").val();
-            var userId = userIdStr ? userIdStr.replaceAll("@", "_AT_").replaceAll(".", "_DOT_") : null;
-            if (userId) meta = "user_" + userId;
-
             var statuses = [];
             if ($("[name='not_handled']").is(':checked')) statuses.push($("[name='not_handled']").val());
             if ($("[name='in_progress']").is(':checked')) statuses.push($("[name='in_progress']").val());
@@ -111,11 +107,8 @@ window.screens['reports'] = {
                 else if (!statuses.includes("status_in_progress") && !statuses.includes("status_processed"))
                     meta_not = "status_in_progress,status_processed";
             } else if (statuses) {
-                meta += meta ? "," + statuses.join(",") : statuses.join(",");
+                meta = statuses.join(",");
             }
-
-            var onlyTrueResults = $("[name='result_true']").is(':checked') ? true : false;
-            if (onlyTrueResults) meta += meta ? ",result_true" : "result_true";
 
             var startTimeStr = $("#startTimeFilter").val();
             var endTimeStr = $("#endTimeFilter").val();
@@ -157,6 +150,25 @@ window.screens['reports'] = {
             
             vxg.api.cloud.getEventslist(vxg.api.cloud.allCamsToken, 200, undefined, args).then(function(ret) {
                 var events = ret.objects;
+
+                // filter for user
+                var userIdStr = $("#userid").val();
+                var userId = userIdStr ? userIdStr.replaceAll("@", "_AT_").replaceAll(".", "_DOT_") : null;
+
+                // filter for result
+                var onlyTrueResults = $("[name='result_true']").is(':checked') ? true : false;
+
+                var i = events.length;
+                while(i--) {
+                    if (events[i].meta === undefined && (userId || onlyTrueResults)) {
+                        events.splice(i, 1);
+                    } else if (userId && events[i].meta.user_id != userId) {
+                        events.splice(i, 1);
+                    } else if (onlyTrueResults && events[i].meta.result !== "true") {
+                        events.splice(i, 1);
+                    }
+                }
+
                 $(".reportslist").removeClass("noreports");
                 $(".reportslist").empty();
                 var eventsTable = `
@@ -165,7 +177,7 @@ window.screens['reports'] = {
                             <tr>
                                 <th>${$.t('common.eventID')}</th>
                                 <th>${$.t('common.eventTime')}</th>
-                                <th>${$.t('common.precessingStatus')}</th>
+                                <th>${$.t('common.processingStatus')}</th>
                                 <th>${$.t('common.started')}</th>
                                 <th>${$.t('common.completed')}</th>
                                 <th>${$.t('common.result')}</th>
@@ -180,7 +192,7 @@ window.screens['reports'] = {
                     var status = $.t('common.eventStatuses.notHandled');
                     if (event.meta && event.meta.process) {
                         if (event.meta.process == "in_progress") status = $.t('common.eventStatuses.inProgress');
-                        if (event.meta.process == "processed") status = $.t('common.eventStatuses.precessed');
+                        if (event.meta.process == "processed") status = $.t('common.eventStatuses.processed');
                     }
 
                     var startTime = event.meta && event.meta.start_time ? new Date(event.meta.start_time).toLocaleString().replace(",", "") : $.t('common.eventStatuses.notStarted');

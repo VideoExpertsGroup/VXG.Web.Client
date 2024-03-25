@@ -41,9 +41,6 @@ window.screens['tagsview'] = {
         });
     },
     'on_show':function(access_token, timestamp){
-        if ($('.close-menu').hasClass('open')) {
-            $('.close-menu').trigger('click');
-        }
         let self =this;
 	$("#sd_wrapper").hide();
 	$("#backup-ctrl").hide();

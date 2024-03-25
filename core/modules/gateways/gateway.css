@@ -36,6 +36,11 @@ font-size: 10px;
     font-weight: normal;
 }
 
+.gateway-download {
+    place-items: center;
+    display: inline-flex;
+}
+
 .tablecaminfo {
     font-size: 10px;
     background: gray;

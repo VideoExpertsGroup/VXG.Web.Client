@@ -1,86 +1,5 @@
 window.screens = window.screens || {};
 var path = window.core.getPath('cameras.js');
-//const locTypes = ["Province", "City", "Zone", "Circuit", "Subcircuit"];
-
-// function camGrid(size /* 2,3,4 */){
-//     let el = $('.screens .cameras .camgrid2')
-//     el.removeClass('grid3').removeClass('grid4');
-//     if (size==3) el.addClass('grid3');
-//     if (size==4) el.addClass('grid4');
-//     let td = $('.screens .cameras .camgrid2 > div');
-//     let state = window.screens['cameras'].getState();
-//     if (!window.screens['cameras'].playerList) {
-//         try {
-//             //window.screens['cameras'].playerList = new CloudPlayerList("single-timeline", {timeline: true, calendar: true});
-//         } catch(e) {
-//             window.screens['cameras'].playerList = null;
-//         }
-//     }
-//     var preferredPlayerFormat = (window.skin.grid && window.skin.grid.preferredPlayerFormat)?(' preferredPlayerFormat="' + window.skin.grid.preferredPlayerFormat + '" ' ):('') ;
-    
-//     for (let i=0; i<td.length; i++){
-//         let access_token = state.cams['player'+i] ? ' access_token="'+state.cams['player'+i]+'"' : '';
-//         if ($(td[i]).hasClass('grid3')){
-//             if (size>=3 && td[i].innerHTML=='')
-//                 $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
-//             if (size<=2)
-//                 $(td[i]).empty();
-//         } else if ($(td[i]).hasClass('grid4')){
-//             if (size>=4 && td[i].innerHTML=='')
-//                 $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
-//             if (size<=3)
-//                 $(td[i]).empty();
-//         } else {
-//             if (size<2)
-//                 $(td[i]).empty();
-//             else if (td[i].innerHTML=='')
-//                $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
-//         }
-//     }
-
-//     let p = $('.screens .cameras .camgrid2 player').off('dblclick').on('dblclick',function(){
-//         if (!$(this).attr('access_token')) return;
-//         let the = this;
-//         dialogs['mdialog'].activate(`<p>${$.t('cameras.deleteConfirm.title')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.no')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.yes')}</button></p>`).then(function(r){
-//             if (r.button!='delete') return;
-//             $(the).attr('access_token','');
-//             $(the)[0].on_access_token_change('');
-//             let id = $(the).attr('id');
-//             let state = window.screens['cameras'].getState();
-//             state.cams = state.cams || {};
-//             delete state.cams[id];
-//             window.screens['cameras'].setState(state);
-//         });
-
-//     });
-//     $('.screens .cameras .camgrid2 player').each(function(){
-//         this.on_access_token_change = function(){
-//             let access_token = $(this).attr('access_token');
-//             let id = $(this).attr('id');
-//             let state = window.screens['cameras'].getState();
-//             state.cams = state.cams || {};
-//             state.cams[id]=access_token;
-//             window.screens['cameras'].setState(state);
-
-//             if (window.screens['cameras'].playerList) {
-//                 let cloudPlayerId = this.newid;
-//                 var cloudPlayerObj = window.controls['player'].players['player'+cloudPlayerId];
-//                 if (access_token == '') {
-//                     window.screens['cameras'].playerList.removePlayerFromList(cloudPlayerObj)
-//                 }
-//                 window.screens['cameras'].playerList.killSyncPromise(true).then(() => {
-//                     setTimeout(() => {
-//                         window.screens['cameras'].playerList.killSyncPromise(false).then(() => {
-//                             window.screens['cameras'].playerList.synchronize([], true)
-//                         })
-//                     }, 1500);
-//                 })
-//             }           
-//         };        
-//     });
-//     onCameraScreenResize();
-// }
-
 (function( $ ){
 
   $.fn.simpleMenuPlugin = function(e) {
@@ -93,6 +12,8 @@ var path = window.core.getPath('cameras.js');
         let gatewayId = $(this).attr("gateway_id") == "null" ? "" : $(this).attr("gateway_id");
         let gatewayToken = $(this).attr("gateway_token") == "null" ? "" : $(this).attr("gateway_token");
 
+        let camOrder = $(this).attr("cam_order");
+
         sessionStorage.setItem("backToCam", channelID);
 
         var menu =  $(`
@@ -102,7 +23,7 @@ var path = window.core.getPath('cameras.js');
         <div class="listmenu-item cam-menu mchart dvrcam" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.metadata')} </span></div>
         <a class="listmenu-item cam-menu mwebui subuser-hide" id="ui-link" href="" target="_blank" style="display: none"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.cameraUI')} </span></a>
         <div class="listmenu-item cam-menu mconfigure dvrcam subuser-hide" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.config')} </span></div>
-        <div class="listmenu-item cam-menu mtrash subuser-hide" onclick="onCameraDelete('${channelID}', '${gatewayId}', '${gatewayToken}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>
+        <div class="listmenu-item cam-menu mtrash subuser-hide" onclick="onCameraDelete('${channelID}', '${gatewayId}', '${gatewayToken}', '${camOrder}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>
         </div>`);
         
         var userType = vxg.user.src.role;
@@ -201,34 +122,7 @@ function addSimpleMenu(_menu, settingsEle, e, isSubuser = false) {
         el.css('bottom',hh-e.clientY-10);
 }
 
-// function onEventsSet(e){
-//     let t = $(e).getNearParentAtribute('access_token');
-//     setTimeout(function(){$('.simplemenu').remove();},10);
-//     core.elements['global-loader'].show();
-//     vxg.cameras.getCameraByIDPromise(t).then(function(camera){
-//         return camera.getEventTypes().then(function(r){
-//             core.elements['global-loader'].hide();
-//             let event_types = r.event_types?r.event_types:[];
-//             let types = {'motion': $.t('common.eventTypes.motion'),'post_object_and_scene_detection': $.t('common.eventTypes.sceneDetection')};
-//             let text='';
-//             for (let i in types)
-//                 text += (text?'<br/>':'') + '<label><input class="svgbtnbefore" type="checkbox" name="'+i+'" '+(event_types.indexOf(i)!=-1?'checked':'')+'><span>'+types[i]+'</span></label>';
-//             dialogs['mdialog'].activate(`<h7>${$.t('cameras.selectEventTypes')}</h7><p></p>${text}<br/><p><br/><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="set" class="vxgbutton">${$.t('action.set')}</button></p>`).then(function(r){
-//                 if (r.button!='set') return;
-//                 core.elements['global-loader'].show();
-//                 let data = [];
-//                 for (let i in r.form) if (r.form[i]=='on') data.push(i);
-//                 camera.setEventTypes(data).finally(function(r){
-//                     core.elements['global-loader'].hide();
-//                 });
-//             });
-//         });
-//     }).catch(function(){
-//         core.elements['global-loader'].hide();
-//     });;
-// }
-
-function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null){
+function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null, camOrder = null){
     setTimeout(function(){$('.simplemenu').remove();},10);
 
     vxg.cameras.getCameraByIDPromise(channel_id).then(function(camera){
@@ -246,7 +140,7 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null){
         
                 if (savedCam && savedCam.url && savedCam.url != "nourl") {
                     gatewayUrl = savedCam.url;
-                    return doCameraDelete(camera, oldsubid, gatewayUrl);
+                    return doCameraDelete(camera, oldsubid, camOrder, gatewayUrl);
                 } else if (!savedCam) {
                     vxg.api.cloud.getCameraConfig(gatewayId, gatewayToken).then(function(config) {
                         return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
@@ -257,20 +151,20 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null){
                                 cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
                                 sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));  
                                 gatewayUrl = urlinfo.url;
-                                return doCameraDelete(camera, oldsubid, gatewayUrl);
+                                return doCameraDelete(camera, oldsubid, camOrder, gatewayUrl);
                             }
                             
                         });
                     })
                 }
             } else {
-                return doCameraDelete(camera, oldsubid);
+                return doCameraDelete(camera, oldsubid, camOrder);
             }
         });
     })
 }
 
-function doCameraDelete(camera, oldsubid, gatewayUrl = null) {
+function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null) {
     if (camera) camera.deleteCameraPromise(gatewayUrl).then(function(){
         var planIndex = vxg.user.src.plans ? vxg.user.src.plans.findIndex(p => p.id == oldsubid) : -1;
         if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
@@ -285,13 +179,14 @@ function doCameraDelete(camera, oldsubid, gatewayUrl = null) {
         }
 
         var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
+        var total = 0;
         if (cameraList) {
-            cameraList.objects = cameraList.objects.filter(c => c.id != camera.camera_id);
-            var total = parseInt(cameraList.meta.total_count);
+            var newCamList = cameraList.objects.filter(c => c.id != camera.camera_id);
+            cameraList.objects = newCamList;
+            total = parseInt(cameraList.meta.total_count);
             cameraList.meta.total_count = total - 1;
             localStorage.cameraList = JSON.stringify(cameraList);
         }
-
 
         localStorage.removeItem(camera.camera_id);
         var backToCam = sessionStorage.getItem("backToCam");
@@ -303,15 +198,36 @@ function doCameraDelete(camera, oldsubid, gatewayUrl = null) {
             sessionStorage.setItem("cameraUrls", JSON.stringify(removeCurrent));
         }
 
-        location.reload();
-        //core.elements['global-loader'].hide();
-        //return screens['cameras'].on_show();
+        if (gatewayUrl) updateBootstrapTable("#gatewaycams-table", camera.camera_id)
+
+        updateBootstrapTable("#table", camera.camera_id)
+
+        core.elements['global-loader'].hide();
+        return screens['cameras'].on_show();
     }, function(r){
         core.elements['global-loader'].hide();
         let err_text = $.t('toast.deleteCameraFailed');
         if (r && r.responseJSON && r.responseJSON.errorDetail) err_text = r.responseJSON.errorDetail;
         dialogs['mdialog'].activate(`<h7>${$.t('common.error')}</h7><p>${err_text}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
     });
+}
+
+function updateBootstrapTable(tableId, cameraId) {
+    var tableData = $(tableId).bootstrapTable("getData");
+
+    var camToRemove = tableData.filter(t => t.camId == cameraId); 
+    if (camToRemove.length == 0) return;
+    var camOrder = camToRemove[0].order;
+
+    if (camOrder) $(tableId).bootstrapTable('removeByUniqueId', camOrder);
+
+    while (camOrder < tableData.length) {
+        $(tableId).bootstrapTable('updateCell', {index: camOrder-1, field: 'order', value: camOrder.toString()});
+        var camIdCurr = tableData[camOrder-1].camId;
+        $("input.groupCamCheck[cam_id='"+camIdCurr+"']").attr("cam_order", camOrder);
+        $("div.settings[cam_id='"+camIdCurr+"']").attr("cam_order", camOrder);
+        camOrder++;
+    }
 }
 
 function onCameraScreenResize(){
@@ -354,7 +270,7 @@ window.screens['cameras'] = {
     'menu_icon': '<i class="fa fa-video-camera" aria-hidden="true"></i>',
     'html': path+'cameras.html',
     'css':[path+'cameras.css'],
-    'js':[path.substr(0,path.length-16)+'webcontrols/camera_map.js'],
+    'js':["core/webcontrols/camera_map.js"],
     'stablecss':[path+'scameras.css'],
     'playerList': null,
     'provincesLoaded': false,
@@ -393,7 +309,13 @@ window.screens['cameras'] = {
                 self.playerList.synchronize();
             }
         }, 1500)
-        if (this.getState().grid == 1) return this.loadProvinces(true); 
+        if (this.getState().grid == 1) {
+            if (localStorage.locationHierarchy == undefined)
+                return self.createLocationHierarchy();
+            else {
+                return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy), self);
+            }
+        }
         else if (this.getState().grid < 0) $('.cammap').show()
         else return this.loadCameras(filterarray, true)
     },
@@ -494,7 +416,7 @@ window.screens['cameras'] = {
                     name: list[i].src.name,
                     location: list[i].src.meta && list[i].src.meta.location ? list[i].src.meta.location : "",
                     group: tableGroup,
-                    action: `<div class="settings" access_token="${list[i].token}" cam_id="${channelID}" gateway_id="${gatewayId}" gateway_token="${gatewayToken}">
+                    action: `<div class="settings" access_token="${list[i].token}" cam_order="${count}" cam_id="${channelID}" gateway_id="${gatewayId}" gateway_token="${gatewayToken}">
                     <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
                 </div>`,
                     hide: 1
@@ -774,14 +696,14 @@ window.screens['cameras'] = {
                     event.preventDefault();
                     $(".location-tools").hide();
                     $(".camlist").hide();
-                    var locPathArr = localStorage.locPath.split(":");
-                    locPathArr.pop();
-                    if (locPathArr.length == 0) return self.loadProvinces();
     
-                    var backToLoc = locPathArr[locPathArr.length - 1];
-                    localStorage.locPath = locPathArr.join(":");
                     $('#table').bootstrapTable('removeAll');
-                    return self.loadLocationHierarchy(locPathArr.length, backToLoc);
+
+                    if (localStorage.locationHierarchy == undefined)
+                        self.createLocationHierarchy();
+                    else {
+                        self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy), self);
+                    }
                 });
 
             } else {
@@ -836,7 +758,139 @@ window.screens['cameras'] = {
         self.wrapper.removeClass('loader');
         return this.camera_list_promise;
     },
-    loadProvinces: function(fromShow = false) {
+    onLocationHierarchyLoaded: function(locationHierarchy) {
+        var self = this;
+        $('.camlist').hide();
+        $('.cammap').hide();
+        $('.loc-cont').show();
+
+        var dropdownTreeStr;
+        if ( Object.keys(locationHierarchy).length == 0) {
+            dropdownTreeStr = "<p class='nolocs'>No locations have been set for this account. Add a location below</p>"
+        } else {
+            var dropdownTree = this.createLocationList(locationHierarchy)
+            dropdownTreeStr = $(dropdownTree).prop('outerHTML');
+        }
+
+        $('.loclist').empty();
+        $('.loclist').append(dropdownTreeStr);
+
+        $('.loc-name').on("click", function() {
+            var metaFilter = $(this).attr('loadCamerasFor')
+            localStorage.locPath = self.getLocPath(this, []);
+            self.loadCameras(undefined, undefined, "", metaFilter);
+        });
+    },
+    getLocPath: function(locClicked, locPath) {
+        var self = this;
+        var currentLoc = $(locClicked).parent().parent().attr("locName");
+        locPath.push(currentLoc.substring(currentLoc.indexOf("_") + 1).replaceAll("_", " "));
+
+        if ($(locClicked).parent().parent().attr("locType") !== "province") {
+            return self.getLocPath($(locClicked).parent().parent(), locPath);
+        } else {
+            var locStr = locPath.reverse().join(":");
+            return locStr; 
+        }
+
+    },
+    createLocationList: function(locationHierarchy) {
+        var self = this;
+        if (locationHierarchy instanceof Object && !(locationHierarchy instanceof String)) {
+            var firstObj = Object.keys(locationHierarchy)[0];
+            var locType = firstObj ? firstObj.split("_")[0] : "EMPTY";
+            var ul = $(`<ul class="location-hierarchy locations-page ${locType}-ul" ${(locType != "province" ? `style="display:none"` : "")}></ul>`);
+            for (var child in locationHierarchy) {
+                var childName = child.substring(child.indexOf("_") + 1).replaceAll("_", " ");
+                var li_ele = $(`
+                        <li class="loc-dropdown ${child}-dropdown" locName=${child} locType="${locType}">
+                            <div class="location-btn-cont">
+                                <span class="loc-name" loadCamerasFor="${child}" locType="${locType}">
+                                    <i class="fa fa-video-camera camera-view" aria-hidden="true"></i>
+                                    ${childName}
+                                </span>
+                                <i class="location-arrow fa fa-caret-up" onclick="showNextTier(event, this, '${locType}')" aria-hidden="true"></i>
+                            </div>    
+                        </li>`);
+                li_ele.append(this.createLocationList(locationHierarchy[child]));
+                ul.append(li_ele);
+            }
+            return ul;
+        }
+    },
+    createLocationHierarchy: function() {
+        var self = this;
+        var locationHierarchy = localStorage.locationHierarchy ?  JSON.parse(localStorage.locationHierarchy) : {};
+        if (!Object.keys(locationHierarchy).length) {
+            return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, "Province").then(function(locations) {
+                for (const loc in locations) {
+                    var firstLoc = "province_" + loc.replaceAll(" ", "_");
+                    locationHierarchy[firstLoc] = {}
+                }
+                let currentProvince;
+                var locationsArr = Object.keys(locationHierarchy);
+                if (locationsArr.length == 0) {
+                    self.onLocationHierarchyLoaded({});
+                };
+                let promiseChain = Promise.resolve();
+                for (let i = 0; i < locationsArr.length; i++) { 
+                    currentProvince = locationsArr[i];
+
+                    const makeNextPromise = (currentProvince) => () => {
+                        return window.vxg.cameras.getCameraListPromise(500,0,currentProvince,undefined,undefined) 
+                            .then((cameras) => {
+                                self.getSubLocations(locationHierarchy, 1, cameras, [currentProvince]);
+                                if (i == locationsArr.length - 1) {
+                                    localStorage.locationHierarchy = JSON.stringify(locationHierarchy);
+                                    self.onLocationHierarchyLoaded(locationHierarchy);
+                                }
+                                return true;
+                            });
+                    }
+                    promiseChain = promiseChain.then(makeNextPromise(currentProvince))
+                }
+            })
+        }
+    },
+    getSubLocations: function(locationHierarchy, locLevel, cameras, prevLocs) {
+        var self = this;
+        if (locLevel == 4) return {};
+        else {
+            // get rid of any cameras that don't have the previous filter
+            var camsFiltered = cameras.filter(cam => {
+                var inCurrentLoc = true;
+                if (cam.src.meta[locTypes[locLevel]] == undefined) inCurrentLoc = false;
+                prevLocs.forEach(prevLoc => {
+                    if (cam.src.meta && cam.src.meta[prevLoc] == undefined) {inCurrentLoc = false}
+                })
+                if (inCurrentLoc) return cam;
+            });
+            
+            if (camsFiltered.length == 0) { return {} }
+
+            camsFiltered.forEach(cam => {
+                // checking if current location is in the hierarchy
+                var currLocName = locTypes[locLevel].toLowerCase() + "_" + cam.src.meta[locTypes[locLevel]].replaceAll(" ", "_");
+                var currentLocPath = prevLocs.concat(currLocName)
+                const currentLoc = currentLocPath.reduce((object, key) => {
+                    return (object || {})[key];
+                }, locationHierarchy);
+                
+                if (currentLoc == undefined) { 
+                    self.updateObjProp(locationHierarchy, {}, currentLocPath.join("."));
+                    return self.getSubLocations(locationHierarchy, locLevel + 1, cameras, currentLocPath);
+                }
+            });
+        }
+    },
+    updateObjProp: function(obj, value, propPath) {
+        const [head, ...rest] = propPath.split('.');
+    
+        !rest.length
+            ? obj[head] = value
+            : this.updateObjProp(obj[head], value, rest.join('.'));
+    },
+    /*loadProvinces: function(fromShow = false) {
         var self = this;
         if (localStorage.locPath && localStorage.locPath != "undefined" && fromShow) return;
         if (self.provincesLoaded && fromShow) {
@@ -851,7 +905,7 @@ window.screens['cameras'] = {
         
         if (localStorage.locPath) localStorage.removeItem('locPath');
         $('.loclist').empty();
-        $(".location-title").empty().html("<h4> Provinces </h4>").show();
+        $(".location-title").empty().html("<h4> Location " + $.t("locationsPage.locationTier.one") + " </h4>").show();
         return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, "Province").then(function(locations) {
             var location_eles = "";
             for (const loc in locations) {
@@ -868,7 +922,7 @@ window.screens['cameras'] = {
                         </div>
                 `;
             }
-            if (!location_eles) location_eles = `<h4 class="nocamsloc">There are currently no locations set on this account.</h4>`
+            if (!location_eles) location_eles = `<h4 class="nocamsloc">${$.t("locationsPage.noLocations")}</h4>`
             $('.loclist').append(location_eles);
             $('.sub-location').on("click", function() {
                 self.loadLocationHierarchy(1, $(this).attr('locName'));
@@ -889,8 +943,9 @@ window.screens['cameras'] = {
             localStorage.locPath = currentLocPath ? currentLocPath + ":" + prevLocation : prevLocation == undefined ? "" : prevLocation; 
         }
         var currLocType = locTypes[locLevel];
+        var genLoc = self.getGenLocName(locLevel);
         $('.loclist').empty();
-        $(".location-title").empty().html("<h4>"+currLocType+"</h4>").show();
+        $(".location-title").empty().html("<h4> Location "+genLoc+"</h4>").show();
         return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, currLocType).then(function(locations) {
             var limit = 0;
             // locations has how many times locations occur. Use this to create an upper limit to 500 
@@ -919,8 +974,8 @@ window.screens['cameras'] = {
                 });
                 var location_eles = "";
                 if (locationTokenList.length == 0) {
-                    location_eles = `<h4 class="nocamsloc">There are currently no ${currLocType}s for ${prevLocation}.
-                        <span class="super-location">Go Back <i class="fa fa-level-up" aria-hidden="true"></i> </span>
+                    location_eles = `<h4 class="nocamsloc">${$.t('locationsPage.noCams', { genLoc: genLoc, prevLoc: prevLocation })}.
+                        <span class="super-location">${$.t('locationsPage.goBack')} <i class="fa fa-level-up" aria-hidden="true"></i> </span>
                     </h4>`
                 } else { 
                     localStorage.currentAvailable = "";
@@ -966,6 +1021,22 @@ window.screens['cameras'] = {
     },
     loadLocationCameras: function(limit, metaFilter) {
         return window.vxg.cameras.getCameraListPromise(limit,0,metaFilter,undefined,undefined);
+    },*/
+    getGenLocName: function(locLevel) {
+        switch (locLevel) {
+            case 0:
+                return $.t("locationsPage.locationTier.one");
+            case 1:
+                return $.t("locationsPage.locationTier.two");
+            case 2:
+                return $.t("locationsPage.locationTier.three");
+            case 3:
+                return $.t("locationsPage.locationTier.four");
+            case 4:
+                return $.t("locationsPage.locationTier.five");
+            default:
+                return "";
+        }
     },
     selectCamForGroup: function(e) {
         var groupCamsList = $("#groupingCams").val();
@@ -1179,14 +1250,15 @@ window.screens['cameras'] = {
             self.wrapper.removeClass('grid');
             let state = self.getState(); state.grid=1; self.setState(state);
             core.elements['header-right'].find('.listmenu span').text($(this).text());
-            if (self.provincesLoaded) {
-                $('.loc-cont').show();
-                $('.camlist').hide();
-                $('.cammap').hide();
-            } else {
-                self.loadProvinces();
+            if (localStorage.locationHierarchy == undefined)
+                self.createLocationHierarchy();
+            else {
+                self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy), self);
             }
-            //location.reload();
+
+            $('.loc-cont').show();
+            $('.camlist').hide();
+            $('.cammap').hide();
         });
 
         core.elements['header-right'].find('.gridmap').click(function(){

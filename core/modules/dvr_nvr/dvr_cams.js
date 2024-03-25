@@ -1,30 +1,26 @@
 window.screens = window.screens || {};
 window.controls = window.controls || {};
 window.dialogs = window.dialogs || {};
-var path = window.core.getPath('gateway_cams.js');
-window.screens['gateway_cams'] = {
-    'header_name': $.t('gateways.gatewayCams'),
-    'html': path+'gateway_cams.html',
-    'css': [path+'gateway.css'],
+var path = window.core.getPath('dvr_cams.js');
+window.screens['dvr_cams'] = {
+    'header_name': $.t('recorders.recorderCams'),
+    'html': path+'dvr_cams.html',
+    'css': [path+'dvr_nvr.css'],
     'commonjs':[],
     'stablecss':[],
     'js':[],
     'on_before_show':function(r){
         return defaultPromise();
     },
-    'on_show':function(r, gatewayChannelId, gatewayToken){
+    'on_show':function(r, dvrId){
         var self = this;
-        self.guid = $(this.src).getNearParentAtribute('gid');
-        self.gatewayChannelId = !gatewayChannelId ? $(this.src).getNearParentAtribute('channel_id') : gatewayChannelId;
-        self.gatewayToken = !gatewayToken ? $(this.src).getNearParentAtribute('gateway_token') : gatewayToken;
+        self.dvrId = !dvrId ? $(this.src).getNearParentAtribute('dvr_id') : dvrId;
 
         setTimeout(function(){onCameraScreenResize();},100);
         core.elements['header-search'].hide();
         if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
-        $('.addgatewaycams').attr("channel_id", self.gatewayChannelId);
-        $('.addgatewaycams').attr("gateway_token", self.gatewayToken);
        
-        return this.loadGatewayCams()
+        return this.loadRecorderCams()
     },
     'on_hide':function(){
     },
@@ -32,34 +28,28 @@ window.screens['gateway_cams'] = {
     },
     'on_init':function(){
         let self = this;
-        core.elements['header-right'].prepend('' +
-        `<div class="transparent-button active addgatewaycams" ifscreen="newcamera" onclick_toscreen="newcamera" channel_id="" gateway_token=""><span class="add-icon">+</span><span>${$.t('gateways.addCameraToGateway')}</span></div>`);
         return defaultPromise();
     },
-    loadGatewayCams: function() {
+    loadRecorderCams: function() {
         let self = this;
-        //$('#gatewaycams-table').html('');
         self.wrapper.addClass('loader');
         var cameraList = localStorage.getItem('cameraList');
         if (cameraList) {
             var cams = JSON.parse(cameraList);
-            self.createGatewayCamsTable(cams.objects, self);
+            var dvrCams = cams.objects.filter(cam => { return cam.meta && cam.meta.dvr_id == self.dvrId})
+            self.createRecorderCamsTable(dvrCams, self);
         } else {
-            vxg.cameras.getFullCameraList(500, 0).then(function() {
-                var cameraList = localStorage.getItem('cameraList');
-                var cams = JSON.parse(cameraList);
-                self.createGatewayCamsTable(cams.objects, self);
+            vxg.api.cloud.getCamerasList({meta: dvrId}).then(function(cams) {
+                self.createRecorderCamsTable(cams.objects, self);
             })
         }
          
-        $(document).on('click', '.settings-gatewaycam', function(event){
+        $(document).on('click', '.settings-dvrcam', function(event){
             $(this).simpleMenuPlugin(event)
         });
     },
-    createGatewayCamsTable: function(cameraList, self) {
+    createRecorderCamsTable: function(dvrCams, self) {
         var count = 0;
-        var gatewayCamsList = cameraList.filter(cam => { return cam.meta && cam.meta.gateway_cam && cam.meta.gateway_id == self.guid});
-
         var columns = [
             {
                 field: "order",
@@ -113,8 +103,7 @@ window.screens['gateway_cams'] = {
         ]
 
         var tableData = [];
-        gatewayCamsList.forEach(camInfo => {
-            //var currentGateway = JSON.parse(camInfo.meta.gateway_first_channel);
+        dvrCams.forEach(camInfo => {
             var channelID = camInfo.id;
             let captured = camInfo.meta.capture_id && vxg.user.src.capture_id == camInfo.meta.capture_id ? ' captured' : '';
             let statusBlock = '<div class="caminfo tablecaminfo '+camInfo.status+' '+(camInfo.status=='active'?' online':'')+'">'+ (camInfo.status=='active'?'Online':'Offline')+'</div>';
@@ -128,7 +117,7 @@ window.screens['gateway_cams'] = {
                 name: camInfo.name,
                 location: camInfo.meta && camInfo.meta.location ? camInfo.meta.location : "",
                 group: camInfo.meta && camInfo.meta.group ? camInfo.meta.group : "",
-                action: `<div class="settings-gatewaycam" access_token="${camInfo.token}" cam_order="${count+1}" cam_id="${channelID}" gateway_id="${self.gatewayChannelId}" gateway_token="${self.gatewayToken}">
+                action: `<div class="settings-dvrcam" access_token="${camInfo.token}" cam_id="${channelID}">
                 <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
             </div>`
             })
@@ -136,28 +125,24 @@ window.screens['gateway_cams'] = {
         });
 
         if (count == 0) {
-            self.wrapper.addClass('nogatewaycams');
-            $('#nogatewaycams').show();
+            self.wrapper.addClass('nodvrcams');
+            $('#nodvrcams').show();
             self.wrapper.removeClass('loader');
             return;
         } else {
-            self.wrapper.removeClass('nogatewaycams');
-            $('#nogatewaycams').hide();
+            self.wrapper.removeClass('nodvrcams');
+            $('#nodvrcams').hide();
         }
         
-        $('#gatewaycams-table').bootstrapTable({
+        $('#dvrcams-table').bootstrapTable({
             pagination: true,
             showToggle: true, 
             showSearchClearButton: true,
             useRowAttrFunc: true,
             filterControl: true,
-            //reorderableRows: !isGridView,
-            toolbar: ".toolbar",
             uniqueId: "order",
             columns: columns,
             sortName: 'order',
-            sortOrder: localStorage.tableOrder,
-            //cardView: isGridView,
             formatRecordsPerPage (pageNumber) {
                 return `${pageNumber} ${$.t('bootstrapTable.camerasPerPage')}`
             },
@@ -197,10 +182,10 @@ window.screens['gateway_cams'] = {
             }
         });
 
-        $('#gatewaycams-table').bootstrapTable('load', tableData);
-        $('#gatewaycams-table').removeClass("table-bordered");
+        $('#dvrcams-table').bootstrapTable('load', tableData);
+        $('#dvrcams-table').removeClass("table-bordered");
 
-        self.wrapper.removeClass('nogatewaycams');
+        self.wrapper.removeClass('nodvrcams');
         self.wrapper.removeClass('loader');
     }
 };

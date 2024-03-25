@@ -219,7 +219,7 @@ window.screens['activity'] = {
         });
 
 		$("#set-time-filter").on("click", function() {
-			var endTime = $("#filter-time").val();
+			var endTime = $("#filter-time-input").val();
 			var utcTime = endTime ? new Date(endTime).toISOString() : '';
 			localStorage.setItem("activityTimeFilter", utcTime);
 			window.skin.use_time_filter = utcTime;
@@ -240,7 +240,7 @@ window.screens['activity'] = {
 		if (activityTimeFilter) {
 			var timeFilterDatetime = new Date(activityTimeFilter);
 			timeFilterDatetime.setMinutes(timeFilterDatetime.getMinutes() - timeFilterDatetime.getTimezoneOffset());
-			$('#filter-time').val(timeFilterDatetime.toISOString().slice(0,16));
+			$('#filter-time-input').val(timeFilterDatetime.toISOString().slice(0,16));
 		}
 		window.skin.use_time_filter = activityTimeFilter == null ? '' : activityTimeFilter;
 
