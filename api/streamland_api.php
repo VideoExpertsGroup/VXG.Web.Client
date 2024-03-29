@@ -177,7 +177,7 @@ class StreamLandAPI {
 		return StreamLandAPI::requestGet(array(
 			'path' => 'api/v3/statistics/',
 			'lkey' => StreamLandAPI::$streamland_key,
-			'get_params' => $params,
+			'get_params' => $paramsArray,
 		));
 	}
 	
