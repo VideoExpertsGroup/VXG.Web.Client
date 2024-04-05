@@ -602,10 +602,11 @@ class MCamera{
         if (!$aiAccessKey || !$aiSecretKey || !$aiDetThresh) {
             error(550, "Ai params not set.");
         }
-
+        // ai_params limited by char length on server, these will be the three new fields when the limit is increased
+        // "min_threshold_of_people": 1, "min_threshold_of_cars": 1, "min_threshold_of_guns": 1
         $ai_params = $type == "by_event" ? 
-        '{"poll_method": "one_token_many_cam", "filter": "undefined", "access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'","det_threshold":'.$aiDetThresh.'}' :
-        '{"access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'", "det_threshold":'.$aiDetThresh.', "poll_method": "one_token_many_cam", "filter": "recording_thumbnail"}';
+        '{"poll_method": "one_token_many_cam", "filter": "undefined", "access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'","det_threshold":'.$aiDetThresh.', "min_threshold_of_guns": 1}' :
+        '{"access_key":"'.$aiAccessKey.'","secret_key":"'.$aiSecretKey.'", "det_threshold":'.$aiDetThresh.', "poll_method": "one_token_many_cam", "filter": "recording_thumbnail", "min_threshold_of_guns": 1}';
 
         $GroupToken = array(
             'name' => $name,
