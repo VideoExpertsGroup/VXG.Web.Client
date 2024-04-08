@@ -76,17 +76,17 @@ margin-left: 32px;
 }
 
 @media (min-width: 1414px) {
-    .screens > .home:not(.showstat) .block4{
+    /* .screens > .home:not(.showstat) .block4{
         height: 50%;
-    }
+    } */
 
     /* .block4 {
 	    height: 60%;
     } */
 
-    .screens > .home:not(.showstat) .block4_1{
+    /* .screens > .home:not(.showstat) .block4_1{
         height: 48%;
-    }
+    } */
 
     /* .block4_1 {
 	    height: 0%;
@@ -161,4 +161,9 @@ body.home .headerBlock .header-right .signout {
 .bignumber-unit {
     margin-left: 5px;
     margin-bottom: 8px;
+}
+@media only screen and (min-width: 1522px) {
+    .block3 {
+        max-width: 400px;
+    }
 }

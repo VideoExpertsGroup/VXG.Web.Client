@@ -51,14 +51,19 @@ window.screens['activity'] = {
     ],
 // Когда экран "активируется" - например вследствие нажатия меню
     'on_search':function(text){
+			localStorage.setItem("activityTextFilter", text);
+      window.skin.use_text_filter = text;
+			localStorage.setItem("initialLoading", true);
         console.log("DEBUG: Activity search text:" + text );
 		var search_obj = {};
         search_obj.meta = text;
 
 	targetElement = this.wrapper.find('.activity_activitylist')[0];
-        targetElement.acceptVXGFilter(search_obj);
+	this.activate();
+        // targetElement.acceptVXGFilter(search_obj);
     },
     'on_before_show':function(r){
+			localStorage.setItem("page", "activity");
         if (this.from_back) return defaultPromise();;
         if (this.scroll_top!==undefined)
             delete this.scroll_top;
@@ -66,7 +71,8 @@ window.screens['activity'] = {
 //        alert('show Testscreen');
 	    targetElement = this.wrapper.find('.activity_activitylist')[0];
 	    var activity_controller = new VXGActivityController(targetElement);
-	    targetElement.showActivityList();
+
+			targetElement.showActivityList();
 	    
 	    let allCamToken	= vxg.user.src.allCamsToken;
 	    window.vxg.cameras.getCameraListPromise(100, 0).then(function (answer) {
@@ -78,7 +84,7 @@ window.screens['activity'] = {
 		    let controlCbFunc 	= listActivityCB2;
 		    targetElement.setCameraArray(answer);
                     camera0.getToken().then(function(token){
-                        targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,40,true, true);
+												targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,200,true, true);
                     });
 
 		}else {
@@ -92,7 +98,7 @@ window.screens['activity'] = {
     'on_show':function(r){
 		core.elements['header-search'].show();
 		$('.mainsearch').find('input').attr("placeholder", "Search Tags");
-        if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
+        if (core.elements['header-search']) core.elements['header-search'].find('input').val(localStorage.getItem('activityTextFilter') ?? window.skin.use_text_filter);
         if (this.scroll_top!==undefined)
             $('.screens').scrollTop(this.scroll_top);
         return defaultPromise();
@@ -214,6 +220,7 @@ window.screens['activity'] = {
 				else $('#activityfilter-btn').removeClass("filterset");
 				localStorage.setItem("activityFilter", f);
                 window.skin.use_filter = f;
+								localStorage.setItem("initialLoading", true);
                 self.activate();
             });
         });
@@ -222,6 +229,7 @@ window.screens['activity'] = {
 			var endTime = $("#filter-time-input").val();
 			var utcTime = endTime ? new Date(endTime).toISOString() : '';
 			localStorage.setItem("activityTimeFilter", utcTime);
+			localStorage.setItem("initialLoading", true);
 			window.skin.use_time_filter = utcTime;
 			self.activate();
 		});
@@ -236,7 +244,7 @@ window.screens['activity'] = {
 		if (window.skin.use_filter.split(",").length != 3) $('#activityfilter-btn').addClass("filterset");
 		else $('#activityfilter-btn').removeClass("filterset");
 
-		var activityTimeFilter = localStorage.getItem("activityTimeFilter");
+		var activityTimeFilter = localStorage.getItem("activityTimeFilter") ?? window.skin.use_time_filter;
 		if (activityTimeFilter) {
 			var timeFilterDatetime = new Date(activityTimeFilter);
 			timeFilterDatetime.setMinutes(timeFilterDatetime.getMinutes() - timeFilterDatetime.getTimezoneOffset());

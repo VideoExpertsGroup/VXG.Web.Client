@@ -26,6 +26,7 @@ window.screens['tagsview'] = {
 	'VXGActivity/VXGActivity.js'
     ],
     'on_before_show':function(access_token, timestamp){
+        localStorage.setItem("page", "tagsview");
         core.elements['header-center'].text('Camera');
         if (!access_token) access_token = $(this.src).getNearParentAtribute('access_token');
         this.access_token = access_token;
@@ -219,8 +220,9 @@ window.screens['tagsview'] = {
 	let apiGetActivityFunc	= vxg.api.cloud.getEventslist;
 	let somethingWrongFunc	= self.somethingWrong;
 	let controlCbFunc	= self.listActivityCB;
+    let allCamToken = vxg.user.src.allCamsToken;
 
-	targetElement.showActivityList( access_token, access_token, apiGetActivityFunc.bind(this) , somethingWrong.bind(this), controlCbFunc.bind(this) );
+	targetElement.showActivityList( access_token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong.bind(this), controlCbFunc.bind(this) );
     },
     minTwoDigits: function(n) {
 	return (n < 10 ? '0' : '') + n;

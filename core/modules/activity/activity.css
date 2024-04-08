@@ -126,3 +126,7 @@ padding: 0 0 14px 0;
 .time-filter-label {
     margin-bottom: 3px;
 }
+
+input#filter-time-input::before {
+    display: none;
+}

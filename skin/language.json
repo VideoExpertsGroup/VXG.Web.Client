@@ -403,9 +403,9 @@
     "metadataForEvent": "Meta data for event"
   },
   "activity": {
-    "title": "Activity",
-    "subtitle": "All Activity",
-    "eventStartTimeLabel": "Event start time:",
+    "title": "Events",
+    "subtitle": "All Events",
+    "eventEndTimeLabel": "Event end time:",
     "selectMotionFilter": "Select motion filter",
     "customEventList": "Custom event list (seperated by commas)",
     "peopleThreshold": "People threshold",

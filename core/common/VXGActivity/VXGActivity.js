@@ -1,14 +1,21 @@
 /*-------MODEL-------*/
+var lastPage = 1;
+var paginationSize = 20;
+var totalCount = 0;
+var totalData = [];
+var refreshTimer;
+
 var VXGActivityModel = function VXGActivityModel() {
 };
 
-VXGActivityModel.prototype.getData = function getData( params, updateDataCBFunc, waitFunc, apiFunc, apiWrongFunc ) {
+VXGActivityModel.prototype.getData = function getData( params, updateDataCBFunc, waitFunc, apiFunc, apiWrongFunc, spinner = true ) {
 
     //let accesToken	= params["roToken"];
     let requestParams	= params["requestParams"];
     let prevOffset 	= requestParams["offset"];
 
-    waitFunc(true);
+    if (spinner)
+			waitFunc(true);
 
 	// Konst We need to change requestParams on parameters and change API a little bit 
     apiFunc (requestParams['token'], requestParams['limit'], requestParams['offset'], requestParams ).done(function (eventlist) {
@@ -38,7 +45,7 @@ VXGActivityView.prototype.initDraw = function initDraw(controller) {
     	'<div class= "VXGActivityContainer">'
     +	'	<div class= "VXGActivityContainer2">'    	
     +	'		<div class="activity-content">'
-    +	'			<div class="feed-activity-list"></div>'
+    +	'			<table class="feed-activity-list"></table>'
     +	`			<div class="d-flex w-100"><div class="VXGActivityMore vxgbutton-transparent">${$.t('common.more')}...</div></div>`
     +	'		</div>'
     +	'		<div class="VXGActivityFilter">'
@@ -373,27 +380,27 @@ VXGActivityView.prototype.timeDifference = function timeDifference(current, prev
     let elapsed = current - previous;
 
     if (elapsed < msPerMinute) {
-        return $.t('common.agoES') + Math.round(elapsed/1000) + ' s ' + $.t('common.agoEN');
+        return Math.round(elapsed/1000) + ' s ago';
     }
 
     else if (elapsed < msPerHour) {
-        return $.t('common.agoES') + Math.round(elapsed/msPerMinute) + ' m ' + $.t('common.agoEN');
+        return Math.round(elapsed/msPerMinute) + ' m ago';
     }
 
     else if (elapsed < msPerDay ) {
-        return $.t('common.agoES') + Math.round(elapsed/msPerHour ) + ' h ' + $.t('common.agoEN');
+        return Math.round(elapsed/msPerHour ) + ' h ago';
     }
 
     else if (elapsed < msPerMonth) {
-        return $.t('common.agoES') + Math.round(elapsed/msPerDay) + ' d ' + $.t('common.agoEN');
+        return Math.round(elapsed/msPerDay) + ' d ago';
     }
 
     else if (elapsed < msPerYear) {
-        return $.t('common.agoES') + Math.round(elapsed/msPerMonth) + ' mo ' + $.t('common.agoEN');
+        return Math.round(elapsed/msPerMonth) + ' mo ago';
     }
 
     else {
-        return $.t('common.agoES') + Math.round(elapsed/msPerYear ) + ' y ' + $.t('common.agoEN');
+        return Math.round(elapsed/msPerYear ) + ' y ago';
     }
 }
 
@@ -415,9 +422,11 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
     this.more.classList.remove('spinner');
     let activitiesContainer = this.element.getElementsByClassName('feed-activity-list')[0]; 
 	let isActivitiesPage = $(this.element).hasClass("activity_activitylist") ? true : false;
+	let isReportPage = $(this.element).hasClass("report_activitylist") ? true : false;
+	let isCameraPage = $(this.element).hasClass("eventslist") ? true : false;
 
     var offset = 0;
-    var limit  = 40;
+    var limit  = 200;
     if (params !== undefined) {
 	var reqParams = params.requestParams;
 	if (reqParams !== undefined) {
@@ -426,16 +435,12 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	}
     }
 
-    if (offset == 0) {
-	$(activitiesContainer).empty();
-    }
-    
     if (offset == 0 && (VXGActivitydata === undefined || VXGActivitydata.length == 0)) {
 	let span = $(this.noevents).find("span")[0];
 	if (this.filter !== undefined && this.filter != null) {
 	    $(span).text($.t('activity.noEventsFoundForSuchFilter'));
 	} else if ($(controller.clView.element).hasClass("report_activitylist")) {
-		$(span).text($.t('home.activity.noFavourites'));
+		$(span).text("No events in Favourited cameras");
 	} else {
 	    $(span).text($.t('activity.noEvents'));
 	}
@@ -454,6 +459,8 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
     
     let additional_search  = ((this.filter !== undefined && this.filter !== null )&& this.filter['label'] !== undefined)? this.filter.label : undefined;
     
+		var tableData = [];
+		let count = 1;
     $.each(VXGActivitydata, function () {
             //if (!this.thumb || !this.thumb.url) return;
             if (self.ActivitiesList_filter !== undefined 
@@ -498,33 +505,53 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 
 		let dclass = "event-ele ";
 		let addon = "";
-		if (isActivitiesPage) {
-	    	dclass+=" event-processing ";
-			addon = `
-			img_url="${((this.thumb && this.thumb.url) ? this.thumb.url : '')}" 
-			event_name="${this.name}"
-			event_id="${this.id}" 
-			event_status="${self.ActivitiesList_resolve_status(eventStatus)}"
-			display_name="${self.ActivitiesList_resolve_name(this.name)}" 
-			token="${(camera ? camera.token : null)}" 
-			tags="${btoa(JSON.stringify(tags, null, 2))}" 
-			meta="${btoa(JSON.stringify(sendMeta, null, 2))}" 
-			camera_name="${(camera ? camera.src.name : null)}" 
-			location="${(camera && camera.src.meta ? camera.src.meta.location : null)}"
-			time="${this.time}Z" 
-			filemeta="${((this.filemeta && this.filemeta.download && this.filemeta.download.url ? this.filemeta.download.url : ''))}"
-			`;
-		} else {
-			if (this.name == "motion") {
-				dclass += "toeventview";
-				addon = 'camid="'+this.camid+'" time="'+this.time+'Z" eventname="'+ this.name +'"';
-			} else {
-				dclass += "tometaview";
-				addon = 'img_url="'+ ((this.thumb && this.thumb.url) ? this.thumb.url : '') + '" ai_type="' + this.name + '" event_id="'+this.id+'" token="'+ self.roToken +'" meta="'+btoa(JSON.stringify(tags))+'" camid="'+this.camid+'" time="' + this.time + 'Z"' ;		
-			}
-		}
+		const event_status = self.ActivitiesList_resolve_status(eventStatus);
 
+		dclass+=" event-processing-activity ";
+		addon = `
+		img_url="${((this.thumb && this.thumb.url) ? this.thumb.url : '')}" 
+		event_name="${this.name}"
+		event_id="${this.id}" 
+		event_status="${event_status}"
+		display_name="${self.ActivitiesList_resolve_name(this.name)}" 
+		token="${(camera ? camera.token : null)}" 
+		tags="${btoa(JSON.stringify(tags, null, 2))}" 
+		meta="${btoa(JSON.stringify(sendMeta, null, 2))}" 
+		camera_name="${(camera ? camera.src.name : null)}" 
+		location="${(camera && camera.src.meta ? camera.src.meta.location : null)}"
+		time="${this.time}Z" 
+		filemeta="${((this.filemeta && this.filemeta.download && this.filemeta.download.url ? this.filemeta.download.url : ''))}"
+		`;
 		var thumb_src = !this.thumb || !this.thumb.url ? "" : this.thumb.url;
+
+		// if (isActivitiesPage) {
+	  //   	dclass+=" event-processing-activity ";
+		// 	addon = `
+		// 	img_url="${((this.thumb && this.thumb.url) ? this.thumb.url : '')}" 
+		// 	event_name="${this.name}"
+		// 	event_id="${this.id}" 
+		// 	event_status="${event_status}"
+		// 	display_name="${self.ActivitiesList_resolve_name(this.name)}" 
+		// 	token="${(camera ? camera.token : null)}" 
+		// 	tags="${btoa(JSON.stringify(tags, null, 2))}" 
+		// 	meta="${btoa(JSON.stringify(sendMeta, null, 2))}" 
+		// 	camera_name="${(camera ? camera.src.name : null)}" 
+		// 	location="${(camera && camera.src.meta ? camera.src.meta.location : null)}"
+		// 	time="${this.time}Z" 
+		// 	filemeta="${((this.filemeta && this.filemeta.download && this.filemeta.download.url ? this.filemeta.download.url : ''))}"
+		// 	`;
+		// 	var thumb_src = !this.thumb || !this.thumb.url ? "" : this.thumb.url;
+		// } else {
+		// 	if (this.name == "motion") {
+		// 		dclass += "toeventview";
+		// 		addon = 'camid="'+this.camid+'" time="'+this.time+'Z" eventname="'+ this.name +'"';
+		// 	} else {
+		// 		dclass += "tometaview";
+		// 		addon = 'img_url="'+ ((this.thumb && this.thumb.url) ? this.thumb.url : '') + '" ai_type="' + this.name + '" event_id="'+this.id+'" token="'+ self.roToken +'" meta="'+btoa(JSON.stringify(tags))+'" camid="'+this.camid+'" time="' + this.time + 'Z"' ;		
+		// 	}
+		// }
+
+		var thumb_src = !this.thumb || !this.thumb.url ? "core/modules/cameras/camera.svg" : this.thumb.url;
 	    
             let feedEl = 
         	'<div class="feed-element mr-1">'
@@ -540,58 +567,227 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 //	    +	'					<div>' + meta + '</div>' 	    
 	    +	'					<small class="text-muted">' + timeString + '</small>' 
 	    +	'				</div>'
-	    +	'				<div class="event-name ' + eventStatus + '"  id="status_'+ this.id + '">' 
+	    +	'				<div class="event-name ' + eventStatus + '">' 
 		+	'					<span>' + self.ActivitiesList_resolve_name(this.name)  + '</span>'
 		+	'				</div>' 
 	    +	'			</div>' 
 	    +	'		</div>' 
 	    +	'	</div>' 
 	    +	'</div>';
-	    
-	    //if (this.thumb) {
-		$(activitiesContainer).append($(feedEl));
-
-		var eventid = this.id;
-		if (!this.thumb || !this.thumb.url) {
-			window.vxg.cameras.getCameraByIDPromise(parseInt(this.camid)).then(function(camera) {
-				camera.getPreview().then(function(url) {
-					var thumb_id = "event_"+eventid+"_thumbnail";
-					document.getElementById(thumb_id).src = url;
-				});
+			
+			let metaData = this.meta ? Object.entries(this.meta).filter(([key, value]) => key !== 'total' && value !== '' && !isNaN(Number(value)) && Number(value) !== 0).map(([key, value]) => `${key}: ${value}`).join(', ') : '-';
+			tableData.push({
+				camId: this.id,
+				// order: count,
+				camera: `<div class="image-container-event ${dclass}" ${addon} eventid="${this.id}">
+									<img src="core/common/VXGActivity/activity.svg" alt="eye" width="20" />
+									<img crossorigin="anonymous" id="event_${this.id}_thumbnail" src="${thumb_src}" alt="event_screen" class="event-screenshot" width="150" />
+								</div>`,
+				// camera: `<div class="image-container d-flex align-items-center ${dclass}" ${addon} eventid="${this.id}">
+				// 					<div class="image-stub"></div><img crossorigin="anonymous" id="event_${this.id}_thumbnail" src="${thumb_src}" alt="event_screen" />
+				// 				</div>`,
+				time: `<small class="text-muted">${timeString}</small>`,
+				type: `<div class="event-name ${eventStatus}"><span>${self.ActivitiesList_resolve_name(this.name)}</span></div>`,
+				cameraInfo: `<span>${cameraInfo}</span>`,
+				status: `${eventStatus == "no_status" ? $.t('action.new') : eventStatus}`,
+				meta: metaData,
 			});
-		}
 
-	    //}
+			count ++;
+	    //if (this.thumb) {
+		// $(activitiesContainer).append($(feedEl));
+
+	});
+	
+	// if ($(activitiesContainer).children().length == 0) {
+	var columns = [
+			// {
+			// 		field: "order",
+			// 		sortable: true,
+			// 		cardVisible: false,
+			// 		class: "sOrdering"
+			// },
+			{
+					field: "camera",
+					cardVisible: false,
+					// title: $.t('common.camera')
+			},
+			{
+					field: "time",
+					cardVisible: false,
+					sortable: true,
+					class: "sTime",
+					title: $.t('common.time')
+			},
+			{
+					field: "type",
+					cardVisible: false,
+					sortable: true,
+					class: "sType",
+					title: $.t('common.type')
+			},
+			{
+					field: "cameraInfo",
+					cardVisible: false,
+					sortable: true,
+					class: "sCameraInfo",
+					title: $.t('common.cameraName')
+			},
+			{
+					field: "status",
+					cardVisible: false,
+					sortable: true,
+					class: "sStatus",
+					title: $.t('common.status')
+			},
+			{
+					field: "meta",
+					cardVisible: false,
+					sortable: true,
+					class: "sMeta",
+					title: $.t('common.meta')
+			},
+	]
+
+	$(activitiesContainer).bootstrapTable({
+			pagination: true,
+			paginationLoop: true,
+			useRowAttrFunc: true,
+			filterControl: true,
+			reorderableRows: false,
+			// uniqueId: "order",
+			columns: columns,
+			sortName: 'time',
+			sortOrder: 'desc',
+			showMultiSort: true,
+			pageList: [20, 50, 100],
+			pageSize: 20,
+			onSort: function (name, order) {
+				localStorage.setItem(name, order);
+			}
 	});
 
-	$('.event-processing').on("click", function() {
+	localStorage.setItem("sTime", "desc");
+	// } 
+	$(activitiesContainer).bootstrapTable('load', tableData);
+	$(activitiesContainer).bootstrapTable('refreshOptions', { sortPriority: [
+	// 	{
+	// 	sortName: "sOrdering",
+	// 	sortOrder: localStorage.getItem("sOrdering")
+	// }, 
+	{
+		sortName: "sTime",
+		sortOrder: localStorage.getItem("sTime")
+	}, {
+		sortName: "sType",
+		sortOrder: localStorage.getItem("sType")
+	}, {
+		sortName: "sCameraInfo",
+		sortOrder: localStorage.getItem("sCameraInfo")
+	}, {
+		sortName: "sStatus",
+		sortOrder: localStorage.getItem("sStatus")
+	}, {
+		sortName: "sMeta",
+		sortOrder: localStorage.getItem("sMeta")
+	}] });
 
+	
+	const activityClick = () => $('table.feed-activity-list tbody tr').on("click", function() {
 		window.event_processing = window.event_processing || {};
-		window.event_processing.thumb_url = $(this).attr("img_url");
-		window.event_processing.camera_name = $(this).attr("camera_name");
-		window.event_processing.token = $(this).attr("token");
-		window.event_processing.meta = $(this).attr("meta");
-		window.event_processing.tags = $(this).attr("tags");
-		window.event_processing.filemeta_download = $(this).attr("filemeta");
-		window.event_processing.event_id = $(this).attr("event_id");
-		window.event_processing.event_status = $(this).attr("event_status");
-		window.event_processing.event_name = $(this).attr("event_name");
-		window.event_processing.display_name = $(this).attr("display_name");
-		window.event_processing.time = $(this).attr("time");
-		window.event_processing.location = $(this).attr("location");
+		window.event_processing.thumb_url = $(this).find('.event-processing-activity').attr("img_url");
+		window.event_processing.camera_name = $(this).find('.event-processing-activity').attr("camera_name");
+		window.event_processing.token = $(this).find('.event-processing-activity').attr("token");
+		window.event_processing.meta = $(this).find('.event-processing-activity').attr("meta");
+		window.event_processing.tags = $(this).find('.event-processing-activity').attr("tags");
+		window.event_processing.filemeta_download = $(this).find('.event-processing-activity').attr("filemeta");
+		window.event_processing.event_id = $(this).find('.event-processing-activity').attr("event_id");
+		window.event_processing.event_status = $(this).find('.event-processing-activity').attr("event_status");
+		window.event_processing.event_name = $(this).find('.event-processing-activity').attr("event_name");
+		window.event_processing.display_name = $(this).find('.event-processing-activity').attr("display_name");
+		window.event_processing.time = $(this).find('.event-processing-activity').attr("time");
+		window.event_processing.location = $(this).find('.event-processing-activity').attr("location");
 
 		window.event_processing.user_email = vxg.user.src.email.replaceAll("@", "_AT_").replaceAll(".", "_DOT_");
 
 		window.event_processing.metascreen = window.screens['camerametaview'];
 
-		window.event_processing.updateEvent = controller.updateEvent;
-
 		var url = window.location.origin + "/activity_processing.html";
 		window.open(url, '_blank').focus();
 	});
 
+	const getActivityByOffest = (offset) => {
+		window.vxg.cameras.getCameraListPromise(100, 0).then(function (answer) {
+			let camera0	= answer[0];
+			let allCamToken	= vxg.user.src.allCamsToken;
+			let apiGetActivityFunc	= vxg.api.cloud.getEventslist;// vs_api.user.camera.event.list;
+			let controlCbFunc 	= listActivityCB2;
+			let targetElement = isActivitiesPage ? $('.activity_activitylist')[0] : isReportPage ? $('.report_activitylist')[0] : $('.eventslist')[0];
+			camera0.getToken().then(function(token){
+				targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),offset,200,true, true);
+			});
+		})
+	}
+
+	const clearActivityInterval = () => {
+		clearInterval(refreshTimer);
+		refreshTimer = undefined;
+	}
+
+	const resetActivityInterval = () => {
+		if(!refreshTimer) {
+			window.vxg.cameras.getCameraListPromise(100, 0).then(function (answer) {
+				let camera0	= answer[0];
+				let allCamToken	= vxg.user.src.allCamsToken;
+				let apiGetActivityFunc	= vxg.api.cloud.getEventslist;// vs_api.user.camera.event.list;
+				let controlCbFunc 	= listActivityCB2;
+				let targetElement = isActivitiesPage ? $('.activity_activitylist')[0] : isReportPage ? $('.report_activitylist')[0] : $('.eventslist')[0];
+				camera0.getToken().then(function(token){
+					refreshTimer = setInterval(function () {
+						if (localStorage.getItem('activityTimeFilter') === null || localStorage.getItem('activityTimeFilter') === '')
+							targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,200,true, true, false);
+					}, 10000);
+				});
+			})
+		}
+	}
+
+	resetActivityInterval();
+
+	$('.VXGActivityContainer .pagination li.page-pre').addClass('disabled');
+
+	$(activitiesContainer).on('page-change.bs.table', function (e, arg1, arg2) {
+		if (arg1 === 1) {
+			$('.VXGActivityContainer .pagination li.page-pre').addClass('disabled');
+		} else {
+			$('.VXGActivityContainer .pagination li.page-pre').removeClass('disabled');
+		}
+		if(paginationSize !== arg2) {
+			paginationSize = arg2;
+		}
+		if(lastPage !== arg1) {
+			setTimeout(activityClick, 500);
+			if(arg1 === 1) {
+				resetActivityInterval();
+			} else {
+				clearActivityInterval();
+			}
+
+			if(totalCount % 200 === 0 && arg1 === totalCount / arg2) {
+				getActivityByOffest(totalCount);
+			}
+			lastPage = arg1;
+		}
+	});
+	
+	$(activitiesContainer).on('toggle-pagination.bs.table', function (e, arg1, arg2) {
+		setTimeout(activityClick, 500);
+	});
+
+	setTimeout(activityClick, 500);
+
 	if (VXGActivitydata !== undefined && VXGActivitydata.length == limit) {
-		$(this.more).addClass('visible');
+		// $(this.more).addClass('visible');
 	} else {
 		$(this.more).removeClass('visible');
                 this.more.classList.remove('spinner');
@@ -740,7 +936,7 @@ var VXGActivityController = function VXGActivityController( element ) {
 ///	 function listActivityCB(operation, obj),there operation - is name, obj - is event-record;
 ///offset - request field for bigdata for getting data with offset (default: 0)
 ///limit  - request field for bigdata for getting data with limited amount (default: 40)
-VXGActivityController.prototype.showActivityList = function showActivityList ( rotoken, allcamtoken, apiGetActivityFunc , apiGetActivityWrongFunc, controlCallbackFunc, offset=0, limit=40, use_filter, use_time_filter) {
+VXGActivityController.prototype.showActivityList = function showActivityList ( rotoken, allcamtoken, apiGetActivityFunc , apiGetActivityWrongFunc, controlCallbackFunc, offset=0, limit=200, use_filter, use_time_filter, spinner = true) {
     this.clView.callbackFunc 	= controlCallbackFunc;
     this.activityFunc		= apiGetActivityFunc;
     this.wrongFunc 		= apiGetActivityWrongFunc;
@@ -758,6 +954,7 @@ VXGActivityController.prototype.showActivityList = function showActivityList ( r
     } else {
         let f = !use_filter ? (window.skin&&window.skin.events_filter?window.skin.events_filter:"") : window.skin.use_filter;
 		let tf = !use_time_filter ? '' : window.skin.use_time_filter;
+		let txf = localStorage.getItem("activityTextFilter") ?? window.skin.use_text_filter;
 	let params = {
 		roToken: rotoken,
 		allCamsToken: allcamtoken,
@@ -771,9 +968,12 @@ VXGActivityController.prototype.showActivityList = function showActivityList ( r
 		    order_by: '-time',
 		}
 	};
-	if (f) params.requestParams.events = f;
-	if (tf) params.requestParams.end = tf;
-	this.clModel.getData( params, this.updateDataCB.bind(this), this.showWait.bind(this), apiGetActivityFunc, apiGetActivityWrongFunc);
+	if (localStorage.getItem("page") === "activity") {
+		if (f) params.requestParams.events = f;
+		if (tf) params.requestParams.end = tf;
+		if (txf) params.requestParams.meta = txf;
+	}
+	this.clModel.getData( params, this.updateDataCB.bind(this), this.showWait.bind(this), apiGetActivityFunc, apiGetActivityWrongFunc, spinner);
     }
 }
 
@@ -805,13 +1005,6 @@ VXGActivityController.prototype.moreData = function moreData (params) {
 		}
 	}
     }
-}
-
-VXGActivityController.prototype.updateEvent = function updateEvent(event_id, event_status, args) {
-	var event = $('[eventid="'+event_id+'"]');
-	$(event).attr("event_status", event_status);
-	$('#status_'+event_id).removeClass("no_status").removeClass("processed").removeClass("in_progress").addClass(args.meta.process);
-	$(event).attr("meta", btoa(JSON.stringify(args.meta, null, 2)))
 }
 
 ///acceptVXGFilter - third method to get data, used previos parameters defined by showActivityList, but with new object-filter
@@ -928,7 +1121,7 @@ VXGActivityController.prototype.acceptVXGFilter = function acceptVXGFilter(filte
 	let requestParams = {
 	    token: allcamtoken,
 	    offset: 0,
-	    limit:  40,
+	    limit:  200,
 	    //events: events,
 	    include_meta: true,
 		include_filemeta_download: true,
@@ -964,7 +1157,25 @@ VXGActivityController.prototype.setCameraArray = function setCameraArray ( camer
 
 ///showCameraList - connect function beetwen chartModel and chartView
 VXGActivityController.prototype.updateDataCB = function updateCameraList( params, data ) {
-    this.clView.render( this, params, data);
+		if(params["requestParams"]["offset"] === totalCount) {
+			totalCount += data.length;
+			totalData = totalData.concat(data);
+		} else if (localStorage.getItem("initialLoading")) {
+			totalCount = data.length;
+			totalData = [...data];
+			localStorage.setItem("initialLoading", false);
+		} else {
+			let firstValue = JSON.stringify(totalData[0]);
+			let differenceIndex = 0;
+			for (let i = 0; i < data.length; i++) {
+				if (firstValue === JSON.stringify(data[i])) {
+					differenceIndex = i;
+					break;
+				}
+			}
+			totalData = data.slice(0, differenceIndex).concat(totalData.slice(0, totalCount - differenceIndex));
+		}
+    this.clView.render( this, params, totalData);
 };
 
 ///showWait - connect function beetwen chartModel and chartView

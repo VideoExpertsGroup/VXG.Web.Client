@@ -200,3 +200,75 @@ display: flex;
 .btn-full-width {
     width: 100%;
 }
+
+.feed-activity-list.table-bordered>:not(caption)>*>* {
+    border-width: 0 0 1px 0;
+}
+.feed-activity-list .fixed-table-pagination {
+    font-size: 12px;
+}
+.feed-activity-list tbody tr {
+    cursor: pointer;
+}
+.event-name {
+    font-size: 12px;
+    color: white;
+    border-radius: 10px;
+    padding: 3px 8px;
+    font-weight: 400;
+    max-width: 135px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: fit-content;
+}
+.event-name.not_handled, .event-name.no_status {
+    background-color: #258cff !important;
+}
+
+.event-name.in_progress {
+    background-color: #e3bd2c !important; 
+}
+
+.event-name.processed {
+    background-color: #7BB247 !important;
+}
+.activity-content .fixed-table-pagination {
+    font-size: 12px !important;
+}
+@media only screen and (min-width: 1530px) {
+    .home .block3 .feed-activity-list tr th:nth-child(4),
+    .home .block3 .feed-activity-list tr th:nth-child(5),
+    .home .block3 .feed-activity-list tr th:nth-child(6),
+    .home .block3 .feed-activity-list tr td:nth-child(4),
+    .home .block3 .feed-activity-list tr td:nth-child(5),
+    .home .block3 .feed-activity-list tr td:nth-child(6) {
+        display: none;
+    }
+}
+.tagsview .feed-activity-list tr th:nth-child(4),
+.tagsview .feed-activity-list tr th:nth-child(5),
+.tagsview .feed-activity-list tr th:nth-child(6),
+.tagsview .feed-activity-list tr td:nth-child(4),
+.tagsview .feed-activity-list tr td:nth-child(5),
+.tagsview .feed-activity-list tr td:nth-child(6) {
+    display: none;
+}
+.feed-activity-list tbody tr td:nth-child(2) > div {
+    background-color: white;
+}
+.feed-activity-list tbody tr td:nth-child(1) {
+    position: relative;
+}
+.feed-activity-list .image-container-event .event-screenshot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: all 300ms ease;
+    z-index: 100;
+}
+.feed-activity-list tbody tr td:nth-child(1):hover .event-screenshot {
+    transform: scaleY(1);
+}

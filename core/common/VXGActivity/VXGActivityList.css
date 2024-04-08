@@ -61,7 +61,7 @@ background-size: 32px 20px;
 }
 
 .feed-activity-list img {
-  max-width: 100%;
+  /* max-width: 100%; */
   object-fit: cover;
   z-index: 1;
 }
@@ -160,11 +160,11 @@ background-size: 32px 20px;
 }
 
 @media (max-width: 1530px){
-  .feed-activity-list {
+  /* .feed-activity-list {
     height: auto;
     display: flex;
     flex-wrap: wrap;
-  }
+  } */
 
   .feed-activity-list .feed-element {
     width:100%;
@@ -176,7 +176,7 @@ background-size: 32px 20px;
   }
 }
 
-@media (min-width: 1530px){
+/* @media (min-width: 1530px){
   .feed-activity-list {
     position: absolute;
     top: 0;
@@ -185,4 +185,4 @@ background-size: 32px 20px;
     left: 0;
     right: 0;
   }
-}
+} */

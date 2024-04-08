@@ -206,6 +206,10 @@ window.screens['home'] = {
 	    
         return defaultPromise();
     },
+		'on_before_show': function(r) {
+			localStorage.setItem("page", "reports");
+			return defaultPromise();
+		},
 // Когда экран "прячется" - например вследствие активации другого экрана
     'on_hide':function(){
 //        alert('hide Test screen');
