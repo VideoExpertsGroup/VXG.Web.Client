@@ -33,6 +33,8 @@ window.screens['tagsview'] = {
         let self=this;
         $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
         return vxg.cameras.getCameraFrom(self.access_token).then(function(camera){
+            localStorage.setItem("activityCameraFilter", camera.camera_id);
+            window.skin.use_camera_filter = camera.camera_id;
             // window.location.hash = `camera?${camera?.src?.meta?.id ? 'meta=' + camera?.src?.meta?.id : 'camera_id=' + camera?.camera_id}`;
             self.access_token = camera.token;
             if (timestamp) self.notetime = timestamp;
