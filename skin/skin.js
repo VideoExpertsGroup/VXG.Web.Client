@@ -30,7 +30,4 @@ window.skin.privacyPolicy = "#";
 window.skin.termsOfUse = "#";
 window.skin.contactUs = "https://www.videoexpertsgroup.com/contacts/";
 
-window.skin.bottom_line = `<div style="padding-bottom: 20px;text-align: center;"><a target="_blank" href="${window.skin.privacyPolicy}" data-i18n="common.privacyPolicy">${$.t('common.privacyPolicy')}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="${window.skin.termsOfUse}" data-i18n="common.termOfUse">${$.t('common.termOfUse')}</a></div><div style="color:#808080;text-align:center;line-height: 14px;padding-bottom: 15px;" data-i18n="${window.skin.copyright}">${window.skin.copyright}</div>`;
-window.skin.login_bottom_line = `<div style="padding-bottom: 20px;text-align: center;"><a target="_blank" href="${window.skin.privacyPolicy}" data-i18n="common.privacyPolicy">${$.t('common.privacyPolicy')}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a target="_blank" href="${window.skin.termsOfUse}" data-i18n="common.termOfUse">${$.t('common.termOfUse')}</a></div><div style="color:#808080;text-align:center;line-height: 14px;padding-bottom: 15px;" data-i18n="${window.skin.copyright}">${window.skin.copyright}</div>`;
-
 window.no_check_local_addresses = true;
