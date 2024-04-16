@@ -72,6 +72,7 @@ window.screens['activity'] = {
 	    targetElement = this.wrapper.find('.activity_activitylist')[0];
 	    var activity_controller = new VXGActivityController(targetElement);
 
+			localStorage.setItem("initialLoading", true);
 			targetElement.showActivityList();
 	    
 	    let allCamToken	= vxg.user.src.allCamsToken;
@@ -84,13 +85,16 @@ window.screens['activity'] = {
 		    let controlCbFunc 	= listActivityCB2;
 		    targetElement.setCameraArray(answer);
                     camera0.getToken().then(function(token){
+												localStorage.setItem("initialLoading", true);
 												targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,200,true, true);
                     });
 
 		}else {
+				localStorage.setItem("initialLoading", true);
 		    targetElement.showActivityList();
 		}
 	    }, function(r) {
+		localStorage.setItem("initialLoading", true);
 		targetElement.showActivityList();
 	    });
         return defaultPromise();
@@ -224,6 +228,23 @@ window.screens['activity'] = {
                 self.activate();
             });
         });
+
+		vxg.cameras.getFullCameraList(500, 0).then(function(cameras) {
+			var activityCamera1Filter = localStorage.getItem("activityCamera1Filter") ?? window.skin.use_camera1_filter;
+			let el = $("#filter-camera-select");
+			let html = '<option></option>';
+			for (let i = 0; i < cameras.length; i++) {
+				html += `<option value="${cameras[i].src.id}" ${cameras[i].src.id === activityCamera1Filter ? 'selected' : ''}>${cameras[i].src.name}</option>`;
+			}
+			el.html(html);
+			$("#set-camera-filter").on("click", function() {
+				let camId = $("#filter-camera-select").val();
+				localStorage.setItem("activityCamera1Filter", camId);
+				localStorage.setItem("initialLoading", true);
+				window.skin.use_camera1_filter = camId;
+				self.activate();
+			});
+		});
 
 		$("#set-time-filter").on("click", function() {
 			var endTime = $("#filter-time-input").val();

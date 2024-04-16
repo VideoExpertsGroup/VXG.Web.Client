@@ -406,6 +406,7 @@
     "title": "Events",
     "subtitle": "All Events",
     "eventEndTimeLabel": "Event end time:",
+    "eventCameraLabel": "Camera:",
     "selectMotionFilter": "Select motion filter",
     "customEventList": "Custom event list (seperated by commas)",
     "peopleThreshold": "People threshold",

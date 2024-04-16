@@ -956,6 +956,7 @@ VXGActivityController.prototype.showActivityList = function showActivityList ( r
 		let tf = !use_time_filter ? '' : window.skin.use_time_filter;
 		let txf = localStorage.getItem("activityTextFilter") ?? window.skin.use_text_filter;
 		let cf = localStorage.getItem("activityCameraFilter") ?? window.skin.use_camera_filter;
+		let c1f = localStorage.getItem("activityCamera1Filter") ?? window.skin.use_camera1_filter;
 	let params = {
 		roToken: rotoken,
 		allCamsToken: allcamtoken,
@@ -973,6 +974,7 @@ VXGActivityController.prototype.showActivityList = function showActivityList ( r
 		if (f) params.requestParams.events = f;
 		if (tf) params.requestParams.end = tf;
 		if (txf) params.requestParams.meta = txf;
+		if (c1f) params.requestParams.camid = c1f;
 	}
 	if (localStorage.getItem("page") === "tagsview") {
 		if (cf) params.requestParams.camid = cf;

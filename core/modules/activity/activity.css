@@ -130,3 +130,18 @@ padding: 0 0 14px 0;
 input#filter-time-input::before {
     display: none;
 }
+.filter-cont {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.camera-filter-cont {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 15px;
+}
+.camera-filter-cont select.camera-select {
+    min-width: 100px;
+}

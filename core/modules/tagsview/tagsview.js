@@ -224,6 +224,7 @@ window.screens['tagsview'] = {
 	let controlCbFunc	= self.listActivityCB;
     let allCamToken = vxg.user.src.allCamsToken;
 
+    localStorage.setItem("initialLoading", true);
 	targetElement.showActivityList( access_token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong.bind(this), controlCbFunc.bind(this) );
     },
     minTwoDigits: function(n) {

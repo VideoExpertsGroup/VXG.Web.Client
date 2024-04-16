@@ -90,11 +90,13 @@ function listControlCB(action, camera) {
 	    
 	    if (camera === null || camera === undefined) {
 		//nodata comes, so stop activity loader by calling function w/o params
+		localStorage.setItem("initialLoading", true);
 		targetElement.showActivityList();
 	        targetElementChart.setSource();
 	    } else {
 		let allCamToken = (camera['allCamsToken'] !== undefined)? camera['allCamsToken'] : vxg.user.src.allCamsToken;
 	    
+		localStorage.setItem("initialLoading", true);
 		targetElement.showActivityList( camera['token'], allCamToken, apiGetActivityFunc.bind(this) , somethingWrong.bind(this), controlCbFunc.bind(this) );
 	    }
 	    
@@ -200,6 +202,7 @@ window.screens['home'] = {
 	    
 	    targetElement = this.wrapper.find('.report_activitylist')[0];
 	    //simulate loading process, so start activity loader by calling function w/o params
+			localStorage.setItem("initialLoading", true);
 	    targetElement.showActivityList();
 
 		this.get_account_stats();
