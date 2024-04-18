@@ -255,6 +255,9 @@ window.screens['activity'] = {
 			self.activate();
 		});
 
+		$("#filter-time-input").flatpickr({enableTime: true,
+			dateFormat: "Y-m-d H:i"});
+
 //        alert('on_ready Test screen');
     },
 // Когда скрипт инициализируется первый раз (чтоб не выполнять лишнюю работу, возможно даже не нужную пользователю)

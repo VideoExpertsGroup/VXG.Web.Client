@@ -276,7 +276,7 @@ window.controls['camfield'] = {
         return getCameraFromElement(this).then(function(camera){
             if (camera && camera.src && camera.src[camfield])
                 el.channeltoken = camera.src&&camera.src.roToken ? camera.src.roToken : camera.token;
-                $(el).text(camera.src[camfield]);
+                $(el).html('<i class="fa fa-video-camera mon-camera" aria-hidden="true"></i> <span>' + camera.src[camfield] + '</span>');
         });
     },
     'attributeChangedCallback':function(name, value){
@@ -288,7 +288,7 @@ window.controls['camfield'] = {
         let el = this;
         return getCameraFromElement(this).then(function(camera){
             if (camera && camera.src && camera.src[camfield])
-                $(el).text(camera.src[camfield]);
+                $(el).html('<i class="fa fa-video-camera mon-camera" aria-hidden="true"></i> <span>' + camera.src[camfield] + '</span>');
         });
     }
 }

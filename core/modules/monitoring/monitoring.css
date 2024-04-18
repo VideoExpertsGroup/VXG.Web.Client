@@ -494,6 +494,11 @@ padding-left: 33px;
     font-weight: 400;
 }
 
+#monitor-locations {
+    height: 75vh;
+    min-width: 200px;
+}
+
 /* input:before {
     cursor: pointer;
     content: '';
@@ -769,6 +774,21 @@ text-align: center;
     max-width: 322px;
 }
 
+camfield {
+    font-size: 14px;
+    height: 15px;
+    display: flex;
+}
+
+camfield > i {
+    padding-right: 4px;
+}
+
+camfield > span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
 /* .card-view-title {
 	 display:none;
 }

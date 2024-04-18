@@ -4,15 +4,18 @@
 </div> 
 <div class="user-assignment tabcontent assign-cameras">
     <div class="usercameralist"></div>
+    <button type="button" class="vxgbutton-transparent morecams" data-attr="camera" data-i18n="common.more">More</button>
 </div>
 <div class="user-assignment tabcontent assign-locations" style="display: none;">
     <div class="locationslist"></div>
     <div class="chosenLocations"></div>
-    <input type="hidden" name="location_strs">
-    <input type="hidden" name="detach_locations">
+    <input type="hidden" name="assigned_strs" class="reset_values">
+    <input type="hidden" name="location_strs" class="reset_values">
+    <input type="hidden" name="detach_locations" class="reset_values">
+    <input type="hidden" name="loc_cam_count" value=0>
 </div>
 <div class="bottom-btns-cont">
-    <button class="vxgbutton" onclick_toscreen="back" data-i18n="action.back">Back</button>
+    <!-- <button class="vxgbutton" onclick_toscreen="back" data-i18n="action.back">Back</button> -->
     <button class="vxgbutton apply" data-i18n="action.apply">Apply</button>
 </div>
 <script>

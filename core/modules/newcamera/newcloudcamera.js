@@ -223,7 +223,7 @@ CameraCloudEditControl = function(){
         $(this).find("#locbtn-cloud").click(function(e) {
             e.preventDefault();
             if (localStorage.locationHierarchy == undefined)
-                self.createLocationHierarchy();
+                window.core.locationHierarchy.createLocationHierarchy(self)
             else {
                 var editingLoc = $(self).find('[name="location_str"]').val();
                 self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy), editingLoc, self);
@@ -416,7 +416,7 @@ CameraCloudEditControl = function(){
                 var locationStr = data.location_str;
                 var locationHierarchy = localStorage.locationHierarchy ? JSON.parse(localStorage.locationHierarchy) : {};
                 var newLocArr = newLocation.split(":");
-                if (newLocArr.length == 1) self.updateObjProp(locationHierarchy, {}, locationStr.replaceAll(":", "."))
+                if (newLocArr.length == 1) window.core.locationHierarchy.updateObjProp(locationHierarchy, {}, locationStr.replaceAll(":", "."))
                 else {
                     var currPath = locationStr == newLocation || !locationStr ? "" : locationStr.replace(":" + newLocation, "");
                     if (!currPath) {
@@ -442,7 +442,7 @@ CameraCloudEditControl = function(){
                                 if (!newLocArr.includes(loc)) return loc;
                             });
                             
-                            self.updateObjProp(locationHierarchy, object, fullLocArr.join("."))
+                            window.core.locationHierarchy.updateObjProp(locationHierarchy, object, fullLocArr.join("."))
                         }
                     }
                 }
@@ -652,6 +652,7 @@ CameraCloudEditControl = function(){
     }
     this.onLocationHierarchyLoaded = function(locationHierarchy, editingLoc = '', self = null) {
         var dropdownTreeStr;
+        locationHierarchy = window.core.locationHierarchy.sortLocations(locationHierarchy);
         if ( Object.keys(locationHierarchy).length == 0) {
             dropdownTreeStr = "<p class='nolocs'>No locations have been set for this account. Add a location below</p>"
         } else {
@@ -724,79 +725,6 @@ CameraCloudEditControl = function(){
             }
             return ul;
         }
-    }
-    this.createLocationHierarchy = function() {
-        var self = this;
-        var locationHierarchy = localStorage.locationHierarchy ?  JSON.parse(localStorage.locationHierarchy) : {};
-        if (!Object.keys(locationHierarchy).length) {
-            return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, "Province").then(function(locations) {
-                for (const loc in locations) {
-                    var firstLoc = "province_" + loc.replaceAll(" ", "_");
-                    locationHierarchy[firstLoc] = {}
-                }
-
-                let currentProvince;
-                var locationsArr = Object.keys(locationHierarchy);
-                if (locationsArr.length == 0) {
-                    self.onLocationHierarchyLoaded({});
-                };
-                let promiseChain = Promise.resolve();
-                for (let i = 0; i < locationsArr.length; i++) { 
-                    currentProvince = locationsArr[i];
-
-                    const makeNextPromise = (currentProvince) => () => {
-                        return window.vxg.cameras.getCameraListPromise(500,0,currentProvince,undefined,undefined) 
-                            .then((cameras) => {
-                                self.getSubLocations(locationHierarchy, 1, cameras, [currentProvince]);
-                                if (i == locationsArr.length - 1) {
-                                    localStorage.locationHierarchy = JSON.stringify(locationHierarchy);
-                                    self.onLocationHierarchyLoaded(locationHierarchy);
-                                }
-                                return true;
-                            });
-                    }
-                    promiseChain = promiseChain.then(makeNextPromise(currentProvince))
-                }
-            })
-        }
-    }
-    this.getSubLocations = function(locationHierarchy, locLevel, cameras, prevLocs) {
-        var self = this;
-        if (locLevel == 4) return {};
-        else {
-            // get rid of any cameras that don't have the previous filter
-            var camsFiltered = cameras.filter(cam => {
-                var inCurrentLoc = true;
-                if (cam.src.meta[locTypes[locLevel]] == undefined) inCurrentLoc = false;
-                prevLocs.forEach(prevLoc => {
-                    if (cam.src.meta && cam.src.meta[prevLoc] == undefined) {inCurrentLoc = false}
-                })
-                if (inCurrentLoc) return cam;
-            });
-            
-            if (camsFiltered.length == 0) { return {} }
-
-            camsFiltered.forEach(cam => {
-                // checking if current location is in the hierarchy
-                var currLocName = locTypes[locLevel].toLowerCase() + "_" + cam.src.meta[locTypes[locLevel]].replaceAll(" ", "_");
-                var currentLocPath = prevLocs.concat(currLocName)
-                const currentLoc = currentLocPath.reduce((object, key) => {
-                    return (object || {})[key];
-                }, locationHierarchy);
-                
-                if (currentLoc == undefined) { 
-                    self.updateObjProp(locationHierarchy, {}, currentLocPath.join("."));
-                    return self.getSubLocations(locationHierarchy, locLevel + 1, cameras, currentLocPath);
-                }
-            });
-        }
-    }
-    this.updateObjProp = function(obj, value, propPath) {
-        const [head, ...rest] = propPath.split('.');
-    
-        !rest.length
-            ? obj[head] = value
-            : this.updateObjProp(obj[head], value, rest.join('.'));
     }
     this.selectPlan = function(self, camera) {
         if (camera) {

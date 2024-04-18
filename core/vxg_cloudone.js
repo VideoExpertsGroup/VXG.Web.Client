@@ -113,6 +113,11 @@ vxg.partners.getList = function (limit, offset) {
             partners.push(self.list[r.data[i].id]);
         }
         ret.partners = partners;
+        ret.pending = [];
+        for (let p in r.pending) {
+            ret.pending.push(r.pending[p])
+        }
+
         return ret;
     }, function (r) {
 

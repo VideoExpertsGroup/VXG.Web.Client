@@ -70,20 +70,6 @@ while($row = $stmt->fetch()){
     // TODO: to optimize query for totalCameras,totalUsers, need inc/dec appropriate field "total*" in table "user" during add/del camera operations
     if (!$total) $total = $row['total_count'];
     $userID = $row['id'];
-    if ($isSuperadmin) {
-        $stmt3 = $conn->prepare('SELECT count(*) AS "totalCameras" FROM camera WHERE "userID" IN (SELECT id FROM "user" WHERE "parentUserID" in (SELECT id FROM "user" WHERE "parentUserID" in (SELECT id FROM "user" WHERE "parentUserID" in (SELECT id FROM "user" WHERE "parentUserID"=' . $userID . '))))');
-    } else
-    if ($isChannel) {
-        $stmt3 = $conn->prepare('SELECT count(*) AS "totalCameras" FROM camera WHERE "userID" IN (SELECT id FROM "user" WHERE "parentUserID" in (SELECT id FROM "user" WHERE "parentUserID" in (SELECT id FROM "user" WHERE "parentUserID"=' . $userID . ')))');
-    } else
-    if ($isTheater) {
-        $stmt3 = $conn->prepare('SELECT count(*) AS "totalCameras" FROM camera WHERE "userID" IN (SELECT id FROM "user" WHERE "parentUserID" in (SELECT id FROM "user" WHERE "parentUserID"=' . $userID . '))');
-    } else
-    if ($isDistrib) {
-        $stmt3 = $conn->prepare('SELECT count(*) AS "totalCameras" FROM camera WHERE "userID" IN (SELECT id FROM "user" WHERE "parentUserID"=' . $userID . ')');
-    } else {
-        //$row3 = array('totalUsers' => 0);
-    }
     if (!$isNoDetails) {
         $stmt2 = $conn->prepare('SELECT "cameraCHID", "location" FROM "userCamera" u WHERE u."userID"='.$row['id']);
         if (!$stmt2->execute()) StaticLib::error(500, $stmt2->errorInfo());
@@ -109,7 +95,7 @@ while($row = $stmt->fetch()){
             'created' => $row['created'],
             'updated' => $row['updated'],
             'totalUsers' => $row3['totalUsers'],
-            'totalCameras' => count($row2),
+            'totalCameras' => $row['totalCameras'],
             'cameras' => $cameras,
             'locations' => $locations,
             'bandwidthBytes' => $row['bandwidthBytes'],

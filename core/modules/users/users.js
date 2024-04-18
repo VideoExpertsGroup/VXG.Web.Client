@@ -310,6 +310,8 @@ window.screens['deleteuser'] = {
 window.screens['usercameras'] = {
     'header_name': $.t('users.assignCameraToUser'),
     'html': path+'usercameras.html',
+    currentOffset: 0,
+    limit: 10,
     'on_before_show':function(r){
         delete this.user;
         if (this.src){
@@ -325,66 +327,9 @@ window.screens['usercameras'] = {
     'on_show':function(r){
         let self = this;
         $(self.wrapper).find('.usercameralist').empty().addClass('spinner');
-        return window.vxg.cameras.getCameraListPromise(100,0, null, "isstorage").then(function(list){
-            if (!list.length){
-                $(self.wrapper).find('.usercameralist').empty().removeClass('spinner').append($.t('cameras.noCamerasAvailable'));
-                return;
-            }
-
-            let html='';
-            for (let i in list){
-                let checked = self.user.src.cameras.indexOf(list[i].camera_id)>=0;
-                html += `<div class="camerablock">
-                            <campreview access_token="${list[i].camera_id}"></campreview>
-                            <div class="usercamera-cont">
-                                <div class="nameloc"> 
-                                    <span class="name">${list[i].src.name}</span>
-                                    <span class="loc">${list[i].getLocation()}</span>
-                                </div>
-                                <label id="cameraselect" class="camera-label custom-checkbox checkbox ${(checked ? 'active' : '')}" channel_id="${list[i].camera_id}">
-                                    <input class="camera-check" ${(checked ? 'checked' : '')} type="checkbox" id="check_${list[i].camera_id}">
-                                    <span class="checkmark"></span>	
-                                </label>
-                            </div>
-                        </div>`;
-            }
-            var assignedLocations = self.user.src.locations;
-            if (assignedLocations) {
-                $(".chosenLocations").empty();
-                for (var i = 0; i < assignedLocations.length; i++) {
-                    var locArr = assignedLocations[i].split(":");
-                    var shownName = [];
-                    for(var j = 0; j < locArr.length; j++) {
-                        var locName = locArr[j].substring(locArr[j].indexOf("_") + 1).replaceAll("_", " ");
-                        shownName.push(locName);
-                    }
-                    
-                    $('.chosenLocations').append(`<span class="chosenloc" onclick="removeLoc(this, '${assignedLocations[i]}', '${assignedLocations}')">${shownName.join(", ")}</span>`);
-                }
-            }
-
-            $(self.wrapper).find('.usercameralist').html(html);
-            $(self.wrapper).find('.usercameralist .camerablock').click(function(){
-                $(this).find('.checkbox').toggleClass('active');
-                var checkInput = $(this).find(".camera-check");
-                checkInput.prop("checked", !checkInput.prop("checked"));
-            });
-
-            $(self.wrapper).find(".camera-check").click(function() {
-                var channelId = $(this).attr('id').replace("check_", "");
-                $(`[channel_id=${channelId}]`).toggleClass("active");
-            })
-
-            if (localStorage.locationHierarchy == undefined)
-                self.createLocationHierarchy();
-            else {
-                self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy));
-            }
-
-            $(self.wrapper).find('.usercameralist').removeClass('spinner');
-        });
-
-        return defaultPromise();
+        $(".morecams").show();
+        this.currentOffset = 0;
+        return this.loadCameras(0);
     },
     'on_hide':function(){
     },
@@ -400,6 +345,11 @@ window.screens['usercameras'] = {
             $('.tabcontent').hide();
             $('.' + tabType).show();
         });
+
+        $('.morecams').click(function() {
+            self.currentOffset++;
+            self.loadCameras()
+        })
 
         this.wrapper.find('.apply').click(function(){
               core.elements['global-loader'].show();
@@ -431,11 +381,13 @@ window.screens['usercameras'] = {
                     detach.push(de);
                 })
             }
+
+            var locCamCount = $('[name="loc_cam_count"]').val();
                 
-            vxg.api.cloudone.user.relation({attach: attach, detach: detach, withUserID: self.user.src.id}).then(function (ret) {
+            vxg.api.cloudone.user.relation({attach: attach, detach: detach, withUserID: self.user.src.id, locCamCount: locCamCount}).then(function (ret) {
                     self.user.src.cameras = r;
-                    // should be all added + remove
-                    self.user.src.locations = locs;
+                    self.user.src.locations = ret.locs;
+                    $('.reset_values').val("");
                     core.elements['global-loader'].hide();
                     window.core.onclick_toscreen('back');
                 },function(r){
@@ -449,8 +401,77 @@ window.screens['usercameras'] = {
 
         return defaultPromise();
     },
+    loadCameras: function() {
+        let self = this;
+        var offset = this.limit * this.currentOffset;
+        core.elements['global-loader'].show();
+        return window.vxg.cameras.getCameraListPromise(this.limit,offset, null, "isstorage").then(function(list){
+            if (!list.length && offset == 0){
+                $(self.wrapper).find('.usercameralist').empty().removeClass('spinner').append($.t('cameras.noCamerasAvailable'));
+                return;
+            }
+
+            if (!list.length && offset != 0) {
+                $(".morecams").hide();
+                return;
+            }
+
+            let html='';
+            for (let i in list){
+                let checked = self.user.src.cameras.indexOf(list[i].camera_id)>=0;
+                html += `<div class="camerablock" id="block_${list[i].camera_id}">
+                            <campreview access_token="${list[i].camera_id}"></campreview>
+                            <div class="usercamera-cont">
+                                <div class="nameloc"> 
+                                    <span class="name">${list[i].src.name}</span>
+                                    <span class="loc">${list[i].getLocation()}</span>
+                                </div>
+                                <label id="cameraselect_${list[i].camera_id}" class="camera-label custom-checkbox checkbox ${(checked ? 'active' : '')}" channel_id="${list[i].camera_id}">
+                                    <input class="camera-check" ${(checked ? 'checked' : '')} type="checkbox" id="check_${list[i].camera_id}">
+                                    <span class="checkmark"></span>	
+                                </label>
+                            </div>
+                        </div>`;
+            }
+            $(self.wrapper).find('.usercameralist').append(html);
+
+            var assignedLocations = self.user.src.locations;
+            if (assignedLocations.length == 0) {
+                vxg.api.cloudone.camera.getLocsForUser(self.user.src.id).then(function(ret) {
+                    if (assignedLocations.length != 0) {
+                        self.user.src.locations = ret.locs;
+                        self.showAssignedLocations(assignedLocations, list);
+                    }
+                    core.elements['global-loader'].hide();
+                })
+            }
+            else {
+                self.showAssignedLocations(assignedLocations, list);
+                core.elements['global-loader'].hide();
+            }
+
+            $(self.wrapper).find('.usercameralist .camerablock').click(function(){
+                $(this).find('.checkbox').toggleClass('active');
+                var checkInput = $(this).find(".camera-check");
+                checkInput.prop("checked", !checkInput.prop("checked"));
+            });
+
+            $(self.wrapper).find(".camera-check").click(function() {
+                var channelId = $(this).attr('id').replace("check_", "");
+                $(`[channel_id=${channelId}]`).toggleClass("active");
+            })
+
+            if (localStorage.locationHierarchy == undefined)
+                window.core.locationHierarchy.createLocationHierarchy(self);
+            else {
+                self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy));
+            }
+            $(self.wrapper).find('.usercameralist').removeClass('spinner');
+        });
+    },
     onLocationHierarchyLoaded: function(locationHierarchy) {
         var dropdownTree;
+        var locationHierarchy = window.core.locationHierarchy.sortLocations(locationHierarchy);
         if ( Object.keys(locationHierarchy).length == 0) {
             dropdownTree = $("<p class='nolocs'>No locations have been set for this account</p>");
         } else {
@@ -461,34 +482,9 @@ window.screens['usercameras'] = {
         $('[name="location_strs"]').empty();
 
         $(".locationslist").append(dropdownTree)
-
-        // dialogs['mdialog'].activate(locationDialog).then(function(r){
-        //     if (r.button!='select') return;
-        //     var showLoc = r.form.show_existing_loc ? r.form.show_existing_loc : "";
-        //     var existing_loc = r.form.existing_loc ? r.form.existing_loc.split(":") : [];
-        //     var locArr = r.form.existing_loc ? r.form.existing_loc.split(":") : [];
-        //     if (locArr.length == locTypes.length) {
-        //         alert("Cannot add a new location to a "+ locTypes[locTypes.length - 1] +".");
-        //     }
-        //     if (r.form.new_loc) {
-        //         var newLocArr = r.form.new_loc.split(",");
-        //         var newLocStr = [];
-        //         for (var i = 0; i < newLocArr.length; i++) {
-        //             var newLocName = newLocArr[i].trim();
-        //             if (existing_loc.length + i > 4) break;
-        //             var newLoc = locTypes[existing_loc.length + i].toLocaleLowerCase() + "_" + newLocName.replaceAll(" ", "_");
-        //             locArr.push(newLoc)
-        //             newLocStr.push(newLoc);
-        //         }
-        //         $('[name="new_location_str"]').val(newLocStr.join(":"));
-        //         showLoc += showLoc ? ", " + r.form.new_loc : r.form.new_loc;
-        //     }
-
-        //     $('[name="shownlocation"]').val(showLoc);
-        //     $('[name="location_str"]').val(locArr.join(":"));
-        // });		
     },
     createLocationList: function(locationHierarchy) {
+        var self = this;
         var locations = this.user.src.locations;
         if (locationHierarchy instanceof Object && !(locationHierarchy instanceof String)) {
             var firstObj = Object.keys(locationHierarchy)[0];
@@ -499,7 +495,7 @@ window.screens['usercameras'] = {
                 var li_ele = $(`
                         <li class="loc-dropdown ${child}-dropdown" locName=${child}>
                             <div class="location-btn-cont">
-                                <span class="loc-name" onclick="chooseLocation_users(this, '${locations}')">${childName}</span>
+                                <span class="loc-name" onclick="chooseLocation_users(this, '${locations}', self)">${childName}</span>
                                 <i class="location-arrow fa fa-caret-down" onclick="showNextTier(event, this, '${locType}')" aria-hidden="true"></i>
                             </div>    
                         </li>`);
@@ -509,81 +505,58 @@ window.screens['usercameras'] = {
             return ul;
         }
     },
-    createLocationHierarchy: function() {
+    filterAndHandleLocCams: function(camList, locationArr) {
         var self = this;
-        var locationHierarchy = localStorage.locationHierarchy ?  JSON.parse(localStorage.locationHierarchy) : {};
-        if (!Object.keys(locationHierarchy).length) {
-            return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, "Province").then(function(locations) {
-                for (const loc in locations) {
-                    var firstLoc = "province_" + loc.replaceAll(" ", "_");
-                    locationHierarchy[firstLoc] = {}
+        var locCams = camList.filter(cam => {
+            var camInLoc = true;
+            for (var i = 0; i < locationArr.length; i++) {
+                var locType = locTypes[i];
+                var camLoc = cam.meta ? cam.meta[locType] : cam.src.meta ? cam.src.meta[locType] : null;
+                if (camLoc != locationArr[i]) {
+                    camInLoc = false;
+                    break;
                 }
-                let currentProvince;
-                var locationsArr = Object.keys(locationHierarchy);
-                if (locationsArr.length == 0) {
-                    self.onLocationHierarchyLoaded({});
-                };
-                let promiseChain = Promise.resolve();
-                for (let i = 0; i < locationsArr.length; i++) { 
-                    currentProvince = locationsArr[i];
-
-                    const makeNextPromise = (currentProvince) => () => {
-                        return window.vxg.cameras.getCameraListPromise(500,0,currentProvince,undefined,undefined) 
-                            .then((cameras) => {
-                                self.getSubLocations(locationHierarchy, 1, cameras, [currentProvince]);
-                                if (i == locationsArr.length - 1) {
-                                    localStorage.locationHierarchy = JSON.stringify(locationHierarchy);
-                                    self.onLocationHierarchyLoaded(locationHierarchy);
-                                }
-                                return true;
-                            });
-                    }
-                    promiseChain = promiseChain.then(makeNextPromise(currentProvince))
-                }
-            })
-        }
-    },
-    getSubLocations: function(locationHierarchy, locLevel, cameras, prevLocs) {
-        var self = this;
-        if (locLevel == 4) return {};
-        else {
-            // get rid of any cameras that don't have the previous filter
-            var camsFiltered = cameras.filter(cam => {
-                var inCurrentLoc = true;
-                if (cam.src.meta[locTypes[locLevel]] == undefined) inCurrentLoc = false;
-                prevLocs.forEach(prevLoc => {
-                    if (cam.src.meta && cam.src.meta[prevLoc] == undefined) {inCurrentLoc = false}
-                })
-                if (inCurrentLoc) return cam;
-            });
-            
-            if (camsFiltered.length == 0) { return {} }
-
-            camsFiltered.forEach(cam => {
-                // checking if current location is in the hierarchy
-                var currLocName = locTypes[locLevel].toLowerCase() + "_" + cam.src.meta[locTypes[locLevel]].replaceAll(" ", "_");
-                var currentLocPath = prevLocs.concat(currLocName)
-                const currentLoc = currentLocPath.reduce((object, key) => {
-                    return (object || {})[key];
-                }, locationHierarchy);
-                
-                if (currentLoc == undefined) { 
-                    self.updateObjProp(locationHierarchy, {}, currentLocPath.join("."));
-                    return self.getSubLocations(locationHierarchy, locLevel + 1, cameras, currentLocPath);
-                }
-            });
-        }
-    },
-    updateObjProp: function(obj, value, propPath) {
-        const [head, ...rest] = propPath.split('.');
+            } 
+            if (camInLoc) return cam;
+        });
     
-        !rest.length
-            ? obj[head] = value
-            : this.updateObjProp(obj[head], value, rest.join('.'));
+        // disable these in the camera side 
+        self.locCams = self.locCams ? self.locCams : [];
+        locCams.forEach(cam => {
+            var camId = cam.id ? cam.id : cam.camera_id;
+            $("#cameraselect_" + camId).css("display", "none");
+            $("#block_" + camId).css("pointer-events", "none");
+
+            if (self.locCams.length == 0 || !self.locCams.find(c => c.id == camId || c.camera_id == camId)) {
+                self.locCams.push(cam)
+            }
+        });
+    
+        $('[name="loc_cam_count"]').val(self.locCams.length);
+    },
+    showAssignedLocations: function(assignedLocations, list) {
+        var self = this;
+        $(".chosenLocations").empty();
+        for (var i = 0; i < assignedLocations.length; i++) {
+            var locArr = assignedLocations[i].split(":");
+            var shownName = [];
+            for(var j = 0; j < locArr.length; j++) {
+                var locName = locArr[j].substring(locArr[j].indexOf("_") + 1).replaceAll("_", " ");
+                shownName.push(locName);
+            }
+
+            self.filterAndHandleLocCams(list, shownName);
+             
+            var currentAssigned = $('[name="assigned_strs"]').val();
+            currentAssigned += assignedLocations[i] + ",";
+            $('[name="assigned_strs"]').val(currentAssigned);
+            
+            $('.chosenLocations').append(`<span class="chosenloc" onclick="removeLoc(this, '${assignedLocations[i]}', '${assignedLocations}')">${shownName.join(", ")}</span>`);
+        }
     }
 };
 
-function chooseLocation_users(currentLocEle, locations) {
+function chooseLocation_users(currentLocEle, locations, self) {
     var showLocationArr = [];
     var locationArr = [];
     var foundAllLocs = false;
@@ -599,22 +572,89 @@ function chooseLocation_users(currentLocEle, locations) {
     }
     locationArr.reverse();
     showLocationArr.reverse();
-    $('.chosenLocations').append(`<span class="chosenloc" onclick="removeLoc(this, '${locationArr.join(":")}','${locations}')">${showLocationArr.join(", ")}</soan>`);
+
+    var currentAssigned = $('[name="assigned_strs"]').val();
     var currentChosen = $('[name="location_strs"]').val();
-    currentChosen += currentChosen ? "," + locationArr.join(":") : locationArr.join(":");
-    $('[name="location_strs"]').val(currentChosen);
+    
+    var inHigherLevel = false;
+    var locStr = locationArr.join(":");
+    var currentChosenArr = currentChosen.split(",").filter(value => Object.keys(value).length !== 0);
+    var currentAssignedArr = currentAssigned.split(",").filter(value => Object.keys(value).length !== 0);
+    for(var i = 0; i <= currentChosenArr.length; i++) {
+        if (locStr.includes(currentChosenArr[i])) inHigherLevel = true;
+    }
+    for(var i = 0; i <= currentAssignedArr.length; i++) {
+        if (locStr.includes(currentAssignedArr[i])) inHigherLevel = true;
+    }
+
+    if (!currentChosen.includes(locationArr.join(":")) && !currentAssigned.includes(locationArr.join(":")) && !inHigherLevel) {
+        $('.chosenLocations').append(`<span class="chosenloc" onclick="removeLoc(this, '${locationArr.join(":")}','${locations}')">${showLocationArr.join(", ")}</soan>`);
+        currentChosen += locationArr.join(":") + ",";
+        $('[name="location_strs"]').val(currentChosen);
+
+        var currentDetach = $('[name="detach_locations"]').val();
+        var removeDetach = currentDetach.replace(locationArr.join(":") + ",", "");
+        $('[name="detach_locations"]').val(removeDetach);
+    
+        if (localStorage.cameraList) {
+            window.screens['usercameras'].filterAndHandleLocCams(JSON.parse(localStorage.cameraList).objects, showLocationArr);
+        } else { 
+            window.vxg.cameras.getCameraListPromise(500,0,locationArr[locationArr.length - 1],undefined,undefined).then(function(cams) {
+                window.screens['usercameras'].filterAndHandleLocCams(cams, showLocationArr);
+            })
+        }
+    } else {
+        alert("You have a location selected at a lower level of this location. If you want to assign the higher level location, remove the lower lever and try again.")
+    }
 }
 
 function removeLoc(current, locToRemove, currentLocs) {
+    var self = window.screens['usercameras'];
     var currentChosen = $('[name="location_strs"]').val();
-    var removed = currentChosen.replaceAll(locToRemove, "");
+    var removed = currentChosen.replaceAll(locToRemove + ",", "");
     current.remove();
-    if (currentLocs.includes(locToRemove)) {
+    //if (currentLocs.includes(locToRemove)) {
         var currentDetach = $('[name="detach_locations"]').val();
-        var newDetach = currentDetach ? currentDetach + "," + locToRemove : locToRemove;
-        $('[name="detach_locations"]').val(newDetach);
-    }
+        if (!currentDetach.includes(locToRemove)) {
+            var newDetach = locToRemove + "," + currentDetach;
+            $('[name="detach_locations"]').val(newDetach);
+        }
+
+        var currentAssigned = $('[name="assigned_strs"]').val();
+        var removeAssigned = currentAssigned.replaceAll(locToRemove + ",", "");
+        $('[name="assigned_strs"]').val(removeAssigned);
+    //}
+
     $('[name="location_strs"]').val(removed);
+
+    if (self.locCams) {
+        var newLocCams = [];
+        var removeCams = self.locCams.filter(cam => {
+            var locationArr = locToRemove.split(":");
+            var camInLoc = true;
+            for (var i = 0; i < locationArr.length; i++) {
+                var locType = locTypes[i];
+                var camLoc = cam.meta ? cam.meta[locType] : cam.src.meta ? cam.src.meta[locType] : null;
+                var location = locationArr[i].replace(locType.toLowerCase() + "_", "").replaceAll("_", " ");
+                if (camLoc != location) {
+                    camInLoc = false;
+                    break;
+                }
+            } 
+            if (camInLoc) return cam;
+            else newLocCams.push(cam);
+        });
+
+        self.locCams = newLocCams;
+
+        removeCams.forEach(cam => {
+            var camId = cam.id ? cam.id : cam.camera_id;
+            $("#cameraselect_" + camId).css("display", "block");
+            $("#block_" + camId).css("pointer-events", "auto");
+        })
+
+        $('[name="loc_cam_count"]').val(self.locCams.length);
+    }
 }
 
 

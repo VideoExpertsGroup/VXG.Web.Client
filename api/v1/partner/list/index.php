@@ -5,7 +5,6 @@ include_once ($curdir."/../../../static_lib.php");
 include_once ('../../core/MCoreJson.php');
 
 MCoreJson::init();
-
 $conn = StaticLib::db_connection();
 
 if (1){
@@ -24,6 +23,16 @@ if (1){
             'allow_int' => (strpos($row['js'],"integration")) ? true: false,
             'allow_ai'	=> (strpos($row['js'],"ai_access")) ? true: false,
 			'allow_nvr'	=> (strpos($row['js'],"servers")) ? true: false
+        );
+    }
+
+    $stmt2 = $conn->prepare('SELECT "id","email" FROM "user" WHERE role=\'pending\' ORDER BY id DESC');
+    if (!$stmt2->execute())
+        StaticLib::error(500, $stmt2->errorInfo());
+    while ($row = $stmt2->fetch()) {
+        MCore::$core->response['pending'][] = array(
+            'id' => $row['id'],
+            'email' => $row['email'],
         );
     }
 

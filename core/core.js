@@ -75,6 +75,92 @@ window.core.globalmenu = {
     }
 };
 
+window.core.locationHierarchy = {
+    createLocationHierarchy: function(caller) {
+        var self = this;
+        var locationHierarchy = localStorage.locationHierarchy ?  JSON.parse(localStorage.locationHierarchy) : {};
+        if (!Object.keys(locationHierarchy).length) {
+            return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, "Province").then(function(locations) {
+                for (const loc in locations) {
+                    var firstLoc = "province_" + loc.replaceAll(" ", "_");
+                    locationHierarchy[firstLoc] = {}
+                }
+                let currentProvince;
+                var locationsArr = Object.keys(locationHierarchy);
+                if (locationsArr.length == 0) {
+                    caller.onLocationHierarchyLoaded({});
+                };
+                let promiseChain = Promise.resolve();
+                for (let i = 0; i < locationsArr.length; i++) { 
+                    currentProvince = locationsArr[i];
+
+                    const makeNextPromise = (currentProvince) => () => {
+                        return window.vxg.cameras.getCameraListPromise(500,0,currentProvince,undefined,undefined) 
+                            .then((cameras) => {
+                                self.getSubLocations(locationHierarchy, 1, cameras, [currentProvince]);
+                                if (i == locationsArr.length - 1) {
+                                    localStorage.locationHierarchy = JSON.stringify(locationHierarchy);
+                                    caller.onLocationHierarchyLoaded(locationHierarchy);
+                                }
+                                return true;
+                            });
+                    }
+                    promiseChain = promiseChain.then(makeNextPromise(currentProvince))
+                }
+            })
+        }
+    },
+    getSubLocations: function(locationHierarchy, locLevel, cameras, prevLocs) {
+        var self = this;
+        if (locLevel == 5) return {};
+        else {
+            // get rid of any cameras that don't have the previous filter
+            var camsFiltered = cameras.filter(cam => {
+                var inCurrentLoc = true;
+                if (cam.src.meta[locTypes[locLevel]] == undefined) inCurrentLoc = false;
+                prevLocs.forEach(prevLoc => {
+                    if (cam.src.meta && cam.src.meta[prevLoc] == undefined) {inCurrentLoc = false}
+                })
+                if (inCurrentLoc) return cam;
+            });
+            
+            if (camsFiltered.length == 0) { return {} }
+
+            camsFiltered.forEach(cam => {
+                // checking if current location is in the hierarchy
+                var currLocName = locTypes[locLevel].toLowerCase() + "_" + cam.src.meta[locTypes[locLevel]].replaceAll(" ", "_");
+                var currentLocPath = prevLocs.concat(currLocName)
+                const currentLoc = currentLocPath.reduce((object, key) => {
+                    return (object || {})[key];
+                }, locationHierarchy);
+                
+                if (currentLoc == undefined) { 
+                    self.updateObjProp(locationHierarchy, {}, currentLocPath.join("."));
+                    return self.getSubLocations(locationHierarchy, locLevel + 1, cameras, currentLocPath);
+                }
+            });
+        }
+    },
+    updateObjProp: function(obj, value, propPath) {
+        const [head, ...rest] = propPath.split('.');
+    
+        !rest.length
+            ? obj[head] = value
+            : this.updateObjProp(obj[head], value, rest.join('.'));
+    },
+    sortLocations: function(locationHierarchy){
+        if (typeof locationHierarchy != "object" || locationHierarchy instanceof Array) // Not to sort the array
+            return locationHierarchy;
+        var locs = Object.keys(locationHierarchy);
+        locs.sort();
+        var locLevel = {};
+        for (var i = 0; i < locs.length; i++){
+            locLevel[locs[i]] = this.sortLocations(locationHierarchy[locs[i]])
+        }
+        return locLevel;
+    }
+}
+
 window.core.activateFirstScreen = function(screen_name, token = null){
     let weight = Number.MAX_VALUE;
     let pos='';

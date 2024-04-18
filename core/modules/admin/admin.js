@@ -49,6 +49,7 @@ window.screens['admin'] = {
         let self=this;
         return vxg.partners.getList(100).then(function(ret){
 			var partners = ret.partners;
+            var pending = ret.pending;
             let table=`
                 <table>
                     <thead>
@@ -60,12 +61,23 @@ window.screens['admin'] = {
                             <th scope="col" style="width: 40%"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="partnerTable">
             `;
             c = 1;
+            for (let i in pending) {
+                table += `<tr userid="${pending[i].id}">
+                            <td class="rowCount">${c}</td>
+                            <td>${pending[i].id}</td>
+                            <td>${pending[i].email}</td>
+                            <td>${$.t('common.userPending')}</td>
+                            <td></td>
+                        </tr>`
+                c++;
+            }
+
             var hide_ai_class = ret.aiEnabled ? "" : "hide-ai";
             for (let i in partners) {
-                table += '<tr userid="' + partners[i].src.id + '"><td>' + c + '</td><td>' + partners[i].src.id + '</td><td class="name">' + partners[i].src.name + '</td>'
+                table += '<tr userid="' + partners[i].src.id + '"><td class="rowCount">' + c + '</td><td>' + partners[i].src.id + '</td><td class="name">' + partners[i].src.name + '</td>'
                         + '<td><button title="Assign Plans" class="item-subs setting_sub sub-btn" userid="'+ partners[i].src.id + '">Assign Plans</button></td>'
                         + '<td class="action-icons">'
 						//+ '<button class="userbtn item-rec userrec setting_rec '+ ((partners[i].src.allow_rec == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></button>'
@@ -77,6 +89,7 @@ window.screens['admin'] = {
 						+ '</td></tr>';
                 c++;
             }
+
             table += '</tbody></table>'
             if (partners.length>0)
                 $(self.wrapper).find('.partnerlist').empty().append(table);
@@ -464,16 +477,39 @@ function add_user()
 												<button name="apply" class="vxgbutton">Apply</button></p>').then(function(r){
 					
 						if (r.button!='apply') return;
-												
+						core.elements['global-loader'].show();				
 						$.ajax({
 						type: 'GET',
 						url: vxg.api.cloudone.apiSrc + '/api/v1/distrib/create_partner/?email=' + r.form.newuser,
 						contentType: "application/json"
 //						data: data
-						}).then(function(d){
-							return ;//self.on_show();
+						}).then(function(ret){
+                            var userTable = document.getElementById("partnerTable");
+                            var row = userTable.insertRow(0);
+
+                            var count = row.insertCell(0);
+                            var id = row.insertCell(1);
+                            var email = row.insertCell(2);
+                            var status = row.insertCell(3);
+                            var empty = row.insertCell(4);
+
+                            count.innerHTML = 0;
+                            count.className = "rowCount";
+                            id.innerHTML = ret.userId;
+                            email.innerHTML = ret.user.email;
+                            status.innerHTML = $.t('common.userPending');
+                            empty.innerHTML = "";
+
+                            var existingRows = document.getElementsByClassName("rowCount");
+
+                            for (var i = 0; i < existingRows.length; i++) {
+                                var currentCount = parseInt(existingRows[i].innerHTML);
+                                existingRows[i].innerHTML = currentCount + 1;
+                            }
+                            core.elements['global-loader'].hide();
 						}).catch(function(d){						
-							return ;
+                            core.elements['global-loader'].hide();
+                            return ;
 						});
 						
 												});

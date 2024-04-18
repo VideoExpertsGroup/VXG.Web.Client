@@ -8,9 +8,10 @@ MCore::checkOnlyForAuthorized();
 if (!MCore::$core->current_user->isPartner())
     error(403, "Access deny");
 
-list($withUserID, $attach, $detach) = MCore::checkAndGetInputParameters(['withUserID', 'attach', 'detach']);
+list($withUserID, $attach, $detach, $locCamCount) = MCore::checkAndGetInputParameters(['withUserID', 'attach', 'detach', 'locCamCount']);
 if (!is_array($attach)) $attach=[];
 if (!is_array($detach)) $detach=[];
+if (!$locCamCount) $locCamCount = 0;
 if (!($user = MUser::getUserById($withUserID)))
     error(403, "No user with id ".$withUserID);
 
@@ -22,11 +23,13 @@ $storage_id = isset($meta['storage_channel_id']) ? 0+$meta['storage_channel_id']
 $usermeta = $user->getAllCamsTokenMeta();
 $user_storage_id = isset($usermeta['storage_channel_id']) ? 0+$usermeta['storage_channel_id'] : 0;
 
+$userLocs = $user->getAllUserLocations();
 foreach($attach as $attachItem){
     if (is_int($attachItem)) {
         $user->attachCameraByChannelID($attachItem);
-    } else {
+    } else if (!in_array($attachItem, $userLocs)){
         $user->attachLocationToUser($attachItem);
+        array_push($userLocs, $attachItem);
     }
 
     if ($attachItem==$storage_id && $storage_id!=$user_storage_id){
@@ -37,8 +40,12 @@ foreach($attach as $attachItem){
 foreach($detach as $detachItem) {
     if (is_int($detachItem)) {
         $user->detachCameraByChannelID($detachItem);
-    } else {
+    } else if (in_array($detachItem, $userLocs)){
         $user->detachLocationFromUser($detachItem);
+        $key = array_search($detachItem, $userLocs);
+        if ($key !== false) {
+            unset($userLocs[$key]);
+        }
     }
     if ($detachItem==$storage_id && $storage_id==$user_storage_id){
         unset($usermeta['storage_channel_id']);
@@ -46,7 +53,11 @@ foreach($detach as $detachItem) {
     }
 }
 
+$cameraCount = $user->getNonLocationCamerasCount();
+$user->setTotalCamerasWithLocations($cameraCount + $locCamCount);
+
 $user->updateAllCamsToken();
+MCore::$core->response['locs'] = $userLocs;
 
 /*
 

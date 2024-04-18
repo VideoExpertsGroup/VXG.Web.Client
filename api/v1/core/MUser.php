@@ -685,6 +685,11 @@ class MUser{
         }
         return $r['license_key']['value'];
     }
+
+    public function removePendingUser($id) {
+        query('DELETE FROM "user" WHERE id = ? AND "role" = ?',[$id, "pending"]);
+    }
+    
     /**
      * Update license key for partner role. Get or create all cams token
      * 
@@ -767,7 +772,25 @@ class MUser{
     public function getNonStorageCameraCount() {
         if ($this->isPartner())
             return fetchOne('SELECT count(*) AS "amountCameras" FROM "camera" WHERE "userID"=? AND "name" NOT LIKE ?',[$this->id, '%#StorageFor%']);
-        return fetchOne('SELECT count(*) AS "amountCameras" FROM "userCamera" WHERE "userID"=? AND "name" NOT LIKE ?',[$this->id, '%#StorageFor%']);
+        return fetchOne('SELECT count(*) AS "amountCameras" FROM "userCamera" WHERE "userID"=? ',[$this->id]);
+    }
+
+    public function getNonLocationCamerasCount() {
+        return fetchOne('SELECT count(*) AS "amountCameras" FROM "userCamera" WHERE "userID"=? AND "cameraCHID" IS NOT NULL ',[$this->id]);
+    }
+
+    public function setTotalCamerasWithLocations($totalCams) {
+        MCore::$core->pdo->query('UPDATE "user" SET "totalCameras" = ? WHERE "id" = ?',
+            [$totalCams, $this->id]);
+    }
+
+    public function getAllUserLocations() {
+        $locs = fetchAll('SELECT "location" FROM "userCamera" WHERE "userID"=? AND "cameraCHID" IS NULL', [$this->id]);
+        $userLocs = [];
+        foreach($locs as $l) {
+            array_push($userLocs, $l['location']);
+        }
+        return $userLocs;
     }
 
     public function getStorageCameraIds() {
@@ -887,9 +910,10 @@ class MUser{
 
 // Либо читаем существующего пользователя, либо создаем пользователя с ролью "partner"
         $r = MCore::$core->pdo->fetchRow('SELECT * FROM "user" WHERE "email" = ? order by id desc limit 1',[$firebase_user->email]);
-        if ($r) 
+        if ($r && $r['role'] != "pending") 
             $user = new MUser($r);
         else {
+            if ($r && $r['role'] == "pending") MUser::removePendingUser($r['id']);
             $distr=MUser::getDefaultDistributor();
             if (!$distr) return false;
             $user = $distr->createUser($firebase_user->email);
@@ -990,7 +1014,14 @@ class MUser{
         query('UPDATE "user" SET '.$args.' WHERE id=?',$vars);
         if ($password!==null)
             $this->updateFirebasePassword($password);
-    }        
+    }    
+    
+    public function createPendingUser($email) {
+        $tempUser = query(
+            'INSERT INTO "user" ("role", "parentUserID", "name", "email", "address", "password_sha3", "desc","token") VALUES(?,?,?,?,?,?,?,?)', 
+            ["pending",-1,$email,$email,"","","pending",'']);
+        return $tempUser;
+    }
     /**
      * Get default dealer
      * 
@@ -1102,6 +1133,10 @@ class MUser{
      */
     public function isSubuser() {
         return isset($this->role) && $this->role=='subuser';
+    }
+
+    public function isPending() {
+        return isset($this->role) && $this->role=='pending';
     }
 
     public function addLocationToAllCamsTokenMeta($location){
