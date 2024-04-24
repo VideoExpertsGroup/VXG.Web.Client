@@ -213,7 +213,7 @@ VXGArchieveView.prototype.initDraw = function initDraw(controller) {
                         <div class="feed-Archieve-list"></div>
                         <div class="d-flex w-100"><div class="VXGArchieveMore vxgbutton-transparent"><span data-i18n="common.more">${$.t('common.more')}</span>...</div></div>
                   </div>
-                  <div class="VXGArchieveNoData"><span data-i18n="archive.noClips">${$.t('archive.noClips')}</span></div>
+                  <div class="VXGArchieveNoData"><h5 data-i18n="archive.noClips" class="font-md">${$.t('archive.noClips')}</h5></div>
                   <div class="VXGArchieveWaiter"></div>
             </div>
             <div class="VXGArchieveCurtain"></div>
@@ -497,7 +497,7 @@ VXGArchieveView.prototype.render = function render(controller, params, VXGArchie
 		'<div class="feed-Archieve-element mr-3">'
 	    +	'	<div class="VXGArchieveClipInfo" clipurl="' + this.url + '" clipid="' + this.id +'" cliptitle="'+ this.title+'" camid="'+this.camid +'"' + camtoken + camname + allcamtoken + storagetoken + '>'
 	    +	'		<div class="clip-info-container">'
-	    +   '			<div class="clip-size '+clipError+'">'+sizeString+'</div><div class="clip-length '+clipError+'">'+clipLength+'</div>'
+	    +   '			<div class="clip-size font-md '+clipError+'">'+sizeString+'</div><div class="clip-length font-md '+clipError+'">'+clipLength+'</div>'
 		+   			errorInfo
 	    +   '		</div>'
 	    +	'		<div class="arch-image-container">'
@@ -506,9 +506,9 @@ VXGArchieveView.prototype.render = function render(controller, params, VXGArchie
 	    +	'		</div>'
 	    +	'		<div class="VXGArchieveCardInfo">'
 	    +	'			<div class="VXGArchieveCardInfoMain">'
-	    +	'				<div class="VXGArchieveCreated"><div class="VXGArchieveCardInfoCreatedValue">' + timeCreated + '</div></div>'
-	    +	'				<div class="VXGArchieveCardInfoTitle">' + ((this.title.length > 0)? this.title : '&nbsp;') + '</div>'
-	    +	'				<div class="VXGArchieveCardInfoCamera">' + cameraInfo  + '</div>'
+	    +	'				<div class="VXGArchieveCreated"><div class="VXGArchieveCardInfoCreatedValue font-sm">' + timeCreated + '</div></div>'
+	    +	'				<div class="VXGArchieveCardInfoTitle font-md">' + ((this.title.length > 0)? this.title : '&nbsp;') + '</div>'
+	    +	'				<div class="VXGArchieveCardInfoCamera font-sm">' + cameraInfo  + '</div>'
 //	    +	'				<div class="VXGArchieveIncident"><div class="VXGArchieveCardInfoIncident">' + $.t('common.incident') + ':</div><div class="VXGArchieveCardInfoIncidentValue">' + timeIncident + '</div></div>'
 //	    +	'				<div class="VXGArchieveCreated"><div class="VXGArchieveCardInfoCreated">Created:</div><div class="VXGArchieveCardInfoCreatedValue">' + timeCreated + '</div></div>'
 	    +	'			</div>'

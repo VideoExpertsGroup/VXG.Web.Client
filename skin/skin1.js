@@ -19,6 +19,6 @@ $( document ).ready(function() {
     $('title').text(window.skin.pageTitle);
 //    $('.logo-container').attr('href', window.skin.logourl);
     setTimeout(() => {
-        $('.bottom-global-menu').prepend(`<a class="vxgbutton-rounded upgrade" target="_blank" href="${window.skin.contactUs}">${$.t('action.contactUs')}</a><span style="color: lightgray;"><br><br>${$.t('layout.contactUsDescription')}</span>`);
+        $('.bottom-global-menu').prepend(`<a class="vxgbutton upgrade" target="_blank" href="${window.skin.contactUs}">${$.t('action.contactUs')}</a><span class="font-md" style="color: lightgray;"><br><br>${$.t('layout.contactUsDescription')}</span>`);
     }, 500)
 });

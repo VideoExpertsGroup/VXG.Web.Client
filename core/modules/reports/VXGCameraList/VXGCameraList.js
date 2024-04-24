@@ -232,7 +232,7 @@ VXGCameraListView.prototype.initDraw = function initDraw(controller, cameraName,
     +	'		</tbody>'
     +	`		</table><div style="text-align:center;margin: 10px 0;"><button type="button" class="vxgbutton more" data-attr="camera">${$.t('common.more')}</button></div>`
     +	'	</div>'
-    +	`	<span class="VXGCameraListEmpty invisible"> ${$.t('home.favourites.noFavourites')} </span>`
+    +	`	<span class="VXGCameraListEmpty invisible font-md"> ${$.t('home.favourites.noFavourites')} </span>`
     +	'</div>';
     let element = this.element;
 
@@ -284,7 +284,7 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
     var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id === cam.camera_id) : "";
 
     var urlMenuItem = savedCam && savedCam.url && savedCam.url != "nourl" ? 
-        `<a class="listmenu-item mwebui" href="${savedCam.url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.cameraUI')} </span></a>` :
+        `<a class="listmenu-item mwebui" href="${savedCam.url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.cameraUI')} </span></a>` :
         "";
 
     var userType = vxg.user.src.role;
@@ -323,12 +323,12 @@ VXGCameraListView.prototype.showMenu = function showMenu(event, whoCall, indexCa
 
 	let menu = `
         <div class="VXGCameraListMenu">
-        	<div class="listmenu-item mcamera" ifscreen="tagsview" onclick_toscreen="tagsview"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.timeline')} </span> </div>
-        	<div class="listmenu-item msetting subuser-hide" ifscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.streamSettings')} </span></div>
-        	<div class="listmenu-item mchart" ifscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.metadata')} </span></div>
-        	<div class="listmenu-item mconfigure subuser-hide" ifscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.config')} </span></div>
+        	<div class="listmenu-item mcamera" ifscreen="tagsview" onclick_toscreen="tagsview"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.timeline')} </span> </div>
+        	<div class="listmenu-item msetting subuser-hide" ifscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.streamSettings')} </span></div>
+        	<div class="listmenu-item mchart" ifscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.metadata')} </span></div>
+        	<div class="listmenu-item mconfigure subuser-hide" ifscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.config')} </span></div>
         	${(userType != "user" ? urlMenuItem : "")}
-        	<div class="listmenu-item mtrash subuser-hide"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>
+        	<div class="listmenu-item mtrash subuser-hide"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('action.remove')} </span></div>
         </div>
     `;
 
@@ -565,13 +565,13 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 	        
 	    let tr = 
 	'<tr class="sl'+vxgcameralistdata[index].camera_id+'" data-index="' + index + '" access_token="'+ vxgcameralistdata[index].token  +'">' 
-    +	'	<td style="width:45%"><div class="namePrev"><campreview></campreview><span id="name_'+ vxgcameralistdata[index].camera_id +'" class="sname"></span></div></td>' 
+    +	'	<td style="width:45%"><div class="namePrev"><campreview></campreview><span id="name_'+ vxgcameralistdata[index].camera_id +'" class="sname font-md"></span></div></td>' 
     //+	'	<td width="10%" class="sname"></td>' 
 //    +   '   <td style="width:5%" class="uilink" id="'+ vxgcameralistdata[index].camera_id+'-ui">' + ((urlEle) ? urlEle : '') + '</td>'
-    +	'	<td style="width:13%" class="sloc"></td>' 
-    +	'	<td style="width:10%" class="showplans"  id="planbtn_'+ vxgcameralistdata[index].camera_id +'"></td>' 
+    +	'	<td style="width:13%" class="sloc font-md"></td>' 
+    +	'	<td style="width:10%" class="showplans font-md"  id="planbtn_'+ vxgcameralistdata[index].camera_id +'"></td>' 
 //    +	'	<td class="sparkline-container"><span class="sparkline" data-token="' + vxgcameralistdata[index].token + '" data-dataset="'+sparkline+'" style="display:none"></span></td>' 
-    +	'	<td style="width:17%" class="showai" id="ai_'+ vxgcameralistdata[index].camera_id +'" data-token="' + vxgcameralistdata[index].camera_id + '"></td>' 
+    +	'	<td style="width:17%" class="showai font-md" id="ai_'+ vxgcameralistdata[index].camera_id +'" data-token="' + vxgcameralistdata[index].camera_id + '"></td>' 
 //    +	'	<td ifscreen="plan2camera"><div class="splan vxgbutton-transparent hide" onclick_toscreen="plan2camera"></div></td>'
     +	'	<td  style="width:10%" class="VXGCameraListActions">'
     +	'	<div class="VXGCameraListSettings"><svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg></div>'

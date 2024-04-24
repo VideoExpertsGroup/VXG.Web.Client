@@ -119,7 +119,7 @@ font-weight: 600;
 }
 
 .event-name.not_handled, .event-name.no_status {
-    background-color: #258cff !important;
+    background-color: #7BB247 !important;
 }
 
 .event-name.in_progress {

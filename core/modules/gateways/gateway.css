@@ -354,12 +354,15 @@ a.listmenu-item.mwebui {
 }
 
 .no-recorders {
-    width: 85%;
+    /* width: 85%;
     margin-top: 160px;
     position: absolute;
     text-align: center;
     font-size: 20px;
-    color: #b1b1b1;
+    color: #b1b1b1; */
+    color: #626262;
+    margin-top: 20%;
+    text-align: center;
 }
 
 .modal-actions {

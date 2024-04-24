@@ -99,7 +99,7 @@ window.screens['recorders'] = {
             tableData.push({
                 order: count + 1,
                 id: `<div class="camerablock${captured}" dvr_id="${currentDvr.id}">
-                <campreview onclick_toscreen="dvr_cams"></campreview>`,
+                <campreview onclick_toscreen="dvr_cams" style="cursor: pointer;"></campreview>`,
                 name: currentDvr.name,
                 location: camInfo.meta.location,
                 group: camInfo.meta.group,
@@ -112,7 +112,7 @@ window.screens['recorders'] = {
 
         if (count == 0) {
             self.wrapper.addClass('nodvrs');
-            $('#dvr-table').html(`<div class="no-recorders"><p>${$.t('recorders.noRecorders')}</p></div>`);
+            $('#dvr-table').html(`<div class="no-recorders"><h5 class="font-md">${$.t('recorders.noRecorders')}. <a href="javascript:void(0)" ifscreen="add_dvr" onclick_toscreen="add_dvr">${$.t('recorders.addRecorder')}</a></h5></div>`);
             self.wrapper.removeClass('loader');
             return;
         } 
@@ -264,9 +264,9 @@ function onDVRDelete(dvrId){
   
           var menu =  $(`
           <div class="simplemenu">
-          <div class="listmenu-item dvr-menu mwebui_dvr"> <a id="ui-link" href="${url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.recorderUI')} </span></a></div>
-          <div class="listmenu-item dvr-menu mconfigure_dvr" ifscreen="add_dvr" onclick_toscreen="add_dvr" editdvr="${dvrid}"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.config')} </span></div>
-          <div class="listmenu-item dvr-menu mtrash_dvr" onclick="onDVRDelete('${dvrid}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>
+          <div class="listmenu-item dvr-menu mwebui_dvr"> <a id="ui-link" href="${url}" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.recorderUI')} </span></a></div>
+          <div class="listmenu-item dvr-menu mconfigure_dvr" ifscreen="add_dvr" onclick_toscreen="add_dvr" editdvr="${dvrid}"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.config')} </span></div>
+          <div class="listmenu-item dvr-menu mtrash_dvr" onclick="onDVRDelete('${dvrid}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('action.remove')} </span></div>
           </div>`);
   
           addSimpleMenu(menu, self, e);

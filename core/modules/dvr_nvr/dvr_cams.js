@@ -111,7 +111,7 @@ window.screens['dvr_cams'] = {
                 camId: channelID,
                 order: count + 1,
                 id: `<div class="camerablock${captured}" access_token="${channelID}" id="scrollto${channelID}">
-                <campreview onclick_toscreen="tagsview"></campreview>`,
+                <campreview onclick_toscreen="tagsview" style="cursor: pointer;"></campreview>`,
                 status: statusBlock,
                 recording: camInfo.recording?'yes':'no',
                 name: camInfo.name,

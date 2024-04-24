@@ -2,11 +2,11 @@ window.screens = window.screens || {};
 var path = window.core.getPath('cameras.js');
 
 var menu =  `
-        <div class="listmenu-item mcamera" onclick_toscreen="player"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.timeline')} </span> </div>'
-        <div class=" listmenu-item msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.camera')} </span></div>'
-        <div class=" listmenu-item mchart" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.metadata')} </span></div>'
-        <div class=" listmenu-item mconfigure" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.config')} </span></div>'
-        <div class=" listmenu-item mtrash" ifscreen="removecamera" onclick_toscreen="removecamera"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>`
+        <div class="listmenu-item mcamera" onclick_toscreen="player"><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.timeline')} </span> </div>'
+        <div class=" listmenu-item msetting" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.camera')} </span></div>'
+        <div class=" listmenu-item mchart" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.metadata')} </span></div>'
+        <div class=" listmenu-item mconfigure" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.config')} </span></div>'
+        <div class=" listmenu-item mtrash" ifscreen="removecamera" onclick_toscreen="removecamera"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('action.remove')} </span></div>`
 
 (function( $ ){
 

@@ -76,7 +76,7 @@ window.screens['users'] = {
                 $(self.wrapper).find('.userlist').empty().append(table);
             else {
                 self.wrapper.addClass('nouser');
-                $(self.wrapper).find('.userlist').empty().append(`${$.t('users.noUsers')}. <a href="javascript:void(0)" ifscreen="edituser" onclick_toscreen="edituser">${$.t('users.addUser')}</a>`);
+                $(self.wrapper).find('.userlist').empty().append(`<h5 class="font-md">${$.t('users.noUsers')}. <a href="javascript:void(0)" ifscreen="edituser" onclick_toscreen="edituser">${$.t('users.addUser')}</a></h5>`);
             }
             self.wrapper.removeClass('loader');
             self.wrapper.find('.userarchive').click(function(){
@@ -473,7 +473,7 @@ window.screens['usercameras'] = {
         var dropdownTree;
         var locationHierarchy = window.core.locationHierarchy.sortLocations(locationHierarchy);
         if ( Object.keys(locationHierarchy).length == 0) {
-            dropdownTree = $("<p class='nolocs'>No locations have been set for this account</p>");
+            dropdownTree = $("<p class='nolocs font-md'>No locations have been set for this account</p>");
         } else {
             dropdownTree = this.createLocationList(locationHierarchy)
         }

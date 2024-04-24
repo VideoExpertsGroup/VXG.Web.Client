@@ -224,8 +224,12 @@ window.screens['tagsview'] = {
 	let controlCbFunc	= self.listActivityCB;
     let allCamToken = vxg.user.src.allCamsToken;
 
-    localStorage.setItem("initialLoading", true);
-	targetElement.showActivityList( access_token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong.bind(this), controlCbFunc.bind(this) );
+    window.vxg.cameras.getCameraListPromise(100, 0).then(function (answer) {
+        targetElement.setCameraArray(answer);
+        localStorage.setItem("initialLoading", true);
+        targetElement.showActivityList( access_token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong.bind(this), controlCbFunc.bind(this) );
+    }, function(r) {
+    });
     },
     minTwoDigits: function(n) {
 	return (n < 10 ? '0' : '') + n;

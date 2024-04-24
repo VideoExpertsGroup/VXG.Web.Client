@@ -2,10 +2,10 @@ window.screens = window.screens || {};
 var path = window.core.getPath('servers.js');
 
 var servermenu = ''
-    + '<div class="msetting svgbtnbeforehover" onclick="onServerConfig(this)">Config</div>'
-    + '<div class="mtrash svgbtnbeforehover" onclick="onServerDelete(this)">Remove</div>';
+    + '<div class="msetting svgbtnbeforehover font-md" onclick="onServerConfig(this)">Config</div>'
+    + '<div class="mtrash svgbtnbeforehover font-md" onclick="onServerDelete(this)">Remove</div>';
 var servermenu2 = ''
-    + '<div class="mtrash svgbtnbeforehover" onclick="onServerDelete(this)">Remove</div>';
+    + '<div class="mtrash svgbtnbeforehover font-md" onclick="onServerDelete(this)">Remove</div>';
 
 function onServerConfig(e){
     setTimeout(function(){$('.simplemenu').remove();},10);
@@ -89,42 +89,142 @@ window.screens['servers'] = {
         self.wrapper.addClass('loader');
         self.wrapper.removeClass('noservers');
         let el = this.wrapper.find('.serverlist');
-        el.html('');
+        // el.html('');
         return vxg.cameras.getServersListPromise().then(function(serverlist){
             self.wrapper.removeClass('loader');
-            let html = '';
+            // let html = '';
             if (!serverlist.data.length){
-                el.html($.t('servers.noServers'));
+                el.html(`<h5 class="font-md">${$.t('servers.noServers')}. <a href="javascript:void(0)" class="addserver">${$.t('servers.add')}</a></h5>`);
                 self.wrapper.addClass('noservers');
+                $('.addserver').click(function(){
+                    dialogs['mdialog'].activate('<h7>Enter the server UUID</h7><p></p><p><input name="uuid"/><br/><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="add" class="vxgbutton">Add server</button></p>').then(function(r){
+                        if (r.button!='add') return;
+                        core.elements['global-loader'].show();
+                        let uuid = r.form.uuid;
+                        vxg.cameras.addServerPromise(uuid).then(function(r){
+                            core.elements['global-loader'].hide();
+                            dialogs['idialog'].activate('The server<br/>successfully added');
+                            self.on_show();
+                        },function(r){
+                            if (r && r.responseJSON && r.responseJSON.errorDetail) alert(r.responseJSON.errorDetail);
+                            else alert('Fail to add server');
+                            core.elements['global-loader'].hide();
+                        });
+                    });
+                });
                 return;
             }
-            for (let i=0;i<serverlist.data.length;i++){
-                let l = '<div class="preview"></div>';
-//                if (serverlist.data[i]['endpoint']) l = '<a href="'+serverlist.data[i]['endpoint']+'" target="_blank" class="preview"></a>';
-                if (serverlist.data[i]['endpoint']) l = '<div serverid="'+serverlist.data[i]['id']+'" servername="'+serverlist.data[i]['name']+'" class="preview active"></div>';
-                let s = 'on';
-                html += '<div><div class="serverstatus'+(serverlist.data[i]['online']?' online':'')+'">'+(serverlist.data[i]['online']?'online':'offline')+
-                    '</div>'+l+'<div class="desc cameras"><div serverid="'+serverlist.data[i]['id']+'" class="settings '+(serverlist.data[i]['endpoint']?'active':'')+'" href="'
-                    +serverlist.data[i]['endpoint']+'" servername="'+serverlist.data[i]['name']+'"></div>'+'<div class="name">'+serverlist.data[i]['name']+'</div><div class="expires">'+(serverlist.data[i]['expires']||'')+'</div></div></div>'
+//             for (let i=0;i<serverlist.data.length;i++){
+//                 let l = '<div class="preview"></div>';
+// //                if (serverlist.data[i]['endpoint']) l = '<a href="'+serverlist.data[i]['endpoint']+'" target="_blank" class="preview"></a>';
+//                 if (serverlist.data[i]['endpoint']) l = '<div serverid="'+serverlist.data[i]['id']+'" servername="'+serverlist.data[i]['name']+'" class="preview active"></div>';
+//                 let s = 'on';
+//                 html += '<div><div class="serverstatus'+(serverlist.data[i]['online']?' online':'')+'">'+(serverlist.data[i]['online']?'online':'offline')+
+//                     '</div>'+l+'<div class="desc cameras"><div serverid="'+serverlist.data[i]['id']+'" class="settings '+(serverlist.data[i]['endpoint']?'active':'')+'" href="'
+//                     +serverlist.data[i]['endpoint']+'" servername="'+serverlist.data[i]['name']+'"></div>'+'<div class="name">'+serverlist.data[i]['name']+'</div><div class="expires">'+(serverlist.data[i]['expires']||'')+'</div></div></div>'
+//             }
+//             el.html(html);
+//             el.find('.preview.active').click(function(){
+//                 let serverid = parseInt($(this).attr('serverid'));
+//                 let servername = $(this).attr('servername');
+//                 window.screens['servercameras'].activate(serverid, servername);
+//             });
+//             el.find('.settings.active').simpleMenuPlugin(servermenu);
+//             el.find('.settings:not(.active)').simpleMenuPlugin(servermenu2);
+// /*
+//             el.find('.settings').click(function(){
+//                 let ref = parseInt($(this).attr('href'));
+//                 let serverid = $(this).attr('serverid');
+// //                window.screens['servercameras'].activate(serverid, servername);
+//             });
+// */
+            let columns = [
+                {
+                    field: "order",
+                    sortable: true,
+                },
+                {
+                    field: "name",
+                    title: $.t("common.name"),
+                    filterControl: "input",
+                    sortable: true,
+                },
+                {
+                    field: "status",
+                    title: $.t("common.status"),
+                    filterControl: "select",
+                    sortable: true,
+                    class: 'status',
+                },
+                {
+                    field: "expires",
+                    title: $.t("common.expires"),
+                    sortable: true,
+                },
+                {
+                    field: "action",
+                    title: $.t("common.actionTitle"),
+                    class: 'action',
+                },
+            ];
+            let tableData = [];
+            for (let i = 0; i < serverlist.data.length; i++) {
+                tableData.push({
+                    order: i + 1,
+                    name: serverlist.data[i]["name"],
+                    status: `<div class="serverstatus ${serverlist.data[i]["online"] ? "online" : ""}">${serverlist.data[i]["online"] ? "online" : "offline"}</div>`,
+                    expires: serverlist.data[i]["expires"] || "",
+                    action: `<div serverid="${serverlist.data[i]["id"]}" class="settings ${serverlist.data[i]["endpoint"] ? "active" : ""}" href="${serverlist.data[i]["endpoint"]}" servername="${serverlist.data[i]["name"]}"></div>`,
+                    endpoint: serverlist.data[i]["endpoint"],
+                    serverid: serverlist.data[i]["id"],
+                });
             }
-            el.html(html);
-            el.find('.preview.active').click(function(){
-                let serverid = parseInt($(this).attr('serverid'));
-                let servername = $(this).attr('servername');
-                window.screens['servercameras'].activate(serverid, servername);
+            function rowAttributes(row, index) {
+                return {
+                  'class': `preview ${row.endpoint ? 'active' : ''}`,
+                  'serverid': row.serverid,
+                  'servername': row.name,
+                }
+            }
+            $("#serverlist_table").bootstrapTable({
+                pagination: true,
+                filterControl: true,
+                columns: columns,
+                sortName: 'order',
+                sortOrder: 'asc',
+                data: tableData,
+                rowAttributes
             });
-            el.find('.settings.active').simpleMenuPlugin(servermenu);
-            el.find('.settings:not(.active)').simpleMenuPlugin(servermenu2);
-/*
-            el.find('.settings').click(function(){
-                let ref = parseInt($(this).attr('href'));
-                let serverid = $(this).attr('serverid');
-//                window.screens['servercameras'].activate(serverid, servername);
-            });
-*/
+            setTimeout(
+                function () {
+                    el.find('tr.preview.active').click(function() {
+                        let serverid = parseInt($(this).attr('serverid'));
+                        let servername = $(this).attr('servername');
+                        window.screens['servercameras'].activate(serverid, servername);
+                    });
+                    el.find('.settings.active').simpleMenuPlugin(servermenu);
+                    el.find('.settings:not(.active)').simpleMenuPlugin(servermenu2);
+                }, 500
+            );
         },function(){
-            el.html($.t('servers.noServers'));
+            el.html(`<h5 class="font-md">${$.t('servers.noServers')}. <a href="javascript:void(0)" class="addserver">${$.t('servers.add')}</a></h5>`);
             self.wrapper.addClass('noservers');
+            $('.addserver').click(function(){
+                dialogs['mdialog'].activate('<h7>Enter the server UUID</h7><p></p><p><input name="uuid"/><br/><button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="add" class="vxgbutton">Add server</button></p>').then(function(r){
+                    if (r.button!='add') return;
+                    core.elements['global-loader'].show();
+                    let uuid = r.form.uuid;
+                    vxg.cameras.addServerPromise(uuid).then(function(r){
+                        core.elements['global-loader'].hide();
+                        dialogs['idialog'].activate('The server<br/>successfully added');
+                        self.on_show();
+                    },function(r){
+                        if (r && r.responseJSON && r.responseJSON.errorDetail) alert(r.responseJSON.errorDetail);
+                        else alert('Fail to add server');
+                        core.elements['global-loader'].hide();
+                    });
+                });
+            });
             self.wrapper.removeClass('loader');
         });
         return defaultPromise();

@@ -18,12 +18,12 @@ var path = window.core.getPath('cameras.js');
 
         var menu =  $(`
         <div class="simplemenu">
-        <div class="listmenu-item cam-menu mcamera dvrcam" onclick_toscreen="tagsview" channelID='${channelID}'><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.timeline')} </span> </div>
-        <div class="listmenu-item cam-menu msetting subuser-hide" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.streamSettings')} </span></div>
-        <div class="listmenu-item cam-menu mchart dvrcam" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.metadata')} </span></div>
-        <a class="listmenu-item cam-menu mwebui subuser-hide" id="ui-link" href="" target="_blank" style="display: none"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.cameraUI')} </span></a>
-        <div class="listmenu-item cam-menu mconfigure dvrcam subuser-hide" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.config')} </span></div>
-        <div class="listmenu-item cam-menu mtrash subuser-hide" onclick="onCameraDelete('${channelID}', '${gatewayId}', '${gatewayToken}', '${camOrder}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>
+        <div class="listmenu-item cam-menu mcamera dvrcam" onclick_toscreen="tagsview" channelID='${channelID}'><i class="fa fa-video-camera" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.timeline')} </span> </div>
+        <div class="listmenu-item cam-menu msetting subuser-hide" ifscreen="camerasettings" onclick_toscreen="camerasettings"><i class="fa fa-cog" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.streamSettings')} </span></div>
+        <div class="listmenu-item cam-menu mchart dvrcam" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.metadata')} </span></div>
+        <a class="listmenu-item cam-menu mwebui subuser-hide" id="ui-link" href="" target="_blank" style="display: none"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.cameraUI')} </span></a>
+        <div class="listmenu-item cam-menu mconfigure dvrcam subuser-hide" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.config')} </span></div>
+        <div class="listmenu-item cam-menu mtrash subuser-hide" onclick="onCameraDelete('${channelID}', '${gatewayId}', '${gatewayToken}', '${camOrder}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('action.remove')} </span></div>
         </div>`);
         
         var userType = vxg.user.src.role;
@@ -349,6 +349,9 @@ window.screens['cameras'] = {
         } else filterarray = this.last_filterarray;
         var cameraListCall = forLocation ? window.vxg.cameras.getCameraListPromise(500,0,forLocation,undefined,undefined) :  vxg.cameras.getFullCameraList(500,this.last_offset);
         this.camera_list_promise = cameraListCall.then(function(fullList){
+            if (fullList.length === 0) {
+                $("#nocameras").empty().append(`<h5 class="font-md">${$.t('cameras.noCameras')}. <a href="javascript:void(0)" ifscreen="newcamera" onclick_toscreen="newcamera">${$.t('cameras.addCamera')}</a></h5>`);
+            }
             self.camera_list_promise=undefined;
             var gatewaysList = fullList.filter(cam => {return cam.src.meta && cam.src.meta.gateway});
             var list = fullList.filter(cam => {if (cam.src.meta) return cam.src.meta.gateway == undefined; else return cam;});
@@ -376,7 +379,7 @@ window.screens['cameras'] = {
                 if (list[i].src && list[i].src.meta && list[i].src.meta.isstorage) continue;
                 if (!list[i].src || list[i].src.status===undefined) continue;
                 let captured = list[i].src && list[i].src.meta && list[i].src.meta.capture_id && vxg.user.src.capture_id == list[i].src.meta.capture_id ? ' captured' : '';
-                let statusBlock = '<div class="caminfo tablecaminfo '+list[i].src.status+' '+(list[i].src.status=='active'?' online':'')+'">'+ (list[i].src.status=='active'?$.t('common.online'):$.t('common.offline'))+'</div>';
+                let statusBlock = '<div class="font-md caminfo tablecaminfo '+list[i].src.status+' '+(list[i].src.status=='active'?' online':'')+'">'+ (list[i].src.status=='active'?$.t('common.online'):$.t('common.offline'))+'</div>';
                 var channelID = list[i].getChannelID();
                 channelIdList.push(channelID.toString());
                 var camGroup = "";
@@ -410,7 +413,7 @@ window.screens['cameras'] = {
                     <span class="checkmark"></span>	
                 </label>`,
                     id: `<div class="camerablock${captured}" access_token="${channelID}" id="scrollto${channelID}">
-                    <campreview onclick_toscreen="tagsview"></campreview>`,
+                    <campreview onclick_toscreen="tagsview" style="cursor: pointer;"></campreview>`,
                     status: statusBlock,
                     recording: list[i].src.recording ? $.t('action.yes') : $.t('action.no'),
                     name: list[i].src.name,
@@ -767,7 +770,7 @@ window.screens['cameras'] = {
         var dropdownTreeStr;
         locationHierarchy = window.core.locationHierarchy.sortLocations(locationHierarchy);
         if ( Object.keys(locationHierarchy).length == 0) {
-            dropdownTreeStr = "<p class='nolocs'>No locations have been set for this account. Add a location below</p>"
+            dropdownTreeStr = "<p class='nolocs font-md'>No locations have been set for this account. Add a location below</p>"
         } else {
             var dropdownTree = this.createLocationList(locationHierarchy)
             dropdownTreeStr = $(dropdownTree).prop('outerHTML');

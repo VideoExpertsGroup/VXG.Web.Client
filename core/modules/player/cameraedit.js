@@ -173,7 +173,7 @@ CameraEditControl = function(){
 </div>
 
 <div class="form-group setting-dropdown loc-dropdown bottom-options notindvr">
-    <div class="anccsUrlLocation">${$.t('common.geolocation').toUpperCase()}</div>
+    <div class="anccsUrlLocation font-md">${$.t('common.geolocation').toUpperCase()}</div>
     <span class="carrot-icon closed"><</span>
 </div>
 
@@ -576,7 +576,7 @@ CameraEditControl = function(){
                                     <span class="checkmark"></span>	
                                 </label>`,
                                     id: `<div class="camerablock${captured}" access_token="${newCam.id}" id="scrollto${newCam.id}">
-                                    <campreview onclick_toscreen="tagsview"></campreview>`,
+                                    <campreview onclick_toscreen="tagsview" style="cursor: pointer;"></campreview>`,
                                     status: statusBlock,
                                     recording: newCam.recording ? $.t('action.yes') : $.t('action.no'),
                                     name: newCam.name,
@@ -911,7 +911,7 @@ CameraEditControl = function(){
         var dropdownTreeStr;
         locationHierarchy = window.core.locationHierarchy.sortLocations(locationHierarchy);
         if ( Object.keys(locationHierarchy).length == 0) {
-            dropdownTreeStr = "<p class='nolocs'>No locations have been set for this account. Add a location below</p>"
+            dropdownTreeStr = "<p class='nolocs font-md'>No locations have been set for this account. Add a location below</p>"
         } else {
             var dropdownTree = this.createLocationList(locationHierarchy)
             dropdownTreeStr = $(dropdownTree).prop('outerHTML');
@@ -921,7 +921,7 @@ CameraEditControl = function(){
         var existingValue = editingLoc ? editingLoc : "";
 
         var locationDialog = `
-            <h4 class="locations-title">Locations</h4>
+            <h4 class="locations-title" class="font-bg">Locations</h4>
             ${dropdownTreeStr}
             <p class="location-info"> 
                 To add a new location under an existing location, choose the existing location from the list above. 

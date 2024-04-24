@@ -72,6 +72,9 @@
 .newcamera .newcamerabtns .add2{display:none;}
 /*.newcamera .newcamerabtns .add5{display:none;}*/
 
+.monitoring-notes {display: none;}
+body.monitoring .header-right .addnote {display: none;}
+
 .single-timeline {display: none !important;}
 
 .prifiletabs .tab1{display:none!important;}

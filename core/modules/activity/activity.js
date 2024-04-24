@@ -154,7 +154,7 @@ window.screens['activity'] = {
 			customFiltersList.forEach(c => { customFilterString += (customFilterString?', ':'')+c; });
 
             dialogs['mdialog'].activate(`
-				<h7 data-i18n="activity.selectMotionFilter">${$.t('activity.selectMotionFilter')}</h7>
+				<h7 data-i18n="activity.selectMotionFilter" class="font-md">${$.t('activity.selectMotionFilter')}</h7>
 				<div>
 					<ul class="activitylist">
 						<li>
@@ -213,7 +213,7 @@ window.screens['activity'] = {
 					</ul>
 				</div>
 				<div>
-					<button name="apply" class="vxgbutton-transparent" style="width:100%">${$.t('action.set')}</button>
+					<button name="apply" class="vxgbutton" style="width:100%">${$.t('action.set')}</button>
 				</div>`).then(function(r){
                 if (!r || r.button!='apply') return;
 				let f='';

@@ -74,13 +74,13 @@ height:16px;
 
 .input-font, .body input{
 font-weight:500;
-font-size: 14px;
+font-size: 13px;
 color:#676a6c;
 }
 
 .select-font, .body select{
 font-weight:500;
-font-size: 14px;
+font-size: 13px;
 color:#676a6c;
 }
 
@@ -117,7 +117,7 @@ button.linkbutton.active {
 }
 
 label{
-font-size: 12px;
+font-size: 13px;
 font-weight:bold;
 color: #676a6c;
 }
@@ -570,6 +570,7 @@ body a.vxgbutton{
 display: inline-block;
     padding-top: 9px;
     width: max-content;
+    text-decoration: none;
 }
 
 .vxgbutton:disabled {
@@ -772,7 +773,7 @@ z-index: 10000;
 }
 
 .rightblock .headerBlock > .header-search .mainsearch input::placeholder {
-    font-size: 12px;
+    font-size: 13px;
     color: #676A6C;
 }
 
@@ -1080,7 +1081,7 @@ top:23px;
     border-collapse: collapse;
 }
 .userlist th, .userlist td {
-    font-size: 14px;
+    font-size: 13px;
 }
 .label-primary, .badge-primary {
     height: 25px;
@@ -1101,7 +1102,7 @@ body .vxgbutton-transparent, body .vxgbutton-rounded, body .vxgbutton{
     border: 1px solid var(--main-color);
     box-sizing: border-box;
     border-radius: 90px;
-    font-size: 12px;
+    font-size: 13px;
     padding: 1px 24px;
     color: white;
     height: 32px;
@@ -1384,4 +1385,39 @@ body:not(.gateway) .header-right .gateway-download {
 
 body:not(.gateway_cams) .header-right .addgatewaycams {
     display: none;
+}
+
+.grid-stack-item-content { background-color: black; }
+.font-bg {
+    font-size: 16px !important;
+}
+.font-md {
+    font-size: 13px !important;
+}
+.font-sm {
+    font-size: 10px !important;
+}
+.text-cap {
+    text-transform: capitalize !important;
+}
+.text-upp {
+    text-transform: uppercase !important;
+}
+.pagination-info {
+    font-size: 10px;
+}
+.bootstrap-table .fixed-table-container .table thead th {
+    vertical-align: top !important;
+}
+.bootstrap-table .fixed-table-container .table thead th select {
+    margin-top: 0 !important;
+}
+.fixed-table-pagination * {
+    font-size: 10px !important;
+}
+.bootstrap-table .fixed-table-container .table thead th .desc {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAMAAABFjsb+AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAADZQTFRFAAAAe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHHqXv4wAAABJ0Uk5TAO7/gP2EtcRX9Fmgkr3IPeAxqMOObQAAAEVJREFUeJxjZMAEjENWjBEq9f8/QoyZ8R+E/o2kl+0PiGT9iWwexy8gwc74DcUO7u8MDFxf0Ozl/crzCd0t/IyM70l0MwDNaw0USBqYjQAAAABJRU5ErkJggg==) !important;
+}
+.bootstrap-table .fixed-table-container .table thead th .asc {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAMAAABFjsb+AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAADZQTFRFAAAAe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHHqXv4wAAABJ0Uk5TAD3gMb3/yKCSV/RZtcSA/YTuqzCmBwAAAEdJREFUeJxjZMAEjPjEGBkZ/6KLsTAy/kITY//HwMD8A0WM8w+QYGX8iizG8xNEcnxGEuNj/AamuT8gxAS/QJW/J+i+ISQGAEcvDBTVjTe7AAAAAElFTkSuQmCC) !important;
 }

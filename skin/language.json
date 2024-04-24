@@ -122,6 +122,7 @@
     "favourite": "Favorite",
     "agoEN": "ago",
     "agoES": "",
+    "expires": "Expires",
     "userPending": "User Pending",
     "timeUnit": {
       "min": "min",
@@ -324,6 +325,7 @@
     "noCameraFound": "No camera found.",
     "selectEventTypes": "Select event types",
     "noLocation": "No location",
+    "noCameras": "No cameras",
     "addCamera": "Add camera",
     "editCamera": "Edit camera",
     "removeCamera": "Remove camera",
@@ -356,16 +358,16 @@
     },
     "hideCameras": "Hide Cameras",
     "hideNotes": "Hide Notes",
-    "noNotes": "No notes created. If notes are enabled, go to the timeline view of a camera to create a note."
+    "noNotes": "No notes. Go to the timeline view of a camera to create a note."
   },
   "notes": {
     "title": "Notes"
   },
   "servers": {
     "title": "Servers",
-    "add": "Add Server",
+    "add": "Add server",
     "downloadPackage": "Download Package",
-    "noServers": "There are no servers."
+    "noServers": "No servers"
   },
   "newCamera": {
     "title": "Add camera",
@@ -447,8 +449,8 @@
   },
   "gateways": {
     "title": "Gateways",
-    "noGateways": "No Gateways",
-    "addGateway": "Add Gateway",
+    "noGateways": "No gateways",
+    "addGateway": "Add gateway",
     "editGateway": "Edit Gateway",
     "modifyGateway": "Modify Gateway",
     "gatewayCams": "Gateway Cameras",
@@ -461,8 +463,8 @@
   },
   "recorders": {
     "title": "Recorders",
-    "noRecorders": "No Recorders",
-    "addRecorder": "Add Recorder",
+    "noRecorders": "No recorders",
+    "addRecorder": "Add recorder",
     "modifyRecorder": "Modify Recorder",
     "editRecorder": "Edit Recorder",
     "noCamerasOnThisRecorder": "No Cameras on this Recorder",
@@ -474,7 +476,7 @@
   },
   "archive": {
     "title": "Archive",
-    "noClips": "No clips",
+    "noClips": "No clips. Go to the timeline view of a camera to create a clip.",
     "deleteClip": "Delete clip",
     "deleteConfirm": {
       "title": "Deleting clip",

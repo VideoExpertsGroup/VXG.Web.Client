@@ -90,14 +90,15 @@ function listControlCB(action, camera) {
 	    
 	    if (camera === null || camera === undefined) {
 		//nodata comes, so stop activity loader by calling function w/o params
-		localStorage.setItem("initialLoading", true);
-		targetElement.showActivityList();
 	        targetElementChart.setSource();
 	    } else {
-		let allCamToken = (camera['allCamsToken'] !== undefined)? camera['allCamsToken'] : vxg.user.src.allCamsToken;
-	    
-		localStorage.setItem("initialLoading", true);
-		targetElement.showActivityList( camera['token'], allCamToken, apiGetActivityFunc.bind(this) , somethingWrong.bind(this), controlCbFunc.bind(this) );
+			let allCamToken = (camera['allCamsToken'] !== undefined)? camera['allCamsToken'] : vxg.user.src.allCamsToken;
+			window.vxg.cameras.getCameraListPromise(100, 0).then(function (answer) {
+				targetElement.setCameraArray(answer);
+				localStorage.setItem("initialLoading", true);
+				targetElement.showActivityList( camera['token'], allCamToken, apiGetActivityFunc.bind(this) , somethingWrong.bind(this), controlCbFunc.bind(this) );
+			}, function(r) {
+			});
 	    }
 	    
 	    sparkline_data_flag = 0;
@@ -202,8 +203,6 @@ window.screens['home'] = {
 	    
 	    targetElement = this.wrapper.find('.report_activitylist')[0];
 	    //simulate loading process, so start activity loader by calling function w/o params
-			localStorage.setItem("initialLoading", true);
-	    targetElement.showActivityList();
 
 		this.get_account_stats();
 	    
@@ -306,8 +305,8 @@ window.screens['home'] = {
 			var offline = total - online;
 			var yValues = [online, offline];
 			var barColors = [
-			"#43b0de",
-			"#f5e049"
+			"#7bb247",
+			"#808080"
 			];
 
 			new Chart("cameras-graph", {
@@ -322,8 +321,11 @@ window.screens['home'] = {
 			options: {   
 				legend: {
 				display: true,
-				position: 'left'
+				position: 'left',
+				labels: {
+					fontSize: 13
 				}
+				},
 			  }
 			});
 		})

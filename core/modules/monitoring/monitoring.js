@@ -2,91 +2,6 @@ window.screens = window.screens || {};
 var path = window.core.getPath('monitoring.js');
 //const locTypes = ["Province", "City", "Zone", "Circuit", "Subcircuit"];
 
-function camGrid(size, /* 2,3,4 */ telconet = false){
-    let el = $('.screens .monitoring .camgrid2')
-    el.removeClass('grid3').removeClass('grid4');
-    if (size==3) el.addClass('grid3');
-    if (size==4) el.addClass('grid4');
-    let td = $('.screens .monitoring .camgrid2 > div');
-    let state = window.screens['monitoring'].getState();
-    if (!window.screens['monitoring'].playerList) {
-        try {
-            //window.screens['cameras'].playerList = new CloudPlayerList("single-timeline", {timeline: true, calendar: true});
-        } catch(e) {
-            window.screens['monitoring'].playerList = null;
-        }
-    }
-    var preferredPlayerFormat = (window.skin.grid && window.skin.grid.preferredPlayerFormat)?(' preferredPlayerFormat="' + window.skin.grid.preferredPlayerFormat + '" ' ):('') ;
-    
-    for (let i=0; i<td.length; i++){
-        let access_token = state.cams['player'+i] && !telconet ? ' access_token="'+state.cams['player'+i]+'"' : '';
-        if ($(td[i]).hasClass('grid3')){
-            if (size>=3 && td[i].innerHTML=='')
-                $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
-            if (size<=2)
-                $(td[i]).empty();
-        } else if ($(td[i]).hasClass('grid4')){
-            if (size>=4 && td[i].innerHTML=='')
-                $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
-            if (size<=3)
-                $(td[i]).empty();
-        } else {
-            if (size<2)
-                $(td[i]).empty();
-            else if (td[i].innerHTML=='')
-               $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
-        }
-    }
-
-    let p = $('.screens .monitoring .camgrid2 player').off('dblclick').on('dblclick',function(){
-        if (!$(this).attr('access_token')) return;
-        let the = this;
-        dialogs['mdialog'].activate(`<p>${$.t('monitoring.confirmDelete')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.no')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.yes')}</button></p>`).then(function(r){
-            if (r.button!='delete') return;
-            $(the).attr('access_token','');
-            $(the)[0].on_access_token_change('');
-            let id = $(the).attr('id');
-            let state = window.screens['monitoring'].getState();
-            state.cams = state.cams || {};
-            delete state.cams[id];
-            window.screens['monitoring'].setState(state);
-        });
-
-    });
-    $('.screens .monitoring .camgrid2 player').each(function(){
-        this.on_access_token_change = function(token, telconet = false){
-            let access_token = $(this).attr('access_token') ? $(this).attr('access_token') : token;
-            let id = $(this).attr('id');
-            let state = window.screens['monitoring'].getState();
-            if (telconet) {
-                let cloudPlayerId = this.newid;
-                var cloudPlayerObj = window.controls['player'].players['player'+cloudPlayerId];
-                return;
-            }
-
-            state.cams = state.cams || {};
-            state.cams[id]=access_token;
-            window.screens['monitoring'].setState(state);
-
-            if (window.screens['monitoring'].playerList) {
-                let cloudPlayerId = this.newid;
-                var cloudPlayerObj = window.controls['player'].players['player'+cloudPlayerId];
-                if (access_token == '') {
-                    window.screens['monitoring'].playerList.removePlayerFromList(cloudPlayerObj)
-                }
-                window.screens['monitoring'].playerList.killSyncPromise(true).then(() => {
-                    setTimeout(() => {
-                        window.screens['monitoring'].playerList.killSyncPromise(false).then(() => {
-                            window.screens['monitoring'].playerList.synchronize([], true)
-                        })
-                    }, 1500);
-                })
-            }           
-        };        
-    });
-    onCameraScreenResize();
-}
-
 window.screens['monitoring'] = {
     'menu_weight':31,
     'menu_name': $.t('monitoring.title'),
@@ -145,7 +60,7 @@ window.screens['monitoring'] = {
 
         $('.hidecameras').removeClass('closed');
         $('.hidecameras').addClass('open');
-        $('.hidecameras').html(`<i class="fa fa-angle-left" aria-hidden="true"></i><span class="hide-section">${$.t('monitoring.hideCameras')}</span>`);
+        $('.hidecameras').html(`<i class="fa fa-angle-left" aria-hidden="true"></i>`);
         $('#cameras-list').show();
         $('.headerBlock').show();
 
@@ -164,9 +79,9 @@ window.screens['monitoring'] = {
                     let timestamp = new Date(note['timestamp']+'Z').getTime();
                     date = new Date(note['timestamp']+'Z');
                     date = date.toLocaleString('en-CA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }).replace(/[,|.]/g,'').replace(' 24',' 00');
-                    notesEle += '<div class="onetag" timestamp="'+timestamp+'">';
+                    notesEle += '<div class="onetag font-md" timestamp="'+timestamp+'">';
                     if (vxg.user.src.role!='user') notesEle += '<div class="edtag" meta="'+i+'"></div>';
-                    notesEle += '<div class="datetime">'+date+'</div><div class="case">'+(note['string']['case']?note['string']['case']:'')+'</div><div class="desc">'+(note['string']['description']?note['string']['description']:'')+'</div></div>';
+                    notesEle += '<div class="datetime">'+date+'</div><div class="case font-md">'+(note['string']['case']?note['string']['case']:'')+'</div><div class="desc">'+(note['string']['description']?note['string']['description']:'')+'</div></div>';
                 })
                 $('.monitoring-noteslist').html(notesEle);
                 $('.monitoring-noteslist').show();
@@ -222,7 +137,7 @@ window.screens['monitoring'] = {
         var telconetIdStr = hash.includes("?camera_id=") ? hash.replaceAll("%22", "").substring(hash.indexOf("=")+1) : "";
         var isTelconet = telconetIdStr.length > 0 ? true : false;
 
-        camGrid(this.getState().grid, isTelconet);
+        self.camGrid(this.getState().grid, isTelconet);
         self.wrapper.addClass('grid');
         setTimeout(function(){onCameraScreenResize();},100);
         self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
@@ -266,7 +181,7 @@ window.screens['monitoring'] = {
         state = state[vxg.user.src.uid];
         if (!state || state.cams===undefined || state.grid===undefined) return {cams:{},grid:2};
         return state;
-    },
+    },   
     'on_init':function(){
         let self=this;
 
@@ -282,7 +197,7 @@ window.screens['monitoring'] = {
             } else {
                 $(this).removeClass('closed');
                 $(this).addClass('open');
-                $(this).html(`<i class="fa fa-angle-right" aria-hidden="true"></i><span class="hide-section">${$.t('monitoring.hideNotes')}</span>`);
+                $(this).html(`<i class="fa fa-angle-right" aria-hidden="true"></i>`);
                 $('.notes-list-cont').show();
                 //$('.noteslist').show();
             }
@@ -301,7 +216,7 @@ window.screens['monitoring'] = {
             } else {
                 $(this).removeClass('closed');
                 $(this).addClass('open');
-                $(this).html(`<i class="fa fa-angle-left" aria-hidden="true"></i><span class="hide-section">${$.t('monitoring.hideCameras')}</span>`);
+                $(this).html(`<i class="fa fa-angle-left" aria-hidden="true"></i>`);
                 $('#cameras-list').show();
                 $('.headerBlock').show();
             }
@@ -311,6 +226,7 @@ window.screens['monitoring'] = {
         gridStateArray[2] = '2 x 2';
         gridStateArray[3] = '3 x 3';
         gridStateArray[4] = '4 x 4';
+        gridStateArray[5] = 'Custom';
 
         let curState = self.getState();
         core.elements['header-right'].prepend(`
@@ -323,6 +239,7 @@ window.screens['monitoring'] = {
                     <li class="cam-dropdown-item grid22"><a href="javascript:;">2 x 2</a></li>
                     <li class="cam-dropdown-item grid33"><a href="javascript:;">3 x 3</a></li>
                     <li class="cam-dropdown-item grid44"><a href="javascript:;">4 x 4</a></li>
+                    <li class="cam-dropdown-item gridcustom"><a href="javascript:;">Custom</a></li>
                 </ul>
             </div>`);
 
@@ -372,8 +289,8 @@ window.screens['monitoring'] = {
                 state.list = false; self.setState(state)
                 //location.reload();
             } else {
-                self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
-                camGrid(2);
+                self.wrapper.find('.ratio2-inner').show();self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();self.wrapper.find('.grid-stack').hide();
+                self.camGrid(2);
                 core.elements['header-right'].find('.gridmenu span').text($(this).text());
             }
         });
@@ -393,8 +310,8 @@ window.screens['monitoring'] = {
                 state.list = false; self.setState(state)
                 //location.reload();
             } else {
-                self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
-                camGrid(3);
+                self.wrapper.find('.ratio2-inner').show();self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();self.wrapper.find('.grid-stack').hide();
+                self.camGrid(3);
                 core.elements['header-right'].find('.gridmenu span').text($(this).text());
             }
         });
@@ -414,11 +331,21 @@ window.screens['monitoring'] = {
                 state.list = false; self.setState(state)
                // location.reload();
             } else {
-                self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
-                camGrid(4);
+                self.wrapper.find('.ratio2-inner').show();self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();self.wrapper.find('.grid-stack').hide();
+                self.camGrid(4);
                 core.elements['header-right'].find('.gridmenu span').text($(this).text());
             }
         });
+        core.elements['header-right'].find('.gridcustom').click(function() {
+            let state = self.getState(); state.grid=5; self.setState(state);
+            self.wrapper.find('.ratio2-inner').hide();self.wrapper.find('.cammap').hide();
+            core.elements['header-right'].find('.gridmenu span').text($(this).text());
+            if ($('[gs-id=cust_player1]').length <= 0) {
+                self.createCustomGrid();
+            } else {
+                $('.grid-stack').show();
+            }
+        })
 
         $(".addnote").click(function() {
             dialogs['mdialog'].activate(`
@@ -478,11 +405,160 @@ window.screens['monitoring'] = {
 
         return defaultPromise();
     },
+    camGrid: function(size, /* 2,3,4, 5 - custom */ telconet = false){
+        if (size == 5 && $('[gs-id=cust_player1]').length <= 0) {
+            this.createCustomGrid();
+            return;
+        } else if (size == 5 && $('[gs-id=cust_player1]').length > 0){
+            $('.grid-stack').show();
+            return;
+        }
+
+        let el = $('.screens .monitoring .camgrid2')
+        el.removeClass('grid3').removeClass('grid4');
+        if (size==3) el.addClass('grid3');
+        if (size==4) el.addClass('grid4');
+        let td = $('.screens .monitoring .camgrid2 > div');
+        let state = window.screens['monitoring'].getState();
+        if (!window.screens['monitoring'].playerList) {
+            try {
+                //window.screens['cameras'].playerList = new CloudPlayerList("single-timeline", {timeline: true, calendar: true});
+            } catch(e) {
+                window.screens['monitoring'].playerList = null;
+            }
+        }
+        var preferredPlayerFormat = (window.skin.grid && window.skin.grid.preferredPlayerFormat)?(' preferredPlayerFormat="' + window.skin.grid.preferredPlayerFormat + '" ' ):('') ;
+        
+        for (let i=0; i<td.length; i++){
+            let access_token = state.cams['player'+i] && !telconet ? ' access_token="'+state.cams['player'+i]+'"' : '';
+            if ($(td[i]).hasClass('grid3')){
+                if (size>=3 && td[i].innerHTML=='')
+                    $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
+                if (size<=2)
+                    $(td[i]).empty();
+            } else if ($(td[i]).hasClass('grid4')){
+                if (size>=4 && td[i].innerHTML=='')
+                    $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
+                if (size<=3)
+                    $(td[i]).empty();
+            } else {
+                if (size<2)
+                    $(td[i]).empty();
+                else if (td[i].innerHTML=='')
+                   $(td[i]).html('<player class="grid-multiplayer" id="player'+i+'"'+access_token+' loader_timeout=-1 '+preferredPlayerFormat+'>player</player>');
+            }
+        }
+    
+        let p = $('.screens .monitoring .camgrid2 player').off('dblclick').on('dblclick',function(){
+            if (!$(this).attr('access_token')) return;
+            let the = this;
+            dialogs['mdialog'].activate(`<p>${$.t('monitoring.confirmDelete')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.no')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.yes')}</button></p>`).then(function(r){
+                if (r.button!='delete') return;
+                $(the).attr('access_token','');
+                $(the)[0].on_access_token_change('');
+                let id = $(the).attr('id');
+                let state = window.screens['monitoring'].getState();
+                state.cams = state.cams || {};
+                delete state.cams[id];
+                window.screens['monitoring'].setState(state);
+            });
+    
+        });
+        $('.screens .monitoring .camgrid2 player').each(function(){
+            this.on_access_token_change = function(token, telconet = false){
+                let access_token = $(this).attr('access_token') ? $(this).attr('access_token') : token;
+                let id = $(this).attr('id');
+                let state = window.screens['monitoring'].getState();
+                if (telconet) {
+                    let cloudPlayerId = this.newid;
+                    var cloudPlayerObj = window.controls['player'].players['player'+cloudPlayerId];
+                    return;
+                }
+    
+                state.cams = state.cams || {};
+                state.cams[id]=access_token;
+                window.screens['monitoring'].setState(state);
+    
+                if (window.screens['monitoring'].playerList) {
+                    let cloudPlayerId = this.newid;
+                    var cloudPlayerObj = window.controls['player'].players['player'+cloudPlayerId];
+                    if (access_token == '') {
+                        window.screens['monitoring'].playerList.removePlayerFromList(cloudPlayerObj)
+                    }
+                    window.screens['monitoring'].playerList.killSyncPromise(true).then(() => {
+                        setTimeout(() => {
+                            window.screens['monitoring'].playerList.killSyncPromise(false).then(() => {
+                                window.screens['monitoring'].playerList.synchronize([], true)
+                            })
+                        }, 1500);
+                    })
+                }           
+            };        
+        });
+        onCameraScreenResize();
+    }, 
+    createCustomGrid: function() {
+        $('.ratio2-inner').hide();$('.cammap').hide();
+        var items = [
+            {x: 0, y: 0, w: 4, h: 4, content: '', id:'cust_player1'},
+            {x: 4, y: 0, w: 4, h: 4, content: '', id:'cust_player2'},	
+            {x: 4, y: 4, w: 4, h: 2, content: '', id:'cust_player3'},	
+            {x: 0, y: 4, w: 2, h: 2, content: '', id:'cust_player4'},	
+            {x: 8, y: 0, w: 2, h: 2, content: '', id:'cust_player5'},	
+            {x: 8, y: 2, w: 2, h: 2, content: '', id:'cust_player6'},	
+            {x: 2, y: 4, w: 2, h: 2, content: '', id:'cust_player7'},	
+            {x: 10, y: 0, w: 1, h: 1, content: '', id:'cust_player8'},	
+            {x: 10, y: 1, w: 1, h: 1, content: '', id:'cust_player9'}	
+          ];
+        var grid = GridStack.init();
+        grid.load(items);
+
+        $($("[gs-id=cust_player1]").children()[0]).attr("id","cust_player1");
+        $($("[gs-id=cust_player1]").children()[0]).attr("playerindex","1");
+        $($("[gs-id=cust_player2]").children()[0]).attr("id","cust_player2");
+        $($("[gs-id=cust_player2]").children()[0]).attr("playerindex","2");
+        $($("[gs-id=cust_player3]").children()[0]).attr("id","cust_player3");
+        $($("[gs-id=cust_player3]").children()[0]).attr("playerindex","3");
+        $($("[gs-id=cust_player4]").children()[0]).attr("id","cust_player4");
+        $($("[gs-id=cust_player4]").children()[0]).attr("playerindex","4");
+        $($("[gs-id=cust_player5]").children()[0]).attr("id","cust_player5");
+        $($("[gs-id=cust_player5]").children()[0]).attr("playerindex","5");
+        $($("[gs-id=cust_player6]").children()[0]).attr("id","cust_player6");
+        $($("[gs-id=cust_player6]").children()[0]).attr("playerindex","6");
+        $($("[gs-id=cust_player7]").children()[0]).attr("id","cust_player7");
+        $($("[gs-id=cust_player7]").children()[0]).attr("playerindex","7");
+        $($("[gs-id=cust_player8]").children()[0]).attr("id","cust_player8");
+        $($("[gs-id=cust_player8]").children()[0]).attr("playerindex","8");
+        $($("[gs-id=cust_player9]").children()[0]).attr("id","cust_player9");
+        $($("[gs-id=cust_player9]").children()[0]).attr("playerindex","9");
+
+        $($("[gs-id=cust_player1]").children()[0]).addClass("player"); 
+        $($("[gs-id=cust_player2]").children()[0]).addClass("player"); 
+        $($("[gs-id=cust_player3]").children()[0]).addClass("player"); 
+        $($("[gs-id=cust_player4]").children()[0]).addClass("player"); 
+        $($("[gs-id=cust_player5]").children()[0]).addClass("player"); 
+        $($("[gs-id=cust_player6]").children()[0]).addClass("player"); 
+        $($("[gs-id=cust_player7]").children()[0]).addClass("player"); 
+        $($("[gs-id=cust_player8]").children()[0]).addClass("player"); 
+        $($("[gs-id=cust_player9]").children()[0]).addClass("player"); 
+
+        $('.grid-stack').show();
+        
+        $("#cust_player1").html('<player class="grid-multiplayer" id="cust_playersdk1" loader_timeout=-1>player</player>');
+        $("#cust_player2").html('<player class="grid-multiplayer" id="cust_playersdk2" loader_timeout=-1>player</player>');
+        $("#cust_player3").html('<player class="grid-multiplayer" id="cust_playersdk3" loader_timeout=-1>player</player>');
+        $("#cust_player4").html('<player class="grid-multiplayer" id="cust_playersdk4" loader_timeout=-1>player</player>');
+        $("#cust_player5").html('<player class="grid-multiplayer" id="cust_playersdk5" loader_timeout=-1>player</player>');
+        $("#cust_player6").html('<player class="grid-multiplayer" id="cust_playersdk6" loader_timeout=-1>player</player>');
+        $("#cust_player7").html('<player class="grid-multiplayer" id="cust_playersdk7" loader_timeout=-1>player</player>');
+        $("#cust_player8").html('<player class="grid-multiplayer" id="cust_playersdk8" loader_timeout=-1>player</player>');
+        $("#cust_player9").html('<player class="grid-multiplayer" id="cust_playersdk9" loader_timeout=-1>player</player>');
+    },
     onLocationHierarchyLoaded: function(locationHierarchy) {
         var dropdownTree;
         locationHierarchy = this.sortLocations(locationHierarchy);
         if ( Object.keys(locationHierarchy).length == 0) {
-            dropdownTree = $("<p class='nolocs'>No locations have been set for this account</p>");
+            dropdownTree = $("<p class='nolocs font-md'>No locations have been set for this account</p>");
         } else {
             dropdownTree = this.createLocationList(locationHierarchy)
         }
@@ -560,7 +636,10 @@ window.screens['monitoring'] = {
                     var li_ele = $(`
                     <li class="loc-dropdown ${child}-dropdown loc-draggable" id="loc-${child}" draggable="true" locName=${child}>
                         <div class="location-btn-cont =">
-                            <span class="loc-name">${childName}</span>
+                            <div class="loc-label-name">
+                                <i class="fa fa-home" aria-hidden="true"></i>
+                                <span class="loc-name">${childName}</span>
+                            </div>
                             <i class="location-arrow fa fa-caret-down" onclick="showNextTier(event, this, '${locType}')" aria-hidden="true"></i>
                         </div>    
                     </li>`);

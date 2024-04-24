@@ -61,15 +61,15 @@ window.core.globalmenu = {
     },
     addMenu: function(screen_id, menu_name, menu_icon, weight){
         let li = core.elements['global-menu'].find('li');
-        if (!li.length) core.elements['global-menu'].append('<li class="menu-item '+screen_id+'" weight="'+weight+'"><span class="menu-icon">'+menu_icon+'</span> <span class="menu-name">'+menu_name+'</span></li>');
+        if (!li.length) core.elements['global-menu'].append('<li class="menu-item font-md '+screen_id+'" weight="'+weight+'"><span class="menu-icon">'+menu_icon+'</span> <span class="menu-name">'+menu_name+'</span></li>');
         for (let i=0; i<li.length; i++){
             let w = $(li[i]).attr('weight');
             if (w>weight) {
-                $(li[i]).before('<li class="menu-item '+screen_id+'" weight="'+weight+'"><span class="menu-icon">'+menu_icon+'</span> '+menu_name+'</li>');
+                $(li[i]).before('<li class="menu-item font-md '+screen_id+'" weight="'+weight+'"><span class="menu-icon">'+menu_icon+'</span> '+menu_name+'</li>');
                 break;
             }
             if (i==li.length-1)
-                $(li[i]).after('<li class="menu-item '+screen_id+'" weight="'+weight+'"><span class="menu-icon">'+menu_icon+'</span> '+menu_name+'</li>');
+                $(li[i]).after('<li class="menu-item font-md '+screen_id+'" weight="'+weight+'"><span class="menu-icon">'+menu_icon+'</span> '+menu_name+'</li>');
         }
         core.elements['global-menu'].find('.'+screen_id).attr('screen_id',screen_id);
     }

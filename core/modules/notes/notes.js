@@ -85,7 +85,7 @@ window.screens['notes'] = {
                     if (camera.length > 0) {
                         let captured = camera[0].meta &&  camera[0].meta.capture_id && vxg.user.src.capture_id ==  camera[0].meta.capture_id ? ' captured' : '';
                         cameraListed = `<div class="camerablock${captured}" notetime="${timestamp}" access_token="${note.camid}">
-                        <campreview onclick_toscreen="tagsview" notetime="${timestamp}"></campreview>`
+                        <campreview onclick_toscreen="tagsview" notetime="${timestamp}" style="cursor: pointer;"></campreview>`
                     }
 
                     tableData.push({

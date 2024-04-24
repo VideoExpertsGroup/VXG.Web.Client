@@ -68,11 +68,11 @@ display:none;
 .screens > .monitoring.grid .camlist-monitoring {
 flex-direction: column;
     flex-wrap: nowrap;
-    width: 250px;
+    width: 300px;
     height: 100%;
     padding-right: 10px;
     overflow-y: auto;
-    margin-left: 13px;
+    margin-left: 0 !important;
     min-width: 250px;
 position: relative;
 }
@@ -260,11 +260,11 @@ width: calc(100% - 4px);
 }
 
 .screens > .monitoring .camlist-monitoring .camerafield-block{
-    margin: 1em 1em 1em 3em;
+    margin: 1.4em 1em 1.4em 3em;
     cursor: pointer;
 }
 .screens > .monitoring .camlist-monitoring .camerafield-block.parent-cam{
-    margin-left: 3px;
+    margin-left: 6px;
 }
 
 body.mobile .screens > .monitoring .camlist-monitoring .camerablock{
@@ -622,7 +622,7 @@ text-align: center;
     padding-left: 30px;
     margin-bottom: 12px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 200;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -727,10 +727,11 @@ text-align: center;
 
 .bootstrap-table .fixed-table-container.has-card-view .table tbody tr td {
 	width: 322px;
-}#groupingButton {
+}
+/* #groupingButton {
     background-color: var(--main-color);
     padding: 5px 20px;
-}
+} */
 
 .mwebui {
     text-decoration: none;
@@ -774,20 +775,25 @@ text-align: center;
     max-width: 322px;
 }
 
+.camlist-cont {
+    display: flex;
+}
+
 camfield {
-    font-size: 14px;
+    font-size: 12px;
     height: 15px;
     display: flex;
 }
 
 camfield > i {
-    padding-right: 4px;
+    padding-right: 8px;
 }
 
 camfield > span {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    font-size: 13px;
 }
 /* .card-view-title {
 	 display:none;
@@ -927,7 +933,7 @@ input.token-input {
 }
 
 .players-container {
-    width:80%;
+    width:100%;
     display: flex;
     flex-direction: column;
     height: 86.5vh;
@@ -962,17 +968,18 @@ input.token-input {
     background-color: #dfdfdf;
 }
 
-button.vxgbutton.hidecameras.open, button.vxgbutton.hidenotes.open {
-    width: 95%;
-    margin-left: 10px;
-    margin-bottom: 12px;
-    height: 27px;
+button.vxgbutton.hidecameras.closed {
+    margin-right: 5px;
 }
-button.vxgbutton.hidecameras.closed, button.vxgbutton.hidenotes.closed {
-    padding: 15px;
+
+.hidecameras {
+    padding: 10px 6px !important;
+    font-size: 15px;
+    color: var(--main-color);
 }
-.hidecameras.open i {
-    margin-left: 10px;
+
+.hidecameras:hover{
+    cursor: pointer;
 }
 
 .note-input-cont {
@@ -1003,7 +1010,7 @@ button.vxgbutton.hidecameras.closed, button.vxgbutton.hidenotes.closed {
 .notes-title-cont {
     width: 100%;
     border-bottom: 2px solid var(--main-color);
-    font-size: 18px;
+    font-size: 13px;
     text-transform: uppercase;
     text-align: center;
 }
@@ -1049,4 +1056,21 @@ text-align:right;
 
 .hide-section {
     margin-left: 5px;
+}
+
+.monitoring-nonotes > h5 {
+    color: #626262;
+}
+ul.location-hierarchy {
+    padding-left: 1rem !important;
+}
+
+.grid-stack-item-content.player {
+    width: 95% !important;
+    height: 95% !important;
+    margin-right: 1%;
+}
+
+.grid-stack>.grid-stack-item>.grid-stack-item-content {
+    overflow-y: hidden !important;
 }

@@ -26,11 +26,14 @@
 }
 
 .VXGArchieveNoData.visible {
-    align-items: center;
+    /* align-items: center;
     display: flex;
-    justify-content: center;
+    justify-content: center; */
     opacity: 1;
     z-index: 1;
+    margin-top: 20%;
+    color: #626262;
+    text-align: center;
 }
 
 .VXGArchieveContainer {

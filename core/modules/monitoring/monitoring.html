@@ -1,9 +1,8 @@
 <div class="monitoring-cont ">
   <div class="cambd">
     <div class="camlist-cont">
-      <button class="vxgbutton hidecameras open"><i class="fa fa-angle-left" aria-hidden="true"></i><span class="hide-section" data-i18n="monitoring.hideCameras">Hide Cameras</span></button>
-      <div class="camlist-monitoring" id="cameras-list" style="display:none;">
-      </div>
+      <span class="hidecameras open"><i class="fa fa-angle-left" aria-hidden="true"></i></span>
+      <div class="camlist-monitoring" id="cameras-list" style="display:none;"></div>
     </div>
     <div class="ratio2 wrapper">
       <div class="ratio2-inner ratio2-4-3">
@@ -14,6 +13,7 @@
           <div class="grid-player grid4"></div><div class="grid-player grid4"></div><div class="grid-player grid4"></div><div class="grid-player grid4"></div>
         </div>
       </div>
+      <div class="grid-stack players-container"></div>
       <div id="single-timeline">
         <div class="cloudplayer-controls-container single-timeline">
           <div class="cloudplayer-timeline-container single-timeline">
@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="notes-cont">
+    <div class="notes-cont monitoring-notes">
       <button class="vxgbutton hidenotes open"><i class="fa fa-angle-right" aria-hidden="true"></i><span class="hide-section" data-i18n="monitoring.hideNotes">Hide Notes</span></button>
       <div class="notes-list-cont">
         <div class="notes-title-cont">
@@ -31,7 +31,7 @@
         </div>
         <div class="monitoring-noteslist">
           <div class="monitoring-nonotes">
-              <p data-i18n="monitoring.noNotes"> No notes created. If notes are enabled, go to the timeline view of a camera to create a note. </p>
+              <h5 data-i18n="monitoring.noNotes" class="font-md"> No notes. Go to the timeline view of a camera to create a note. </h5>
           </div>
         </div>
       </div>

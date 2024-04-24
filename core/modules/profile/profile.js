@@ -37,7 +37,7 @@ window.screens['profile'] = {
             `;
             $(this.wrapper).find('.planlist').html(planlist);
         } else {
-            $(this.wrapper).find('.planlist').html(`<p>${$.t('profile.noSubscriptionsFound')}</p>`);
+            $(this.wrapper).find('.planlist').html(`<p class="font-sm">${$.t('profile.noSubscriptionsFound')}</p>`);
         }
         $(this.wrapper).find('[name="phone"]').val(vxg.user.src.phone ? vxg.user.src.phone:'' );
         $(this.wrapper).find('[name="sheduler"]').val(vxg.user.src.sheduler ? vxg.user.src.sheduler:'' );
@@ -85,7 +85,7 @@ window.screens['profile'] = {
         core.elements['global-menu-header'].html(''+
         '<div class="dropdown profile-element" style="height:155px;padding-top: 32px;" onclick_toscreen="profile">'+
         '<span class="rounded-circle profile-img" src="'+path+'profile_dev.svg"></span><br/>'+
-        '<div class="username">'+vxg.user.src.username+'</div>'+
+        '<div class="username font-md">'+vxg.user.src.username+'</div>'+
         '</div>');
         return defaultPromise();
     },

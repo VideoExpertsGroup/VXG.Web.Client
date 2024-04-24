@@ -11,19 +11,23 @@ flex-direction: row;
     margin-left: -10px;
     align-content: flex-start;
 }
-
-.screens > .servers.noservers .serverlist {
-    width: 100%;
-    height: 100%;
+.screens > .servers.noservers {
+    height: unset !important;
 }
 .screens > .servers.noservers .serverlist {
-    display: flex;
+    /* display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 14px; */
+    width: 100%;
+    text-align: center;
+    color: #626262;
+    margin-top: 20%;
+    display: block;
+    margin-left: 0px !important;
 }
 
-.screens > .servers .serverlist > div {
+/* .screens > .servers .serverlist > div {
     width: calc(100% - 4px);
     height: 216px;
     min-height: 216px;
@@ -51,21 +55,21 @@ background-color: white;
 
 .screens > .servers .serverlist .serverstatus.online {
 background-color:var(--main-color);
-}
+} */
 
-.screens > .servers .serverlist .desc {
+/* .screens > .servers .serverlist .desc {
     height: 46px;
     width: 100%;
     font-size: 12px;
     font-weight: 600;
     background: white;
     border-top: 1px solid var(--main-color);
-}
+} */
 
 .screens > .servers .serverlist .preview.active {
 cursor:pointer;
 }
-.screens > .servers .serverlist .preview {
+/* .screens > .servers .serverlist .preview {
     width: 100%;
     height: calc(100% - 46px);
     background-repeat: no-repeat;
@@ -73,15 +77,16 @@ cursor:pointer;
     background-size: auto;
     background-color: white;
 display:block;
-}
+} */
 
 .screens > .servers .serverlist .settings {
-width: 40px;
-    height: 46px;
-    float: right;
+width: 30px;
+    height: 30px;
+    /* float: right; */
     background-repeat: no-repeat;
-    background-position: 8px center;
+    background-position: center;
     cursor: pointer;
+    margin: 0 auto;
 }
 
 .screens > .servers .serverlist .name {
@@ -120,4 +125,21 @@ width: 40px;
     line-height: 25px;
     padding: 7px 10px;
     padding-left: 41px;
+}
+
+#serverlist_table .serverstatus {
+    font-size: 13px;
+    background: gray;
+    color: white;
+    padding: 5px 12px 4px;
+    border-radius: 8px;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+#serverlist_table .serverstatus.online {
+    background-color:var(--main-color);
+}
+#serverlist_table > :not(caption) > * > * {
+    border-width: 0 0 1px 0 !important;
 }

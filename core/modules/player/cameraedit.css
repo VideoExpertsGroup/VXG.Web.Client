@@ -253,7 +253,7 @@ option.dvr-disabled:disabled {
 .location-btn-cont {
     padding: 5px 10px;
     border-bottom: thin solid #a4a4a4;
-    font-size: 18px;
+    font-size: 13px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -269,10 +269,10 @@ option.dvr-disabled:disabled {
     cursor: pointer;
 }
 
-.loc-name:hover {
+/* .loc-name:hover {
     cursor: pointer;
     color: var(--main-color);
-}
+} */
 
 .existing-input-cont {
     display: flex;

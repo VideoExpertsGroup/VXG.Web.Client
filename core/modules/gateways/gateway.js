@@ -104,7 +104,7 @@ window.screens['gateway'] = {
             tableData.push({
                 order: count + 1,
                 id: `<div class="camerablock${captured}" channel_id="${camInfo.id}" gid="${camInfo.meta.gateway_id}" gateway_token="${camInfo.token}" id="scrollto${camInfo.id}">
-                <campreview onclick_toscreen="gateway_cams"></campreview>`,
+                <campreview onclick_toscreen="gateway_cams" style="cursor: pointer;"></campreview>`,
                 name: camInfo.name,
                 location: camInfo.meta.location,
                 group: camInfo.meta.group,
@@ -117,7 +117,8 @@ window.screens['gateway'] = {
 
         if (count == 0) {
             self.wrapper.addClass('nogateways');
-            $('#gateway-table').html(`<div class="no-recorders"><p>${$.t('gateways.noGateways')}</p></div>`);
+            // $('#gateway-table').html(`<div class="no-recorders"><p>${$.t('gateways.noGateways')}</p></div>`);
+            $('.nogateways').html(`<div class="no-recorders"><h5 class="font-md">${$.t('gateways.noGateways')}. <a href="javascript:void(0)" ifscreen="add_gateway" onclick_toscreen="add_gateway">${$.t('gateways.addGateway')}</a></h5></div>`);
             self.wrapper.removeClass('loader');
             return;
         } 
@@ -129,7 +130,7 @@ window.screens['gateway'] = {
             reorderableRows: true,
             useRowAttrFunc: true,
             filterControl: true,
-            toolbar: ".toolbar",
+            // toolbar: ".toolbar",
             uniqueId: "order",
             columns: columns,
             sortName: 'order',
@@ -178,9 +179,9 @@ window.screens['gateway'] = {
 
         var menu =  $(`
         <div class="simplemenu">
-        <div class="listmenu-item gateway-menu mwebui_gateway"> <a id="ui-link" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.gatewayUI')} </span></a></div>
-        <div class="listmenu-item gateway-menu mconfigure_gateway" ifscreen="add_gateway" onclick_toscreen="add_gateway" editGateway="${gatewayid}"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('common.config')} </span></div>
-        <div class="listmenu-item gateway-menu mtrash_gateway" onclick="onGatewayDelete('${gatewayid}', '${camid}', '${access_token}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name"> ${$.t('action.remove')} </span></div>
+        <div class="listmenu-item gateway-menu mwebui_gateway"> <a id="ui-link" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.gatewayUI')} </span></a></div>
+        <div class="listmenu-item gateway-menu mconfigure_gateway" ifscreen="add_gateway" onclick_toscreen="add_gateway" editGateway="${gatewayid}"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.config')} </span></div>
+        <div class="listmenu-item gateway-menu mtrash_gateway" onclick="onGatewayDelete('${gatewayid}', '${camid}', '${access_token}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('action.remove')} </span></div>
         </div>`);
 
         var cameraUrlsStr = sessionStorage.getItem("cameraUrls");

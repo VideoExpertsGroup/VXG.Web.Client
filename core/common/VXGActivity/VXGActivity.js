@@ -96,7 +96,7 @@ VXGActivityView.prototype.initDraw = function initDraw(controller) {
     +	'				</center></div></div>'
     +	'			</div>'
     +	'		</div>'
-    +	`		<div class="VXGActivityNoEvents"><span>${$.t('activity.noEvents')}</span></div>`
+    +	`		<div class="VXGActivityNoEvents"><span class="font-md">${$.t('activity.noEvents')}</span></div>`
     +	'		<div class="VXGActivityWaiter"></div>'
     +	'	</div>'
     +	'</div>';
@@ -509,6 +509,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 
 		dclass+=" event-processing-activity ";
 		addon = `
+		camid="${this.camid}"
 		img_url="${((this.thumb && this.thumb.url) ? this.thumb.url : '')}" 
 		event_name="${this.name}"
 		event_id="${this.id}" 
@@ -560,12 +561,12 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	    +	'			<div class="image-stub"></div><img crossorigin="anonymous" id="event_'+ this.id +'_thumbnail" src="' + thumb_src + '" alt="">'
 	    +	'		</div>' 
 	    +	'		<div class="VXGActivityCardInfo flex-grow-1">'
-	    +	'			<small class="VXGActivityCardInfoTimeback float-right text-navy"><b>' + self.timeDifference(currentTime, new Date(this.time +"Z")) + '</b></small>' 
+	    +	'			<span class="VXGActivityCardInfoTimeback float-right text-navy"><b>' + self.timeDifference(currentTime, new Date(this.time +"Z")) + '</b></span>' 
 	    +	'			<div class="VXGActivityCardInfoMain flex-column h-100 justify-content-between">'
 	    +	'				<div class="event-info">'
 	    +	cameraInfo
 //	    +	'					<div>' + meta + '</div>' 	    
-	    +	'					<small class="text-muted">' + timeString + '</small>' 
+	    +	'					<span class="text-muted">' + timeString + '</span>' 
 	    +	'				</div>'
 	    +	'				<div class="event-name ' + eventStatus + '">' 
 		+	'					<span>' + self.ActivitiesList_resolve_name(this.name)  + '</span>'
@@ -586,8 +587,8 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 				// camera: `<div class="image-container d-flex align-items-center ${dclass}" ${addon} eventid="${this.id}">
 				// 					<div class="image-stub"></div><img crossorigin="anonymous" id="event_${this.id}_thumbnail" src="${thumb_src}" alt="event_screen" />
 				// 				</div>`,
-				time: `<small class="text-muted">${timeString}</small>`,
-				type: `<div class="event-name ${eventStatus}"><span>${self.ActivitiesList_resolve_name(this.name)}</span></div>`,
+				time: `<span class="text-muted">${timeString}</span>`,
+				type: `<div class="event-name ${eventStatus}"><span class="font-md">${self.ActivitiesList_resolve_name(this.name)}</span></div>`,
 				cameraInfo: `<span>${cameraInfo}</span>`,
 				status: `${eventStatus == "no_status" ? $.t('action.new') : eventStatus}`,
 				meta: metaData,
@@ -617,7 +618,12 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 					cardVisible: false,
 					sortable: true,
 					class: "sTime",
-					title: $.t('common.time')
+					title: $.t('common.time'),
+					sorter: function timeSorting(a, b) {
+						if (new Date(a.replace('<span class="text-muted">', '').replace('</span>', '')) < new Date(b.replace('<span class="text-muted">', '').replace('</span>', ''))) return -1;
+						if (new Date(a.replace('<span class="text-muted">', '').replace('</span>', '')) > new Date(b.replace('<span class="text-muted">', '').replace('</span>', ''))) return 1;
+						return 0;
+					}
 			},
 			{
 					field: "type",
@@ -694,6 +700,26 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 
 	
 	const activityClick = () => $('table.feed-activity-list tbody tr').on("click", function() {
+		if (window.location.href.indexOf("cameras") !== -1)
+			{
+			     let camid = $(this).find('.event-processing-activity').attr("camid");;
+			     let eventid = $(this).find('.event-processing-activity').attr("event_id");;
+			     let time 	= $(this).find('.event-processing-activity').attr("time");
+			     let name	= $(this).find('.event-processing-activity').attr("camera_name");;
+			     let camera = self.objByCamid(camid);
+	    
+			     let obj = {
+				camid: camid,
+				access_token: self.roToken,
+				eventid: eventid,
+				time: time,
+				name: name,
+				camera: camera
+			     };
+			     self.callbackFunc("event", obj);
+			     return;	
+			}
+			
 		window.event_processing = window.event_processing || {};
 		window.event_processing.thumb_url = $(this).find('.event-processing-activity').attr("img_url");
 		window.event_processing.camera_name = $(this).find('.event-processing-activity').attr("camera_name");
@@ -721,7 +747,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 			let camera0	= answer[0];
 			let allCamToken	= vxg.user.src.allCamsToken;
 			let apiGetActivityFunc	= vxg.api.cloud.getEventslist;// vs_api.user.camera.event.list;
-			let controlCbFunc 	= listActivityCB2;
+//			let controlCbFunc 	= listActivityCB;
 			let targetElement = isActivitiesPage ? $('.activity_activitylist')[0] : isReportPage ? $('.report_activitylist')[0] : $('.eventslist')[0];
 			camera0.getToken().then(function(token){
 				targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),offset,200,true, true);
@@ -740,7 +766,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 				let camera0	= answer[0];
 				let allCamToken	= vxg.user.src.allCamsToken;
 				let apiGetActivityFunc	= vxg.api.cloud.getEventslist;// vs_api.user.camera.event.list;
-				let controlCbFunc 	= listActivityCB2;
+//				let controlCbFunc 	= listActivityCB;
 				let targetElement = isActivitiesPage ? $('.activity_activitylist')[0] : isReportPage ? $('.report_activitylist')[0] : $('.eventslist')[0];
 				camera0.getToken().then(function(token){
 					refreshTimer = setInterval(function () {
