@@ -700,7 +700,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 
 	
 	const activityClick = () => $('table.feed-activity-list tbody tr').on("click", function() {
-		if (window.location.href.indexOf("cameras") !== -1)
+		/*if (window.location.href.indexOf("cameras") !== -1)
 			{
 			     let camid = $(this).find('.event-processing-activity').attr("camid");;
 			     let eventid = $(this).find('.event-processing-activity').attr("event_id");;
@@ -718,7 +718,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 			     };
 			     self.callbackFunc("event", obj);
 			     return;	
-			}
+			}*/
 			
 		window.event_processing = window.event_processing || {};
 		window.event_processing.thumb_url = $(this).find('.event-processing-activity').attr("img_url");
@@ -747,7 +747,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 			let camera0	= answer[0];
 			let allCamToken	= vxg.user.src.allCamsToken;
 			let apiGetActivityFunc	= vxg.api.cloud.getEventslist;// vs_api.user.camera.event.list;
-//			let controlCbFunc 	= listActivityCB;
+			let controlCbFunc 	= listActivityCB;
 			let targetElement = isActivitiesPage ? $('.activity_activitylist')[0] : isReportPage ? $('.report_activitylist')[0] : $('.eventslist')[0];
 			camera0.getToken().then(function(token){
 				targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),offset,200,true, true);
@@ -766,7 +766,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 				let camera0	= answer[0];
 				let allCamToken	= vxg.user.src.allCamsToken;
 				let apiGetActivityFunc	= vxg.api.cloud.getEventslist;// vs_api.user.camera.event.list;
-//				let controlCbFunc 	= listActivityCB;
+				let controlCbFunc 	= listActivityCB;
 				let targetElement = isActivitiesPage ? $('.activity_activitylist')[0] : isReportPage ? $('.report_activitylist')[0] : $('.eventslist')[0];
 				camera0.getToken().then(function(token){
 					refreshTimer = setInterval(function () {
