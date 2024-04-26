@@ -31,3 +31,6 @@ window.skin.termsOfUse = "#";
 window.skin.contactUs = "https://www.videoexpertsgroup.com/contacts/";
 
 window.no_check_local_addresses = true;
+
+window.isTelconet = false;
+window.showNotes = false;

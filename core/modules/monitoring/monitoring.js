@@ -69,36 +69,43 @@ window.screens['monitoring'] = {
                 self.playerList.synchronize();
             }
         }, 1500)
-
-        return vxg.api.cloud.getAllNotes(vxg.user.src.allCamsToken).then(ret => {
-            var notesList = ret.objects;
-            if (notesList.length > 0) {
-                $('.nonotes').hide();
-                var notesEle = '';
-                notesList.forEach(note => {
-                    let timestamp = new Date(note['timestamp']+'Z').getTime();
-                    date = new Date(note['timestamp']+'Z');
-                    date = date.toLocaleString('en-CA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }).replace(/[,|.]/g,'').replace(' 24',' 00');
-                    notesEle += '<div class="onetag font-md" timestamp="'+timestamp+'">';
-                    if (vxg.user.src.role!='user') notesEle += '<div class="edtag" meta="'+i+'"></div>';
-                    notesEle += '<div class="datetime">'+date+'</div><div class="case font-md">'+(note['string']['case']?note['string']['case']:'')+'</div><div class="desc">'+(note['string']['description']?note['string']['description']:'')+'</div></div>';
-                })
-                $('.monitoring-noteslist').html(notesEle);
-                $('.monitoring-noteslist').show();
-            }
-            if (localStorage.locationHierarchyCams == undefined)
-                return self.createLocationHierarchy();
-            else {
-                return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
-            }
-        }, function(err) {
-            console.log(err.responseText);
-            if (localStorage.locationHierarchyCams == undefined) {
-                return self.createLocationHierarchy();
-            } else {
-                return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
-            }
-        });
+        if (window.showNotes) {
+            return vxg.api.cloud.getAllNotes(vxg.user.src.allCamsToken).then(ret => {
+                var notesList = ret.objects;
+                if (notesList.length > 0) {
+                    $('.nonotes').hide();
+                    var notesEle = '';
+                    notesList.forEach(note => {
+                        let timestamp = new Date(note['timestamp']+'Z').getTime();
+                        date = new Date(note['timestamp']+'Z');
+                        date = date.toLocaleString('en-CA', { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }).replace(/[,|.]/g,'').replace(' 24',' 00');
+                        notesEle += '<div class="onetag font-md" timestamp="'+timestamp+'">';
+                        if (vxg.user.src.role!='user') notesEle += '<div class="edtag" meta="'+i+'"></div>';
+                        notesEle += '<div class="datetime">'+date+'</div><div class="case font-md">'+(note['string']['case']?note['string']['case']:'')+'</div><div class="desc">'+(note['string']['description']?note['string']['description']:'')+'</div></div>';
+                    })
+                    $('.monitoring-noteslist').html(notesEle);
+                    $('.monitoring-noteslist').show();
+                }
+                //if (localStorage.locationHierarchyCams == undefined)
+                    return self.createLocationHierarchy();
+                //else {
+                //    return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
+                //}
+            }, function(err) {
+                console.log(err.responseText);
+                //if (localStorage.locationHierarchyCams == undefined) {
+                    return self.createLocationHierarchy();
+                //} else {
+                //    return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
+                //}
+            });
+        } else {
+            //if (localStorage.locationHierarchyCams == undefined) {
+            return self.createLocationHierarchy();
+            //} else {
+            //    return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
+            //}
+        }
     },
     playChannels: function(resolve) {
         if (this.camera_list_promise) return this.camera_list_promise;
@@ -562,7 +569,6 @@ window.screens['monitoring'] = {
         } else {
             dropdownTree = this.createLocationList(locationHierarchy)
         }
-
         $(".camlist-monitoring").empty();
         $('[name="location_strs"]').empty();
 
@@ -674,7 +680,7 @@ window.screens['monitoring'] = {
                             .then((cameras) => {
                                 self.getSubLocations(locationHierarchy, 1, cameras, [currentProvince]);
                                 if (i == locationsArr.length - 1) {
-                                    localStorage.locationHierarchyCams = JSON.stringify(locationHierarchy);
+                                    //localStorage.locationHierarchyCams = JSON.stringify(locationHierarchy);
                                     self.onLocationHierarchyLoaded(locationHierarchy);
                                 }
                                 return true;
