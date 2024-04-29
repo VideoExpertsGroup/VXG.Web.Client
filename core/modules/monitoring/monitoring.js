@@ -69,6 +69,8 @@ window.screens['monitoring'] = {
                 self.playerList.synchronize();
             }
         }, 1500)
+        $(".camlist-monitoring").empty();
+        $(".camlist-monitoring").append($('<div class="loader section-loader monitoring-loader"></div>'))
         if (window.showNotes) {
             return vxg.api.cloud.getAllNotes(vxg.user.src.allCamsToken).then(ret => {
                 var notesList = ret.objects;
@@ -659,7 +661,7 @@ window.screens['monitoring'] = {
     },
     createLocationHierarchy: function() {
         var self = this;
-        var locationHierarchy = localStorage.locationHierarchyCams ?  JSON.parse(localStorage.locationHierarchyCams) : {};
+        var locationHierarchy = {}; //localStorage.locationHierarchyCams ?  JSON.parse(localStorage.locationHierarchyCams) : {};
         if (!Object.keys(locationHierarchy).length) {
             return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, "Province").then(function(locations) {
                 for (const loc in locations) {

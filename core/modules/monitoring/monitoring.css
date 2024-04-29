@@ -499,6 +499,12 @@ padding-left: 33px;
     min-width: 200px;
 }
 
+.monitoring-loader {
+    height: 150px;
+    width: 150px;
+    margin: auto;
+}
+
 /* input:before {
     cursor: pointer;
     content: '';
