@@ -53,7 +53,7 @@ window.screens['activity'] = {
     'on_search':function(text){
 			localStorage.setItem("activityTextFilter", text);
       window.skin.use_text_filter = text;
-			localStorage.setItem("initialLoading", true);
+			// localStorage.setItem("initialLoading", true);
         console.log("DEBUG: Activity search text:" + text );
 		var search_obj = {};
         search_obj.meta = text;
@@ -72,8 +72,8 @@ window.screens['activity'] = {
 	    targetElement = this.wrapper.find('.activity_activitylist')[0];
 	    var activity_controller = new VXGActivityController(targetElement);
 
-			localStorage.setItem("initialLoading", true);
-			targetElement.showActivityList();
+			// localStorage.setItem("initialLoading", true);
+			// targetElement.showActivityList();
 	    
 	    let allCamToken	= vxg.user.src.allCamsToken;
 	    window.vxg.cameras.getCameraListPromise(100, 0).then(function (answer) {
@@ -90,12 +90,12 @@ window.screens['activity'] = {
                     });
 
 		}else {
-				localStorage.setItem("initialLoading", true);
-		    targetElement.showActivityList();
+				// localStorage.setItem("initialLoading", true);
+		    // targetElement.showActivityList();
 		}
 	    }, function(r) {
-		localStorage.setItem("initialLoading", true);
-		targetElement.showActivityList();
+		// localStorage.setItem("initialLoading", true);
+		// targetElement.showActivityList();
 	    });
         return defaultPromise();
     },
@@ -109,6 +109,7 @@ window.screens['activity'] = {
     },
 // Когда экран "прячется" - например вследствие активации другого экрана
     'on_hide':function(){
+        localStorage.setItem("eventsList", false);
         this.scroll_top = $('.screens').scrollTop();
 	let targetElement = core.elements['header-search'].find('input')[0];
 	if (targetElement !== undefined) {
@@ -123,13 +124,13 @@ window.screens['activity'] = {
         let self = this;
         core.elements['header-right'].prepend(`<div class="activityfilterContainer">
 													<div class="transparent-button activityfilter">
-														<span id="activityfilter-btn"> ${$.t('action.filter')}</span>
+														<button id="activityfilter-btn" class="vxgfilterbtn"> ${$.t('action.filter')}</button>
 													</div>
 												</div>`);
 		
 
 		
-        core.elements['header-right'].find('.activityfilterContainer .activityfilter').click(function(){
+        core.elements['header-right'].find('.activityfilterContainer .activityfilter').click(async function(){
 
 /*
 	case "yolov4_detection":
@@ -144,139 +145,178 @@ window.screens['activity'] = {
 	case "linecross":
 	    name="Line cross";break;
 */			
+			let cameras = await vxg.cameras.getFullCameraList(500, 0);
+			let activityCamera1Filter = localStorage.getItem("activityCamera1Filter") ?? window.skin.use_camera1_filter;
+			let htmlCamera = '<option></option>';
+			for (let i = 0; i < cameras.length; i++) {
+				htmlCamera += `<option value="${cameras[i].src.id}" ${cameras[i].src.id == activityCamera1Filter ? 'selected' : ''}>${cameras[i].src.name}</option>`;
+			}
+
+			var activityTimeFilter = localStorage.getItem("activityTimeFilter") ?? window.skin.use_time_filter;
+			let timeFilterDatetime;
+			if (activityTimeFilter) {
+				timeFilterDatetime = new Date(activityTimeFilter);
+				timeFilterDatetime.setMinutes(timeFilterDatetime.getMinutes() - timeFilterDatetime.getTimezoneOffset());
+			}
+
+			// let buttonClass = '';
+			// if (isEmpty(window.skin.use_camera1_filter) && isEmpty(window.skin.use_filter) && isEmpty(window.skin.use_time_filter)) {
+			// 	buttonClass = 'unset';
+			// } else {
+			// 	buttonClass = 'set';
+			// }
 
 			var activityFilter = localStorage.getItem("activityFilter");
 			var savedFiltersStr = activityFilter == null ? window.skin.use_filter : activityFilter;
-			var savedFilters = savedFiltersStr.split(',');
+			var savedFilters = savedFiltersStr ? savedFiltersStr.split(',') : [];
 			var defaultFilters = "motion,object_and_scene_detection,post_object_and_scene_detection,network,vehicle_stopped_detection,plate_recognition,crowd_detection";
 			var customFiltersList = savedFilters.filter(f => !defaultFilters.includes(f) );
 			var customFilterString = "";
 			customFiltersList.forEach(c => { customFilterString += (customFilterString?', ':'')+c; });
 
             dialogs['mdialog'].activate(`
-				<h7 data-i18n="activity.selectMotionFilter" class="font-md">${$.t('activity.selectMotionFilter')}</h7>
-				<div>
-					<ul class="activitylist">
-						<li>
-							<label class="filter-label custom-checkbox">
-								<span>${$.t('common.eventTypes.motion')}</span>
-								<input type="checkbox" `+(savedFilters.indexOf('motion')!==-1?'checked':'')+` name="motion">
-								<span class="checkmark"></span>	
-							</label>
-						</li>
-						<li>
-							<label class="filter-label custom-checkbox">
-								<span>${$.t('common.eventTypes.objectDetection')}</span>
-								<input type="checkbox" `+(savedFilters.indexOf('object_and_scene_detection')!==-1?'checked':'')+` name="object_and_scene_detection">
-								<span class="checkmark"></span>	
-							</label>
-						</li>
-						<li>
-							<label class="filter-label custom-checkbox">
-								<span>${$.t('common.eventTypes.peopleDetection')}</span>
-								<input type="checkbox" `+(savedFilters.indexOf('post_object_and_scene_detection')!==-1?'checked':'')+` name="post_object_and_scene_detection">
-								<span class="checkmark"></span>		
-							</label>
-						</li>
-						<li>
-							<label class="filter-label custom-checkbox">
-								<span>${$.t('common.eventTypes.network')}</span>
-								<input type="checkbox" `+(savedFilters.indexOf('network')!==-1?'checked':'')+` name="network">
-								<span class="checkmark"></span>		
-							</label>
-						</li>
-						<li>
-							<label class="filter-label custom-checkbox">
-								<span>${$.t('common.eventTypes.vehicleStopped')}</span>
-								<input type="checkbox" `+(savedFilters.indexOf('vehicle_stopped_detection')!==-1?'checked':'')+` name="vehicle_stopped_detection">
-								<span class="checkmark"></span>		
-							</label>
-						</li>
-						<li>
-							<label class="filter-label custom-checkbox">
-								<span>${$.t('common.eventTypes.LPR')}</span>
-								<input type="checkbox" `+(savedFilters.indexOf('plate_recognition')!==-1?'checked':'')+` name="plate_recognition">
-								<span class="checkmark"></span>		
-							</label>
-						</li>
-						<li>
-							<label class="filter-label custom-checkbox">
-								<span>${$.t('common.eventTypes.crowd')}</span>
-								<input type="checkbox" `+(savedFilters.indexOf('crowd_detection')!==-1?'checked':'')+` name="crowd_detection">
-								<span class="checkmark"></span>		
-							</label>
-						</li>
-						<li>
-							<p class="custom-input-label">${$.t('activity.customEventList')}</p>
-							<input type="text" class="custom-filter-input" name="custom_filter_list" value="${customFilterString}">
-						</li>
-					</ul>
+				<h7 data-i18n="activity.selectFilter" class="font-md">${$.t('activity.selectFilter')}</h7>
+				<div class="filter-box">
+					<div class="camera-filter-cont">
+						<div class="camera-select-cont">
+								<label class="camera-filter-label font-md" for="filter-camera-select" data-i18n="activity.eventCameraLabel">${$.t('activity.eventCameraLabel')}</label>
+								<select class="camera-select" id="filter-camera-select" name="filter-camera-select">${htmlCamera}</select>
+						</div>
+					</div>
+					<div class="time-filter-cont">
+						<div class="time-input-cont">
+								<label class="time-filter-label font-md" for="filter-time-input" data-i18n="activity.eventEndTimeLabel">${$.t('activity.eventEndTimeLabel')}</label>
+								<input class="time-input" id="filter-time-input" type="datetime-local" name="filter-time-input" value="${timeFilterDatetime ? timeFilterDatetime.toISOString().slice(0, 16) : ''}"/>
+						</div>
+					</div>
+					<div class="type-filter-cont">
+						<label class="type-filter-label font-md" data-i18n="activity.eventTypeLabel">${$.t('activity.eventTypeLabel')}</label>
+						<ul class="activitylist">
+							<li>
+								<label class="filter-label custom-checkbox">
+									<span>${$.t('common.eventTypes.motion')}</span>
+									<input type="checkbox" `+(savedFilters.indexOf('motion')!==-1?'checked':'')+` name="motion">
+									<span class="checkmark"></span>	
+								</label>
+							</li>
+							<li>
+								<label class="filter-label custom-checkbox">
+									<span>${$.t('common.eventTypes.objectDetection')}</span>
+									<input type="checkbox" `+(savedFilters.indexOf('object_and_scene_detection')!==-1?'checked':'')+` name="object_and_scene_detection">
+									<span class="checkmark"></span>	
+								</label>
+							</li>
+							<li>
+								<label class="filter-label custom-checkbox">
+									<span>${$.t('common.eventTypes.peopleDetection')}</span>
+									<input type="checkbox" `+(savedFilters.indexOf('post_object_and_scene_detection')!==-1?'checked':'')+` name="post_object_and_scene_detection">
+									<span class="checkmark"></span>		
+								</label>
+							</li>
+							<li>
+								<label class="filter-label custom-checkbox">
+									<span>${$.t('common.eventTypes.network')}</span>
+									<input type="checkbox" `+(savedFilters.indexOf('network')!==-1?'checked':'')+` name="network">
+									<span class="checkmark"></span>		
+								</label>
+							</li>
+							<li>
+								<label class="filter-label custom-checkbox">
+									<span>${$.t('common.eventTypes.vehicleStopped')}</span>
+									<input type="checkbox" `+(savedFilters.indexOf('vehicle_stopped_detection')!==-1?'checked':'')+` name="vehicle_stopped_detection">
+									<span class="checkmark"></span>		
+								</label>
+							</li>
+							<li>
+								<label class="filter-label custom-checkbox">
+									<span>${$.t('common.eventTypes.LPR')}</span>
+									<input type="checkbox" `+(savedFilters.indexOf('plate_recognition')!==-1?'checked':'')+` name="plate_recognition">
+									<span class="checkmark"></span>		
+								</label>
+							</li>
+							<li>
+								<label class="filter-label custom-checkbox">
+									<span>${$.t('common.eventTypes.crowd')}</span>
+									<input type="checkbox" `+(savedFilters.indexOf('crowd_detection')!==-1?'checked':'')+` name="crowd_detection">
+									<span class="checkmark"></span>		
+								</label>
+							</li>
+							<li>
+								<p class="custom-input-label">${$.t('activity.customEventList')}</p>
+								<input type="text" class="custom-filter-input" name="custom_filter_list" value="${customFilterString}">
+							</li>
+						</ul>
+					</div>
 				</div>
-				<div>
-					<button name="apply" class="vxgbutton" style="width:100%">${$.t('action.set')}</button>
+				<div class="filter-button-container">
+					<button name="clear" class="vxgbutton">${$.t('action.clear')}</button>
+					<button name="apply" class="vxgbutton">${$.t('action.set')}</button>
 				</div>`).then(function(r){
-                if (!r || r.button!='apply') return;
-				let f='';
-				let customFilterArr = r.form.custom_filter_list ? r.form.custom_filter_list.split(',') : [];
-				for (let c in customFilterArr) { f += (f?',':'')+customFilterArr[c].trim(); }
-                for (let i in r.form){ if (r.form[i]=='on') f += (f?',':'')+i; }
-				if (f.split(",").length != 3) $('#activityfilter-btn').addClass("filterset");
-				else $('#activityfilter-btn').removeClass("filterset");
-				localStorage.setItem("activityFilter", f);
-                window.skin.use_filter = f;
-								localStorage.setItem("initialLoading", true);
-                self.activate();
+					if (r && r.button === 'apply') {
+						let f='';
+						let customFilterArr = r.form.custom_filter_list ? r.form.custom_filter_list.split(',') : [];
+						for (let c in customFilterArr) { f += (f?',':'')+customFilterArr[c].trim(); }
+										for (let i in r.form){ if (r.form[i]=='on') f += (f?',':'')+i; }
+						
+						localStorage.setItem("activityFilter", f);
+										window.skin.use_filter = f;
+		
+										let camId = r.form['filter-camera-select'];
+						localStorage.setItem("activityCamera1Filter", camId);
+						window.skin.use_camera1_filter = camId;
+		
+						let endTime = r.form['filter-time-input'];
+					let utcTime = endTime ? new Date(endTime).toISOString() : '';
+					localStorage.setItem("activityTimeFilter", utcTime);
+					window.skin.use_time_filter = utcTime;
+		
+					if (isEmpty(window.skin.use_camera1_filter) && isEmpty(window.skin.use_filter) && isEmpty(window.skin.use_time_filter)) {
+						$('#activityfilter-btn').removeClass("set");
+						$('#activityfilter-btn').addClass("unset");
+					} else {
+						$('#activityfilter-btn').addClass("set");
+						$('#activityfilter-btn').removeClass("unset");
+					}
+		
+						// localStorage.setItem("initialLoading", true);
+										self.activate();
+					} else if (r && r.button === 'clear') {
+						localStorage.setItem("activityFilter", '');
+						window.skin.use_filter = '';
+						localStorage.setItem("activityCamera1Filter", '');
+						window.skin.use_camera1_filter = '';
+						localStorage.setItem("activityTimeFilter", '');
+						window.skin.use_time_filter = '';
+						// localStorage.setItem("initialLoading", true);
+						$('#activityfilter-btn').removeClass("set");
+						$('#activityfilter-btn').addClass("unset");
+						self.activate();
+					}
             });
+				$("#filter-time-input").flatpickr({enableTime: true,
+					dateFormat: "Y-m-d H:i"});
         });
-
-		vxg.cameras.getFullCameraList(500, 0).then(function(cameras) {
-			var activityCamera1Filter = localStorage.getItem("activityCamera1Filter") ?? window.skin.use_camera1_filter;
-			let el = $("#filter-camera-select");
-			let html = '<option></option>';
-			for (let i = 0; i < cameras.length; i++) {
-				html += `<option value="${cameras[i].src.id}" ${cameras[i].src.id === activityCamera1Filter ? 'selected' : ''}>${cameras[i].src.name}</option>`;
-			}
-			el.html(html);
-			$("#set-camera-filter").on("click", function() {
-				let camId = $("#filter-camera-select").val();
-				localStorage.setItem("activityCamera1Filter", camId);
-				localStorage.setItem("initialLoading", true);
-				window.skin.use_camera1_filter = camId;
-				self.activate();
-			});
-		});
-
-		$("#set-time-filter").on("click", function() {
-			var endTime = $("#filter-time-input").val();
-			var utcTime = endTime ? new Date(endTime).toISOString() : '';
-			localStorage.setItem("activityTimeFilter", utcTime);
-			localStorage.setItem("initialLoading", true);
-			window.skin.use_time_filter = utcTime;
-			self.activate();
-		});
-
-		$("#filter-time-input").flatpickr({enableTime: true,
-			dateFormat: "Y-m-d H:i"});
 
 //        alert('on_ready Test screen');
     },
 // Когда скрипт инициализируется первый раз (чтоб не выполнять лишнюю работу, возможно даже не нужную пользователю)
     'on_init':function(){
-		var activityFilter = localStorage.getItem("activityFilter");
-		window.skin.use_filter = activityFilter == null ? '' : activityFilter;
-
-		if (window.skin.use_filter.split(",").length != 3) $('#activityfilter-btn').addClass("filterset");
-		else $('#activityfilter-btn').removeClass("filterset");
-
-		var activityTimeFilter = localStorage.getItem("activityTimeFilter") ?? window.skin.use_time_filter;
-		if (activityTimeFilter) {
-			var timeFilterDatetime = new Date(activityTimeFilter);
-			timeFilterDatetime.setMinutes(timeFilterDatetime.getMinutes() - timeFilterDatetime.getTimezoneOffset());
-			$('#filter-time-input').val(timeFilterDatetime.toISOString().slice(0,16));
-		}
-		window.skin.use_time_filter = activityTimeFilter == null ? '' : activityTimeFilter;
-
+			localStorage.setItem("activityTimeFilter", '');
+			window.skin.use_time_filter = localStorage.getItem("activityTimeFilter");
+			window.skin.use_camera1_filter = localStorage.getItem("activityCamera1Filter");
+			window.skin.use_filter = localStorage.getItem("activityFilter");
+			if (isEmpty(window.skin.use_camera1_filter) && isEmpty(window.skin.use_filter) && isEmpty(window.skin.use_time_filter)) {
+				$('#activityfilter-btn').removeClass("set");
+				$('#activityfilter-btn').addClass("unset");
+			} else {
+				$('#activityfilter-btn').addClass("set");
+				$('#activityfilter-btn').removeClass("unset");
+			}
 //        alert('on_init Test screen');
         return defaultPromise();
     }
 };
+
+const isEmpty = value => {
+	return value === null || value === undefined || (typeof value === 'string' && value.trim() === '');
+}

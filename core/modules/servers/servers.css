@@ -27,6 +27,14 @@ flex-direction: row;
     margin-left: 0px !important;
 }
 
+.screens > .servers .serverlist .no-servers {
+    display: none;
+}
+
+.screens > .servers.noservers .serverlist .no-servers {
+    display: block;
+}
+
 /* .screens > .servers .serverlist > div {
     width: calc(100% - 4px);
     height: 216px;
@@ -66,9 +74,9 @@ background-color:var(--main-color);
     border-top: 1px solid var(--main-color);
 } */
 
-.screens > .servers .serverlist .preview.active {
+/* .screens > .servers .serverlist .preview.active {
 cursor:pointer;
-}
+} */
 /* .screens > .servers .serverlist .preview {
     width: 100%;
     height: calc(100% - 46px);
@@ -80,11 +88,11 @@ display:block;
 } */
 
 .screens > .servers .serverlist .settings {
-width: 30px;
-    height: 30px;
+    width: fit-content;
+    /* height: 30px; */
     /* float: right; */
-    background-repeat: no-repeat;
-    background-position: center;
+    /* background-repeat: no-repeat; */
+    /* background-position: center; */
     cursor: pointer;
     margin: 0 auto;
 }

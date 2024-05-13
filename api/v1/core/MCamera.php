@@ -1017,6 +1017,8 @@ class MCamera{
     }
 
     public function getGatewayAuthToken($gatewayUrl) {
+        if ($gatewayUrl == "") error(501, "Gateway url not available yet.");
+        
         $username = MCore::$core->config['gateway_default_user'];
         $pass = MCore::$core->config['gateway_default_pass'];
 
@@ -1032,6 +1034,10 @@ class MCamera{
         curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $json_params, CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true,
                                 CURLOPT_HTTPHEADER => ['Content-Type:application/json']]);
         $result = curl_exec($ch);
+        $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
+        if ($code != 200) {
+            error($code, $result);
+        }
         // being returned as an html string 
         $sub = '{"token":"';
         $arr = explode($sub, $result);

@@ -41,9 +41,9 @@ window.controls['chart'] = {
 	let legend_avg_color = $(this).attr('legend_avg_color');
 	
 	var visualOptions = {};
-	visualOptions.color_of_average_curve = (legend_avg_color)? legend_avg_color : (window.skin)? window.skin.color_of_average_curve : "#00ff00";
-	visualOptions.color_of_min_curve = (legend_min_color)? legend_min_color : (window.skin)? window.skin.color_of_min_curve : "#ff0000";
-	visualOptions.color_of_max_curve = (legend_max_color)? legend_max_color : (window.skin)? window.skin.color_of_max_curve : "#0000ff";
+	visualOptions.color_of_average_curve = (legend_avg_color)? legend_avg_color : window.core.getCustomPropertyValue('--average-curve-color');
+	visualOptions.color_of_min_curve = (legend_min_color)? legend_min_color : window.core.getCustomPropertyValue('--min-curve-color');
+	visualOptions.color_of_max_curve = (legend_max_color)? legend_max_color : window.core.getCustomPropertyValue('--max-curve-color');
 	visualOptions.show_meta_select = false;
 	visualOptions.show_report_select = false;
 	visualOptions.show_period_select = false;

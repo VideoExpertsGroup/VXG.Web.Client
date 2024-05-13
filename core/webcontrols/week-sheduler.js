@@ -142,7 +142,7 @@ overflow: hidden;
     max-width: 9vw;
 }
 table td[checked]{
-background:#7BB247;
+background: var(--main-color);
 }
 </style>`;
     }

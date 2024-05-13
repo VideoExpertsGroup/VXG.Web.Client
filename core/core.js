@@ -158,6 +158,113 @@ window.core.locationHierarchy = {
             locLevel[locs[i]] = this.sortLocations(locationHierarchy[locs[i]])
         }
         return locLevel;
+    },
+    findNestedObj: function(locationHierarchy, keys) {
+        let value = locationHierarchy;
+    
+        for (let key of keys) {
+            if (value[key]) {
+                value = value[key];
+            } else {
+                // If a key doesn't exist, return undefined
+                return undefined;
+            }
+        }
+        
+        return value;
+    },
+    searchHierarchy: function(locationHierarchy, searchTerm) {
+        let foundObj;
+        JSON.stringify(locationHierarchy, (_, nestedValue) => {
+          if (nestedValue && nestedValue[searchTerm] !== undefined) {
+            foundObj = nestedValue;
+          }
+          return nestedValue;
+        });
+        return foundObj;
+    },
+    addCamToHierarchy: function(locationHierarchy, locArr, cam) {
+        var currentCams = this.findNestedObj(locationHierarchy, locArr);
+        var newCams = [cam];
+        if (currentCams) {
+            currentCams.push(cam);
+            newCams = currentCams;
+        }
+        this.updateObjProp(locationHierarchy, newCams, locArr.join("."));
+    },
+    updateCamInHierarchy: function(locationHierarchy, oldLocArr, camera) {
+        var newLocArr = this.createLocationArray(camera.src.meta);
+
+        // only do things if the location changed
+        if (JSON.stringify(newLocArr) != JSON.stringify(oldLocArr)) {
+            if (newLocArr.length > 0) {
+                newLocArr.push("cams");
+                this.addCamToHierarchy(locationHierarchy, newLocArr, camera);
+            }
+
+            if (oldLocArr.length > 0) {
+                this.removeCamFromHierarchy(locationHierarchy, oldLocArr, camera);
+            }
+        }
+    },
+    removeCamFromHierarchy: function(locationHierarchy, locArr, camera) {
+        locArr.push("cams");
+        var currentCams = this.findNestedObj(locationHierarchy, locArr);
+        // if there are other cameras, just remove this cam from the cams list
+        if (currentCams && currentCams.length > 1) {
+            currentCams = currentCams.filter(camCurr => {
+                return camCurr.camera_id !== camera.camera_id;
+            });
+            this.updateObjProp(locationHierarchy, currentCams, locArr.join("."));
+        } else if (currentCams) {
+            // if this is the only camera, have to remove location and all empty parent locations 
+            locArr.pop();
+            this.removeLoc(locationHierarchy, locArr);
+            locArr.pop();
+            var searchingTree = true;
+            while (locArr.length > 0 && searchingTree) { 
+                var current = this.findNestedObj(locationHierarchy, locArr);
+                var currKeys = Object.keys(current);
+                if (current.cams.length == 0 && currKeys.length == 1) {
+                    this.removeLoc(locationHierarchy, locArr);
+                    locArr.pop();
+                    if (locArr.length == 0) searchingTree = false;
+                } else {
+                    searchingTree = false;
+                }
+            }
+        }
+
+        return locationHierarchy;
+    },
+    removeLoc: function(locationHierarchy, locArr) {
+        for (let i = 0; i < locArr.length - 1; i++) {
+            const key = locArr[i];
+            if (locationHierarchy.hasOwnProperty(key) && typeof locationHierarchy[key] === 'object') {
+                locationHierarchy = locationHierarchy[key];
+            } else {
+                // If any key is not found, return without making any changes
+                return;
+            }
+    
+        }    
+        const lastKey = locArr[locArr.length - 1];
+        if (locationHierarchy.hasOwnProperty(lastKey)) {
+            delete locationHierarchy[lastKey]
+        }
+    },
+    createLocationArray: function(camMeta) {
+        var locArr = [];
+        locTypes.forEach(locType => {
+            var loc = camMeta[locType];
+            if (loc) locArr.push(locType.toLowerCase() + "_" + loc.replaceAll(" ", "_"));
+        })
+
+        if (window.isTelconet && camMeta.group && locArr.length == 3) {
+            locArr.push(camMeta.group);
+        }
+
+        return locArr;
     }
 }
 
@@ -208,6 +315,25 @@ window.core.getActiveScreen = function(){
     let screen_id = $('body').data('screenid');
     if (!window.screens[screen_id]) return false;
     return window.screens[screen_id];
+}
+
+window.core.getCustomPropertyValue = function(propertyName) {
+    return getComputedStyle(document.documentElement).getPropertyValue(propertyName).trim();
+}
+window.core.generateRandomString = function(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+window.core.showToast = function(type, msg, duration = 2000, ripple = true, position = {x: 'right', y: 'top'}) {
+    var notyf = new Notyf({duration, ripple, position});
+    if (type === 'success') notyf.success(msg ?? $.t('common.successMsg'));
+    else if (type === 'error') notyf.error(msg ?? $.t('common.errorMsg'));
+    return;
 }
 
 window.core.onclick_toscreen = function(e){

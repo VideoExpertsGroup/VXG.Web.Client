@@ -124,6 +124,8 @@
     "agoES": "",
     "expires": "Expires",
     "userPending": "User Pending",
+    "successMsg": "Operation has been successful",
+    "errorMsg": "Something went wrong",
     "timeUnit": {
       "min": "min",
       "hour": "hour",
@@ -219,7 +221,8 @@
     "downloadReportAsCsv": "Download Report as CSV",
     "downloadWindowsCameraFinderTool": "Download Windows Camera Finder Tool",
     "changePassword": "Change password",
-    "returnToDefaultStorage": "Return to Default Storage"
+    "returnToDefaultStorage": "Return to Default Storage",
+    "clear": "Clear"
   },
   "toast": {
     "loginFailed": "Login failed",
@@ -367,7 +370,8 @@
     "title": "Servers",
     "add": "Add server",
     "downloadPackage": "Download Package",
-    "noServers": "No servers"
+    "noServers": "No servers",
+    "noServerCams": "No cameras attached to this server"
   },
   "newCamera": {
     "title": "Add camera",
@@ -398,7 +402,8 @@
     "noSubscriptionAssigned": "No Subscription Assigned",
     "noPlan": "No Plan",
     "assignSubscriptionTo": "Assign Subscription to",
-    "selectTimezonePlaceholder": "Select a Timezone"
+    "selectTimezonePlaceholder": "Select a Timezone",
+    "passwordError": "Password can only contain characteres a-z, A-Z, 0-9, ! $ & ' ( ) * + , ; = to be compliant with"
   },
   "cameraMetadata": {
     "title": "Camera metadata",
@@ -410,7 +415,8 @@
     "subtitle": "All Events",
     "eventEndTimeLabel": "Event end time:",
     "eventCameraLabel": "Camera:",
-    "selectMotionFilter": "Select motion filter",
+    "eventTypeLabel": "Event type:",
+    "selectFilter": "Select filter",
     "customEventList": "Custom event list (seperated by commas)",
     "peopleThreshold": "People threshold",
     "peopleThresholdPlaceholder": "Enter person count",

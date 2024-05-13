@@ -230,7 +230,7 @@ padding: 8px 24px;
 .locationContainer .locHeader {
     text-align: left;
     font-size: 14px;
-    color: #7BB247;
+    color: var(--main-color);
     border-bottom: 1px solid #EFEFEF;
     padding: 15px 20px;
 }
@@ -279,7 +279,7 @@ padding: 8px 24px;
     width: 15px;
     height: 15px;
     border-radius: 5px;
-    border: 1px solid #7BB247;
+    border: 1px solid var(--main-color);
     display: flex;
     align-items: center;
     margin-right: 10px;
@@ -288,7 +288,7 @@ padding: 8px 24px;
     top: 3px;
 }
 .locationContainer .locList input:checked + label:before {
-    /*background-color: #7BB247;*/
+    /*background-color: var(--main-color);*/
 }
 
 .locationContainer .locFooter {

@@ -91,9 +91,13 @@ window.screens['add_gateway'] = {
         formData.uuid = cloud_uuid;
 
         vxg.cameras.createCameraGatewayPromise(formData).then(function(r) {
-            core.elements['global-loader'].hide();
             self.reset();
             location.reload();
+        }).catch(err => {
+            console.log(err);
+            window.core.showToast('error');
+        }).finally(() => {
+            core.elements['global-loader'].hide();
         });
     },
     editGateway: function(formData, self) {
@@ -119,7 +123,12 @@ window.screens['add_gateway'] = {
                 promiseChain = promiseChain.then(makeNextPromise(currentCam))
             }
         
-        })
+        }).catch(err => {
+            console.log(err);
+            window.core.showToast('error');
+        }).finally(() => {
+            core.elements['global-loader'].hide();
+        });
     },
     checkInputs: function(formData, creating = true) {
         var inputError = false;

@@ -495,7 +495,6 @@ padding-left: 33px;
 }
 
 #monitor-locations {
-    height: 75vh;
     min-width: 200px;
 }
 
@@ -503,6 +502,17 @@ padding-left: 33px;
     height: 150px;
     width: 150px;
     margin: auto;
+}
+
+.noLocs {
+    padding-left: 1rem;
+}
+
+p.noCamsMessage {
+    width: 150px;
+    text-align: center;
+    margin: auto;
+    margin-top: 75%;
 }
 
 /* input:before {
@@ -599,7 +609,7 @@ body.mobile.monitoring .mdialog{
 }
 
 body.mobile.monitoring .mdialog h7{
-color: #7BB247;
+color: var(--main-color);
 font-style: normal;
 font-weight: normal;
 font-size: 12px;
@@ -916,9 +926,9 @@ input.token-input {
 .getcameras-btn {
     padding: 5px 30px;
     margin-left: 10px;
-    background-color: #7bb247;
+    background-color: var(--main-color);
     color: white;
-    border: 2px solid #7bb247;
+    border: 2px solid var(--main-color);
     border-radius: 3px;
     font-weight: 600;
 }

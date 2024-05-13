@@ -17,9 +17,9 @@
 	<script>
 	    document.addEventListener('DOMContentLoaded', function(){
 		var visualOptions = {};
-		visualOptions.color_of_average_curve = (window.skin)? window.skin.color_of_average_curve : "#00ff00";
-		visualOptions.color_of_min_curve = (window.skin)? window.skin.color_of_min_curve : "#ff0000";
-		visualOptions.color_of_max_curve = (window.skin)? window.skin.color_of_max_curve : "#0000ff";
+		visualOptions.color_of_average_curve = window.core.getCustomPropertyValue('--average-curve-color');
+		visualOptions.color_of_min_curve = window.core.getCustomPropertyValue('--min-curve-color');
+		visualOptions.color_of_max_curve = window.core.getCustomPropertyValue('--average-max-color');
 		visualOptions.show_meta_select = true;
 		visualOptions.show_report_select = true;
 		visualOptions.show_period_select = true;

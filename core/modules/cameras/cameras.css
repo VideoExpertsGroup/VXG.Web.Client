@@ -491,6 +491,7 @@ span.loc-name {
     display: flex;
     align-items: center;
     width: max-content;
+    cursor: pointer;
 }
 
 .loc-label-name > i {
@@ -531,7 +532,7 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 
 .header-right .listmenu {
     order: 2;
-    flex: 3 1 50px;
+    flex: 5 1 50px;
     min-width: 25px;
     max-width: 100px;
 }
@@ -596,7 +597,7 @@ body.mobile.cameras .mdialog{
 }
 
 body.mobile.cameras .mdialog h7{
-color: #7BB247;
+color: var(--main-color);
 font-style: normal;
 font-weight: normal;
 font-size: 12px;

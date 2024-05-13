@@ -66,7 +66,7 @@ content: ' ';
     margin-top: 1px;
     position: absolute;
     border-radius: 50%;
-    background-color: #7BB247;
+    background-color: var(--main-color);
     width: 9px;
     height: 9px;
 }

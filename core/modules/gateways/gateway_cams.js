@@ -23,8 +23,24 @@ window.screens['gateway_cams'] = {
         if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
         $('.addgatewaycams').attr("channel_id", self.gatewayChannelId);
         $('.addgatewaycams').attr("gateway_token", self.gatewayToken);
-       
-        return this.loadGatewayCams()
+        this.loadGatewayCams()
+
+        var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
+        var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : [];
+        var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id == self.gatewayChannelId) : "";
+        if (savedCam && savedCam.url && savedCam.url != "nourl") {
+            $('.addgatewaycams').removeClass("disabled")
+        } else {
+            return vxg.api.cloud.getCameraConfig(self.gatewayChannelId, self.gatewayToken).then(function(cam) {
+                return vxg.api.cloud.getUplinkUrl(cam.id, cam.url).then(function(urlinfo) {
+                    if (urlinfo.id && urlinfo.url) {
+                        cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
+                        sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));  
+                        $('.addgatewaycams').removeClass("disabled")
+                    }
+                });
+            });
+        }
     },
     'on_hide':function(){
     },
@@ -33,7 +49,7 @@ window.screens['gateway_cams'] = {
     'on_init':function(){
         let self = this;
         core.elements['header-right'].prepend('' +
-        `<div class="transparent-button active addgatewaycams" ifscreen="newcamera" onclick_toscreen="newcamera" channel_id="" gateway_token=""><span class="add-icon">+</span><span>${$.t('gateways.addCameraToGateway')}</span></div>`);
+        `<div class="transparent-button active addgatewaycams disabled" ifscreen="newcamera" onclick_toscreen="newcamera" channel_id="" gateway_token=""><span class="add-icon">+</span><span>${$.t('gateways.addCameraToGateway')}</span></div>`);
         return defaultPromise();
     },
     loadGatewayCams: function() {

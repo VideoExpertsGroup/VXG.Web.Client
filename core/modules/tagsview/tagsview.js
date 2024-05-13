@@ -31,6 +31,8 @@ window.screens['tagsview'] = {
         if (!access_token) access_token = $(this.src).getNearParentAtribute('access_token');
         this.access_token = access_token;
         let self=this;
+        // self.rdn = window.core.generateRandomString(64);
+        // $("#tagsplayer-wrapper").html(`<div id="tagsplayer${self.rdn}" class="ratio-content" style="background-color: #000;"></div>`);
         $('.cloudplayer-sd-backup').attr('id', 'sd-disabled');
         return vxg.cameras.getCameraFrom(self.access_token).then(function(camera){
             localStorage.setItem("activityCameraFilter", camera.camera_id);
@@ -39,6 +41,21 @@ window.screens['tagsview'] = {
             self.access_token = camera.token;
             if (timestamp) self.notetime = timestamp;
             if (!self.camera) self.camera = camera;
+
+            // var playerOptions = {timeline: true, timelineampm: true, mute: true, alt_protocol_names:true, calendar: true/*, cloud_domain: vs_api.options['cloud_domain'], useOnlyPlayerFormat: 'html5'*/};
+            // if (window.core.isMobile()){
+            //     playerOptions.disableAudioControl = true;
+            //     playerOptions.disableZoomControl = true;
+            //     playerOptions.disableGetShot = true;
+            //     playerOptions.disableGetClip = true;
+            // }
+            // playerOptions.livePoster = true;
+            // var localStorage_sdCard = localStorage.getItem(camera.camera_id);
+            // var sdCardEnabled = (typeof localStorage_sdCard === "string" && localStorage_sdCard.toLowerCase() === "true");
+            // playerOptions.disableSdCard = sdCardEnabled ? false : true;
+
+            // self.player = new CloudPlayerSDK('tagsplayer' + self.rdn, playerOptions);
+
         }, () => {
             window.screens['home'].activate();
         });
@@ -125,29 +142,33 @@ window.screens['tagsview'] = {
 	    }
 
             $(self.wrapper).find('events-list').attr('access_token',camera.token);
-            try {
-                var inc = new Date().getTime() / 1000;
-                self.camera.createClip(inc - 10000, inc + 10000, "testingClip").then(function(clip){
-                    clip.setMeta("testingMeta", "", "", inc).then(function(readyclip){
-                        console.log("meta is working, delete clip and camera just made");
-                        self.metaEnabled = true;
-                        sessionStorage.setItem("notesMode", "enabled");
+            if (sessionStorage.notesMode == undefined) {
+                try {
+                    var inc = new Date().getTime() / 1000;
+                    self.camera.createClip(inc - 10000, inc + 10000, "testingClip").then(function(clip){
+                        clip.setMeta("testingMeta", "", "", inc).then(function(readyclip){
+                            console.log("meta is working, delete clip and camera just made");
+                            self.metaEnabled = true;
+                            sessionStorage.setItem("notesMode", "enabled");
+                            vxg.api.cloud.deleteClipV2(clip.token, clip.src.id).then(function(r){ /* testing clip deleted */}, function(err) {console.log(err)})
+                        },function(){
+                            self.metaEnabled = false;
+                            sessionStorage.setItem("notesMode", "disabled");
+                            $(".clipcase").addClass("disabled clipdis");
+                            $(".edittag").addClass("disabled")
+                            $(".clip textarea").addClass("disabled clipdis")
+                            $(".shownotes").addClass("disabled");
+                            vxg.api.cloud.deleteClipV2(clip.token, clip.src.id).then(function(r){ /* testing clip deleted */}, function(err) {console.log(err)})
+                        });
                     },function(){
-                        self.metaEnabled = false;
-                        sessionStorage.setItem("notesMode", "disabled");
-                        $(".clipcase").addClass("disabled clipdis");
-                        $(".edittag").addClass("disabled")
-                        $(".clip textarea").addClass("disabled clipdis")
-                        $(".shownotes").addClass("disabled");
+                        console.log("Test clip isn't working, something bad has happened");
                     });
-                    vxg.api.cloud.deleteClipV2(clip.token, clip.src.id).then(function(r){ /* testing clip deleted */}, function(err) {console.log(err)})
-                },function(){
-                    console.log("Test clip isn't working, something bad has happened");
-                });
-            } catch(err) {
-                console.log(err);
-                self.metaEnabled = false;
+                } catch(err) {
+                    console.log(err);
+                    self.metaEnabled = false;
+                }
             }
+
             function tryStart( position) {
                 if (self.player.camera != null) {
                         self.player.setPosition(position);
@@ -183,8 +204,14 @@ window.screens['tagsview'] = {
         return defaultPromise();
     },
     'on_hide':function(){
+        localStorage.setItem("eventsList", false);
         $("#backup-ctrl").hide();
-        if (this.player) this.player.stop();
+        if (this.player) {
+            this.player.stop();
+            // this.player.close();
+            // delete this.player;
+            // $("#tagsplayer" + this.rdn).remove();
+        }
         return defaultPromise();
     },
     'on_ready':function(){
@@ -273,8 +300,8 @@ window.screens['tagsview'] = {
                 <div class="transparent-button makeclip"><i class="fa fa-play-circle-o" aria-hidden="true"></i><span> ${$.t('tagsview.clip')} </span></div>
                 <div class="transparent-button makesnapshot"><i class="fa fa-camera" aria-hidden="true"></i><span>  ${$.t('tagsview.snapshot')} </div></span>
                 <div class="transparent-button makeshare"><i class="fa fa-share-alt" aria-hidden="true"></i><span>  ${$.t('action.share')} </span></div>
-                <div class="transparent-button active edittag"><span class="add-icon">+</span><span> ${$.t('monitoring.createNote')} </span></div>
                 </div>`);
+                // <div class="transparent-button active edittag"><span class="add-icon">+</span><span> ${$.t('monitoring.createNote')} </span></div>
                 // <div class="transparent-button active edittag"><span class="add-icon">+</span><span> Add note</span></div>
 
         /*if (vxg.user.src.role=='user')
@@ -294,6 +321,9 @@ window.screens['tagsview'] = {
         let f = false;
         core.elements['global-loader'].show();
 
+        // var localStorage_sdCard = localStorage.getItem(self.camera.camera_id);
+        // var sdCardEnabled = (typeof localStorage_sdCard === "string" && localStorage_sdCard.toLowerCase() === "true");
+
         var playerOptions = {timeline: true, timelineampm: true, mute: true, alt_protocol_names:true, calendar: true/*, cloud_domain: vs_api.options['cloud_domain'], useOnlyPlayerFormat: 'html5'*/};
         if (window.core.isMobile()){
             playerOptions.disableAudioControl = true;
@@ -307,6 +337,7 @@ window.screens['tagsview'] = {
         playerOptions.disableSdCard = sdCardEnabled ? false : true;
 
         self.player = new CloudPlayerSDK('tagsplayer', playerOptions);
+
 
         if (self.player.player.sdCardCompatible) {
             if (sdCardEnabled) {

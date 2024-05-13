@@ -10,4 +10,12 @@ if (!MCore::$core->current_user->isUser() && !MCore::$core->current_user->isDeal
     error(401,'No access');
 
 list($server_uuid) = MCore::checkAndGetInputParameters(['uuid']);
-MCore::$core->current_user->addServer($server_uuid);
+$newServer = MCore::$core->current_user->addServer($server_uuid);
+if (!$newServer) {
+    error(501,"Failed to add server");
+} else if ($newServer['errorDetail']) {
+    error(501,$newServer['errorDetail']);
+} else {
+    MCore::$core->response['server'] = $newServer;
+}
+

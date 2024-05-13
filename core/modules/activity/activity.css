@@ -7,7 +7,7 @@
     height: 100%;
 }
 
-.header-right .activityfilter{
+/* .header-right .activityfilter{
     width: 75px;
     display: flex;
 }
@@ -16,7 +16,7 @@
     padding: 0;
     display: inline-block;
 margin-left: 6px;
-}
+} */
 
 .header-right .activityfilterContainer{
     display: block;
@@ -114,34 +114,48 @@ padding: 0 0 14px 0;
     transform: rotate(45deg);
 }
 
-.time-filter-cont {
-    width:25%;
+.filter-box {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    gap: 20px;
+    font-family: 'Montserrat', sans-serif;
 }
-
-.time-input-cont {
-    margin-right: 15px;
+.camera-filter-cont label.camera-filter-label {
+    margin-bottom: 1px;
 }
 .time-filter-label {
-    margin-bottom: 3px;
+    margin-bottom: 5px;
 }
-
 input#filter-time-input::before {
     display: none;
 }
-.filter-cont {
+.type-filter-cont .type-filter-label {
+    margin-bottom: 5px;
+}
+.filter-button-container {
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
     gap: 20px;
 }
-.camera-filter-cont {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 15px;
+/* #filter-set-button {
+    border: 1px solid var(--main-color);
+    box-sizing: border-box;
+    border-radius: 90px;
+    font-size: 13px;
+    padding: 1px 24px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    outline: none !important;
+    white-space: nowrap;
 }
-.camera-filter-cont select.camera-select {
-    min-width: 100px;
+#filter-set-button.set {
+    background: var(--main-color);
+    color: white;
 }
+#filter-set-button.unset {
+    background-color: white;
+    color: var(--main-color);
+} */

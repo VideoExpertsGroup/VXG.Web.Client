@@ -846,7 +846,7 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
 		type: 'bar',
 		height: '20px',
 		width: '200px',
-		barColor: '#7BB247',
+		barColor: window.core.getCustomPropertyValue('--main-color'),
 		barSpacing: 4
 	    });
 	    let roToken = $(this).data('token');
@@ -887,7 +887,7 @@ VXGCameraListView.prototype.updateSparkline = function updateSparkline(element, 
 		type: 'bar',
 		height: '20px',
 		width: '200px',
-		barColor: '#7BB247',
+		barColor: window.core.getCustomPropertyValue('--main-color'),
 		barSpacing: 4
 	    });
 }

@@ -101,9 +101,11 @@ window.screens['gateway'] = {
         gatewaysList.forEach(camInfo => {
             //var currentGateway = JSON.parse(camInfo.meta.gateway_first_channel);
             let captured = camInfo.meta.capture_id && vxg.user.src.capture_id == camInfo.meta.capture_id ? ' captured' : '';
+            var firstGatewayCam = cameraList.filter(gatewayCam => { return camInfo.meta.gateway_id == gatewayCam.meta.gateway_id && gatewayCam.meta.gateway_cam == "gateway_cam" });
+            var camblockAccessToken = firstGatewayCam.length > 0 ? firstGatewayCam[0].id : "";
             tableData.push({
                 order: count + 1,
-                id: `<div class="camerablock${captured}" channel_id="${camInfo.id}" gid="${camInfo.meta.gateway_id}" gateway_token="${camInfo.token}" id="scrollto${camInfo.id}">
+                id: `<div class="camerablock${captured}" access_token="${camblockAccessToken}" channel_id="${camInfo.id}" gid="${camInfo.meta.gateway_id}" gateway_token="${camInfo.token}" id="scrollto${camInfo.id}">
                 <campreview onclick_toscreen="gateway_cams" style="cursor: pointer;"></campreview>`,
                 name: camInfo.name,
                 location: camInfo.meta.location,
@@ -304,6 +306,11 @@ function doGatewayDelete(gateway_id, gatewayUrl) {
                             });
                         }
                         return true;
+                    }).catch(err => {
+                        console.log(err);
+                        window.core.showToast('error');
+                    }).finally(() => {
+                        core.elements['global-loader'].hide();
                     });
             }
             promiseChain = promiseChain.then(makeNextPromise(currentCam))

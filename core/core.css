@@ -246,6 +246,7 @@ display:none;
     font-size: 20px;
     top: 50vh;
     z-index: 1;
+    color: white;
 }
 
 .close-menu.open {
@@ -911,11 +912,11 @@ display:none;
     background: #ffffff;
 }
 
-.menu:after {
+/* .menu:after {
     content: url("/img/dropdown.svg");
     padding: 0;
     display: inline-block;
-}
+} */
 
 .VXGActivityFilterPersonSolution.menu,
 .VXGActivityFilterCarSolution.menu {
@@ -1194,16 +1195,35 @@ display:none;
 
 
 .headerBlock .header-left .mainbackbtn{
-font-size: 27px;
-    font-family: monospace;
-    padding: 1px 7px;
+/* font-size: 27px; */
+    /* font-family: monospace; */
+    /* padding: 1px 7px; */
     margin-right: 10px;
     display: none;
-    width: 24px;
-    height: 24px;
-    color: var(--main-color);
+    /* width: 24px; */
+    /* height: 24px; */
+    /* color: var(--main-color); */
 /*background:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB4PSIyLjQiIHk9IjIuNCIgd2lkdGg9IjE5LjIiIGhlaWdodD0iMTkuMiIgcng9IjkuNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiLz48cGF0aCBkPSJNMTMgOUwxMC4xNzE2IDExLjgyODRMMTMgMTQuNjU2OSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIwLjgiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=) no-repeat;*/
 cursor:pointer;
+}
+
+.headerBlock .header-left .mainbackbtn .back-icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    font-family: monospace;
+    width: 27px;
+    height: 27px;
+    color: white;
+    background-color: var(--main-color);
+    border-radius: 100px;
+}
+
+.headerBlock .header-left .mainbackbtn:hover .back-icon-container {
+    color: var(--main-color);
+    background-color: transparent;
+    border: 2px solid var(--main-color);
 }
 
 body .body .hide{
@@ -1416,8 +1436,41 @@ body:not(.gateway_cams) .header-right .addgatewaycams {
     font-size: 10px !important;
 }
 .bootstrap-table .fixed-table-container .table thead th .desc {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAMAAABFjsb+AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAADZQTFRFAAAAe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHHqXv4wAAABJ0Uk5TAO7/gP2EtcRX9Fmgkr3IPeAxqMOObQAAAEVJREFUeJxjZMAEjENWjBEq9f8/QoyZ8R+E/o2kl+0PiGT9iWwexy8gwc74DcUO7u8MDFxf0Ozl/crzCd0t/IyM70l0MwDNaw0USBqYjQAAAABJRU5ErkJggg==) !important;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAMAAABFjsb+AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAD9QTFRFAAAAMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzNdnNUQAAABV0Uk5TAOH/6mf8/ZfYwmjuhYz684e/q4R3Hhg0NwAAAEVJREFUeJxjZMAEjENWjBEqxfgXIcYC4bAw/kTSy/ELRLJ/RzaPixHIZWH7gmIHL+MXXsYPaPYKfhR4h+4W4fdCb0h0MwBXow0UM8XrnQAAAABJRU5ErkJggg==) !important;
 }
 .bootstrap-table .fixed-table-container .table thead th .asc {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAMAAABFjsb+AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAADZQTFRFAAAAe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHe7JHHqXv4wAAABJ0Uk5TAD3gMb3/yKCSV/RZtcSA/YTuqzCmBwAAAEdJREFUeJxjZMAEjPjEGBkZ/6KLsTAy/kITY//HwMD8A0WM8w+QYGX8iizG8xNEcnxGEuNj/AamuT8gxAS/QJW/J+i+ISQGAEcvDBTVjTe7AAAAAElFTkSuQmCC) !important;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAMAAABFjsb+AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAD9QTFRFAAAAMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzNdnNUQAAABV0Uk5TAIT/d7+rjPrzh2ju/YXYwmf8l+Hq6yk5kQAAAEdJREFUeJxjZMAEjPjEGBkZ/6KLsfxj/o0mxsb4m43xO4oYF4jPxfgZWYzvC4jk/YgkJsAI5nGxvUOICb+HKBd6Q9B9Q0gMAHshDRQ5FVJyAAAAAElFTkSuQmCC) !important;
+}
+.bootstrap-table .fixed-table-pagination .page-item .page-link {
+    color: var(--main-color);
+}
+.bootstrap-table .fixed-table-pagination .page-item.active .page-link {
+    background-color: var(--main-color);
+    border-color: var(--main-color);
+    color: white;
+}
+.bootstrap-table .fixed-table-pagination .dropdown-item:active,
+.bootstrap-table .fixed-table-pagination .dropdown-item.active {
+    background-color: var(--main-color);
+}
+.vxgfilterbtn {
+    border: 1px solid var(--main-color);
+    box-sizing: border-box;
+    border-radius: 90px;
+    font-size: 13px;
+    padding: 1px 24px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    outline: none !important;
+    white-space: nowrap;
+}
+.vxgfilterbtn.set {
+    background: var(--main-color);
+    color: white;
+}
+.vxgfilterbtn.unset {
+    background-color: white;
+    color: var(--main-color);
 }

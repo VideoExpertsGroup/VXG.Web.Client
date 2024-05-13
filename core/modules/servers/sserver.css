@@ -1,5 +1,5 @@
 .screens > .servers .settings {
-    background-image: url(serverlink.svg);
+    /* background-image: url(serverlink.svg); */
 }
 
 body:not(.servers) .header-right .addserver,
@@ -10,4 +10,9 @@ display:none;
 .server-download {
 place-items: center; 
 display: inline-flex;
+}
+
+.noservercams {
+    margin: auto;
+    margin-top: 20%;
 }

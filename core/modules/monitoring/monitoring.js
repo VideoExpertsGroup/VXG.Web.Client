@@ -88,25 +88,38 @@ window.screens['monitoring'] = {
                     $('.monitoring-noteslist').html(notesEle);
                     $('.monitoring-noteslist').show();
                 }
-                //if (localStorage.locationHierarchyCams == undefined)
+                if (localStorage.locationHierarchyCams == undefined)
+                if (localStorage.locationHierarchyCams == undefined)
                     return self.createLocationHierarchy();
-                //else {
-                //    return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
-                //}
+                else {
+                    return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
+                }
+                else {
+                    return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
+                }
             }, function(err) {
                 console.log(err.responseText);
-                //if (localStorage.locationHierarchyCams == undefined) {
+                if (localStorage.locationHierarchyCams == undefined) {
+                if (localStorage.locationHierarchyCams == undefined) {
                     return self.createLocationHierarchy();
-                //} else {
-                //    return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
-                //}
+                } else {
+                    return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
+                }
+                } else {
+                    return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
+                }
             });
         } else {
-            //if (localStorage.locationHierarchyCams == undefined) {
-            return self.createLocationHierarchy();
-            //} else {
-            //    return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
-            //}
+            if (localStorage.locationHierarchyCams == undefined) {
+                return self.createLocationHierarchy();
+            } else {
+                return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
+            }
+            if (localStorage.locationHierarchyCams == undefined) {
+                return self.createLocationHierarchy();
+            } else {
+                return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchyCams));
+            }
         }
     },
     playChannels: function(resolve) {
@@ -130,8 +143,17 @@ window.screens['monitoring'] = {
     'on_hide':function(){
         core.elements['global-loader'].show();
         let p = this.wrapper.find('player');
-        for (i=0; i<p.length; i++) p[i].stop();
+        for (i=0; i<p.length; i++) p[i].remove();
         core.elements['global-loader'].hide();
+    },
+    'on_before_show':function(){
+        var hash = window.location.hash;
+        var telconetIdStr = hash.includes("?camera_id=") ? hash.replaceAll("%22", "").substring(hash.indexOf("=")+1) : "";
+        var isTelconet = telconetIdStr.length > 0 ? true : false;
+
+        let self=this;
+        self.camGrid(this.getState().grid, isTelconet);
+        return defaultPromise();
     },
     'on_ready':function(){
         let self = this;
@@ -144,9 +166,9 @@ window.screens['monitoring'] = {
         });
         var hash = window.location.hash;
         var telconetIdStr = hash.includes("?camera_id=") ? hash.replaceAll("%22", "").substring(hash.indexOf("=")+1) : "";
-        var isTelconet = telconetIdStr.length > 0 ? true : false;
+        // var isTelconet = telconetIdStr.length > 0 ? true : false;
 
-        self.camGrid(this.getState().grid, isTelconet);
+        // self.camGrid(this.getState().grid, isTelconet);
         self.wrapper.addClass('grid');
         setTimeout(function(){onCameraScreenResize();},100);
         self.wrapper.find('.cambd').show();self.wrapper.find('.cammap').hide();
@@ -566,15 +588,37 @@ window.screens['monitoring'] = {
     onLocationHierarchyLoaded: function(locationHierarchy) {
         var dropdownTree;
         locationHierarchy = this.sortLocations(locationHierarchy);
-        if ( Object.keys(locationHierarchy).length == 0) {
-            dropdownTree = $("<p class='nolocs font-md'>No locations have been set for this account</p>");
-        } else {
-            dropdownTree = this.createLocationList(locationHierarchy)
-        }
+        var locsSet = Object.keys(locationHierarchy).length == 0 ? false : true;
+        if (locsSet) dropdownTree = this.createLocationList(locationHierarchy)
+        
         $(".camlist-monitoring").empty();
         $('[name="location_strs"]').empty();
 
-        $(".camlist-monitoring").append(dropdownTree)
+        $(".camlist-monitoring").append(dropdownTree);
+
+        var noLocationCams = localStorage.noLocCams;
+        if (!noLocationCams) {
+            window.vxg.cameras.getCameraListPromise(500, 0, undefined, "location,isstorage", undefined).then((noLocsCams) => {
+                var noLocsDiv;
+                var noLocsCams_noStorage = noLocsCams.filter(cam => { return cam.src.meta.isstorage == undefined});
+                if (!locsSet && noLocsCams_noStorage.length == 0) {
+                    noLocsDiv = $('<div class="noCams"> <p class="noCamsMessage"> No cameras have been added to this account. </p> </div>')
+                } else {
+                    noLocsDiv = this.noLocationList(noLocsCams_noStorage);
+                }
+                if (noLocsCams_noStorage.length > 0) localStorage.noLocCams = JSON.stringify(noLocsCams_noStorage);
+                $(".camlist-monitoring").append(noLocsDiv);
+            })
+        } else {
+            var noLocsDiv;
+            var noLocsCams = JSON.parse(noLocationCams);
+            if (!locsSet && noLocsCams.length == 0) {
+                noLocsDiv = $('<div class="noCams"> <p class="noCamsMessage"> No cameras have been added to this account. </p> </div>')
+            } else {
+                noLocsDiv = this.noLocationList(noLocsCams);
+            }
+            $(".camlist-monitoring").append(noLocsDiv);
+        }
 
         $('.loc-draggable, .camgrid2').on("dragstart", function(e) {
             e.stopPropagation();
@@ -659,9 +703,21 @@ window.screens['monitoring'] = {
             return ul;
         }
     },
+    noLocationList: function(noLocCams) {
+        var noLocsDiv = $(`<div class="noLocs"></div>`);
+        for (var i = 0; i < noLocCams.length; i++) {
+            var camDiv = $(`
+                <div class="camerafield-block captured parent-cam" access_token="${noLocCams[i].camera_id}" channel_token="${noLocCams[i].token}">
+                    <camfield field="name" onclick_toscreen="tagsview" access_token="${noLocCams[i].camera_id}"></camfield>
+                </div>
+            `);
+            noLocsDiv.append(camDiv);
+        }
+        return noLocsDiv;
+    },
     createLocationHierarchy: function() {
         var self = this;
-        var locationHierarchy = {}; //localStorage.locationHierarchyCams ?  JSON.parse(localStorage.locationHierarchyCams) : {};
+        var locationHierarchy = localStorage.locationHierarchyCams ?  JSON.parse(localStorage.locationHierarchyCams) : {};
         if (!Object.keys(locationHierarchy).length) {
             return vxg.api.cloud.getMetaTag(vxg.user.src.allCamsToken, "Province").then(function(locations) {
                 for (const loc in locations) {
@@ -682,8 +738,12 @@ window.screens['monitoring'] = {
                             .then((cameras) => {
                                 self.getSubLocations(locationHierarchy, 1, cameras, [currentProvince]);
                                 if (i == locationsArr.length - 1) {
-                                    //localStorage.locationHierarchyCams = JSON.stringify(locationHierarchy);
-                                    self.onLocationHierarchyLoaded(locationHierarchy);
+                                    window.vxg.cameras.getCameraListPromise(500, 0, undefined, "location,isstorage", undefined).then((noLocs) => {
+                                        var noLocs_noStorage = noLocs.filter(cam => { return cam.src.meta.isstorage == undefined});
+                                        if (noLocs_noStorage.length > 0) localStorage.noLocCams = JSON.stringify(noLocs_noStorage);
+                                        localStorage.locationHierarchyCams = JSON.stringify(locationHierarchy);
+                                        self.onLocationHierarchyLoaded(locationHierarchy);
+                                    })
                                 }
                                 return true;
                             });

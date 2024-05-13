@@ -480,9 +480,10 @@ class MUser{
         if (2 != (int)($httpcode/100)){
             $r = json_decode($result, JSON_OBJECT_AS_ARRAY);
             error(501,$r['errorDetail']);
-            return false;
+            return $r;
         }
         $r = json_decode($result, JSON_OBJECT_AS_ARRAY);
+        return $r;
     }
     
     public function removeServer($server_id){

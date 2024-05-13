@@ -245,6 +245,11 @@ function onDVRDelete(dvrId){
                                 location.reload();
                             }
                             return true;
+                        }).catch(err => {
+                            console.log(err);
+                            window.core.showToast('error');
+                        }).finally(() => {
+                            core.elements['global-loader'].hide();
                         });
                 }
                 promiseChain = promiseChain.then(makeNextPromise(currentCamId))

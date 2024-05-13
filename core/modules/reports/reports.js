@@ -217,7 +217,7 @@ window.screens['home'] = {
 //        alert('hide Test screen');
 	let targetElement = this.wrapper.find('.report_activitylist')[0];
 	targetElement.showVXGFilter(false);
-    
+			localStorage.setItem("eventsList", false);
     },
 // Когда все скрипты и стили загружены
     'on_ready':function(){
@@ -232,9 +232,9 @@ window.screens['home'] = {
 
 	    targetElement = this.wrapper.find('.linechart')[0];
 	    var visualOptions = {};
-	    visualOptions.color_of_average_curve = (window.skin)? window.skin.color_of_average_curve : "#00ff00";
-	    visualOptions.color_of_min_curve = (window.skin)? window.skin.color_of_min_curve : "#ff0000";
-	    visualOptions.color_of_max_curve = (window.skin)? window.skin.color_of_max_curve : "#0000ff";
+	    visualOptions.color_of_average_curve = window.core.getCustomPropertyValue('--average-curve-color');
+	    visualOptions.color_of_min_curve = window.core.getCustomPropertyValue('--min-curve-color');
+	    visualOptions.color_of_max_curve = window.core.getCustomPropertyValue('--max-curve-color');
 	    visualOptions.show_meta_select = true;
 	    visualOptions.show_report_select = true;
 	    visualOptions.show_period_select = true;
@@ -305,8 +305,8 @@ window.screens['home'] = {
 			var offline = total - online;
 			var yValues = [online, offline];
 			var barColors = [
-			"#7bb247",
-			"#808080"
+				window.core.getCustomPropertyValue('--main-color'),
+				window.core.getCustomPropertyValue('--second-color'),
 			];
 
 			new Chart("cameras-graph", {

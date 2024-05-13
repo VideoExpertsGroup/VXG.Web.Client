@@ -219,13 +219,18 @@ window.controls['campreview'] = {
         $(this).empty().addClass('spinner');
         let el = this;
         return getCameraFromElement(this).then(function(camera){
-            if (!camera) return;
+            if (!camera) {
+                $(el).empty().removeClass('spinner');
+                return;
+            }
             return camera.getPreview().then(function(url){
                 $(el).html('<img src="'+url+'"/>');
                 $(el).removeClass('spinner');
             },function(){
                 $(el).empty().removeClass('spinner');
             });
+        }, function() {
+            $(el).empty().removeClass('spinner');
         });
     }
 }

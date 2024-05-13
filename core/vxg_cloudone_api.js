@@ -56,6 +56,7 @@ alert('only firebase support!');
             localStorage.setItem("uid", vs_api.uid);
 */
 //            createManagePath();
+// r['scripts'].push('core/modules/servers/servers.js');
             d.resolve(r);
         }).fail(function(r){
             localStorage.removeItem("api_token");

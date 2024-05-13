@@ -220,7 +220,7 @@ display: flex;
     width: fit-content;
 }
 .event-name.not_handled, .event-name.no_status {
-    background-color: #7BB247 !important;
+    background-color: var(--main-color) !important;
 }
 
 .event-name.in_progress {
@@ -228,7 +228,7 @@ display: flex;
 }
 
 .event-name.processed {
-    background-color: #7BB247 !important;
+    background-color: var(--main-color) !important;
 }
 @media only screen and (min-width: 1530px) {
     .home .block3 .feed-activity-list tr th:nth-child(4),

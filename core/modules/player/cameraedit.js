@@ -383,6 +383,17 @@ CameraEditControl = function(){
         }
         if (data.password && !(/^[a-zA-Z0-9_.\-~%!$&\'()*+,;=]{0,64}$/.test(data.password))){
             core.flashInputBackgroundColor($(this).find('.password'));
+            
+            dialogs['mdialog'].activate(`        
+            <h6 class="locations-title" class="font-bg">Error</h6>
+            <p class="password-error-info"> 
+                ${$.t('newCamera.passwordError')}
+               <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">RFC3989</a>
+            </p>
+            <button name="select" class="vxgbutton assign-btn">Close</button>`).then(function(r){
+                return;
+            })
+            
             this.defferedDispatchEvent(this.error_event);
             return false;
         }
@@ -447,9 +458,9 @@ CameraEditControl = function(){
 
         if (isCloud) data.url='';
         let p;
-        if (data.url && purl && purl.host && (!data.lat || !data.lon))
-            p = this.ipToLocation(purl.host);
-        else
+        //if (data.url && purl && purl.host && (!data.lat || !data.lon))
+        //    p = this.ipToLocation(purl.host);
+        //else
             p =  new Promise(function(resolve, reject){resolve({lat:data.lat,lon:data.lon});});
 
         var newLocation = data.new_location_str;
@@ -461,32 +472,62 @@ CameraEditControl = function(){
                 data.lat = r.lat ? r.lat : null;
                 data.lon = r.lon ? r.lon : null;
                 vxg.cameras.createCameraPromise(data).then(function(r){
+                    var locationStr = data.location_str;
                     if (newLocation) {
-                        var locationStr = data.location_str;
                         var locationHierarchy = localStorage.locationHierarchy ? JSON.parse(localStorage.locationHierarchy) : {};
+                        var locationHierarchyCams = localStorage.locationHierarchyCams ? JSON.parse(localStorage.locationHierarchyCams) : null;
                         var newLocArr = newLocation.split(":");
-                        if (newLocArr.length == 1) window.core.locationHierarchy.updateObjProp(locationHierarchy, {}, locationStr.replaceAll(":", "."))
+                        if (newLocArr.length == 1) {
+                            window.core.locationHierarchy.updateObjProp(locationHierarchy, {}, locationStr.replaceAll(":", "."))
+                            if (locationHierarchyCams) {
+                                window.core.locationHierarchy.updateObjProp(locationHierarchyCams, {}, locationStr.replaceAll(":", "."))
+                                window.core.locationHierarchy.updateObjProp(locationHierarchyCams, [], locationStr.replaceAll(":", ".") + ".cams")
+                            }
+                        } 
                         else {
                             var province = newLocArr[0];
                             newLocArr.shift();
-                            var object = {}, o = object;
+                            var locObj = {}, l = locObj;
+                            var camsObj = {}, c = camsObj;
+                            var groupArray = null;
+                            if (window.isTelconet && data.group && newLocArr.length == 2) {
+                                groupArray = newLocArr;
+                                groupArray.push(data.group);
+                                for(var i = 0; i < groupArray.length; i++) {
+                                    c = c[newLocArr[i]] = {cams: []}
+                                }
+                            }
+
                             for(var i = 0; i < newLocArr.length; i++) {
-                                o = o[newLocArr[i]] = {};
+                                l = l[newLocArr[i]] = {};
+                                if (!groupArray) c = c[newLocArr[i]] = {cams: []}
                             }
 
                             if (locationStr == newLocation || !locationStr) {
-                                locationHierarchy[province] = object;
+                                locationHierarchy[province] = locObj;
+                                if (locationHierarchyCams) {
+                                    locationHierarchyCams[province] = camsObj;
+                                    locationHierarchyCams[province].cams = [];
+                                }
                             } else {
                                 var fullLocArr = locationStr.split(":").filter(loc => {
                                     if (!newLocArr.includes(loc)) return loc;
                                 });
                                 
-                                window.core.locationHierarchy.updateObjProp(locationHierarchy, object, fullLocArr.join("."))
+                                window.core.locationHierarchy.updateObjProp(locationHierarchy, locObj, fullLocArr.join("."))
+                                if (locationHierarchyCams) {
+                                    var camsField = {cams: []};
+                                    var fullObj = {...camsField, ...camsObj}
+                                    window.core.locationHierarchy.updateObjProp(locationHierarchyCams, fullObj, fullLocArr.join("."))
+                                } 
+
                             }
                         }
 
                         localStorage.locationHierarchy = JSON.stringify(locationHierarchy);
+                        if (locationHierarchyCams) localStorage.locationHierarchyCams = JSON.stringify(locationHierarchyCams);
                     }
+
 					var custProm =  new Promise(function(resolve, reject){resolve({lat:data.lat,lon:data.lon});});
 
 					if (data.subid == "CUST") { 
@@ -547,7 +588,15 @@ CameraEditControl = function(){
 								else
 									alert($.t('toast.deleteSettingFailed'));
 								self.dispatchEvent(self.submited_event);
-							});       
+							});
+
+							var noLocsCams = localStorage.noLocCams ? JSON.parse(localStorage.noLocCams) : null;
+                            if (noLocsCams && data.location_str == "") {
+                                var formattedCam = new vxg.cameras.objects.Camera(newCam.token ? newCam.token : newCam.id);
+                                formattedCam.src = newCam;
+                                noLocsCams.push(formattedCam);
+                                localStorage.noLocCams = JSON.stringify(noLocsCams);
+                            }
 
 							var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
 							if (cameraList) {                                
@@ -556,6 +605,28 @@ CameraEditControl = function(){
 								cameraList.meta.total_count = total + 1;
 								localStorage.cameraList = JSON.stringify(cameraList);
 							}
+
+                            var locationHierarchyCams = localStorage.locationHierarchyCams ? JSON.parse(localStorage.locationHierarchyCams) : {};
+                            var formattedCam = new vxg.cameras.objects.Camera(newCam.token ? newCam.token : newCam.id);
+                            formattedCam.src = newCam;
+                            var locArr = locationStr.split(":");
+                            if (window.isTelconet) {
+                                var camGroup = newCam.meta.group;
+                                if (camGroup && locationStr.split(":").length == 3) {
+                                    locArr.push(camGroup);
+                                    locArr.push("cams");
+                                    window.core.locationHierarchy.addCamToHierarchy(locationHierarchyCams, locArr, formattedCam);
+                                } else {
+                                    locArr.push("cams");
+                                    window.core.locationHierarchy.addCamToHierarchy(locationHierarchyCams, locArr, formattedCam);
+                                }
+                            } else {
+                                locArr.push("cams");
+                                window.core.locationHierarchy.addCamToHierarchy(locationHierarchyCams, locArr, formattedCam);
+                            }
+
+                            localStorage.locationHierarchyCams = JSON.stringify(locationHierarchyCams);
+
                             
                             var tableData = $("#table").bootstrapTable('getData');
                             var insertIndex = tableData.length;
@@ -622,6 +693,8 @@ CameraEditControl = function(){
             });
             return;
         }
+
+        var oldLocArr = this.camera ? window.core.locationHierarchy.createLocationArray(this.camera.src.meta) : [];
         p.then(function(r){
             data.lat = r.lat ? r.lat : null;
             data.lon = r.lon ? r.lon : null;
@@ -630,32 +703,62 @@ CameraEditControl = function(){
                 data.rete_time = 0;
             }
             self.camera.updateCameraPromise(data).then(function(r){
+                var locationStr = data.location_str;
                 if (newLocation) {
-                    var locationStr = data.location_str;
                     var locationHierarchy = localStorage.locationHierarchy ? JSON.parse(localStorage.locationHierarchy) : {};
+                    var locationHierarchyCams = localStorage.locationHierarchyCams ? JSON.parse(localStorage.locationHierarchyCams) : null;
                     var newLocArr = newLocation.split(":");
-                    if (newLocArr.length == 1) window.core.locationHierarchy.updateObjProp(locationHierarchy, {}, locationStr.replaceAll(":", "."))
+                    if (newLocArr.length == 1) {
+                        window.core.locationHierarchy.updateObjProp(locationHierarchy, {}, locationStr.replaceAll(":", "."))
+                        if (locationHierarchyCams) {
+                            window.core.locationHierarchy.updateObjProp(locationHierarchyCams, {}, locationStr.replaceAll(":", "."))
+                            window.core.locationHierarchy.updateObjProp(locationHierarchyCams, [], locationStr.replaceAll(":", ".") + ".cams")
+                        }
+                    } 
                     else {
-                        var currPath = locationStr == newLocation || !locationStr ? "" : locationStr.replace(":" + newLocation, "");
-                        if (!currPath) {
-                            var province = newLocArr[0];
-                            newLocArr.shift();
-                            var object = {}, o = object;
-                            for(var i = 0; i < newLocArr.length; i++) {
-                                o = o[newLocArr[i]] = {};
+                        var province = newLocArr[0];
+                        newLocArr.shift();
+                        var locObj = {}, l = locObj;
+                        var camsObj = {}, c = camsObj;
+                        var groupArray = null;
+                        if (window.isTelconet && data.group && newLocArr.length == 2) {
+                            groupArray = newLocArr;
+                            groupArray.push(data.group);
+                            for(var i = 0; i < groupArray.length; i++) {
+                                c = c[newLocArr[i]] = {cams: []}
                             }
-                            locationHierarchy[province] = object;
+                        }
+
+                        for(var i = 0; i < newLocArr.length; i++) {
+                            l = l[newLocArr[i]] = {};
+                            if (!groupArray) c = c[newLocArr[i]] = {cams: []}
+                        }
+
+                        if (locationStr == newLocation || !locationStr) {
+                            locationHierarchy[province] = locObj;
+                            if (locationHierarchyCams) {
+                                locationHierarchyCams[province] = camsObj;
+                                locationHierarchyCams[province].cams = [];
+                            }
                         } else {
-                            var object = {}, o = object;
-                            for(var i = 0; i < newLocArr.length; i++) {
-                                o = o[newLocArr[i]] = {};
-                            }
-                            window.core.locationHierarchy.updateObjProp(locationHierarchy, object, currPath.replaceAll(":", "."))
+                            var fullLocArr = locationStr.split(":").filter(loc => {
+                                if (!newLocArr.includes(loc)) return loc;
+                            });
+                            
+                            window.core.locationHierarchy.updateObjProp(locationHierarchy, locObj, fullLocArr.join("."))
+                            if (locationHierarchyCams) {
+                                var camsField = {cams: []};
+                                var fullObj = {...camsField, ...camsObj}
+                                window.core.locationHierarchy.updateObjProp(locationHierarchyCams, fullObj, fullLocArr.join("."))
+                            } 
+
                         }
                     }
 
                     localStorage.locationHierarchy = JSON.stringify(locationHierarchy);
+                    if (locationHierarchyCams) localStorage.locationHierarchyCams = JSON.stringify(locationHierarchyCams);
                 }
+
 				var oldsubid = self.camera.src.meta && self.camera.src.meta.subid ? self.camera.src.meta.subid : "customParameters";
 				
 				var custProm =  new Promise(function(resolve, reject){resolve({lat:data.lat,lon:data.lon});});
@@ -730,6 +833,19 @@ CameraEditControl = function(){
 							self.reset();
 							self.dispatchEvent(self.submited_event);
 						}
+                        
+                        var noLocsCams = localStorage.noLocCams ? JSON.parse(localStorage.noLocCams) : null;
+                        var camExistsInArr = noLocsCams && noLocsCams.some(cam => cam.camera_id == updatedCam.id)
+                        if (!camExistsInArr && data.location_str == "") {
+                            var formattedCam = new vxg.cameras.objects.Camera(updatedCam.token ? updatedCam.token : updatedCam.id);
+                            formattedCam.src = updatedCam;
+                            noLocsCams.push(formattedCam);
+                            localStorage.noLocCams = JSON.stringify(noLocsCams);
+                        } else if (camExistsInArr && data.location_str != "") {
+                            var removeCam = noLocsCams.filter(cam => { return cam.camera_id != updatedCam.id});
+                            if (removeCam.length == 0) localStorage.removeItem(noLocCams)
+                            else localStorage.noLocCams = JSON.stringify(removeCam);
+                        }
 
 						var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
 						if (cameraList) {
@@ -737,6 +853,14 @@ CameraEditControl = function(){
 							cameraList.objects[oldCamIndex] = updatedCam;
 							localStorage.cameraList = JSON.stringify(cameraList);
 						}
+
+                        var locationHierarchyCams = localStorage.locationHierarchyCams ? JSON.parse(localStorage.locationHierarchyCams) : {};
+                        var formattedCam = new vxg.cameras.objects.Camera(updatedCam.token ? updatedCam.token : updatedCam.id);
+                        formattedCam.src = updatedCam;
+                        window.core.locationHierarchy.updateCamInHierarchy(locationHierarchyCams, oldLocArr, formattedCam);
+                        localStorage.locationHierarchyCams = JSON.stringify(locationHierarchyCams);
+                        
+
 						return screens['cameras'].on_show();
 					})
 				})

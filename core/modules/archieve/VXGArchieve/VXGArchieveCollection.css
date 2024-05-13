@@ -56,7 +56,7 @@
 
 
 .detected-Archieve-label {
-/*  background-color: #7BB247;
+/*  background-color: var(--main-color);
   color: #FFFFFF; */
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 600;

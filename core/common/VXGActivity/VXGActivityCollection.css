@@ -119,7 +119,7 @@ font-weight: 600;
 }
 
 .event-name.not_handled, .event-name.no_status {
-    background-color: #7BB247 !important;
+    background-color: var(--main-color) !important;
 }
 
 .event-name.in_progress {
@@ -127,7 +127,7 @@ font-weight: 600;
 }
 
 .event-name.processed {
-    background-color: #7BB247 !important;
+    background-color: var(--main-color) !important;
 }
 
 
@@ -141,7 +141,7 @@ font-weight: 600;
 }
 
 .detected-label {
-/*  background-color: #7BB247;
+/*  background-color: var(--main-color);
   color: #FFFFFF; */
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 600;

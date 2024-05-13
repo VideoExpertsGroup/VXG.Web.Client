@@ -1,7 +1,7 @@
 .code{
 font-family: monospace;
     color: black;
-    border-left: 5px dashed #7BB247;
+    border-left: 5px dashed var(--main-color);
     padding: 10px 10px 0 10px;
 margin: 10px 0;
 }

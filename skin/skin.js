@@ -14,12 +14,6 @@ window.skin.favicon = '/skin/fav-icon.png';
 window.skin.logourl = '#';
 
 // People and Viecle counting
-// Color of the average curve
-window.skin.color_of_average_curve = '#7BB247';
-// Color of the max curve
-window.skin.color_of_max_curve = '#676a6c';
-// Color of the min curve
-window.skin.color_of_min_curve = '#7BB247';
 
 
 // Filter for activity

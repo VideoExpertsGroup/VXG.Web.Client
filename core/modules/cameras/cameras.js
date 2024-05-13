@@ -188,6 +188,13 @@ function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null) {
             localStorage.cameraList = JSON.stringify(cameraList);
         }
 
+        var noLoc = localStorage.noLocCams ? JSON.parse(localStorage.noLocCams) : null;
+        if (camera.src.meta.location == undefined && noLoc) {
+            var removeCam = noLoc.filter(cam => { return cam.camera_id != camera.camera_id});
+            if (removeCam.length == 0) localStorage.removeItem(noLocCams)
+            else localStorage.noLocCams = JSON.stringify(removeCam);
+        }
+
         localStorage.removeItem(camera.camera_id);
         var backToCam = sessionStorage.getItem("backToCam");
         if (backToCam == camera.camera_id) sessionStorage.removeItem("backToCam");
@@ -200,7 +207,15 @@ function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null) {
 
         if (gatewayUrl) updateBootstrapTable("#gatewaycams-table", camera.camera_id)
 
-        updateBootstrapTable("#table", camera.camera_id)
+        updateBootstrapTable("#table", camera.camera_id);
+
+        // remove from locationHierarchyCams
+        var locationHierarchy = localStorage.locationHierarchyCams ? JSON.parse(localStorage.locationHierarchyCams) : null;
+        if (locationHierarchy) {
+            var locArr = window.core.locationHierarchy.createLocationArray(camera.src.meta);
+            var locHierarchy = window.core.locationHierarchy.removeCamFromHierarchy(locationHierarchy, locArr, camera); 
+            localStorage.locationHierarchyCams = JSON.stringify(locHierarchy);
+        }       
 
         core.elements['global-loader'].hide();
         return screens['cameras'].on_show();
@@ -440,11 +455,13 @@ window.screens['cameras'] = {
                         field: "order",
                         sortable: true,
                         cardVisible: false,
-                        class: "ordering"
+                        class: "ordering",
+                        width: "40"
                     },
                     {
                         field: "state",
-                        cardVisible: false
+                        cardVisible: false,
+                        width: "40"
                     },
                     {
                         field: "id",
@@ -457,37 +474,42 @@ window.screens['cameras'] = {
                         filterControl: "select",
                         sortable: true,
                         cardVisible: false,
+                        width: "140"
                     },
                     {
                         field: "recording",
                         title: $.t('common.recording'),
                         filterControl: "select",
                         sortable: true,
-                        cardVisible: false
+                        cardVisible: false,
+                        width: "80"
                     },
                     {
                         field: "name",
                         title: $.t('common.name'),
                         filterControl: "input",
-                        sortable: true
+                        sortable: true,
                     },
                     {
                         field: "location",
                         title: $.t('common.location'),
                         filterControl: "select",
                         sortable: true,
-                        cardVisible: false
+                        cardVisible: false,
+                        width: "180"
                     },
                     {
                         field: "group",
                         title: $.t('common.group'),
                         filterControl: "select",
                         sortable: true,
-                        cardVisible: false
+                        cardVisible: false,
+                        width: "150"
                     },
                     {
                         field: "action",
-                        title: $.t('common.actionTitle')
+                        title: $.t('common.actionTitle'),
+                        width: "140"
                     },
                     {
                         field: "hide",

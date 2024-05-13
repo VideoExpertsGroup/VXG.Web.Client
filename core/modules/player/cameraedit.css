@@ -247,8 +247,6 @@ option.dvr-disabled:disabled {
 .province-ul {
     padding-left: 0;
     min-width: 500px;
-    height: 250px;
-    overflow-y: auto; 
 }
 .location-btn-cont {
     padding: 5px 10px;

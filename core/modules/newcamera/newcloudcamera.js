@@ -386,6 +386,23 @@ CameraCloudEditControl = function(){
 
         }
 
+        if (data.password && !(/^[a-zA-Z0-9_.\-~%!$&\'()*+,;=]{0,64}$/.test(data.password))){
+            core.flashInputBackgroundColor($(this).find('.password'));
+            
+            dialogs['mdialog'].activate(`        
+            <h6 class="locations-title" class="font-bg">Error</h6>
+            <p class="password-error-info"> 
+                ${$.t('newCamera.passwordError')}
+               <a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.1">RFC3989</a>
+            </p>
+            <button name="select" class="vxgbutton assign-btn">Close</button>`).then(function(r){
+                return;
+            })
+            
+            this.defferedDispatchEvent(this.error_event);
+            return false;
+        }
+
         if (macAddress && serverSerial) {
             data.serialnumber = String(serverSerial).toUpperCase();
             data.macAddress = String(macAddress).toUpperCase();
@@ -584,6 +601,17 @@ CameraCloudEditControl = function(){
                         self.defferedDispatchEvent(self.error_event);
                     });         
                 });
+        }, function(err) {
+            self.hidewait();
+            self.defferedDispatchEvent(self.error_event);
+            var locationDialog = `<h6 class="locations-title" class="font-bg">Error</h6>
+            <p class="password-error-info"> 
+                ${err.responseJSON.errorDetail}
+            </p>
+            <button name="select" class="vxgbutton assign-btn">Close</button>`
+            dialogs['mdialog'].activate(locationDialog).then(function(r){
+                return;
+            });	
         });
 
         return true;

@@ -381,3 +381,8 @@ a.listmenu-item.mwebui {
     background-color: white !important;
     color: #d9534f !important;
 }
+
+.addgatewaycams.disabled {
+    pointer-events: none;
+    color:#626262;
+}

@@ -17,7 +17,7 @@ $( document ).ready(function() {
 
     var userEmail = activity_window.event_processing.user_email;
 
-    $(".event-time").html(eventTime);
+    $(".event-time").html(moment(eventTime).format("M/D/YYYY h:mm:ss A"));
     $(".event-camera").html(cameraName);
     $(".event-loc").html(location);
     $(".event-type").html(eventDisplayName);

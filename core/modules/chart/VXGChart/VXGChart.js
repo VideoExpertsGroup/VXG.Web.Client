@@ -372,7 +372,7 @@ VXGChartView.prototype.initDraw = function initDraw(controller, cameraName, meta
     +	'					    <ul id="count-type" class="menu-dropdown" x-placement="bottom-start" style="position: absolute; top: 19px; left: 0px; will-change: top, left;">'
     +	`						    <li data-type="Person"><span>${$.t('home.statistics.peopleCounting')}</span></li>`
     +	`					    	<li data-type="Car"><span>${$.t('home.statistics.carCounting')}</span></li>`
-    +	'					    </ul>'
+    +	'					    </ul>&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>'
     +   '					</div>'
     +	'				</div>'
 //    +	'				<div class="VXGChartRefreshContainer">'
@@ -386,11 +386,11 @@ VXGChartView.prototype.initDraw = function initDraw(controller, cameraName, meta
     +	'				<span class="VXGChart reportDownload vxgbutton-transparent" ' + ((!show_report_select)?(' style="display:none;"'):('')) +'>Download Report</span>'
     +	'				<a class="VXGDownloadAnchorElem" style="display:none"></a>'
         +	'					<div class="btn-group period" ' + ((!show_period_select)?(' style="display:none;"'):(''))  + ' >'
-        +	'					<span class="shift-left"></span>'
+        +	'					<span class="shift-left"><i class="fa fa-chevron-left"></i></span>'
         +	`						<button data-period="600"   type="button" class="VXGChart btn btn-white btn-xs period10m" >10 ${$.t('common.timeUnit.min')}</button>`
         +	`						<button data-period="3600"  type="button" class="VXGChart btn btn-white btn-xs period1h active">1 ${$.t('common.timeUnit.hour')}</button>`
         +	`						<button data-period="86400" type="button" class="VXGChart btn btn-white btn-xs period1d">1 ${$.t('common.timeUnit.day')}</button>`
-        +	'					<span class="shift-right"></span>'
+        +	'					<span class="shift-right"><i class="fa fa-chevron-right"></i></span>'
         +	'					</div>'
     +	'				<div>'
     +	'				</div>'
@@ -536,7 +536,7 @@ VXGChartView.prototype.render = function render(viewModel) {
     }
     if (viewModel['chartDataMin'] !== undefined) {
 	dataset.push ({
-		label: $.t('common.stats.max'),
+		label: $.t('common.stats.min'),
                 backgroundColor: "rgba(123, 178, 71, 0)",
                 borderColor:  this.visualOptions.color_of_min_curve,
                 pointBackgroundColor: this.visualOptions.color_of_min_curve,

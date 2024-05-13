@@ -39,14 +39,14 @@
 }
 
 /* The icon for the drop down control  */
-.menu:after {
+/* .menu:after {
     content: url(img/dropdown.svg);
-}
+} */
 
 /* The icon for the AI statistics control  */
-.shift-right, .shift-left {
+/* .shift-right, .shift-left {
     background: url(img/shevron.svg) center no-repeat !important;
-}
+} */
 
 /* The icon for profile in the left panel */
 .profile-img {
