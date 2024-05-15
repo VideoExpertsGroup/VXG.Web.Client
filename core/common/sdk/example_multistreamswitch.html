@@ -2,7 +2,7 @@
 	<head>
 		<title>VXGCloudSDK-Web 3.3.18</title>
 		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-		
+
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<meta http-equiv="x-ua-compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -32,17 +32,27 @@
     <script type="text/javascript" src="vxgwebsdk/LocalPlayer.js"></script>
     <!-- automaticly include: end -->
 
+
 		<script>
-			window.sessNameCh = 'example_cloudplayersdk5_ch';
+			window.sessNameCh = 'example_multistreamswitch_ch';
+
 			$(document).ready(function () {
 				try {  var sChannel = window.sessionStorage.getItem(window.sessNameCh);
 					$('#channel').val(sChannel !== null ? sChannel : ''); } catch (e) {}
 
 				window.player = new CloudPlayerSDK('player1', {
 					autohide: 3000,
-					useOnlyPlayerFormat: 'html5', // hls force enabled
+					timeline: true,
+					calendar: true,
+					//preferredPlayerFormat: 'html5',
+					//useOnlyPlayerFormat: 'webrtc', //more powerful than preferredPlayerFormat
+					disableZoomControl: false,
+					disableAudioControl: false,
+					disableGetShot: false,
+					disableGetClip: false,
+					//model3d: <custompathformodel.json>
 				});
-				
+
 				$('#play_channel').unbind().bind('click', function(){
 					var channelElem = $('#channel');
 					var channel = channelElem.val();
@@ -51,9 +61,8 @@
 						setTimeout(function () {channelElem.css('background-color', '');},200);
 						return;
 					}
-					player.setSource(channel);
-					player.play();
 
+					player.setSource(channel);
 					try { window.sessionStorage.setItem(window.sessNameCh, channel) } catch(e) { }
 				});
 			});
@@ -82,10 +91,10 @@
 	<div class="row">
 		<div class="col-md-1"></div>
 		<div class="col-md-10 col-md-offset-1">
-			<h2>Used only HLS protocol</h2>
+			<h2>Multi Stream Switching</h2>
 			<p>
-				<a href="example_cloudplayersdk4.html" id="prev_example" class="btn btn-link ">Previous example</a>
-				<a href="example_cloudplayersdk6.html" id="next_example" class="btn btn-link ">Next example</a>
+				<a href="example_sdbackup.html" id="prev_example" class="btn btn-link ">Previous example</a>
+				<a href="example_cloudplayersdk3.html" id="next_example" class="btn btn-link ">Next example</a>
 			</p>
 		</div>
 	</div>
@@ -109,6 +118,12 @@
 		<div class="col-md-1"></div>
 		<div class="col-md-10 col-md-offset-1" style="height: 520px">
 			<div id="player1"></div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10 col-md-offset-1" style="height: 50px">
 		</div>
 	</div>
 

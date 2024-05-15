@@ -34,38 +34,95 @@
 
 		<script>
 			$(document).ready(function () {
+				
+				window.playerList = new CloudPlayerList('single-timeline', {timeline: true, calendar: true});
 				window.player1 = new CloudPlayerSDK('player1');
+				window.playerList.addPlayerToList(window.player1);
 				window.player2 = new CloudPlayerSDK('player2');
+				window.playerList.addPlayerToList(window.player2);
 				window.player3 = new CloudPlayerSDK('player3');
+				window.playerList.addPlayerToList(window.player3);
 				window.player4 = new CloudPlayerSDK('player4');
+				window.playerList.addPlayerToList(window.player4);
+				
+				const playChannelsPromise = (playerInfo) =>
+					new Promise ((resolve, reject) => {
+						var onlyPlaying = [];
+						playerInfo.forEach(pi => {
+							var channelElem = $('#' + pi.channelel);
+							var channel = channelElem.val();
+							if (!channel || channel === '') {
+								channelElem.css('background-color', 'red').focus();
+								setTimeout(function () {channelElem.css('background-color', '');},200);
+							} else {
+								pi.player.setSource(channel);
+								onlyPlaying.push(pi.player);
+							}
+						})
+						 resolve(onlyPlaying);
+					})
+				
+				$('#acc_token_toggle').click(function(){
+					$(".acc_token_input").toggleClass("hidden");	
+					$(".col-md-6").toggleClass("no_padding");					  
+				});
 
-				function play_channel(player, channelel){
-					var channelElem = $('#' + channelel);
-					var channel = channelElem.val();
-					if (!channel || channel === '') {
-						channelElem.css('background-color', 'red').focus();
-						setTimeout(function () {channelElem.css('background-color', '');},200);
-						return;
-					}
+				$('#play_channel_all').click(function(){
+					var allPlayerInfo = [
+						{"player": player1, "channelel": 'channel1'},
+						{"player": player2, "channelel": 'channel2'},
+						{"player": player3, "channelel": 'channel3'},
+						{"player": player4, "channelel": 'channel4'}]
+					playChannelsPromise(allPlayerInfo).then((onlyPlaying) => {
+							onlyPlaying.forEach(p => {
+								playerList.updatePlayerCamera(p);
+							})
+							playerList.synchronize();
+						})
+				});
 
-					// player.stop();
-					player.setSource(channel);
+				setInterval(function() { showTimes(); }, 500);
+				
+			});
+			
+			function showTimes() {
+				var allTimes = [];
+				if (player1.getPosition().code === undefined) {
+					allTimes.push(player1.getPosition());
+					$('#time1').html("UTC time: " + CloudHelpers.readableFormatUTCTime(player1.getPosition()));
+				}
+				if (player2.getPosition().code === undefined) {
+					allTimes.push(player2.getPosition());
+					$('#time2').html("UTC time: " + CloudHelpers.readableFormatUTCTime(player2.getPosition()));
+				}
+				if (player3.getPosition().code === undefined) {
+					allTimes.push(player3.getPosition());
+					$('#time3').html("UTC time: " + CloudHelpers.readableFormatUTCTime(player3.getPosition()));
+				}
+				if (player4.getPosition().code === undefined) {
+					allTimes.push(player4.getPosition());
+					$('#time4').html("UTC time: " + CloudHelpers.readableFormatUTCTime(player4.getPosition()));
 				}
 
-				$('#play_channel1').unbind().bind('click', function(){
-					play_channel(player1, 'channel1');
-				});
-				$('#play_channel2').unbind().bind('click', function(){
-					play_channel(player2, 'channel2');
-				});
-				$('#play_channel3').unbind().bind('click', function(){
-					play_channel(player3, 'channel3');
-				});
-				$('#play_channel4').unbind().bind('click', function(){
-					play_channel(player4, 'channel4');
-				});
-			});
+				if (allTimes.length > 1) {
+					var maxDiff = Math.max(...allTimes) - Math.min(...allTimes);
+					$("#maxDiff").html(maxDiff/1000);
+				}
+			}
 		</script>
+
+		<style>
+			.hidden {
+			display: none;
+			}
+			.no_padding {
+			padding-left: 0px;
+			padding-right: 0px;
+			}
+			.input-group-btn {
+				display: none;
+			}
+		</style>
 	</head>
 
 <body>
@@ -89,24 +146,48 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<h2>Multi players</h2>
+			<h2>Multi Player Joined Timeline</h2>
 			<p>
-				<a href="example_multistreamswitch.html" id="prev_example" class="btn btn-link ">Previous example</a>
-				<a href="example_cloudplayersdk4.html" id="next_example" class="btn btn-link ">Next example</a>
+				<a href="example_cloudplayersdk8.html" id="prev_example" class="btn btn-link ">Previous example</a>
+				<a href="example_cloudstreamersdk1.html" id="next_example" class="btn btn-link ">Next example</a>
+				<div class="form-group">
+				<label>Show/hide controls</label>
+				<button id="acc_token_toggle" class="btn btn-default btn-vxg">Toggle</button>
+				<label>Play all</label>
+				<button id="play_channel_all" class="btn btn-default btn-vxg">Play</button>
+			</div>
 			</p>
 		</div>
 	</div>
 
 	<div class="row">
+		<div id="single-timeline" class="col-12">
+			<div class="cloudplayer-controls-container single-timeline">
+				<div class="cloudplayer-timeline-container single-timeline">
+					<div class="cloudplayer-calendar-container single-timeline"></div>
+					<div class="cloudcameracalendar-content" id="single-timeline-calendar"></div>
+				</div>
+				<div class="cloudplayer-controls single-timeline">
+					<div class="cloudplayer-play" style="display: none"></div>
+					<div class="cloudplayer-stop" style="display: none"></div>
+					<div class="cloudplayer-pause hidden"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row acc_token_input">
+		<p class="col-6 max-diff">Maximum player delay: <span id="maxDiff">--</span> seconds</p>
+	</div>
+
+	<div class="row acc_token_input">
 		<div class="col-md-6">
 			<div class="form-group">
 				<label for="cameraID">Player1: Access token</label>
 				<div class="input-group">
 					<input id="channel1" type="text" class="form-control" placeholder="Enter access token" value="">
-					<span class="input-group-btn">
-						<button id="play_channel1" class="btn btn-default btn-vxg">Play</button>
-					</span>
 				</div>
+				<p id="time1">UTC time: nothing yet.</p>
 			</div>
 		</div>
 		<div class="col-md-6">
@@ -114,10 +195,8 @@
 				<label for="cameraID">Player2: Access token</label>
 				<div class="input-group">
 					<input id="channel2" type="text" class="form-control" placeholder="Enter access token" value="">
-					<span class="input-group-btn">
-						<button id="play_channel2" class="btn btn-default btn-vxg">Play</button>
-					</span>
 				</div>
+				<p id="time2">UTC time: nothing yet.</p>
 			</div>
 		</div>
 	</div>
@@ -131,16 +210,14 @@
 		</div>
 	</div>
 	
-	<div class="row">
+	<div class="row acc_token_input">
 		<div class="col-md-6">
 			<div class="form-group">
 				<label for="cameraID">Player3: Access token</label>
 				<div class="input-group">
 					<input id="channel3" type="text" class="form-control" placeholder="Enter access token" value="">
-					<span class="input-group-btn">
-						<button id="play_channel3" class="btn btn-default btn-vxg">Play</button>
-					</span>
 				</div>
+				<p id="time3">UTC time: nothing yet.</p>
 			</div>
 		</div>
 		<div class="col-md-6">
@@ -148,10 +225,8 @@
 				<label for="cameraID">Player4: Access token</label>
 				<div class="input-group">
 					<input id="channel4" type="text" class="form-control" placeholder="Enter access token" value="">
-					<span class="input-group-btn">
-						<button id="play_channel4" class="btn btn-default btn-vxg">Play</button>
-					</span>
 				</div>
+				<p id="time4">UTC time: nothing yet.</p>
 			</div>
 		</div>
 	</div>
