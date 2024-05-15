@@ -431,7 +431,7 @@ window.screens['cameras'] = {
                     <campreview onclick_toscreen="tagsview" style="cursor: pointer;"></campreview>`,
                     status: statusBlock,
                     recording: list[i].src.recording ? $.t('action.yes') : $.t('action.no'),
-                    name: list[i].src.name,
+                    name: list[i].src.name + `${list[i]?.src?.meta?.subid == 'NOPLAN' ? ' (' + $.t('common.noSubscription') + ')' : ''}`,
                     location: list[i].src.meta && list[i].src.meta.location ? list[i].src.meta.location : "",
                     group: tableGroup,
                     action: `<div class="settings" access_token="${list[i].token}" cam_order="${count}" cam_id="${channelID}" gateway_id="${gatewayId}" gateway_token="${gatewayToken}">
@@ -522,7 +522,7 @@ window.screens['cameras'] = {
 
                 $('#table').bootstrapTable({
                     pagination: true,
-                    showToggle: true, 
+                    // showToggle: true, 
                     showSearchClearButton: true,
                     useRowAttrFunc: true,
                     filterControl: true,
@@ -1174,7 +1174,7 @@ window.screens['cameras'] = {
             
             $("#table").bootstrapTable("refreshOptions", {
                 pagination: true,
-                showToggle: true, 
+                // showToggle: true, 
                 showSearchClearButton: true,
                 useRowAttrFunc: true,
                 filterControl: true,

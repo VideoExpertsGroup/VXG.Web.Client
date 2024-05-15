@@ -126,6 +126,7 @@
     "userPending": "User Pending",
     "successMsg": "Operation has been successful",
     "errorMsg": "Something went wrong",
+    "noSubscription": "no subscription",
     "timeUnit": {
       "min": "min",
       "hour": "hour",

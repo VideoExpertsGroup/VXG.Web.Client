@@ -84,8 +84,9 @@ window.screens['tagsview'] = {
 
         $('.headerBlock .header-center').text('Camera');
         if (this.access_token) return vxg.cameras.getCameraFrom(this.access_token).then(function(camera){
+            let isSubscription = camera?.src?.meta?.subid == 'NOPLAN';
             camera.getName().then(function(name){
-                $('.headerBlock .header-center').text(name);
+                $('.headerBlock .header-center').text(`${name} ${isSubscription ? ' (' + $.t('common.noSubscription') + ')' : '' }`);
             });
             self.camera = camera;
 
