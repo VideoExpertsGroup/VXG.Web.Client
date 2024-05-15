@@ -2,7 +2,7 @@
 	<head>
 		<title>VXGCloudSDK-Web 3.3.18</title>
 		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-		
+
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<meta http-equiv="x-ua-compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -32,42 +32,116 @@
     <script type="text/javascript" src="vxgwebsdk/LocalPlayer.js"></script>
     <!-- automaticly include: end -->
 
+
 		<script>
-			window.sessNameCh = 'example_cloudplayersdk8_ch';
+			window.sessNameCh_check = 'example_speaker_ch_check';
+			window.sessNameCh_ab = 'example_speaker_ch_ab';
+
+			function setBackwardsFormats (formats) {
+				if (window.player_check) {
+					window.player_check.player.setBackwardsFormats( formats );
+				}
+			}
+
+			function sendBackwardAudio () {
+				if (window.player_ab) {
+					window.player_ab.player.sendBackwardAudio();
+				}
+			}
+
+			function backwardAudioStatus(status) {
+				console.log(status);
+				if (window.player_check){
+					window.player_check.player.backwardAudioStatus(status);
+				}
+			}
+
+			function setVolume(val) {
+				if (window.player_ab) {
+					window.player_ab.player.volume(val);
+				}
+			}
+
+			function setMute() {
+				if (window.player_ab) {
+					window.player_ab.player.mute();
+				}
+			}
 
 			$(document).ready(function () {
-				try {  var sChannel = window.sessionStorage.getItem(window.sessNameCh);
-					$('#channel').val(sChannel !== null ? sChannel : ''); } catch (e) {}
-					
-				var startTime = CloudHelpers.getCurrentTimeUTC() - 30*60*1000; // now - 30 minutes
-				var endTime = CloudHelpers.getCurrentTimeUTC() + 30*60*1000; // now + 30 minutes
+				try {
+					var sChannel_check = window.sessionStorage.getItem(window.sessNameCh_check);
+					$('#channel_check').val(sChannel_check !== null ? sChannel_check : '');
+				} catch (e) {}
 
-				window.player = new CloudPlayerSDK('player1', {
+				try {
+					var sChannel_ab = window.sessionStorage.getItem(window.sessNameCh_ab);
+					$('#channel_ab').val(sChannel_ab !== null ? sChannel_ab : '');
+				} catch (e) {}
+
+				window.player_check_options = {
 					autohide: 3000,
 					timeline: true,
-					arrows: false,
-					gotoLive: false,
-					range: {min: startTime, max: endTime}
-				});
+					calendar: true,
+					disableZoomControl: false,
+					disableAudioControl: false,
+					disableGetShot: false,
+					disableGetClip: false,
+					//model3d: <custompathformodel.json>
+				};
 
-				// player.setRange(startTime, endTime);
-				
+				window.player_ab_options = {
+					autohide: 3000,
+					timeline: true,
+					calendar: true,
+					disableZoomControl: false,
+					disableAudioControl: false,
+					disableGetShot: false,
+					disableGetClip: false,
+					//model3d: <custompathformodel.json>
+				}
+
+
+				window.player_check = new CloudPlayerSDK('player_check', window.player_check_options );
+				window.player_ab = new CloudPlayerSDK('player_ab', window.player_ab_options);
+
 				$('#play_channel').unbind().bind('click', function(){
-					var channelElem = $('#channel');
-					var channel = channelElem.val();
-					if (!channel || channel === '') {
-						channelElem.css('background-color', 'red').focus();
-						setTimeout(function () {channelElem.css('background-color', '');},200);
-						return;
+
+					var channelElem = $('#channel_check');
+					var channel_check = channelElem.val();
+
+					channelElem = $('#channel_ab');
+					var channel_ab = channelElem.val();
+
+					player_check.setSource(channel_check);
+					if (channel_ab) {
+						window.player_check_options.ext_sendBackwardAudio = sendBackwardAudio.bind();
+						window.player_check_options.ext_setVolume = setVolume.bind();
+						window.player_check_options.ext_setMute = setMute.bind();
+
+						window.player_ab_options.ext_setBackwardsFormats = setBackwardsFormats.bind();
+						window.player_ab_options.ext_backwardAudioStatus = backwardAudioStatus.bind();
+
+						player_ab.setSource(channel_ab);
+						player_ab.play();
+					} else {
+						window.player_check_options.ext_sendBackwardAudio = undefined;
+						window.player_check_options.ext_setVolume = undefined;
+						window.player_check_options.ext_setMute = undefined;
+
+						player_ab.stop();
 					}
 
-					// player.stop();
-					player.setSource(channel);
-					player.setPosition(startTime);
-					player.timeline.moveToPosition(startTime)
-					player.play();
-					try { window.sessionStorage.setItem(window.sessNameCh, channel) } catch(e) { }
+					player_check.setPosition(-1);
+
+					try {
+					    window.sessionStorage.setItem(window.sessNameCh_check, channel_check)
+					} catch(e) { }
+					try {
+					    window.sessionStorage.setItem(window.sessNameCh_ab, channel_ab)
+					} catch(e) { }
 				});
+
 			});
 		</script>
 	</head>
@@ -94,10 +168,10 @@
 	<div class="row">
 		<div class="col-md-1"></div>
 		<div class="col-md-10 col-md-offset-1">
-			<h2>Time Range</h2>
+			<h2>Speaker camera with check one</h2>
 			<p>
-				<a href="example_cloudplayersdk6.html" id="prev_example" class="btn btn-link ">Previous example</a>
-				<a href="example_cloudplayersdk8.html" id="next_example" class="btn btn-link ">Next example</a>
+				<a href="example_localplayersdk.html" id="prev_example" class="btn btn-link ">Previous example</a>
+				<a href="example_localplayer_speaker.html" id="next_example" class="btn btn-link ">Next example</a>
 			</p>
 		</div>
 	</div>
@@ -108,7 +182,10 @@
 			<div class="form-group">
 				<label for="cameraID">Access token</label>
 				<div class="input-group">
-					<input id="channel" type="text" class="form-control" placeholder="Enter access token" value="">
+					<input id="channel_ab" type="text" class="form-control" placeholder="Enter access token for backward camera" value="">
+				</div>
+				<div class="input-group">
+					<input id="channel_check" type="text" class="form-control" placeholder="Enter access token for check camera" value="">
 					<span class="input-group-btn">
 						<button id="play_channel" class="btn btn-default btn-vxg">Play</button>
 					</span>
@@ -120,14 +197,14 @@
 	<div class="row">
 		<div class="col-md-1"></div>
 		<div class="col-md-10 col-md-offset-1" style="height: 520px">
-			<div id="player1"></div>
+			<div id="player_check"></div>
 		</div>
+		<div id="player_ab"></div>
 	</div>
 
 	<div class="row">
 		<div class="col-md-1"></div>
 		<div class="col-md-10 col-md-offset-1" style="height: 50px">
-
 		</div>
 	</div>
 
