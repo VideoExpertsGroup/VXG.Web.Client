@@ -1,6 +1,6 @@
 // CloudSDK.debug.js
-// version: 3.3.19
-// date-of-build: 240226
+// version: 3.2.6
+// date-of-build: 230502
 // copyright (c) VXG Inc
 // Includes gl-matrix  <https://github.com/toji/gl-matrix>
 // ver: 3.3.0 // Available under MIT License 
@@ -45,14 +45,14 @@ window.Log = function(elid){
 			self.el.innerHTML += '<div class="logger-line info">' + self.escape(msg) + '</div>';
 		}
 	}
-
+	
 	self.error = function(msg){
 		console.error(msg);
 		if(self.el){
 			self.el.innerHTML += '<div class="logger-line error">' + self.escape(msg) + '</div>';
 		}
 	}
-
+	
 	self.warn = function(msg){
 		console.warn(msg);
 		if(self.el){
@@ -69,23 +69,23 @@ CloudHelpers.POSITION_LIVE = -1;
 window.CloudHelpers.RequestWrap = function(){
     var self = this;
     var isRequestAnswersAllowed = 1;
-
+    
     self.request = function(obj) {
 	var p = CloudHelpers.promise();
 	var xhr = ("onload" in new XMLHttpRequest()) ? new XMLHttpRequest : new XDomainRequest;
 	xhr.open(obj.type, obj.url, true);
 	xhr.withCredentials = true;
-
+	
 	if(obj.contentType){
 		xhr.setRequestHeader('Content-Type', obj.contentType);
 	}
 	if (obj.access_token) {
 		xhr.setRequestHeader('Authorization', "Acc " + obj.access_token);
-	}
-// [TECH-2963] In some cases this header can produce CORS-block , removing to prevent
-//	else if(obj.token){ 
+// [TECH-2963] In some cases this header can produce CORS-block , removing to prevent		
+//	}else 
+//	if(obj.token){ //back compatability
 //		xhr.setRequestHeader('Authorization', "SkyVR " + obj.token);
-//	} 
+	} 
 	xhr.onload = function() {
 		var r = "";
 		if(this.responseText != ""){
@@ -206,7 +206,7 @@ CloudHelpers.promise = function(){
 		}
 		return d;
 	}
-
+	
 	d.fail = function(callback){
 		d.fail_callback = callback;
 		if(d.completed && typeof d.fail_callback === "function" && d.failed){
@@ -214,7 +214,7 @@ CloudHelpers.promise = function(){
 		}
 		return d;
 	}
-
+	
 	d.resolve = function() {
 		if(!d.completed){
 			d.result_arguments = arguments; // [];
@@ -422,7 +422,7 @@ CloudHelpers.requestAsyncList = function(getData, request_data, p){
 	};
 	request_data.limit = result.meta.limit;
 	request_data.offset = result.meta.offset;
-
+		
 	getData(request_data).fail(function(err){
 		p.reject(err);
 	}).done(function(r){
@@ -523,7 +523,7 @@ CloudHelpers.locale = function() {
 		}else{
 			console.warn("Unsupported lang " + navLang + ", will be used default lang: " + CloudHelpers.sLang)
 		}
-
+		
 		CloudHelpers.sLang =  langs.indexOf(navLang) >= -1 ? navLang : CloudHelpers.sLang;
 	} else {
 		CloudHelpers.sLang = 'en';
@@ -610,7 +610,7 @@ CloudHelpers.isChrome = function(){
 	return bIsChrome;
 }
 
-CloudHelpers.isMobile = function() {
+CloudHelpers.isMobile = function() { 
 	if(navigator.userAgent.match(/Android/i)
 		|| navigator.userAgent.match(/webOS/i)
 		|| navigator.userAgent.match(/iPhone/i)
@@ -640,7 +640,7 @@ CloudHelpers.parseUTCTime = function(str){
 	d.setUTCHours(parseInt(arr[3],10));
 	d.setUTCMinutes(parseInt(arr[4],10));
 	d.setUTCSeconds(parseInt(arr[5],10));
-	var t = d.getTime();
+	var t = d.getTime(); 
 	t = t - t % 1000;
 	return t;
 }
@@ -774,7 +774,7 @@ CloudHelpers.isPublicUrl = function(url){
 		local_addresses.push({'from': '172.16.0.0', 'to': '172.31.255.255', 'comment': '16 contiguous class B network'});
 		local_addresses.push({'from': '192.168.0.0', 'to': '192.168.255.255', 'comment': '256 contiguous class C network'});
 		local_addresses.push({'from': '169.254.0.0', 'to': '169.254.255.255', 'comment': 'Link-local address also refered to as Automatic Private IP Addressing'});
-		local_addresses.push({'from': '127.0.0.0', 'to': '127.255.255.255', 'comment': 'localhost addresses'});
+		local_addresses.push({'from': '127.0.0.0', 'to': '127.255.255.255', 'comment': 'localhost addresses'});		
 		//for(var i in local_addresses){
 		for(var i = 0; i < local_addresses.length; i++) {
 			var range_from = CloudHelpers.convertIpV4ToInt(local_addresses[i].from);
@@ -808,14 +808,14 @@ CloudHelpers.isFireFox = function(){
 	return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 }
 
-CloudHelpers.isAndroid = function() {
+CloudHelpers.isAndroid = function() { 
 	if(navigator.userAgent.match(/Android/i)){
 		return true;
 	};
 	return false;
 }
 
-CloudHelpers.isIOS = function() {
+CloudHelpers.isIOS = function() { 
 	if(navigator.userAgent.match(/iPhone/i)
 		|| navigator.userAgent.match(/iPad/i)
 		|| navigator.userAgent.match(/iPod/i)
@@ -825,14 +825,14 @@ CloudHelpers.isIOS = function() {
 	return false;
 }
 
-CloudHelpers.isWindowsPhone = function() {
+CloudHelpers.isWindowsPhone = function() { 
 	if(navigator.userAgent.match(/Windows Phone/i)){
 		return true;
 	};
 	return false;
 }
 
-CloudHelpers.isBlackBerry = function() {
+CloudHelpers.isBlackBerry = function() { 
 	if(navigator.userAgent.match(/BlackBerry/i)){
 		return true;
 	};
@@ -889,8 +889,8 @@ CloudHelpers.getOffsetTimezone = function(timezone) {
 
 // polyfill for ie11
 Number.isInteger = Number.isInteger || function(value) {
-    return typeof value === "number" &&
-           isFinite(value) &&
+    return typeof value === "number" && 
+           isFinite(value) && 
            Math.floor(value) === value;
 };
 
@@ -919,7 +919,7 @@ CloudHelpers.checkAutoplay = function(ch_auto_callback){
 			tmp_video_el.parentNode.removeChild(tmp_video_el);
 		}
 	}, false);
-
+	
 	var p = tmp_video_el.play();
 	var s = '';
 	if (window['Promise']) {
@@ -1039,7 +1039,7 @@ CloudHelpers.unpackAccessToken = function(access_token) {
 		console.error('Invalid access token format');
 		return null;
 	}
-
+	
 	result.base_url = result.host;
 	if (result.host == 'web.skyvr.videoexpertsgroup.com') {
 		result.base_url = 'https://' + result.host;
@@ -1147,7 +1147,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 		storage: self.host+"api/v2/storage/",
 		clips: self.host+"api/v2/storage/clips/",
 		channels: self.host+"api/v3/channels/"
-
+		
 	};
 
 	self.endpoints_v4 = {
@@ -1175,7 +1175,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			self.token = new_token.token;
 			self.token_expire = new_token.expire;
 			self.token_expireUTC = Date.parse(new_token.expire + "Z");
-			// start poling token thread
+			// start poling token thread 
 			clearInterval(self.updateTokenInterval);
 			self.updateTokenInterval = setInterval(function(){
 				if(self.token_expireUTC - new Date().getTime() < 20*60000){ // less then 20 minutes
@@ -1197,7 +1197,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 		self.token = null;
 		clearInterval(self.updateTokenInterval);
 	}
-
+	
 	self.createCamera = function(data){
 		return self.requestWrap.request({
 			url: self.endpoints.cameras + '?detail=detail',
@@ -1211,7 +1211,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 	self.camerasList = function(data){
 		data = data || {};
 		if(self.isShareToken()){
-			data.token = self._getCloudToken();
+			data.token = self._getCloudToken();	
 		}
 		var query = CloudHelpers.mapToUrlQuery(data);
 		return self.requestWrap.request({
@@ -1222,9 +1222,9 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			contentType: 'application/json'
 		});
 	}
-
+	
 	self.getCameraList = self.camerasList;
-
+	
 	self.deleteCamera = function(camid){
 		return self.requestWrap.request({
 			url: self.endpoints.cameras + camid + '/',
@@ -1237,7 +1237,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 		data = data || {};
 		data['detail'] = 'detail';
 		if(self.isShareToken()){
-			data.token = self._getCloudToken();
+			data.token = self._getCloudToken();	
 		}
 		var query = CloudHelpers.mapToUrlQuery(data);
 		return self.requestWrap.request({
@@ -1250,7 +1250,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 	self.getCamera2 = function(camid, data){ // new
 		data = data || {};
 		if(self.isShareToken()){
-			data.token = self._getCloudToken();
+			data.token = self._getCloudToken();	
 		}
 		var query = CloudHelpers.mapToUrlQuery(data);
 		return self.requestWrap.request({
@@ -1259,7 +1259,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken()
 		});
 	}
-
+	
 	self.cameraUsage = function(camid){
 		return self.requestWrap.request({
 			url: self.endpoints.cameras + camid + '/usage/',
@@ -1267,11 +1267,11 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken()
 		});
 	}
-
+	
 	self.updateCamera = function(camid, data){
 		data = data || {};
 		if(self.isShareToken()){
-			data.token = self._getCloudToken();
+			data.token = self._getCloudToken();	
 		}
 		var query = CloudHelpers.mapToUrlQuery(data);
 		return self.requestWrap.request({
@@ -1282,14 +1282,10 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			contentType: 'application/json'
 		});
 	}
-
-	self.cameraLiveUrls = function(camid, streamid = ""){
+	
+	self.cameraLiveUrls = function(camid){
 		var data = {};
 		var r_url = self.endpoints.cameras + camid + '/live_urls/?';
-		if (streamid !== "") {
-			data.stream_id = streamid;
-		}
-
 		if(self.isShareToken()){
 			data.token = self._getCloudToken();
 			//data.media_urls = 'webrtc';
@@ -1299,8 +1295,8 @@ window.CloudAPI = function(cloud_token, svcp_url){
 		return self.requestWrap.request({
 			url: r_url + query,
 			type: 'GET',
-			token: self._getCloudToken()
-			//data: JSON.stringify(data),
+			token: self._getCloudToken(),
+			data: JSON.stringify(data),
 		});
 	}
 
@@ -1318,7 +1314,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			data: JSON.stringify(data),
 		});
 	}
-
+	
 	self.cameraStreamUrls_webrtc = function(camid){
 		var data = {};
 		var r_url = self.endpoints.cameras + camid + '/stream_urls/?';
@@ -1335,10 +1331,10 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			data: JSON.stringify(data),
 		});
 	}
-
+	
 	self.getServerTime = function(){
 		var p = CloudHelpers.promise();
-
+		
 		self.requestWrap.request({
 			url: self.endpoints.api + 'server/time/',
 			type: 'GET'
@@ -1351,7 +1347,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 		})
 		return p;
 	}
-
+	
 	self.getAccountInfo = function(){
 		return self.requestWrap.request({
 			url: self.endpoints.account,
@@ -1359,7 +1355,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken()
 		});
 	}
-
+	
 	self.getAccountCapabilities = function(){
 		return self.requestWrap.request({
 			url: self.endpoints.account + "capabilities/",
@@ -1369,60 +1365,27 @@ window.CloudAPI = function(cloud_token, svcp_url){
 	}
 
 	self.cameraMediaStreams = function(camid){
-		var data = {};
-		if(self.isShareToken()){
-			data.token = self._getCloudToken();
-		}
-		var query = CloudHelpers.mapToUrlQuery(data);
 		return self.requestWrap.request({
-			url: self.endpoints.cameras + camid + "/media_streams/?" + query,
+			url: self.endpoints.cameras + camid + "/media_streams/",
 			type: 'GET',
-			token: self._getCloudToken(),
+			token: self._getCloudToken()
 		});
 	};
 
 	self.updateCameraMediaStreams = function(camid, data){
-		data = data || {};
-		if(self.isShareToken()){
-			data.token = self._getCloudToken();
-		}
-		var query = CloudHelpers.mapToUrlQuery(data);
 		return self.requestWrap.request({
-			url: self.endpoints.cameras + camid + '/media_streams/?' + query,
+			url: self.endpoints.cameras + camid + "/media_streams/",
 			type: 'PUT',
-			token: self._getCloudToken(),
 			data: JSON.stringify(data),
-			contentType: 'application/json'
-		});	
-	};
-
-	self.getCameraVideoStreams = function(camid) {
-		return self.requestWrap.request({
-			url: self.endpoints.cameras + camid + "/video/streams",
-			type: 'GET',
 			contentType: 'application/json',
-			token: self._getCloudToken(),
-		});
-	}
-	
-	self.getCameraVideoStream = function(camid,videoid){
-		var data = {};
-		if(self.isShareToken()){
-			data.token = self._getCloudToken();
-		}
-		var query = CloudHelpers.mapToUrlQuery(data);
-		return self.requestWrap.request({
-			url: self.endpoints.cameras + camid + "/video/streams/"+videoid+"/?" + query,
-			type: 'GET',
-			token: self._getCloudToken(),
+			token: self._getCloudToken()
 		});
 	};
-
 
 	self.cameraPreview = function(camid){
 		var data = {};
 		if(self.isShareToken()){
-			data.token = self._getCloudToken();
+			data.token = self._getCloudToken();	
 		}
 		var query = CloudHelpers.mapToUrlQuery(data);
 		return self.requestWrap.request({
@@ -1435,7 +1398,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 	self.cameraUpdatePreview = function(camid){
 		var get_params = {};
 		if(self.isShareToken()){
-			get_params.token = self._getCloudToken();
+			get_params.token = self._getCloudToken();	
 		}
 		var query = CloudHelpers.mapToUrlQuery(get_params);
 		return self.requestWrap.request({
@@ -1444,13 +1407,12 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken()
 		});
 	};
-
-
+	
 	self.cameraSendPtz = function(camid, data){
 		data = data || {};
 		var get_params = {};
 		if(self.isShareToken()){
-			get_params.token = self._getCloudToken();
+			get_params.token = self._getCloudToken();	
 		}
 		var query = CloudHelpers.mapToUrlQuery(get_params);
 		return self.requestWrap.request({
@@ -1461,12 +1423,12 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			contentType: 'application/json'
 		});
 	}
-
+	
 	self.cameraPtzExecute = function(camid, data){
 		data = data || {};
 		var get_params = {};
 		if(self.isShareToken()){
-			get_params.token = self._getCloudToken();
+			get_params.token = self._getCloudToken();	
 		}
 		var query = CloudHelpers.mapToUrlQuery(get_params);
 		return self.requestWrap.request({
@@ -1477,11 +1439,11 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			contentType: 'application/json'
 		});
 	}
-
+	
 	self.cameraPtz = function(camid){
 		var data = {};
 		if(self.isShareToken()){
-			data.token = self._getCloudToken();
+			data.token = self._getCloudToken();	
 		}
 		var query = CloudHelpers.mapToUrlQuery(data);
 		return self.requestWrap.request({
@@ -1490,11 +1452,11 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken(),
 		});
 	}
-
+	
 	self.cameraAudio = function(camid) {
 		var data = {};
 		if(self.isShareToken()){
-			data.token = self._getCloudToken();
+			data.token = self._getCloudToken();	
 		}
 		var query = CloudHelpers.mapToUrlQuery(data);
 		return self.requestWrap.request({
@@ -1503,7 +1465,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken(),
 		});
 	}
-
+	
 	self.storageRecords = function(camid, startDT, endDt){
 		var p = CloudHelpers.promise();
 		var request_data = {
@@ -1514,11 +1476,11 @@ window.CloudAPI = function(cloud_token, svcp_url){
 		};
 		if(endDt)
 			request_data.end = endDt;
-
+		
 		if(self.isShareToken()){
 			request_data.token = self._getCloudToken();
 		}
-
+		
 		function getData(req_data){
 			var query = CloudHelpers.mapToUrlQuery(req_data);
 			return self.requestWrap.request({
@@ -1527,11 +1489,11 @@ window.CloudAPI = function(cloud_token, svcp_url){
 				token: self._getCloudToken()
 			});
 		};
-
+		
 		CloudHelpers.requestAsyncList(getData, request_data, p);
 		return p;
 	};
-
+	
 	self.storageRecordsFirst = function(camid, startDT, nLimit){
 		// console.log("storageRecordsFirst, nLimit: " + nLimit);
 
@@ -1546,7 +1508,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 		if(self.isShareToken()){
 			request_data.token = self._getCloudToken();
 		}
-
+			
 		/*function getData(req_data){
 			console.log("req_data: ", query);
 			var query = CloudHelpers.mapToUrlQuery(req_data);
@@ -1557,7 +1519,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 				token: self._getCloudToken()
 			});
 		};*/
-
+		
 		// CloudHelpers.requestAsyncList(getData, request_data_st, p);
 		// return p;
 
@@ -1568,7 +1530,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken()
 		});
 	};
-
+	
 	self.storageTimeline = function(camid, start_dt, end_dt, slice){
 		var request_data = {
 			start: start_dt,
@@ -1586,7 +1548,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken()
 		});
 	};
-
+	
 	self.storageActivity = function(camid, use_timezone){
 
 		var request_data = {
@@ -1608,7 +1570,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken()
 		});
 	};
-
+	
 	/* cameramanager */
 
 	self.resetCameraManager = function(cmid, data){
@@ -1632,7 +1594,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			});
 		}
 	};
-
+	
 	self.updateCameraManager = function(cmid, data){
 		data = data || {};
 		return self.requestWrap.request({
@@ -1643,9 +1605,9 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			contentType: 'application/json'
 		});
 	};
-
+	
 	/* camsess */
-
+	
 	self.getCamsessList = function(data){
 		var query = CloudHelpers.mapToUrlQuery(data);
 		return self.requestWrap.request({
@@ -1666,7 +1628,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			contentType: 'application/json'
 		});
 	}
-
+	
 	self.getCamsessRecords = function(sessid){
 		return self.requestWrap.request({
 			url: self.endpoints.camsess + sessid + "/records/",
@@ -1676,7 +1638,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			contentType: 'application/json'
 		});
 	}
-
+	
 	self.deleteCamsess = function(sessid){
 		return self.requestWrap.request({
 			url: self.endpoints.camsess + sessid + "/",
@@ -1725,19 +1687,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken(),
 		});
 	}
-
-	self.toggleMemRec = function(camid, mem_rec, access_token) {
-		var obj = obj || {};
-		obj.memorycard_recording = mem_rec;
-		return self.requestWrap.request({
-			url: self.endpoints.cameras + camid,
-			type: 'PUT',
-			data: JSON.stringify(obj),
-			contentType: 'application/json',
-			access_token: access_token,
-		});
-	}
-
+	
 	// clips
 	self.createClip = function ( camid, title, start, end, delete_at, access_token ) {
 	    title = title || '';
@@ -1761,10 +1711,10 @@ window.CloudAPI = function(cloud_token, svcp_url){
 	    } else {
 		request.token = self._getCloudToken();
 	    }
-
+    
 	    return self.requestWrap.request(request);
 	}
-
+	
 	self.getClip = function ( clipid , access_token) {
 	    var request = {};
 	    request.url = self.endpoints.clips + clipid + '/';
@@ -1774,10 +1724,10 @@ window.CloudAPI = function(cloud_token, svcp_url){
 	    } else {
 		request.token = self._getCloudToken();
 	    }
-
+	    
 	    return self.requestWrap.request(request);
 	}
-
+	
 	self.getChannels = function(){
 		return self.requestWrap.request({
 			url: self.endpoints.channels,
@@ -1793,7 +1743,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 		token: self._getCloudToken()
 	    });
 	};
-
+	
 	//images
 	self.cameraImages = function( options ){
 		var data = {};
@@ -1819,9 +1769,9 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			data.offset = options.offset;
 		}
 		var r_url = self.endpoints_v4.images + '?';
-
+		
 		var query = CloudHelpers.mapToUrlQuery(data);
-
+		
 		return self.requestWrap.request({
 			url: r_url + query,
 			type: 'GET',
@@ -1909,7 +1859,7 @@ CloudAPI.cache.setCameraInfo = function(cam){
 		CloudAPI.cache.cameras[camid] = {};
 	};
 	var changed_p2p_settings = cam['p2p_streaming'] && cam['p2p_streaming'] == true ? true : false; // need request
-
+	
 	var prev_cam = CloudAPI.cache.cameras[camid];
 	CloudAPI.cache.cameras[camid] = CloudAPI.cache.mergeObjects(prev_cam, cam);
 
@@ -2159,14 +2109,14 @@ CloudAPI.applyApiToken = function(){
 // $.support.cors = true;
 /*
 CloudAPI.updatePageProgressCaption = function(){
-
+	
 	var loading_translate = {
 		'en' : 'Loading...',
 		'ru' : 'Загрузка...',
 		'ko' : '카메라 정보 가져오는 중...',
 		'it' : 'Caricamento in corso...'
 	}
-
+	
 	try{
 		if(document.getElementById('progress-caption')){
 			if(loading_translate[CloudAPI.lang()]){
@@ -2185,7 +2135,7 @@ CloudAPI.loadVendorScripts = function(vendor, path){
 		js.type = "text/javascript";
 		js.src = (path ? path : './') + 'vendor/' + vendor + "/cc.js";
 		document.head.appendChild(js);
-
+		
 		js.onload = function(){
 			CloudAPI.updatePageProgressCaption(); // TODO move to CloudUI
 			if(CloudHelpers.containsPageParam("customswf")){
@@ -2207,7 +2157,7 @@ CloudAPI.loadVendorScripts = function(vendor, path){
 		cc_css.rel = "stylesheet";
 		cc_css.href = (path ? path : './') + "vendor/" + vendor + "/cc.min.css";
 		document.head.appendChild(cc_css);
-
+		
 		var cc_css2 = document.createElement("link");
 		cc_css2.rel = "stylesheet";
 		cc_css2.href = (path ? path : './') + "vendor/" + vendor + "/pageloader.min.css";
@@ -2344,7 +2294,7 @@ CloudAPI.enable401handler = function() {
 	/*$.ajaxSetup({
 		error : function(jqXHR, textStatus, errorThrown) {
 			if (jqXHR.status == 401 && jqXHR.statusText == "UNAUTHORIZED") {
-
+				
 				var uri = CloudAPI.parseUri(CloudAPI.url);
 				var uri2 = CloudAPI.parseUri(CloudAPI.config.url);
 				if(uri.host == "" || uri.host == uri2.host){
@@ -2391,7 +2341,7 @@ CloudAPI.hasAccess = function(caminfo, rule){
 	if(!caminfo['access']) return true;
 	var bResult = false;
 //	for(var s in caminfo['access']){
-	for(var s = 0; s < caminfo['access'].length; s++){
+	for(var s = 0; s < caminfo['access'].length; s++){ 
 		if(caminfo['access'][s] == rule)
 			bResult = true;
 	}
@@ -2897,16 +2847,16 @@ CloudAPI.cameraInfo = function(camid){
 		url: CloudAPI.config.url_cameras + camid + "/",
 		type: 'GET'
 	}).done(function(response){
-
+		
 		if(CloudAPI.cache.cameras[response.id] && !CloudAPI.cache.cameras[response.id]["memory_card"]){
 			console.log("cameraInfo cahce has not memory card info for camid=" + response.id);
 			CloudAPI.cameraMemoryCard(response.id);
 		}else if(!CloudAPI.cache.cameras[response.id]){
 			console.log("cameraInfo has not in cache for camid=" + response.id);
-			CloudAPI.cameraMemoryCard(response.id);
+			CloudAPI.cameraMemoryCard(response.id);	
 		}
-
-
+		
+		
 		// SET to cache
 		if(CloudAPI.cache.setCameraInfo(response)){
 			CloudAPI.cameraP2PSettings(camid).done(function(p2p_settings){
@@ -3124,7 +3074,7 @@ CloudAPI.cameraBackwardStart = function(){
 		CloudAPI.config.tmpBackwardURLCount = 1;
 		CloudAPI.config.tmpBackwardURL = CloudAPI.config.backwardURL;
 	}
-
+	
 	if(CloudAPI.isP2PStreaming()){
 		console.log("[CLOUDAPI] Send (audio streaming) backward start: " + CloudAPI.config.backwardURL);
 		$.ajax({
@@ -3203,7 +3153,7 @@ CloudAPI.cameraUpdatePreview = function(cameraID){
 		url: CloudAPI.config.url_cameras + cameraID + "/preview/update/",
 		type: 'POST'
 	});
-};
+};	
 CloudAPI.storageDataFirstRecord = function(startDT){
 	var d = $.Deferred();
 	var request_data = {
@@ -3301,7 +3251,7 @@ CloudAPI.storageThumbnails = function(startDT, endDt){
 	};
 	if(endDt)
 		request_data.end = endDt;
-
+	
 	function getData(req_data){
 		var req_d = $.Deferred();
 		$.ajax({
@@ -3366,7 +3316,7 @@ CloudAPI.storageTimeline = function(startDT, endDt){
 	};
 	if(endDt)
 		request_data.end = endDt;
-
+		
 	function getData(req_data){
 		var req_d = $.Deferred();
 		$.ajax({
@@ -3665,7 +3615,7 @@ CloudAPI.camerasList = function(params){
 CloudAPI.camerasListByCriterions = function(criterions, cb_success, cb_error){
 	cb_success = cb_success || CloudAPI.handleNothing
 	cb_error = cb_error || CloudAPI.handleError;
-
+	
 	$.ajax({
 		url: CloudAPI.config.url_cameras,
 		data: criterions,
@@ -3716,7 +3666,7 @@ CloudAPI.storageClipList = function(){
 		camid: CloudAPI.cameraID(),
 		usecamtz: ''
 	};
-
+	
 	function getData(req_data){
 		var req_d = $.Deferred();
 		$.ajax({
@@ -3795,7 +3745,7 @@ CloudAPI.storageClipListAnon = function(token){
 			});
 			return req_d;
 		};
-
+		
 		getData(request_data).fail(function(){
 			d.reject();
 		}).done(function(data){
@@ -3909,7 +3859,7 @@ CloudAPI.cameraSettings = function(){
 		d.always(function(){ d2.resolve();});
 		return d2;
 	}
-
+	
 	function mediaStreams(){
 		var d2 = $.Deferred();
 		CloudAPI.cameraMediaStreams().done(function(media_streams){
@@ -4110,8 +4060,8 @@ CloudAPI.loadApiTokenFromHref = function(){
 	var prms = window.location.href.split("#");
 	var token = prms[prms.length - 1];
 	token = token.split("&");
-
-
+	
+	
 	//for(var i in token){
 	for(var i = 0; i < token.length; i++){
 		var name = token[i].split("=")[0];
@@ -4229,7 +4179,7 @@ CloudReturnCode.ERROR_NO_MEMORY = {
 	code: -12,
 	text: 'Out of memory'
 };
-
+   
 CloudReturnCode.ERROR_ACCESS_DENIED = {
 	name: 'ERROR_ACCESS_DENIED',
 	code: -13,
@@ -4374,6 +4324,8 @@ CloudReturnCode.ERROR_NOT_FOUND = {
 	text: 'Not found object'
 }
 
+
+
 window.CloudCameraPrivacyFilter = {};
 
 CloudCameraPrivacyFilter.PS_OWNER_NOT_PUBLIC = {
@@ -4466,27 +4418,27 @@ window.CloudTrialConnection = function(){
 	var self = this;
 	self.mAPI = null;
 	self.AccountProviderUrl = (window.location.protocol=='file:'?'http:':window.location.protocol) + "//cnvrclient2.videoexpertsgroup.com/";
-
+	
 	self.setAccpUrl = function(new_accp_url){
-		self.AccountProviderUrl = new_accp_url;
+		self.AccountProviderUrl = new_accp_url; 
 	};
-
+	
 	self.setSvcpUrlBase = function(new_svcp_url){
-		self.ServiceProviderUrl = new_svcp_url;
+		self.ServiceProviderUrl = new_svcp_url; 
 	};
 
 	self.setApiConfig = function(api_host, api_port, api_secure_port){
-		self.ApiHost = api_host;
+		self.ApiHost = api_host; 
 		self.ApiPort = api_port;
 		self.ApiSecurePort = api_secure_port;
 	};
 
 	self.setCamConfig = function(cam_host, cam_port, cam_secure_port){
-		self.CamHost = cam_host;
+		self.CamHost = cam_host; 
 		self.CamPort = cam_port;
 		self.CamSecurePort = cam_secure_port;
 	};
-
+	
 	// Open without redirects
 	self.open = function(license_key){
 		var p = CloudHelpers.promise();
@@ -4506,11 +4458,11 @@ window.CloudTrialConnection = function(){
 	self.close = function(){
 		self.mAPI = null;
 	}
-
+	
 	self._getAPI = function(){
 		return self.mAPI;
 	}
-
+	
 	self.getUserInfo = function(){
 		var p = CloudHelpers.promise();
 		if(!self.isOpened()){
@@ -4529,7 +4481,7 @@ window.CloudTrialConnection = function(){
 		})
 		return p;
 	}
-
+	
 	self.getServerTimeDiff = function(){
 		return self.mAPI.diffServerTime;
 	}
@@ -4597,11 +4549,11 @@ window.CloudTokenConnection = function(options){
 	self.close = function(){
 		self.mAPI = null;
 	}
-
+	
 	self._getAPI = function(){
 		return self.mAPI;
 	}
-
+	
 	self.getUserInfo = function(){
 		var p = CloudHelpers.promise();
 		if(!self.isOpened()){
@@ -4621,7 +4573,7 @@ window.CloudTokenConnection = function(options){
 		})
 		return p;
 	}
-
+	
 	self.getServerTimeDiff = function(){
 		return self.mAPI.diffServerTime;
 	}
@@ -4643,7 +4595,7 @@ window.CloudShareConnection = function(options){
 		};
 		var p = CloudHelpers.promise();
 		self.mAPI = new CloudAPI(cloud_token, self.ServiceProviderUrl);
-
+		
 		self.mAPI.getServerTime().done(function(){
 			p.resolve();
 		}).fail(function(err){
@@ -4662,11 +4614,11 @@ window.CloudShareConnection = function(options){
 	self.close = function(){
 		self.mAPI = null;
 	}
-
+	
 	self._getAPI = function(){
 		return self.mAPI;
 	}
-
+	
 	self.getUserInfo = function(){
 		var p = CloudHelpers.promise();
 		if(!self.isOpened()){
@@ -4686,7 +4638,7 @@ window.CloudShareConnection = function(options){
 		})
 		return p;
 	}
-
+	
 	self.getServerTimeDiff = function(){
 		return self.mAPI.diffServerTime;
 	}
@@ -4718,11 +4670,11 @@ window.CloudUserConnection = function(){
 	self.close = function(){
 		self.mAPI = null;
 	}
-
+	
 	self._getAPI = function(){
 		return self.mAPI;
 	}
-
+	
 	self.getUserInfo = function(){
 		var p = CloudHelpers.promise();
 		if(!self.isOpened()){
@@ -4748,7 +4700,7 @@ window.CloudUserConnection = function(){
 		})
 		return p;
 	}
-
+	
 	self.getServerTimeDiff = function(){
 		return self.mAPI.diffServerTime;
 	}
@@ -4792,7 +4744,7 @@ window.CloudUserInfo = function(conn, jsonUser, jsonCapabilities){
 	var mID, mEmail, mFirstName, mLastName, mPreferredName;
 	var mHostedCamerasLimit, mTotalCamerasLimit;
 	var mHostedCamerasCreated, mTotalCamerasCreated;
-
+	
 	function _parseJson(data_user, data_caps){
 		mOrigJsonAccount = data_user;
 		mOrigJsonCapabilities = data_caps;
@@ -4814,41 +4766,41 @@ window.CloudUserInfo = function(conn, jsonUser, jsonCapabilities){
 		}
 	}
 	var mUpdateData = {};
-
+	
 	_parseJson(jsonUser, jsonCapabilities);
 
 	self._getConn = function(){
 		return mConn;
 	}
-
+	
 	self._origJsonAccount = function(){
 		return mOrigJsonAccount;
 	}
-
+	
 	self._origJsonCapabilities = function(){
 		return mOrigJsonCapabilities;
 	}
-
+	
 	self.getID = function(){
 		return mID;
 	}
-
+	
 	self.getEmail = function(){
 		return mEmail;
 	}
-
+	
 	self.getFirstName = function(){
 		return mFirstName;
 	}
-
+	
 	self.getLastName = function(){
 		return mLastName;
 	}
-
+	
 	self.getPreferredName = function(){
 		return mPreferredName;
 	}
-
+	
 	self.getCameraLimit = function(){
 		return mTotalCamerasLimit;
 	}
@@ -4856,7 +4808,7 @@ window.CloudUserInfo = function(conn, jsonUser, jsonCapabilities){
 	self.getCameraCreated = function(){
 		return mTotalCamerasCreated;
 	}
-
+	
 	self.refresh = function(){
 		var p = CloudHelpers.promise();
 		if(!mConn || !mConn.isOpened()){
@@ -4895,7 +4847,7 @@ window.CloudCamera = function(conn, jsonData){
 	var mBrand, mGroupName, mFirmwareVersion;
 	var mLed, mModel, mUUID, mSerialNumber;
 	var mPublic;
-
+	
 	function _parseJsonData(data){
 		mOrigJson = data;
 		mURLLogin = data.login;
@@ -4919,18 +4871,18 @@ window.CloudCamera = function(conn, jsonData){
 		mPublic = data.public ? data.public : false;
 	}
 	var mUpdateData = {};
-
+	
 	_parseJsonData(jsonData);
 
 	self._getConn = function(){
 		console.log("mConn = " + mConn)
 		return mConn;
 	}
-
+	
 	self._origJson = function(){
 		return mOrigJson;
 	}
-
+	
 	self.getID = function(){
 		return mID;
 	}
@@ -4950,12 +4902,12 @@ window.CloudCamera = function(conn, jsonData){
     self.getURLLogin = function(){
 		return mURLLogin;
 	}
-
+	
 	self.setURLLogin = function(val){
 		mURLLogin = val;
 		mUpdateData['login'] = val;
 	}
-
+	
     self.getURLPassword = function(){
 		return mURLPassword;
 	}
@@ -4977,7 +4929,7 @@ window.CloudCamera = function(conn, jsonData){
 		mTZ = timezone;
 		mUpdateData["timezone"] = timezone;
 	}
-
+	
 	self.isPublic = function(){
 		return mPublic;
 	}
@@ -4985,7 +4937,7 @@ window.CloudCamera = function(conn, jsonData){
 		mPublic = bValue;
 		mUpdateData["public"] = bValue;
 	}
-
+	
 	self.getStatus = function(){
 		var st = mStatus.toUpperCase();
 		if(CloudCameraStatus[st]){
@@ -4995,7 +4947,7 @@ window.CloudCamera = function(conn, jsonData){
 		}
 		return null;
 	}
-
+	
 	self.getName = function(){
 		return mName;
 	}
@@ -5004,25 +4956,25 @@ window.CloudCamera = function(conn, jsonData){
 		mName = name;
 		mUpdateData["name"] = name;
 	}
-
+	
 	self.getLatitude = function(){
 		return mLatitude;
 	}
-
+	
 	self.setLatitude = function(latitude){
 		mLatitude = latitude;
 		mUpdateData['latitude'] = latitude;
 	}
-
+	
 	self.getLongitude = function(){
 		return mLongitude;
 	}
-
+	
 	self.setLongitude = function(longitude){
 		mLongitude = longitude;
 		mUpdateData['longitude'] = longitude;
 	}
-
+	
 	self.isRecording = function(){
 		return mRecStatus;
 	}
@@ -5034,19 +4986,19 @@ window.CloudCamera = function(conn, jsonData){
 	self.getBrand = function(){
 		return mBrand;
 	}
-
+	
 	self.getGroupName = function(){
 		return mGroupName;
 	}
-
+	
 	self.getFirmwareVersion = function(){
 		return mFirmwareVersion;
 	}
-
+	
 	self.getModel = function(){
 		return mModel;
 	}
-
+	
 	self.getUUID = function(){
 		return mUUID;
 	}
@@ -5068,7 +5020,7 @@ window.CloudCamera = function(conn, jsonData){
 			console.error("[CloudCamera] Unknown mode of recording");
 		}
 	}
-
+	
 	self.getRecordingMode = function(){
 		if(mRecMode == "on"){
 			return CloudHelpers.copy(CloudCameraRecordingMode.CONTINUES);
@@ -5082,10 +5034,10 @@ window.CloudCamera = function(conn, jsonData){
 			console.error("[CloudCamera] Unknown mode of recording");
 		}
 	}
-
+	
 	self.save = function(){
 		var p = CloudHelpers.promise();
-
+		
 		mConn._getAPI().updateCamera(mID, mUpdateData).done(function(r){
 			_parseJsonData(r);
 			if(mUpdateData['timezone']){ // timezone need change in cameramanager
@@ -5105,10 +5057,10 @@ window.CloudCamera = function(conn, jsonData){
 		});
 		return p;
 	}
-
+	
 	self.getPreview = function(){
 		var p = CloudHelpers.promise();
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
@@ -5135,7 +5087,7 @@ window.CloudCamera = function(conn, jsonData){
 
 	self.getTimeline = function(start,end){
 		var p = CloudHelpers.promise();
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
@@ -5162,10 +5114,10 @@ window.CloudCamera = function(conn, jsonData){
 		});
 		return p;
 	}
-
+	
 	self.getTimelineDays = function(use_timezone){
 		var p = CloudHelpers.promise();
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
@@ -5182,10 +5134,10 @@ window.CloudCamera = function(conn, jsonData){
 		});
 		return p;
 	}
-
+	
 	self.getCameraUsage = function(){
 		var p = CloudHelpers.promise();
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
@@ -5199,7 +5151,7 @@ window.CloudCamera = function(conn, jsonData){
 	}
 
 	var sharing_token_name = 'COMMON_SHARING_TOKEN';
-
+	
 	function channelCode(share_token){
 		var channel = {};
 		channel.token = share_token;
@@ -5218,14 +5170,14 @@ window.CloudCamera = function(conn, jsonData){
 		}
 
 		if(mConn.ApiSecurePort && mConn.ApiSecurePort != 443){
-			channel.api_sp = mConn.ApiSecurePort;
+			channel.api_sp = mConn.ApiSecurePort; 
 		}
 
 		// console.log("js: " + JSON.stringify(channel));
 		// console.log("js2: " + btoa(JSON.stringify(channel)));
 		return CloudHelpers.base64_encode(JSON.stringify(channel));
 	}
-
+	
 	self.enableSharing = function(){
 		var p = CloudHelpers.promise();
 		if(!mConn || !mConn.isOpened()){
@@ -5258,14 +5210,14 @@ window.CloudCamera = function(conn, jsonData){
 					p.resolve(channelCode(r.token, mID, 'watch'));
 				}).fail(function(err){
 					CloudHelpers.handleError(err, p);
-				});
+				});	
 			}
 		}).fail(function(err){
 			CloudHelpers.handleError(err, p);
 		});
 		return p;
 	}
-
+	
 	self.disableSharing = function(sharing_token){
 		var p = CloudHelpers.promise();
 		if(!mConn || !mConn.isOpened()){
@@ -5294,28 +5246,10 @@ window.CloudCamera = function(conn, jsonData){
 		});
 		return p;
 	}
-
-	self.toggleMemRec = function(mem_rec, access_token) {
-		var p = CloudHelpers.promise();
-
-		if(!mConn || !mConn.isOpened()){
-			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
-			return p;
-		}
-
-		mConn._getAPI().toggleMemRec(mID, mem_rec, access_token)
-		.done(function(r){
-			p.resolve(r);
-		})
-		.fail(function(err){
-			CloudHelpers.handleError(err, p);
-		});
-		return p;
-	}
-
+	
 	self.createClip = function(title, start, end, delete_at, accessToken) {
 		var p = CloudHelpers.promise();
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
@@ -5333,7 +5267,7 @@ window.CloudCamera = function(conn, jsonData){
 		});
 		return p;
 	}
-
+	
 	self.getClip = function (clipid, accessToken) {
 	    var p = CloudHelpers.promise();
 
@@ -5350,8 +5284,8 @@ window.CloudCamera = function(conn, jsonData){
 	    });
 	    return p;
 	}
-
-
+	
+	
 	var sharing_token_name_for_stream = 'COMMON_SHARING_TOKEN_FOR_STREAM';
 
 	function channelCodeForStream(share_token){
@@ -5379,7 +5313,7 @@ window.CloudCamera = function(conn, jsonData){
 		}
 
 		if(mConn.ApiSecurePort && mConn.ApiSecurePort != 443){
-			channel.api_sp = mConn.ApiSecurePort;
+			channel.api_sp = mConn.ApiSecurePort; 
 		}
 
 		if(mConn.CamHost){
@@ -5391,14 +5325,14 @@ window.CloudCamera = function(conn, jsonData){
 		}
 
 		if(mConn.CamSecurePort){
-			channel.cam_sp = mConn.CamSecurePort;
+			channel.cam_sp = mConn.CamSecurePort; 
 		}
 
 		// console.log("js: " + JSON.stringify(channel));
 		// console.log("js2: " + btoa(JSON.stringify(channel)));
 		return CloudHelpers.base64_encode(JSON.stringify(channel));
 	}
-
+	
 	self.enableSharingForStream = function(){
 		var p = CloudHelpers.promise();
 		if(!mConn || !mConn.isOpened()){
@@ -5431,7 +5365,7 @@ window.CloudCamera = function(conn, jsonData){
 					p.resolve(channelCodeForStream(r.token));
 				}).fail(function(err){
 					CloudHelpers.handleError(err, p);
-				});
+				});	
 			}
 		}).fail(function(err){
 			CloudHelpers.handleError(err, p);
@@ -5481,7 +5415,7 @@ window.CloudCameraListFilter = function(){
 			delete self.filterParams['name'];
 		}
 	}
-
+	
 	self.setPartOfName = function(name){
 		if(name !== undefined){
 			self.filterParams['name__icontains'] = name;
@@ -5591,15 +5525,15 @@ window.CloudCameraListFilter = function(){
 window.CloudCameraList = function(conn){
 	var self = this;
 	var mConn = conn;
-
+	
 	self.getCamera = function(camid){
 		var p = CloudHelpers.promise();
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
 		}
-
+		
 		mConn._getAPI().getCamera(camid).done(function(r){
 			p.resolve(new CloudCamera(mConn, r));
 		}).fail(function(err){
@@ -5610,7 +5544,7 @@ window.CloudCameraList = function(conn){
 
 	self.createCamera = function(url, login, password){
 		var p = CloudHelpers.promise();
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
@@ -5628,10 +5562,10 @@ window.CloudCameraList = function(conn){
 		});
 		return p;
 	}
-
+	
 	self.createCameraForStream = function(){
 		var p = CloudHelpers.promise();
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
@@ -5677,23 +5611,23 @@ window.CloudCameraList = function(conn){
 		})
 		return p;
 	}
-
+	
 
 	self.getCameraList = function(camFilter){
 		var p = CloudHelpers.promise();
-
+		
 		camFilter = camFilter || new CloudCameraListFilter();
 		if(!camFilter['_values']){
 			console.error(CloudReturnCode.ERROR_EXPECTED_FILTER);
 			p.reject(CloudReturnCode.ERROR_EXPECTED_FILTER);
 			return p;
 		}
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
 		}
-
+		
 		mConn._getAPI().camerasList(camFilter._values()).done(function(r){
 			var arr = [];
 			//for(var i in r.objects){
@@ -5706,17 +5640,17 @@ window.CloudCameraList = function(conn){
 		})
 		return p;
 	}
-
+	
 	self.getCameraListLight = function(camFilter){
 		var p = CloudHelpers.promise();
-
+		
 		camFilter = camFilter || new CloudCameraListFilter();
 		if(!camFilter['_values']){
 			console.error(CloudReturnCode.ERROR_EXPECTED_FILTER);
 			p.reject(CloudReturnCode.ERROR_EXPECTED_FILTER);
 			return p;
 		}
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
@@ -5730,15 +5664,15 @@ window.CloudCameraList = function(conn){
 		})
 		return p;
 	}
-
+	
 	self.deleteCamera = function(camid){
 		var p = CloudHelpers.promise();
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
 		}
-
+		
 		mConn._getAPI().deleteCamera(camid).done(function(){
 			p.resolve();
 		}).fail(function(err){
@@ -5755,9 +5689,9 @@ window.CloudSession = function(conn, jsonData){
 	var mConn = conn;
 	var mOrigJson;
 	var mID = jsonData.id;
-
+	
 	// TODO
-
+	
 	var mActive, mTitle, mPreviewURL, mAuthor;
 	var mStreaming, mPublic, mLatitude, mLongitude;
 	var mStart, mEnd, mHasRecords;
@@ -5766,9 +5700,9 @@ window.CloudSession = function(conn, jsonData){
 	var mStatisticsLive = 0, mStatisticsPeakLive = 0, mStatisticsPlayback = 0;
 	var mAuthorPreferredName;
 	var mLiveURL_rtmp, mLiveURL_hls, mLiveURL_expire;
-
+	 
 	mPreviewURL = "";
-
+	
 	function _parseJsonData(data){
 		mOrigJson = data;
 		mActive = data.active;
@@ -5802,14 +5736,14 @@ window.CloudSession = function(conn, jsonData){
 		}else{
 			mAuthorPreferredName = "unknown";
 		}
-
+		
 		if(data.access){
 			mHasAccessAll = data.access.indexOf("all") != -1;
 			mHasAccessWatch = data.access.indexOf("watch") != -1;
 		}
 	}
 	var mUpdateData = {};
-
+	
 	_parseJsonData(jsonData);
 
 	self._getConn = function(){
@@ -5819,23 +5753,23 @@ window.CloudSession = function(conn, jsonData){
 	self._origJson = function(){
 		return mOrigJson;
 	}
-
+	
 	self.hasAccessAll = function(){
 		return mHasAccessAll;
 	}
-
+	
 	self.hasAccessWatch = function(){
 		return mHasAccessAll || mHasAccessWatch;
 	}
-
+	
 	self.getID = function(){
 		return mID;
 	}
-
+	
 	self.isOnline = function(){
 		return mActive;
 	}
-
+	
 	self.getTitle = function(){
 		return mTitle;
 	}
@@ -5843,19 +5777,19 @@ window.CloudSession = function(conn, jsonData){
 	self.getAuthorPreferredName = function(){
 		return mAuthorPreferredName;
 	}
-
+	
 	self.getStatisticsLive = function(){
 		return mStatisticsLive;
 	}
-
+	
 	self.getStatisticsPeakLive = function(){
 		return mStatisticsPeakLive;
 	}
-
+	
 	self.getStatisticsPlayback = function(){
 		return mStatisticsPlayback;
 	}
-
+	
 	self.getStartTime = function(){
 		if(mStart == null){
 			console.error("[CloudSession] #" + mID + " Start time is null");
@@ -5863,7 +5797,7 @@ window.CloudSession = function(conn, jsonData){
 		}
 		return CloudHelpers.parseUTCTime(mStart);
 	}
-
+	
 	self.getEndTime = function(){
 		if(mStart == null){
 			console.error("[CloudSession] #" + mID + " End time is null but session is mActive: " + mActive);
@@ -5875,35 +5809,35 @@ window.CloudSession = function(conn, jsonData){
 	self.getPreview = function(){
 		return mPreviewURL;
 	}
-
+	
 	self.getLatitude = function(){
 		return mLatitude;
 	}
-
+	
 	self.getLongitude = function(){
 		return mLongitude;
 	}
-
+	
 	self.isStreaming = function(){
 		return mStreaming;
 	}
-
+	
 	self.isPublic = function(){
 		return mPublic;
 	}
-
+	
 	self.hasRecords = function(){
 		return mHasRecords;
 	}
-
+	
 	self.getLiveUrl_Rtmp = function(){
 		return mLiveURL_rtmp;
 	}
-
+	
 	self.getLiveUrl_HLS = function(){
 		return mLiveURL_hls;
 	}
-
+	
 	self.getLiveUrl_Expire = function(){
 		return mLiveURL_expire;
 	}
@@ -5930,7 +5864,7 @@ window.CloudSessionListFilter = function(){
 	self.setLimit = function(limit){
 		self.filterParams['limit'] = limit;
 	}
-
+	
 	self.setOffset = function(offset){
 		self.filterParams['offset'] = offset;
 	}
@@ -5938,11 +5872,11 @@ window.CloudSessionListFilter = function(){
 	self.setTitle = function(s){
 		self.filterParams["title__icontains"] = s; // ignore case
 	}
-
+	
 	self.setStartLessThen = function(s){
 		self.filterParams['start__lte'] = s;
 	}
-
+	
 	self.setHasRecords = function(s){
 		if(s == 'any'){
 			// all
@@ -5956,7 +5890,7 @@ window.CloudSessionListFilter = function(){
 			console.error("[CloudSessionListFilter] setHasRecords, expected 'any', 'yes' or 'no'")
 		}
 	}
-
+	
 	self.setStreaming = function(s){
 		if(s == 'any'){
 			// all
@@ -5976,7 +5910,7 @@ window.CloudSessionListFilter = function(){
 	self.setAuthorName = function(s){
 		self.filterParams['author_name__icontains'] = s;
 	}
-
+	
 	self.setAuthorID = function(n){
 		if(n){
 			self.filterParams['author_id'] = n;
@@ -5984,7 +5918,7 @@ window.CloudSessionListFilter = function(){
 			delete self.filterParams['author_id'];
 		}
 	}
-
+	
 	self.setAuthorPreferredName = function(s){
 		if(s){
 			self.filterParams['author_preferred_name__icontains'] = s;
@@ -5992,15 +5926,15 @@ window.CloudSessionListFilter = function(){
 			delete self.filterParams['author_preferred_name__icontains'];
 		}
 	}
-
+	
 	self.setWithDetails = function(){
 		console.warn("[CloudSessionListFilter] 'setWithDetails' not supported anymore. Please use getSessionList or getSessionListLight")
 	}
-
+	
 	self.setOnline = function(s){
 		console.warn("[CloudSessionListFilter] 'setOnline' not supported anymore")
 	}
-
+	
 	self.setPublic = function(s){
 		if(s == 'any'){
 			// any
@@ -6012,7 +5946,7 @@ window.CloudSessionListFilter = function(){
 			console.error("[CloudSessionListFilter] setOnline, expected 'any', 'yes' or 'no'")
 		}
 	}
-
+	
 	self.setLatLngBounds = function(latitude_min, latitude_max, longitude_min, longitude_max){
 		if(latitude_min <= latitude_max){
 			self.filterParams['latitude__gte'] = latitude_min;
@@ -6042,15 +5976,15 @@ window.CloudSessionListFilter = function(){
 window.CloudSessionList = function(conn){
 	var self = this;
 	var mConn = conn;
-
+	
 	self.getSession = function(sessid){
 		var p = CloudHelpers.promise();
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
 		}
-
+		
 		mConn._getAPI().getCamsess(sessid).done(function(r){
 			p.resolve(new CloudSession(mConn, r));
 		}).fail(function(err){
@@ -6061,14 +5995,14 @@ window.CloudSessionList = function(conn){
 
 	self.getSessionList = function(sessionFilter){
 		var p = CloudHelpers.promise();
-
+		
 		sessionFilter = sessionFilter || new CloudSessionListFilter();
 		if(!sessionFilter['_values']){
 			console.error(CloudReturnCode.ERROR_EXPECTED_FILTER);
 			p.reject(CloudReturnCode.ERROR_EXPECTED_FILTER);
 			return p;
 		}
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
@@ -6087,17 +6021,17 @@ window.CloudSessionList = function(conn){
 		})
 		return p;
 	}
-
+	
 	self.getSessionListLight = function(sessionFilter){
 		var p = CloudHelpers.promise();
-
+		
 		sessionFilter = sessionFilter || new CloudSessionListFilter();
 		if(!sessionFilter['_values']){
 			console.error(CloudReturnCode.ERROR_EXPECTED_FILTER);
 			p.reject(CloudReturnCode.ERROR_EXPECTED_FILTER);
 			return p;
 		}
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
@@ -6111,15 +6045,15 @@ window.CloudSessionList = function(conn){
 		})
 		return p;
 	}
-
+	
 	self.deleteSession = function(sessid){
 		var p = CloudHelpers.promise();
-
+		
 		if(!mConn || !mConn.isOpened()){
 			p.reject(CloudReturnCode.ERROR_NO_CLOUD_CONNECTION);
 			return p;
 		}
-
+		
 		mConn._getAPI().deleteCamsess(sessid).done(function(){
 			p.resolve();
 		}).fail(function(err){
@@ -6166,7 +6100,7 @@ CloudPlayerEvent.CLOSED = {
 	code: 6,
 	text: 'Player state is CLOSED.'
 };
-
+   
 CloudPlayerEvent.SEEK_COMPLETED = {
 	name: 'SEEK_COMPLETED',
 	code: 17,
@@ -6228,6 +6162,7 @@ CloudPlayerEvent.ACCESS_TOKEN_EXPIRED_IN_5MIN = {
 };
 
 
+// construct
 window._cloudPlayers = window._cloudPlayers || {};
 
 window.CloudPlayer = function(elid, options){
@@ -6254,7 +6189,7 @@ window.CloudPlayer = function(elid, options){
 /*
 	var mNativeVideo1_el = null;
 	var mNativeVideo2_el = null;
-*/
+*/	
 	var mLiveModeAutoStart = false;
 	var mPolingCameraStatus = null;
 	var mCallback_onError = null; // deprecated
@@ -6277,17 +6212,6 @@ window.CloudPlayer = function(elid, options){
 	var f_callbackIOsFullscreenFunc = null;
 	var mVxgcloudplayer = null;
 
-	self.sdCardCompatible = true;
-	var hasMultipleStreams = null;
-	var streamQuality = "main";
-	var liveResId = null;
-	var mainResId =  null;
-	var mainVsId  = null;
-	var liveVsId  = null;
-	self.VsFormat  = null;
-
-
-
 	self.mPTZActions = null;
 	self.mPTZShow = true;
 
@@ -6295,14 +6219,14 @@ window.CloudPlayer = function(elid, options){
 
 	self.timePolingLiveUrls = 15000;
 	self.player = document.getElementById(elid);
-
+	
 	if (_cloudPlayers[elid]) {
 		return _cloudPlayers[elid];
 	}
-
+	
 	var mCurrentRecord_vjs = null;
 	var mNextRecord_vjs = null;
-
+	
 	var mRangeMin = -1;
 	var mRangeMax = -1;
 	var mVideoSizeLive = {w: 0, h: 0};
@@ -6331,15 +6255,15 @@ window.CloudPlayer = function(elid, options){
 		console.error("[CloudPlayer] Not found element");
 		return null;
 	}
-
+	
 	if (self.player.tagName != 'DIV') {
 		console.error("[CloudPlayer] Expected DIV tag but got " + self.player.tagName);
 		return null;
 	}
-
-
+	
+	
 	var mPosition = -1;
-
+	
 	var mWaitSourceActivationCounter = 0;
 	var mTimePolingCameraStatus_inactive = 2000;
 	var mTimePolingCameraStatus_active = 5000;
@@ -6357,7 +6281,7 @@ window.CloudPlayer = function(elid, options){
 	if (self.m.useTimezone) {
 		console.warn("[CloudPlayer] useTimezone: " + self.m.useTimezone);
 	}
-
+	
 	if (self.m.waitSourceActivation < 0) {
 		console.warn("[CloudPlayer] option waitSourceActivation must be greater than -1");
 		self.m.waitSourceActivation = 0;
@@ -6366,23 +6290,23 @@ window.CloudPlayer = function(elid, options){
 	self.m.useNativeHLS = options.useNativeHLS || false;
 
 	self.m.backwardAudio = false;
-	self.m.backwardAudio = options.backwardAudio || self.player.getAttribute('backward-audio') != null || self.m.backwardAudio;
+	self.m.backwardAudio = options.backwardAudio || self.player.getAttribute('backward-audio') != null || self.m.backwardAudio; 
 	self.defualtAutohide = 3000;
 	if (options["autohide"] !== undefined) {
-		self.m.autohide = options.autohide
+		self.m.autohide = options.autohide	
 	} else {
-		self.m.autohide = self.defualtAutohide;
+		self.m.autohide = self.defualtAutohide;	
 	}
 
 	if (options.trasholdPlaybackInMs) {
 		mTrasholdPlayback = options.trasholdPlaybackInMs;
 		console.log("[CloudPlayer] applied option trasholdPlaybackInMs " + options.trasholdPlaybackInMs);
 	}
-
+	
 	self.mPlayerFormat = 'html5';
 
 	// load format from storage
-
+	
 	var tmp_plr_frmt = '';
 	if (options.preferredPlayerFormat) {
 		self.mPreferredPlayerFormat = options.preferredPlayerFormat;
@@ -6402,13 +6326,13 @@ window.CloudPlayer = function(elid, options){
 		self.mPlayerFormat = tmp_plr_frmt;
 	} else{
 		if(tmp_plr_frmt != null){
-		}
+		} 
 		console.warn("[CloudPlayer] Unknown player format: ", tmp_plr_frmt, ", html5 is used by default");
 	}
 
 	if (options.useOnlyPlayerFormat) {
 		var use_plr_frmt = options.useOnlyPlayerFormat;
-
+		
 		if (use_plr_frmt !== 'webrtc' && use_plr_frmt !== 'html5' && use_plr_frmt !== 'flash' && use_plr_frmt !== 'jpeg') {
 			console.error("Wrong value of useOnlyPlayerFormat, expected 'webrtc' or 'html5' or 'flash'")
 		} else {
@@ -6431,7 +6355,7 @@ window.CloudPlayer = function(elid, options){
 	self.player.classList.add("cloudplayer");
 	self.player.classList.add("green");
 	self.player.classList.add("black");
-
+	
 	self.player.innerHTML = ''
 		+ '<div class="cloudplayer-loader" style="display: inline-block"></div>'
 		+ '<div class="cloudplayer-screenshot-loading" style="display: none">'
@@ -6492,7 +6416,7 @@ window.CloudPlayer = function(elid, options){
 		+ '    <table class="mem_rec_hide"><tr><td>Duration<br/><span>(sec.)</span></td><td>Date/Time</td></tr>'
 		+ '    <tr><td style="width: 50%"><input class="backupduration" type="number" min=1 max=3600 value="900" style="width: 100%"></td><td class="syncdt" style="width: 50%"></td></tr>'
 		+ '    <tr><td colspan="2"><div class="sdcardbackupbtn">Start SD Card Backup &gt;</div></td></tr>'
-		+ '    <tr><td colspan="2" id="backup_result"></td></tr></table>'
+		+ '    <tr><td colspan="2"><progress id="backup-progress" value="0" max="100" style="display: none; width: 100%; height: 15px;" ></progress></td></tr></table>'
 		+ '	   <div class="sd-divider mem_rec_hide"></div> '
 		+ '    <div class="enable-disable-sdcard"></div>'
 		+ '</div>'
@@ -6500,8 +6424,6 @@ window.CloudPlayer = function(elid, options){
 		+ '<div class="cloudplayer-info-main">'
 		+ '		<div class="cloudplayer-info-title">Settings</div>'
 		+ '		<div class="cloudplayer-info-container">'
-		+ '		<div class="cloudplayer-info-player-quality enabled"> Stream:'
-		+ '		<div class="selected-quality">Main</div></div>'
 		+ '		<div class="cloudplayer-info-player-mode" style="' + (mPlayerFormatForced !== null ? 'disabled' : '' ) + '"> Preferred format: '
 		+ '		<div class="selected-format"></div></div>'
 		+ (CloudHelpers.isIE() ? ('') : (
@@ -6525,13 +6447,6 @@ window.CloudPlayer = function(elid, options){
 		+ '		<div class="cloudplayer-info-playerversion">Version: ' + CloudSDK.version + ' (' + CloudSDK.datebuild + ')</div>'
 		+ '		<div class="cloudplayer-info-playertype">Used player:</div>'
 		+ '</div>'
-		+ '</div>'
-		+ '<div class="cloudplayer-info-setting quality-select">'
-		+ '		<div class="cloudplayer-info-title"><span class="back"></span>Stream</div>'
-		+ '		<div class="cloudplayer-info-container">'
-		+ '			<div class="cloudplayer-player-mode cloudplayer-quality-mode quality-main selected" data-quality="main">Main</div>'
-		+ '			<div class="cloudplayer-player-mode cloudplayer-quality-mode quality-live" data-quality="live">Live</div>'
-		+ '		</div>'
 		+ '</div>'
 		+ '<div class="cloudplayer-info-setting mode-select">'
 		+ '		<div class="cloudplayer-info-title"><span class="back"></span>Preferred format</div>'
@@ -6614,12 +6529,12 @@ window.CloudPlayer = function(elid, options){
 		+ '<div class="cloudplayer-share-clip" style="width:100%; height:100%; display:none;"></div>'
 		+ '<div class="allvideotags" style="width:100%; height:100%;" >'
 		+ '	<video crossorigin="anonymous" id="' + elid + '_vjs" class="video-js" preload="auto" class="video-js vjs-default-skin vjs-live vjs-fill" '
-		+ '		controls width="100%" height="100%"'
+		+ '		controls width="100%" height="100%"' 
 //		+ '		data-setup=\'{"aspectRatio":"16:9", "fluid": true}\''
 		+ '		 muted=' + self.m.mute + ' autoplay=true preload playsinline="true"></video>'
 /*		+ '	<video crossorigin="anonymous" id="' + elid + '_vjs2" class="video-js" preload="auto" class="video-js vjs-default-skin vjs-live"'
 		+ '		 muted=' + self.m.mute + ' autoplay=true preload playsinline="true" ></video>'
-*/
+*/	
 /*
 		+ '	<video crossorigin="anonymous" id="' + elid + '_nv1" class="cloudplayer-native-video ' + elid + '_nv1"'
 		+ '		autoplay=true preload  playsinline="true" ></video>'
@@ -6632,7 +6547,7 @@ window.CloudPlayer = function(elid, options){
 		+			'timelineselector="#'+elid+'_timeline" '
 		+			'thumbnails '
 		+			'videomodule="k-video-sdvxg" '
-		+			'controls="k-control-timepicker " '
+		+			'controls="k-control-timepicker " ' 
 //		+			'options="{&quot;onlypreview&quot;:1}" '
 		+			'style="display: block; width:100%;height:100%;">'
 		+		'</vxg-cloud-player>'
@@ -6655,14 +6570,14 @@ window.CloudPlayer = function(elid, options){
 	self.vjs = videojs(elid + '_vjs', {
 		"controls": false,
 	});
-
+	
 	//self.vjs2 = videojs(elid + '_vjs2', {
 	//	"controls": false
 	//}).ready(function(){
 		//self.vjs2.style.display = "none";
 	//});
 
-
+	
 	self.vjs.on('error',function(error){
 		_hideloading();
 		if(self.vjs.error() != null){
@@ -6720,7 +6635,6 @@ window.CloudPlayer = function(elid, options){
 	var el_controls_get_shot = self.player.getElementsByClassName('cloudplayer-get-shot')[0];
 	var el_controls_get_clip = self.player.getElementsByClassName('cloudplayer-get-clip')[0];
 	var el_controls_sd_backup = self.player.getElementsByClassName('cloudplayer-sd-backup')[0];
-	var el_selectbackuptime = self.player.getElementsByClassName('cloudplayer-selectbackuptime')[0];
 	var el_toggle_sd_sync = self.player.getElementsByClassName('enable-disable-sdcard')[0];
 	var el_controls_ptz_container = self.player.getElementsByClassName('cloudplayer-ptz')[0];
 	var mElementPlay = self.player.getElementsByClassName('cloudplayer-play')[0];
@@ -6745,7 +6659,7 @@ window.CloudPlayer = function(elid, options){
 	var mJpegPlayer_el = self.player.getElementsByClassName('cloudplayer-jpeg')[0];
 	var mTimelapsePlayer_el = self.player.getElementsByClassName('cloudplayer-timelapse')[0];
 	var mTimelapseControlsContainer_el = self.player.getElementsByClassName('cloudplayer-controls-timelapse-container')[0];
-
+	
 	var el_timelapse_left = self.player.getElementsByClassName('cloudplayer-timelapse-left')[0];
 	var el_timelapse_pause = self.player.getElementsByClassName('cloudplayer-timelapse-pause')[0];
 	var el_timelapse_right = self.player.getElementsByClassName('cloudplayer-timelapse-right')[0];
@@ -6760,7 +6674,6 @@ window.CloudPlayer = function(elid, options){
 	var mElSettings_back_buttons = self.player.querySelectorAll('.cloudplayer-info-title .back');
 	var mElSettings_format_container = self.player.getElementsByClassName('cloudplayer-info-player-mode')[0];
 	var mElSettings_speed_container = self.player.querySelector('.cloudplayer-info-player-speed');
-	var mElSettings_selected_quality_container = self.player.getElementsByClassName('selected-quality')[0];
 	var mElSettings_selected_format_container = self.player.getElementsByClassName('selected-format')[0];
 	var mElSettings_selected_speed_container = self.player.querySelector('.cloudplayer-info-player-speed.enabled .selected-speed');
 	var mElSettings_selected_dewarping_container = self.player.querySelector('.cloudplayer-info-player-dewarping.enabled .selected-dewarping');
@@ -6775,32 +6688,27 @@ window.CloudPlayer = function(elid, options){
 	var el_controls_ptz_right = self.player.getElementsByClassName('ptz-right')[0];
 	var el_controls_ptz_up = self.player.getElementsByClassName('ptz-top')[0];
 	var el_controls_ptz_down = self.player.getElementsByClassName('ptz-bottom')[0];
-	var el_controls_ptz_zoomin = self.player.getElementsByClassName('ptz-zoom-plus')[0];
-	var el_controls_ptz_zoomout = self.player.getElementsByClassName('ptz-zoom-minus')[0];
-
+	var el_controls_ptz_zoomin = self.player.getElementsByClassName('ptz-zoom-plus')[0];	
+	var el_controls_ptz_zoomout = self.player.getElementsByClassName('ptz-zoom-minus')[0];	
+	
 	var el_calendar_container = self.player.getElementsByClassName('cloudplayer-calendar-container')[0];
 	var el_live_container = self.player.getElementsByClassName('cloudplayer-live-container')[0];
 
-	var mElSettings_quality_mode = self.player.querySelectorAll('.cloudplayer-quality-mode');
 	var mElSettings_speed_mode = self.player.querySelectorAll('.cloudplayer-speed-mode');
 	var mElSettings_dewarping_mode = self.player.querySelectorAll('.cloudplayer-dewarping-mode');
 
 	var mVxgcloudplayer = self.player.getElementsByClassName('cloudplayer-vxgcloudplayer')[0];
 
-	var mJpegPlayer = new CloudPlayerJpegLive( mJpegPlayer_el );
+	var mJpegPlayer = new CloudPlayerJpegLive( mJpegPlayer_el ); 
 	if (self.options.jpegForcedUpdatePeriod) {
 		mJpegPlayer.setForcedUpdatePeriod(self.options.jpegForcedUpdatePeriod);
 	}
-
+	
 	var mTimelapsePlayer = new CloudPlayerJpegTimelapse (mTimelapsePlayer_el);
 
 	var el_shareclip = self.player.getElementsByClassName('cloudplayer-share-clip')[0];
 	if (el_shareclip !== undefined){
 	    var shareClip = new CloudShareClipController(el_shareclip, self._shareClipCallback);
-	}
-
-	for (var quality = mElSettings_quality_mode.length - 1; quality >= 0; quality--) {
-		mElSettings_quality_mode[quality].onclick = selectQuality;
 	}
 
 	for (var speed = mElSettings_speed_mode.length - 1; speed >= 0; speed--) {
@@ -6811,7 +6719,7 @@ window.CloudPlayer = function(elid, options){
 		mElSettings_dewarping_mode[dewarping].onclick = selectDewarping;
 	}
 
-
+	
 	if(typeof rangeSlider !== "undefined") {
 	    rangeSlider.create(el_volume);
 	}
@@ -6829,16 +6737,6 @@ window.CloudPlayer = function(elid, options){
 		valueOutput(elements[i]);
 	}
 
-	function selectQuality() {
-		for (var el = mElSettings_quality_mode.length - 1; el >= 0; el--) {
-			mElSettings_quality_mode[el].classList.remove('selected');
-		}
-
-		this.classList.add('selected');
-		mElSettings_selected_quality_container.textContent = this.textContent;
-		_applyQuality(this.dataset.quality);
-	}
-
 	function selectSpeed(){
 		for (var el = mElSettings_speed_mode.length - 1; el >= 0; el--) {
 			mElSettings_speed_mode[el].classList.remove('selected');
@@ -6848,7 +6746,7 @@ window.CloudPlayer = function(elid, options){
 		mElSettings_selected_speed_container.textContent = this.textContent;
 		_applySpeed(this.dataset.speed);
 	}
-
+	
 
 	function selectDewarping(){
 		for (var el = mElSettings_dewarping_mode.length - 1; el >= 0; el--) {
@@ -6872,12 +6770,6 @@ window.CloudPlayer = function(elid, options){
 		}
 	}
 
-	function _applyQuality(quality) {
-		// request live_url for first stream (low) or second stream (high)
-		streamQuality = quality;
-		_loadLiveUrl(mUniqPlay);
-	}
-
 	function _applyDewarping(dewarping)
 	{
 		if (dewarping == 1)
@@ -6891,7 +6783,7 @@ window.CloudPlayer = function(elid, options){
 		var p = el_player.getElementsByClassName('cloudplayer-native-video');
 		for (var i=0;i<p.length;i++)
 			p[i].defaultPlaybackRate=p[i].playbackRate=speed;
-
+		
 		if (mVxgcloudplayer) {
 			mVxgcloudplayer.playbackRate = speed;
 		}
@@ -6916,7 +6808,7 @@ window.CloudPlayer = function(elid, options){
 		} else if (Number.isNaN(to)) {
 			to = 0;
 		}
-
+	
 		if(self.mShowedBigPlayButton == true){
 			_hideloading();
 		} else if(!mShowedLoading){
@@ -6941,40 +6833,30 @@ window.CloudPlayer = function(elid, options){
 			mShowedLoading = false;
 		}
 	}
-
+	
 	/* settings */
 
 	self.onDocumentClick = function(event) {
 		var isClickInside = el_info.contains(event.target) || mElSettingsOpen == event.target || mElSettingsOpen.contains(event.target) ||
-			mElementCalendar == event.target || mElementCalendar.contains(event.target) ||
+			mElementCalendar == event.target || mElementCalendar.contains(event.target) || 
 			el_controls_get_shot == event.target || el_controls_get_clip == event.target || el_controls_sd_backup == event.target || el_controls_microphone == event.target ||
 			el_controls_zoom_switcher == event.target || el_controls_zoom_switcher.contains(event.target) ||
 			el_controls_zoom_container == event.target || el_controls_zoom_container.contains(event.target) ||
-                        mElementCalendarButton == event.target || mElementCalendarButton.contains(event.target) ||
-						el_selectbackuptime == event.target || el_selectbackuptime.contains(event.target);
+                        mElementCalendarButton == event.target || mElementCalendarButton.contains(event.target);
 
 		if (!isClickInside) {
 			self.player.classList.remove('showing-zoom', 'showing-settings');
-			if(self.sdControls) {
-				self.player.getElementsByClassName('cloudplayer-selectbackuptime')[0].style.display = "none";
-			}
-
 			if(self.calendar){
 				self.calendar.hideCalendar();
 				var el_timelineCalendar = self.player.getElementsByClassName('cloudcameratimeline-calendar')[0];
-				if (el_timelineCalendar)
+				if (el_timelineCalendar) 
 					el_timelineCalendar.classList.remove("shadowed");
 			}
 		}
 	};
 	document.addEventListener('click', self.onDocumentClick);
-
+	
 	mElSettingsOpen.onclick = function(){
-		el_player.classList.remove('showing-quality-selection');
-		el_player.classList.remove('showing-format-selection');
-		el_player.classList.remove('showing-speed-selection');
-		el_player.classList.remove('showing-dewarping-selection');
-
 		self.player.classList.toggle('showing-settings');
 		self.player.classList.remove('showing-zoom');
 		self.player.getElementsByClassName('cloudplayer-selectcliptime')[0].style.display = "none";
@@ -6986,10 +6868,6 @@ window.CloudPlayer = function(elid, options){
 				.getElementsByClassName('cloudcameratimeline-calendar')[0];
 			if (el_timelineCalendar) el_timelineCalendar.classList.remove("shadowed");
 		}
-	};
-
-	mElSettings_selected_quality_container.onclick = function () {
-		el_player.classList.toggle('showing-quality-selection');
 	};
 
 	mElSettings_selected_format_container.onclick = function(){
@@ -7024,7 +6902,7 @@ window.CloudPlayer = function(elid, options){
 		"timeout": 10000
 	    }
 	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('shifted to left');
+		console.log('shifted to left');	
 	    }).fail(function(r){
 		console.error(r);
 	    });
@@ -7044,12 +6922,12 @@ window.CloudPlayer = function(elid, options){
 		"timeout": 10000
 	    }
 	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('shifted to right');
+		console.log('shifted to right');	
 	    }).fail(function(r){
 		console.error(r);
 	    });
 	}
-
+	
 	el_controls_ptz_up.onmousedown = function(){
     	    var api = mConn._getAPI()
 	    if (api == null) {
@@ -7064,7 +6942,7 @@ window.CloudPlayer = function(elid, options){
 		"timeout": 10000
 	    }
 	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('shifted to up');
+		console.log('shifted to up');	
 	    }).fail(function(r){
 		console.error(r);
 	    });
@@ -7084,7 +6962,7 @@ window.CloudPlayer = function(elid, options){
 		"timeout": 10000
 	    }
 	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('shifted to down');
+		console.log('shifted to down');	
 	    }).fail(function(r){
 		console.error(r);
 	    });
@@ -7104,7 +6982,7 @@ window.CloudPlayer = function(elid, options){
 		"timeout": 10000
 	    }
 	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('Zoomed in');
+		console.log('Zoomed in');	
 	    }).fail(function(r){
 		console.error(r);
 	    });
@@ -7123,17 +7001,17 @@ window.CloudPlayer = function(elid, options){
 		"timeout": 10000
 	    }
 	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('Zoomed out');
+		console.log('Zoomed out');	
 	    }).fail(function(r){
 		console.error(r);
 	    });
 	}
 
 	el_controls_ptz_zoomin.onmouseup =
-	el_controls_ptz_zoomout.onmouseup =
+	el_controls_ptz_zoomout.onmouseup =	
 	el_controls_ptz_left.onmouseup =
 	el_controls_ptz_right.onmouseup =
-	el_controls_ptz_up.onmouseup =
+	el_controls_ptz_up.onmouseup =	
 	el_controls_ptz_down.onmouseup = function(){
     	    var api = mConn._getAPI()
 	    if (api == null) {
@@ -7147,7 +7025,7 @@ window.CloudPlayer = function(elid, options){
 		"timeout": 1000
 	    }
 	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('stop move');
+		console.log('stop move');	
 	    }).fail(function(r){
 		console.error(r);
 	    });
@@ -7175,7 +7053,7 @@ window.CloudPlayer = function(elid, options){
 	el_controls_get_shot.onclick = function(){
 		self._getSnapshot();
 	};
-
+	
 	el_controls_microphone.onclick = function() {
 		if (mPosition == -1) {
 			self._sendBackwardAudio();
@@ -7233,16 +7111,13 @@ window.CloudPlayer = function(elid, options){
 
 	el_controls_sd_backup.onclick = function(){
 		var el_selectcliptime = self.player.getElementsByClassName('cloudplayer-selectbackuptime')[0];
-		if (el_selectcliptime.style.display == "block") {
+		if (el_selectcliptime.style.display == "block")
 			el_selectcliptime.style.display = "none";
-			self.sdControls = false;
-		}
 		else {
 			el_selectcliptime.style.display = "block";
 			if (mPosition == -1) el_player_synctime.innerHTML = new Date().toLocaleString();
 			else el_player_synctime.innerHTML = new Date(mPosition).toLocaleString();
 			self.player.classList.remove('showing-zoom', 'showing-settings');
-			self.sdControls = true;
 		}
 	};
 
@@ -7269,10 +7144,10 @@ window.CloudPlayer = function(elid, options){
 	}
 
 	el_toggle_sd_sync.onclick = function() {
-		var curVal = this.getAttribute("enabled") == "true" ? true : false;
+		var curVal = this.getAttribute("enabled") == "true" ? true : false; 
 		self._toggleSync(!curVal);
 	}
-
+	
 	function showTimelapseControls (isShow) {
 		mTimelapseControlsContainer_el.style.display = (isShow)?"flex":"none";
 	}
@@ -7291,7 +7166,7 @@ window.CloudPlayer = function(elid, options){
 		}
 		self.play();
 	}
-
+	
 	el_timelapse_left.onclick = function(){
 		console.log('TODO: timelapse left');
 		if (mTimelapsePlayer) {
@@ -7312,7 +7187,7 @@ window.CloudPlayer = function(elid, options){
 		console.log('TODO: timelapse right');
 		if (mTimelapsePlayer) {
 			mPlaying = true;
-
+		
 			mTimelapsePlayer.fastforward(self.time);
 		}
 	}
@@ -7321,7 +7196,7 @@ window.CloudPlayer = function(elid, options){
 		if (options.useOnlyPlayerFormat !== undefined) {
 		    return;
 		}
-
+	
 		self.setPlayerFormat('webrtc');
 		self.play();
 	}
@@ -7329,7 +7204,7 @@ window.CloudPlayer = function(elid, options){
 		if (options.useOnlyPlayerFormat !== undefined) {
 		    return;
 		}
-
+	
 		self.setPlayerFormat('flash');
 		self.play();
 	}
@@ -7337,7 +7212,7 @@ window.CloudPlayer = function(elid, options){
 		if (options.useOnlyPlayerFormat !== undefined) {
 		    return;
 		}
-
+	
 		self.setPlayerFormat('html5');
 		self.play();
 	}
@@ -7368,10 +7243,10 @@ window.CloudPlayer = function(elid, options){
 	function _updatePlayerFormatUI(live_urls) {
 		live_urls = live_urls || {};
 		mElSettings_wantWebRTC.style.display = (!CloudHelpers.isIE() && (live_urls.rtc || live_urls.webrtc)) ? '' : 'none';
-		//hide rtmp as Flash-player cause Flash is going to be hide
+		//hide rtmp as Flash-player cause Flash is going to be hide 
 		mElSettings_wantFlash.style.display = 'none';//(!self.isMobile && live_urls.rtmp) ? '' : 'none';
-		mElSettings_wantHTML5.style.display = (live_urls.hls) ? 'block' : 'none';
-		mElSettings_wantJpeg.style.display = (live_urls.hls) ? 'block' : 'none';
+		mElSettings_wantHTML5.style.display = (live_urls.hls) ? '' : 'none';
+		mElSettings_wantJpeg.style.display = (live_urls.hls) ? '' : 'none';
 		// UI
 		mElSettings_wantWebRTC.classList.remove('selected');
 		mElSettings_wantFlash.classList.remove('selected');
@@ -7392,11 +7267,11 @@ window.CloudPlayer = function(elid, options){
 			mElSettings_selected_format_container.textContent = mElSettings_wantJpeg.textContent;
 		}
 	}
-
+	
 	_updatePlayerFormatUI();
 
 	/* element for black screen */
-
+	
 	var mElementPlayerBlackScreen = self.player.getElementsByClassName('cloudplayer-black-screen')[0];
 	function _showBlackScreen(){
 		if(CloudHelpers.isFireFox()){
@@ -7430,14 +7305,14 @@ window.CloudPlayer = function(elid, options){
 	}
 
 	/*
-	 * Poling time Start/Stop
+	 * Poling time Start/Stop 
 	 * */
-
+	
 	var _timeWaitStartStreamMax = 30;
 	var _timeWaitStreamMax = 15; // if video stopped and wait for restart
-
+	
 	var _source_type = null;
-
+	
 	function _formatTimeMS(t){
 		var t_ = t;
 		var sec = t % 60;
@@ -7446,10 +7321,10 @@ window.CloudPlayer = function(elid, options){
 		// t = (t - min)/60;
 		return ("00" + min).slice(-2) + ":" + ("00" + sec).slice(-2);
 	}
-
+		
 	function _formatTimeLive(){
-
-
+		
+		
 		var offset = 0;
 //		if (self.mSrc.type == 'camera' && self.m.useTimezone) {
 //			offset = CloudHelpers.getOffsetTimezone(self.m.useTimezone);
@@ -7459,12 +7334,12 @@ window.CloudPlayer = function(elid, options){
 		offset = - new Date().getTimezoneOffset()*60*1000;
 
 		var now = new Date();
-
+		
 		var offset_time = now.getTime() + offset;
 		if (offset_time < 0 || Number.isNaN(offset_time)) {
 			return "";
 		}
-
+		
 		now.setTime(offset_time);
 		var hours = now.getUTCHours();
 		var suffix = '';
@@ -7481,7 +7356,7 @@ window.CloudPlayer = function(elid, options){
 			+ ":" + ("00" + now.getUTCSeconds()).slice(-2) + suffix;
 		return res;
 	}
-
+	
 	function _formatTimeCameraRecords(t){
 		var offset = 0;
 //		if (self.mSrc.type == 'camera' && self.m.useTimezone) {
@@ -7515,24 +7390,24 @@ window.CloudPlayer = function(elid, options){
 			+ ":" + ("00" + now.getUTCSeconds()).slice(-2) + suffix;
 		return res;
 	}
-
+	
 	function _calculateTime(){
 		if(mPosition != -1){
-/*
+/*		
 			if (mEnablePlaybackNative) {
 				return Math.floor(mCurrentPlayRecord.startUTC + mPlaybackPlayer1.currentTime()*1000);
 			}
 			return mCurrentPlayRecord.startUTC + self.vjs.currentTime()*1000;
-*/
+*/			
 		}
 		return Math.floor(self.vjs.currentTime());
 	}
-
+	
 	function _checkAndFixVideoSize(){
 
 		var h = self.vjs.videoHeight();
 		var w = self.vjs.videoWidth();
-
+		
 		if(mVideoSizeLive.w != w || mVideoSizeLive.h != h){
 			// console.log("_checkAndFixVideoSize");
 			// console.log("video h = " + h + ", w = " + w);
@@ -7556,18 +7431,18 @@ window.CloudPlayer = function(elid, options){
 			mVideoSizeLive.h = h;
 		}
 	}
-
+	
 	function _beforePlay() {
 	    console.log('before play');
 	    self._hideSnapshot(true);
 	}
-
-
+	
+	
 	function _stopPolingTime(){
 		clearInterval(mCurrentTimeInterval);
 		//el_player_time.innerHTML = "";
 	}
-
+	
 
 	function _startPolingTime(){
 		console.warn("[PLAYER] Start poling player time");
@@ -7593,13 +7468,13 @@ window.CloudPlayer = function(elid, options){
 						curr_time = mJpegPlayer.getcurrtime();
 					} else {
 						try {
-							curr_time = self.vjs.currentTime()*1000
+							curr_time = self.vjs.currentTime()*1000 
 						} catch (e) {
 							console.error("Ignore: ", e);
 						}
 						try {
 							_checkAndFixVideoSize();
-						} catch(e) {
+						} catch(e) { 
 							// silent exception
 						}
 					}
@@ -7648,7 +7523,7 @@ window.CloudPlayer = function(elid, options){
 									self.setPosition( CloudPlayer.POSITION_LIVE );
 									self.play();
 								}, 10);
-							}
+							} 
 						    }
 						} else {
 							if (self.time == 0 || mPosition != -1) {
@@ -7666,7 +7541,7 @@ window.CloudPlayer = function(elid, options){
 					mTimeWaitStartStream = 0;
 					self.mShowedBigPlayButton == false;
 					mElBigPlayButton.style.display = "none";
-
+					
 					if (_source_type == 'camera_records') {
 						self.time = curr_time;
 						mPosition = self.time; // remember last success position
@@ -7793,13 +7668,13 @@ window.CloudPlayer = function(elid, options){
 		setTimeout(function(){
 		    _hideloading();
 		},1000);
-
+		
 		_stopPolingTime();
 		if (mVxgcloudplayer) {
 			_source_type = 'camera_records';
 			mVxgcloudplayer.parentElement.style.zIndex = -1;
 			mVxgcloudplayer.parentElement.style.opacity = 1;
-
+			
 			mVxgcloudplayer.setTimePromise(mPosition).then(function(){
 				_startPolingTime();
 			}).catch(function(){
@@ -7814,7 +7689,7 @@ window.CloudPlayer = function(elid, options){
 /*
 			_stopPolingTime();
 			_startPolingTime();
-
+			
 			mVxgcloudplayer.currentTime = mPosition;
 			mVxgcloudplayer.parentElement.style.zIndex = -1;
 
@@ -7891,7 +7766,7 @@ window.CloudPlayer = function(elid, options){
 					continue;
 				}
 				// console.log("rec2: ", rec);
-
+				
 				if(mCurrentPlayRecord == null && pos >= rec.startUTC && pos <= rec.endUTC){
 					mCurrentPlayRecord = rec;
 					// console.log("mCurrentPlayRecord selected ", mCurrentPlayRecord);
@@ -7918,7 +7793,7 @@ window.CloudPlayer = function(elid, options){
 				if (!self.isRange() || (self.isRange() && firstRecordAfterT.startUTC < mRangeMax)) {
 					mCurrentPlayRecord = firstRecordAfterT;
 					pos = firstRecordAfterT.startUTC;
-					bSendEventPositionJumped = true;
+					bSendEventPositionJumped = true;	
 				}
 			}
 
@@ -7943,13 +7818,13 @@ window.CloudPlayer = function(elid, options){
 
 			// move to live if records not found
 			if (!self.isRange() && mCurrentPlayRecord == null && nCountAfterT == 0) {
-// [CNVR-1826]
+// [CNVR-1826] 
 //				setTimeout( function() {
 //					self.setPosition(CloudPlayer.POSITION_LIVE);
 //					self.play();
 //					mCallbacks.executeCallbacks(CloudPlayerEvent.POSITION_JUMPED, { new_pos: CloudHelpers.getCurrentTimeUTC() });
 //				},10);
-//
+//				
 				return;
 			}
 
@@ -7959,7 +7834,7 @@ window.CloudPlayer = function(elid, options){
 				_stopPolingTime();
 				return;
 			}
-
+			
 			if (_uniqPlay != mUniqPlay) {
 				console.warn("_uniqPlay not current [[_loadCameraRecords fail]]");
 				return;
@@ -7978,11 +7853,11 @@ window.CloudPlayer = function(elid, options){
 				mCallbacks.executeCallbacks(CloudPlayerEvent.POSITION_JUMPED, {new_pos: pos});
 			}
 
-			//
+			// 
 
 			mCurrentRecord_vjs = mPlaybackPlayer1;
 			mNextRecord_vjs = mPlaybackPlayer2;
-
+		
 			if (mEnablePlaybackNative) {
 				mCurrentRecord_vjs.el().style.display = "block";
 				mNextRecord_vjs.el().style.display = "none";
@@ -8014,7 +7889,7 @@ window.CloudPlayer = function(elid, options){
 			// vxgcloudplayer.vjs_play(vcp);
 			mCurrentRecord_vjs.off('ended');
 			mNextRecord_vjs.off('ended');
-
+			
 			function swithPlayers() {
 				console.warn("ended");
 				// stop records
@@ -8026,12 +7901,12 @@ window.CloudPlayer = function(elid, options){
 					mCallbacks.executeCallbacks(CloudPlayerEvent.RANGE_ENDED, {});
 					return;
 				}
-
+				
 				if (mNextPlayRecord != null) {
 					var t = mCurrentRecord_vjs;
 					mCurrentRecord_vjs = mNextRecord_vjs;
 					mNextRecord_vjs = t;
-
+					
 					if (mEnablePlaybackNative) {
 						mCurrentRecord_vjs.el().style.display = "block";
 						mNextRecord_vjs.el().style.display = "none";
@@ -8044,8 +7919,8 @@ window.CloudPlayer = function(elid, options){
 					mCurrentPlayRecord = mNextPlayRecord;
 					mNextPlayRecord = null;
 					// console.warn("url: " + mCurrentPlayRecord.url);
-					mCurrentRecord_vjs.ready(function(){
-						mCurrentRecord_vjs.play();
+					mCurrentRecord_vjs.ready(function(){ 
+						mCurrentRecord_vjs.play(); 
 					});
 					_prepareNextCameraRecord();
 				}
@@ -8103,9 +7978,9 @@ window.CloudPlayer = function(elid, options){
 			return;
 		}
 
-		if(self.mSrc._origJson()['status'] != 'active'
+		if(self.mSrc._origJson()['status'] != 'active' 
 		){
-			if (self.m.waitSourceActivation == 0
+			if (self.m.waitSourceActivation == 0 
 			&& self.mSrc._origJson()['status'] != 'setsource'
 			){
 				self._showerror(CloudReturnCode.ERROR_CAMERA_OFFLINE);
@@ -8119,7 +7994,7 @@ window.CloudPlayer = function(elid, options){
 
 		mTimeWaitStartStream = 0;
 		if(self.mSrc.type == 'camera'){
-			// start
+			// start 
 			_startPolingCameraStatus(_uniqPlay);
 			self._polingLoadCameraLiveUrl(_uniqPlay);
 		} else {
@@ -8145,13 +8020,13 @@ window.CloudPlayer = function(elid, options){
 
 	self.setAccessToken = function( accessToken) {
 	    mAccessToken = accessToken;
-
+	    
 	}
-
+	
 	self.checkTokenExpire = function() {
 		var now		= CloudHelpers.getCurrentTimeUTC();
 		var expire	= CloudHelpers.parseUTCTime(mAccessTokenExpire);
-
+			
 		var delta = expire - now;
 		if (delta < 5*60*1000) {
 			mCallbacks.executeCallbacks(CloudPlayerEvent.ACCESS_TOKEN_EXPIRED_IN_5MIN, delta);
@@ -8161,7 +8036,7 @@ window.CloudPlayer = function(elid, options){
 			}, 5000);
 		}
 	}
-
+	
 	self.setAccessTokenExpire = function( expire ) {
 		mAccessTokenExpire = expire;
 		if ((mAccessTokenExpire != null) && (mAccessTokenExpire !== undefined)) {
@@ -8176,189 +8051,154 @@ window.CloudPlayer = function(elid, options){
 		_hideerror();
 		clearInterval(mPolingCameraStatus);
 		el_player_time.innerHTML = "";
+		
+		self.mSrc = src;
+		if (self.mSrc == null) {
+			mElementPlay.style.display = "none";
+			mConn = null;
+		} else {
+			mElementPlay.style.display = "inline-block";
+			mConn = src._getConn();
+		}
+		var origjs = self.mSrc._origJson();
+		self.mSrc._origJson()['status'] = 'setsource';
 
-		return new Promise (function(resolve, reject) {
-
-			self.mSrc = src;
-			if (self.mSrc == null) {
-				mElementPlay.style.display = "none";
-				mConn = null;
-			} else {
-				mElementPlay.style.display = "inline-block";
-				mConn = src._getConn();
-			}
-			var origjs = self.mSrc._origJson();
-			self.mSrc._origJson()['status'] = 'setsource';
-
-			if(self.isRange()){
-				var cur_time = CloudHelpers.getCurrentTimeUTC();
-				if (mRangeMin < cur_time && cur_time < mRangeMax) {
-					self.setPosition(CloudPlayer.POSITION_LIVE);
-				} else {
-					self.setPosition(mRangeMin);
-				}
-			}else{
+		if(self.isRange()){
+			var cur_time = CloudHelpers.getCurrentTimeUTC();
+			if (mRangeMin < cur_time && cur_time < mRangeMax) {
 				self.setPosition(CloudPlayer.POSITION_LIVE);
-			}
-			mCallbacks.executeCallbacks(CloudPlayerEvent.SOURCE_CHANGED);
-			/*binary*/
-			var el_player = self.player;//document.querySelector('.cloudplayer');
-			if (!el_player) {
-				return;
-			}
-			el_player.classList.remove('showing-ptz');
-
-			var el_controls_ptz_switcher	= self.player.getElementsByClassName('cloudplayer-show-ptz')[0];
-			var el_controls_get_clip	= self.player.getElementsByClassName('cloudplayer-get-clip')[0];
-			var el_controls_sd_backup	= self.player.getElementsByClassName('cloudplayer-sd-backup')[0];
-			var el_sdcardtogglebtn = self.player.getElementsByClassName('enable-disable-sdcard')[0];
-			var el_controls_get_shot	= self.player.getElementsByClassName('cloudplayer-get-shot')[0];
-			var el_controls_microphone	= self.player.getElementsByClassName('cloudplayer-microphone')[0];
-
-			var el_settings_quality = self.player.getElementsByClassName('cloudplayer-info-player-quality')[0];
-
-			if (self.mSrc && self.mSrc._origJson().access.indexOf('all') < 0 ) {
-						el_controls_ptz_switcher.style.display = 'none';
-						el_controls_get_clip.style.display = 'none';
 			} else {
-				//binary: ptz check abit later
-				if (!self.options.disableGetClip || self.options.disableGetClip == false) {
-				if (!CloudHelpers.isIE()) {
-					el_controls_get_clip.style.display = 'block';
-				}
-				}
+				self.setPosition(mRangeMin);
 			}
-			if (!self.options.disableGetShot || self.options.disableGetShot == false) {
-				if (!CloudHelpers.isIE()) {
-					el_controls_get_shot.style.display = 'block';
-				}
-			}
-
-			if (self.options.disableSdCard === false) {
-				if (!CloudHelpers.isIE()) {
-					el_controls_sd_backup.style.display = 'block';
-				}
-			}
-
-			if (mConn) {
-				var camid = self.mSrc.getID();
-				mConn._getAPI().getCamera2(camid).done(function(camInfo) {
-					var toggleSync = self.player.getElementsByClassName('mem_rec_hide');
-					if (!camInfo.memorycard_recording) {
-						for (var i = 0; i < toggleSync.length; i ++) { toggleSync[i].style.display = "block" }
-						el_sdcardtogglebtn.innerHTML = "Enable Sync from Timeline";
-						el_sdcardtogglebtn.setAttribute("enabled", false);
-					} else {
-						for (var i = 0; i < toggleSync.length; i ++) { toggleSync[i].style.display = "none" }
-						el_sdcardtogglebtn.innerHTML = "Enable SD Card Backup";
-						el_sdcardtogglebtn.setAttribute("enabled", true);
-					}
-				});
-
-				mTimelapsePlayer.setApi(mConn._getAPI());
-
-				var el_controls_ptz_top = self.player.getElementsByClassName('ptz-top')[0];
-				var el_controls_ptz_bottom = self.player.getElementsByClassName('ptz-bottom')[0];
-				var el_controls_ptz_left = self.player.getElementsByClassName('ptz-left')[0];
-				var el_controls_ptz_right = self.player.getElementsByClassName('ptz-right')[0];
-				var el_controls_ptz_zoom_in = self.player.getElementsByClassName('ptz-zoom-plus')[0];
-				var el_controls_ptz_zoom_out = self.player.getElementsByClassName('ptz-zoom-minus')[0];
-
-				if (self.options.livePoster && self.options.livePoster == true) {
-					mConn._getAPI().cameraPreview(self.mSrc.getID())
-					.done(function(res){
-					let cur_vtag = self.getCurrentVideoTag();
-					var videotags = self.player.getElementsByClassName('allvideotags')[0];
-					var vtags = videotags.getElementsByTagName('video');
-					self.mPoster  = res.url;
-					for (var i =0; i < vtags.length; i++) {
-						vtags[i].setAttribute('poster', self.mPoster);
-					}
-					self.vjs.poster(self.mPoster);
-					}).fail(function(err){
-					});
-				}
-
-				mConn._getAPI().cameraPtz(self.mSrc.getID()).done(function(r){
-				console.log(r);
-				var actions = r.actions;
-				self.mPTZActions = actions;
-				if ((actions !== undefined) && (actions != null) && (actions.length > 0)){
-					if (self.mPTZShow) {
-					el_controls_ptz_switcher.style.display = 'block';
-					}
-					el_controls_ptz_top.style.display = actions.indexOf("top") > -1 ? 'block' : 'none';
-					el_controls_ptz_bottom.style.display = actions.indexOf("bottom") > -1 ? 'block' : 'none';
-					el_controls_ptz_left.style.display = actions.indexOf("left") > -1 ? 'block' : 'none';
-					el_controls_ptz_right.style.display = actions.indexOf("right") > -1 ? 'block' : 'none';
-					el_controls_ptz_zoom_in.style.display = actions.indexOf("zoom_in") > -1 ? 'block' : 'none';
-					el_controls_ptz_zoom_out.style.display = actions.indexOf("zoom_out") > -1 ? 'block' : 'none';
-				} else {
-					el_controls_ptz_switcher.style.display = 'none';
-					self.mPTZActions = null;
-				}
-				}).fail(function(r){
-					console.log(r);
-					el_controls_ptz_switcher.style.display = 'none';
-					self.mPTZActions = null;
-				});
-				if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) { //check the ability capture audio
-				if (self.options.disableBackwardAudio !== true) {
-					mConn._getAPI().cameraAudio(self.mSrc.getID()).done( function(answer){
-						console.log(answer);
-						if (answer.caps !== undefined && answer.caps.backward_formats !== undefined && answer.caps.backward_formats.length > 0) {
-							mBackwardAudioFormats = answer.caps.backward_formats;
-							el_controls_microphone.classList.remove('disabled');
-						} else {
-							el_controls_microphone.classList.add('disabled');
-						}
-					}).fail(function(err){
-						console.log('Backward channel request:' + err);
-						el_controls_microphone.classList.add('disabled');
-					});
-				}
-				} else {
-				el_controls_microphone.classList.add('disabled');
-				}
-				if (mAccessToken && mVxgcloudplayer) {
-				mVxgcloudplayer.setAttribute('src', mAccessToken);
-				mVxgcloudplayer.pause().then(function(){
-					console.log("vxgcloudplayer pause");
-				}).catch(function(err){
-					console.log("vxgcloudplayer catch:" + err);
-				});
-
-				mConn._getAPI().cameraMediaStreams(self.mSrc.getID()).done(function(media_streams) {
-						mainResId = media_streams.rec_ms_id;
-						liveResId = media_streams.live_ms_id;
-						if  (media_streams.hasOwnProperty('mstreams_supported') )
-							 {
-								for (const obj of media_streams.mstreams_supported) {
-									if  ( obj.vs_id.indexOf("JPEG") === -1 )
-									{
-										if (obj.id == mainResId )
-											mainVsId = obj.vs_id;
-										else if (obj.id == liveResId)
-											liveVsId = obj.vs_id;
-									}
-								}
-							 }
-						if (mainResId == liveResId) el_settings_quality.style.display = "none";
-						else {
-							streamQuality = "main";
-							$(".selected-quality").html("Main");
-							$(".quality-main").addClass("selected");
-							$(".quality-live").removeClass("selected");
-							el_settings_quality.style.display = "flex";
-						}
-						resolve();
-					}).fail(function(r){
-						console.log(r);
-					});
-				}
-			}
-		})
+		}else{
+			self.setPosition(CloudPlayer.POSITION_LIVE);
+		}
+		mCallbacks.executeCallbacks(CloudPlayerEvent.SOURCE_CHANGED);
 		/*binary*/
+		var el_player = self.player;//document.querySelector('.cloudplayer');
+		if (!el_player) {
+		    return;
+		}
+		el_player.classList.remove('showing-ptz');
+		
+		var el_controls_ptz_switcher	= self.player.getElementsByClassName('cloudplayer-show-ptz')[0];
+		var el_controls_get_clip	= self.player.getElementsByClassName('cloudplayer-get-clip')[0];
+		var el_controls_sd_backup	= self.player.getElementsByClassName('cloudplayer-sd-backup')[0];
+		var el_sdcardtogglebtn = self.player.getElementsByClassName('enable-disable-sdcard')[0];
+		var el_controls_get_shot	= self.player.getElementsByClassName('cloudplayer-get-shot')[0];
+		var el_controls_microphone	= self.player.getElementsByClassName('cloudplayer-microphone')[0];
+		
+		if (self.mSrc._origJson().access.indexOf('all') < 0 ) {
+                    el_controls_ptz_switcher.style.display = 'none';
+                    el_controls_get_clip.style.display = 'none';
+		} else {
+		    //binary: ptz check abit later
+		    if (!self.options.disableGetClip || self.options.disableGetClip == false) { 
+			if (!CloudHelpers.isIE()) {
+				el_controls_get_clip.style.display = 'block';
+			}
+		    }
+		}
+		if (!self.options.disableGetShot || self.options.disableGetShot == false) { 
+			if (!CloudHelpers.isIE()) {
+				el_controls_get_shot.style.display = 'block';
+			}
+		}
+
+		if (!self.options.disableSdCard || self.options.disableSdCard == false) { 
+			if (!CloudHelpers.isIE()) {
+				el_controls_sd_backup.style.display = 'block';
+			}
+		}
+			
+		if (mConn) {
+			var camid = self.mSrc.getID();
+			/*mConn._getAPI().getCamera2(camid).done(function(camInfo) {
+				var toggleSync = self.player.getElementsByClassName('mem_rec_hide');
+				if (camInfo.memorycard_recording) {
+					for (var i = 0; i < toggleSync.length; i ++) { toggleSync[i].style.display = "block" }
+					el_sdcardtogglebtn.innerHTML = "Disable SD Card Synchronization";
+					el_sdcardtogglebtn.setAttribute("enabled", true);
+				} else {
+					for (var i = 0; i < toggleSync.length; i ++) { toggleSync[i].style.display = "none" }
+					el_sdcardtogglebtn.innerHTML = "Enable SD Card Synchronization";
+					el_sdcardtogglebtn.setAttribute("enabled", false);
+				}
+			});*/
+
+		    mTimelapsePlayer.setApi(mConn._getAPI());
+		
+		    var el_controls_ptz_top = self.player.getElementsByClassName('ptz-top')[0];
+		    var el_controls_ptz_bottom = self.player.getElementsByClassName('ptz-bottom')[0];
+		    var el_controls_ptz_left = self.player.getElementsByClassName('ptz-left')[0];
+		    var el_controls_ptz_right = self.player.getElementsByClassName('ptz-right')[0];
+		    var el_controls_ptz_zoom_in = self.player.getElementsByClassName('ptz-zoom-plus')[0];
+		    var el_controls_ptz_zoom_out = self.player.getElementsByClassName('ptz-zoom-minus')[0];
+		    
+		    if (self.options.livePoster && self.options.livePoster == true) {
+			    mConn._getAPI().cameraPreview(self.mSrc.getID())
+			    .done(function(res){
+				let cur_vtag = self.getCurrentVideoTag();
+				var videotags = self.player.getElementsByClassName('allvideotags')[0];
+				var vtags = videotags.getElementsByTagName('video');
+				self.mPoster  = res.url;
+				for (var i =0; i < vtags.length; i++) {
+					vtags[i].setAttribute('poster', self.mPoster);
+				}
+				self.vjs.poster(self.mPoster);
+			    }).fail(function(err){
+			    });
+		    } 
+		    
+		    mConn._getAPI().cameraPtz(self.mSrc.getID()).done(function(r){
+			console.log(r);
+			var actions = r.actions;
+			self.mPTZActions = actions;
+			if ((actions !== undefined) && (actions != null) && (actions.length > 0)){ 
+			    if (self.mPTZShow) {
+				el_controls_ptz_switcher.style.display = 'block';
+			    }
+			    el_controls_ptz_top.style.display = actions.indexOf("top") > -1 ? 'block' : 'none';
+			    el_controls_ptz_bottom.style.display = actions.indexOf("bottom") > -1 ? 'block' : 'none';
+			    el_controls_ptz_left.style.display = actions.indexOf("left") > -1 ? 'block' : 'none';
+			    el_controls_ptz_right.style.display = actions.indexOf("right") > -1 ? 'block' : 'none';
+			    el_controls_ptz_zoom_in.style.display = actions.indexOf("zoom_in") > -1 ? 'block' : 'none';
+			    el_controls_ptz_zoom_out.style.display = actions.indexOf("zoom_out") > -1 ? 'block' : 'none';
+			} else {
+			    el_controls_ptz_switcher.style.display = 'none';
+			}
+		    }).fail(function(r){
+			console.log(r);
+			el_controls_ptz_switcher.style.display = 'none';
+		    });
+		    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) { //check the ability capture audio
+			if (self.options.disableBackwardAudio !== true) {
+				mConn._getAPI().cameraAudio(self.mSrc.getID()).done( function(answer){
+					console.log(answer);
+					if (answer.caps !== undefined && answer.caps.backward_formats !== undefined && answer.caps.backward_formats.length > 0) {
+						mBackwardAudioFormats = answer.caps.backward_formats;
+						el_controls_microphone.classList.remove('disabled');
+					} else {
+						el_controls_microphone.classList.add('disabled');
+					}
+				}).fail(function(err){
+					console.log('Backward channel request:' + err);
+					el_controls_microphone.classList.add('disabled');
+				});
+			}
+		    } else {
+			el_controls_microphone.classList.add('disabled');
+		    }
+		    if (mAccessToken && mVxgcloudplayer) {
+			mVxgcloudplayer.setAttribute('src', mAccessToken);
+			mVxgcloudplayer.pause().then(function(){
+				console.log("vxgcloudplayer pause");
+			}).catch(function(err){
+				console.log("vxgcloudplayer catch:" + err);
+			});
+		    }
+		}
+		/*binary*/		
 	}
 
 	self.getSource = function(){
@@ -8368,7 +8208,7 @@ window.CloudPlayer = function(elid, options){
 	self.removeCallback = function(uniqname){
 		mCallbacks.removeCallback(uniqname);
 	}
-
+	
 	self.addCallback = function(uniqname, func){
 		mCallbacks.addCallback(uniqname, func);
 	}
@@ -8385,7 +8225,7 @@ window.CloudPlayer = function(elid, options){
 			console.warn("Skip error player already in live mode");
 			return;
 		}
-/*
+/*		
 		_stopPolingTime();
 		try {
 		    mPlaybackPlayer1.pause();
@@ -8418,7 +8258,7 @@ window.CloudPlayer = function(elid, options){
 		console.log("[PLAYER] _vjs_play_live, mEvent: ", mEvent);
 		// if(!mEvent && !CloudHelpers.autoPlayAllowed){
 		mElBigPlayButton.style.display = "none";
-
+		
 		function startVideo() {
 			var safari_and_hls = mSafariAndHlsNotStarted == 'pause'; // mUsedPlayer == 'hls' && CloudHelpers.isSafari();
 			var is_mobile = CloudHelpers.isIOS() || CloudHelpers.isAndroid();
@@ -8493,7 +8333,7 @@ window.CloudPlayer = function(elid, options){
 	}
 
 	var shareClipInterval = null;
-
+	
 	self._shareClipCallback = function( inProcess, description, clipinfo) {
 	    var el_controls_get_clip	= self.player.getElementsByClassName('cloudplayer-get-clip')[0];
 	    if (inProcess) {
@@ -8534,11 +8374,11 @@ window.CloudPlayer = function(elid, options){
 	    }
             position -= b*1000;
 	    var shareclip = self.player.getElementsByClassName('cloudplayer-share-clip')[0];
-
-	    if ((shareclip !== undefined )
-	    &&  (cloudcamera !== undefined)
+	    
+	    if ((shareclip !== undefined ) 
+	    &&  (cloudcamera !== undefined) 
 	    &&  (mAccessToken && (mAccessToken !== undefined))
-	    ) {
+	    ) { 
 		shareclip.createClip( cloudcamera, mAccessToken, self._shareClipCallback, position, (a+b)*1000 );
 		shareClipInterval = setInterval( function(){
 			var el_controls_get_clip = self.player.getElementsByClassName('cloudplayer-get-clip')[0];
@@ -8573,7 +8413,7 @@ window.CloudPlayer = function(elid, options){
 	    var position = mPosition;
 		var start, end;
 	    if (position == -1) {
-			// if it's live, it should start at live - dur
+			// if it's live, it should start at live - dur 
 			end = new Date().getTime();
 			start = end - (dur * 1000);
 	    } else {
@@ -8583,92 +8423,76 @@ window.CloudPlayer = function(elid, options){
 
 		var start_dt = CloudHelpers.formatUTCTime(start);
 		var end_dt = CloudHelpers.formatUTCTime(end);
-
-		if ((cloudcamera !== undefined) && (mAccessToken && (mAccessToken !== undefined))) {
+        	    
+	    if ((cloudcamera !== undefined) && (mAccessToken && (mAccessToken !== undefined))) { 
 			var vcp = self.player.getElementsByTagName('vxg-cloud-player')[0];
 			vcp.player.camera.get_v4_storage_records({start: start_dt, end: end_dt}).then(function(records) {
-				var cloudRecords = records.objects;
+				var syncCalls = vcp.player.storage.overlapArray(start_dt, end_dt, records.objects);
+				if (syncCalls.length == 0) syncCalls.push({start: start_dt, end: end_dt});
+				var chunkedCalls = vcp.player.storage.chunkSyncCalls(syncCalls);
+
+				var startBackup_el = self.player.getElementsByClassName("sdcardbackupbtn")[0];
+				var toggleSync_el = self.player.getElementsByClassName("enable-disable-sdcard")[0];
+				startBackup_el.classList.add("sd-backup-disable");
+				toggleSync_el.classList.add("sd-backup-disable");
+				var progress_el_id = "#backup-progress";
+				$(progress_el_id).show();
+				var progress_incr = 100 / chunkedCalls.length;
+
+				const allCalls = chunkedCalls.reduce(
+					(p, range) => 
+						p.then(() => vcp.player.storage.syncAndCheck(range.start, range.end, progress_el_id, progress_incr)),
+					Promise.resolve()
+				);
+
 				var sd_loading = self.player.getElementsByClassName("cloudplayer-sd-backup")[0];
 				var rot = 0;
 				var loading = setInterval(function() {
 					rot = rot + 45 == 360 ? 0 : rot + 45;
 					sd_loading.style.transform = `rotate(${rot}deg)`
 				}, 500)
-				var startBackup_el = self.player.getElementsByClassName("sdcardbackupbtn")[0];
-				var toggleSync_el = self.player.getElementsByClassName("enable-disable-sdcard")[0];
-				startBackup_el.classList.add("sd-backup-disable");
-				toggleSync_el.classList.add("sd-backup-disable");
-				var backup_result_el = self.player.querySelector(".cloudplayer-selectbackuptime .mem_rec_hide #backup_result")
 
-				vcp.player.storage.sdStorageAndCheck(start_dt, end_dt).then(function(sdStorageData) {
-					var syncCalls = vcp.player.storage.overlapArray(start_dt, end_dt, cloudRecords);
-					if (syncCalls.length == 0) syncCalls.push({start: start_dt, end: end_dt});
-
-					if (sdStorageData.length == 0) {
-						startBackup_el.classList.remove("sd-backup-disable");
-						toggleSync_el.classList.remove("sd-backup-disable");
-						var noSd = $('<p id="no-sd-data" style="width: 100%; text-align: center;">No SD Card Data Found</p>')
-						backup_result_el.append(noSd[0]);
-						noSd = self.player.querySelector(".cloudplayer-selectbackuptime .mem_rec_hide #backup_result #no-sd-data")
-						sd_loading.style.transform = `rotate(0deg)`
-						clearInterval(loading);
-						setTimeout(function() {noSd.remove();}, 5000);
-						return;
-					} else syncCalls = vcp.player.storage.gapsInSDCard(sdStorageData, syncCalls);
-
-					var chunkedCalls = vcp.player.storage.chunkSyncCalls(syncCalls);
-					var progress_el = $('<progress id="backup-progress" value="0" max="100" style="width: 100%; height: 15px;" ></progress>');
-					backup_result_el.append(progress_el[0]);
-					var progress_incr = 100 / chunkedCalls.length;
-					progress_el = self.player.querySelector(".cloudplayer-selectbackuptime .mem_rec_hide #backup_result #backup-progress")
-
-					const allCalls = chunkedCalls.reduce(
-						(p, range) =>
-							p.then(() => vcp.player.storage.syncAndCheck(range.start, range.end, progress_el, progress_incr)),
-						Promise.resolve()
-					);
-
-					const final = Promise.resolve(allCalls).then(function() {
-						startBackup_el.classList.remove("sd-backup-disable");
-						toggleSync_el.classList.remove("sd-backup-disable");
-						sd_loading.style.transform = `rotate(0deg)`
-						clearInterval(loading);
-						setTimeout(function() {
-							progress_el.remove();
-						}, 15000)
-					}, function(err) {
-						sd_loading.style.transform = `rotate(0deg)`
-						clearInterval(loading);
-						console.log(err.responseText)
-					})
+				const final = Promise.resolve(allCalls).then(function() { 
+					startBackup_el.classList.remove("sd-backup-disable");
+					toggleSync_el.classList.remove("sd-backup-disable");
+					sd_loading.style.transform = `rotate(0deg)`
+					clearInterval(loading);
+					setTimeout(function() {
+						$(progress_el_id).hide();
+						$(progress_el_id).val(0);
+					}, 15000)
+				}, function(err) {
+					sd_loading.style.transform = `rotate(0deg)`
+					clearInterval(loading);
+					console.log(err.responseText)
 				})
 			})
 	    }
 	}
 
 	self._toggleSync = function(mem_rec) {
-		var cloudcamera = self.mSrc;
-		if ((cloudcamera !== undefined) && (mAccessToken && (mAccessToken !== undefined))) {
+		/*var cloudcamera = self.mSrc;
+		if ((cloudcamera !== undefined) && (mAccessToken && (mAccessToken !== undefined))) { 
 			cloudcamera.toggleMemRec(mem_rec, mAccessToken);
 			var toggleSync = self.player.getElementsByClassName('mem_rec_hide');
 			var el_sdcardtogglebtn = self.player.getElementsByClassName('enable-disable-sdcard')[0];
-			if (!mem_rec) {
+			if (mem_rec) {
 				for (var i = 0; i < toggleSync.length; i ++) { toggleSync[i].style.display = "block" }
-				el_sdcardtogglebtn.innerHTML = "Enable Sync from Timeline";
-				el_sdcardtogglebtn.setAttribute("enabled", false);
-			}
+				el_sdcardtogglebtn.innerHTML = "Disable SD Card Synchronization";
+				el_sdcardtogglebtn.setAttribute("enabled", true);
+			} 
 			else {
 				for (var i = 0; i < toggleSync.length; i ++) { toggleSync[i].style.display = "none" }
-				el_sdcardtogglebtn.innerHTML = "Enable SD Card Backup";
-				el_sdcardtogglebtn.setAttribute("enabled", true);
-			}
-	    }
+				el_sdcardtogglebtn.innerHTML = "Enable SD Card Synchronization";
+				el_sdcardtogglebtn.setAttribute("enabled", false);
+			} 
+	    }*/
 	}
 
 	self._onResize  = function() {
 	    var element = self.player.getElementsByClassName('cloudplayer-snapshot')[0];
 	    var allvideotags = self.player.getElementsByClassName('allvideotags')[0];
-
+	    
 	    if (element !== undefined) {
 		element.setAttribute('width', allvideotags.clientWidth);
 		element.setAttribute('height', allvideotags.clientHeight);
@@ -8689,7 +8513,7 @@ window.CloudPlayer = function(elid, options){
 		    videotag = self.player.getElementsByClassName('cloudplayer-webrtc')[0];
 		}
 		*/
-
+		
 		var videotags = self.player.getElementsByClassName('allvideotags')[0];
 		var vtags = videotags.getElementsByTagName('video');
 		for (var i =0; i < vtags.length; i++) {
@@ -8704,14 +8528,14 @@ window.CloudPlayer = function(elid, options){
 			break;
 		    }
 		}
-		if (videotag == null
+		if (videotag == null 
 		&& mPosition != CloudHelpers.POSITION_LIVE
 		&& mVxgcloudplayer != null
 		) {
 			videotag = mVxgcloudplayer.getVideo();
 			if (videotag.src == null || videotag.src == "" || videotag.readyState!=4) {
 				if (videotag.poster != null && videotag.poster != "" ) {
-					fetch(videotag.poster).then(function(resp){
+					fetch(videotag.poster).then(function(resp){ 
 						return resp.blob();
 					})  .then(blob => {
 						const url = window.URL.createObjectURL(blob);
@@ -8727,7 +8551,7 @@ window.CloudPlayer = function(elid, options){
 				return;
 			}
 		}
-
+		
 		if (videotag != null ) {
 		    var width 	= videotag.videoWidth ;
 		    var height	= videotag.videoHeight;
@@ -8762,7 +8586,7 @@ window.CloudPlayer = function(elid, options){
 		}
 	    }
 	}
-
+    
 	self._hideSnapshot = function (isHidden) {
 	    if (self.player) {
 		var element = self.player.getElementsByClassName('cloudplayer-snapshot')[0];
@@ -8772,7 +8596,7 @@ window.CloudPlayer = function(elid, options){
 		} else {
 			$(element).removeClass("hidden");
 		}
-
+		
 		var vtags = self.player.getElementsByTagName('video');
 		for (var i =0; i < vtags.length; i++) {
 		    var el = vtags[i];
@@ -8786,14 +8610,14 @@ window.CloudPlayer = function(elid, options){
 			break;
 		    }
 		}
-
+		
 		if (videotag != null) {
 		    var dx = 0, dy = 0;
 		    var width, height;
-
+		    
 		    var videow = width  = videotag.videoWidth;
 		    var videoh = height = videotag.videoHeight;
-
+		    
 		    var canvasw = element.getAttribute('width');
 		    var canvash = element.getAttribute('height');
 
@@ -8809,7 +8633,7 @@ window.CloudPlayer = function(elid, options){
 			dy = 0;
 			dx = (canvasw - width)/2;
 		    }
-
+		    
 		    //console.log("Snapshot resolution: " + width + "x" + height + " for:" + mUsedPlayer);
 
 		    context = element.getContext('2d');
@@ -8820,9 +8644,9 @@ window.CloudPlayer = function(elid, options){
 		}
 	    }
 	}
-
+	
 	var backwardPlayer = null;
-
+	
 	self.sendBackwardAudio = function() {
 	    if (self.options.disableBackwardAudio === true) {
 		console.warn("Backward audio is disabled by configuration");
@@ -8839,7 +8663,7 @@ window.CloudPlayer = function(elid, options){
 	    self._sendBackwardAudio();
 	    return 0;
 	}
-
+	
 	self._sendBackwardAudio = function(isStarted) {
 		var element		= self.player.getElementsByClassName('cloudplayer-microphone')[0];
 		var pseudoplayer	= self.player.getElementsByClassName('cloudplayer-backward-webrtc')[0];
@@ -8860,10 +8684,10 @@ window.CloudPlayer = function(elid, options){
 					//element.classList.add("onair");
 					element.classList.add("prepare");
 					self.isBackwardAudioStarted = true;
-
+				
 					backwardPlayer = new CloudPlayerWebRTC2(
-						pseudoplayer,
-						live_urls.webrtc_backward.connection_url,
+						pseudoplayer, 
+						live_urls.webrtc_backward.connection_url, 
 						live_urls.webrtc_backward.ice_servers, {send_video: false, send_audio: true}
 					);
 					backwardPlayer.onServerError = function(event){
@@ -8884,7 +8708,7 @@ window.CloudPlayer = function(elid, options){
 			});
 		}
 	}
-
+	
 	self.setPosition = function(t){
 		mPosition = t;
 
@@ -8909,11 +8733,11 @@ window.CloudPlayer = function(elid, options){
 
 			self.time = t;
 			el_player_time.innerHTML = _formatTimeCameraRecords(self.time);
-
+			
 			self.player.classList.remove('showing-ptz');
 			el_controls_ptz_switcher.classList.add('inactive');
 			el_controls_microphone.classList.add('inactive');
-
+			
 			el_record_mode.classList.remove('mode-timelapse');
 			el_record_mode.classList.add('mode-records');
 			/*Binary timelapse debug mode*/
@@ -8921,7 +8745,7 @@ window.CloudPlayer = function(elid, options){
 				el_record_mode.style.display = '';
 			}
 			mRecordMode = "records";
-
+			
 			setTimeout(function(){
 				if (self.isBackwardAudioStarted == true) {
 					self._sendBackwardAudio();
@@ -8929,7 +8753,7 @@ window.CloudPlayer = function(elid, options){
 			}, 100);
 		}
 	}
-
+	
 	// apply option position
 	if(options["position"] !== undefined){
 		self.setPosition(mPosition);
@@ -8971,7 +8795,7 @@ window.CloudPlayer = function(elid, options){
 		} else {
 			self._reset_players();
 		}
-
+		
 		if (self.mSrc.type != 'camera') {
 			self._showerror(CloudReturnCode.ERROR_INVALID_SOURCE);
 			return;
@@ -8983,7 +8807,7 @@ window.CloudPlayer = function(elid, options){
 		el_pause.classList.remove('hidden');
 		el_pause.classList.remove('play');
 		mElementPlay.style.display = "none";
-
+		
 		mStopped = false;
 		mPlaying = true;
 		mPausing = false;
@@ -8991,7 +8815,7 @@ window.CloudPlayer = function(elid, options){
 		//_startPolingTime();
 		//self._reset_players();
 		_hideerror();
-
+		
 		// reset position to start of range
 		if (self.isRange() && mPosition == -1 && CloudHelpers.getCurrentTimeUTC() > mRangeMax) {
 			mPosition = mRangeMin;
@@ -9001,9 +8825,9 @@ window.CloudPlayer = function(elid, options){
 		if (self.isRange() && mPosition > mRangeMax) {
 			mPosition = mRangeMin;
 		}
-
+		
 		mCallbacks.executeCallbacks(CloudPlayerEvent.PLAYED, event);
-
+		
 		if(mPosition == -1){
 			_loadLiveUrl(mUniqPlay);
 			mCallbacks.executeCallbacks(CloudPlayerEvent.POSITION_JUMPED, {new_pos: CloudHelpers.getCurrentTimeUTC()});
@@ -9021,7 +8845,7 @@ window.CloudPlayer = function(elid, options){
 			_showloading( self.options.loaderTimeout || 0 );
 		}
 	}
-
+	
 	self.pause = function(event) {
 	    mStopped = false;
 
@@ -9084,18 +8908,18 @@ window.CloudPlayer = function(elid, options){
 		}
 	    }
 	}
-
+	
 	self.getImages = function() {
 		if (mConn) {
 			var options = {};
 			var now = new Date();
 			var time = now.getTime();
 			var utctime = CloudHelpers.formatUTCTime(time);
-
+				
 			options.order_by = "-time";
 			options.limit = 5;
 			options.end = utctime;
-
+		
 			mConn._getAPI().cameraImages(options).done(function(result){
 				console.log('done');
 			}).fail( function( err ){
@@ -9103,7 +8927,7 @@ window.CloudPlayer = function(elid, options){
 			});
 		}
 	}
-
+	
 	self.stop = function(who_call_stop){
 		console.log("[PLAYER] stop called " + who_call_stop);
 		mUniqPlay = null; // stop any async requests or ignore results
@@ -9115,21 +8939,21 @@ window.CloudPlayer = function(elid, options){
 		clearInterval(mPolingCameraStatus);
 		mCallbacks.executeCallbacks(CloudPlayerEvent.STOPED, who_call_stop);
 
-		if ((	   (who_call_stop === 'by_webrtc2_error')
+		if ((	   (who_call_stop === 'by_webrtc2_error') 
 			|| (who_call_stop === 'by_webrtc0_error')
-		    )
-		    || (   (who_call_stop === 'by_setError')
+		    ) 
+		    || (   (who_call_stop === 'by_setError') 
 			&& (self.mPlayerFormat === 'webrtc')
-		    )
+		    ) 
 		) {
 		    self.mPlayerFormat = 'html5';
 		}
-
+		
 		console.log("[PLAYER] self.stop: somebody call");
 		if (who_call_stop === 'by_plrsdk_3'){
 			self.mPoster = null;
 		}
-
+		
 		if (who_call_stop != 'by_destroy') {
 			self._reset_players();
 		}
@@ -9177,7 +9001,7 @@ window.CloudPlayer = function(elid, options){
 		_stopPolingTime();
 		clearInterval(mExpireHLSTimeInterval);
 		self._stopPolingMediaTicket();
-
+		
 		if (who_call_stop !== 'by_play') { //prevent loader's wink on reset-play
 			_hideloading();
 		}
@@ -9225,7 +9049,7 @@ window.CloudPlayer = function(elid, options){
 	self.error = function(){
 		return self.mLastError || -1;
 	}
-
+	
 	self.onError = function(callback){
 		mCallback_onError = callback;
 	}
@@ -9247,7 +9071,7 @@ window.CloudPlayer = function(elid, options){
 		}
 		// vxgcloudplayer.trigger('error', [self, error]);
 	}
-
+	
 	self.setRange = function(startPos,endPos){
 		console.warn("[PLAYER] setRange");
 		mRangeMin = startPos;
@@ -9261,11 +9085,11 @@ window.CloudPlayer = function(elid, options){
 		var rangeMax = parseInt(options["range"]["max"], 10);
 		self.setRange(rangeMin, rangeMax);
 	}
-
+	
 	self.isRange = function(){
 		return mRangeMin != -1 && mRangeMax != -1;
 	}
-
+	
 	self.resetRange = function(){
 		console.warn("[PLAYER] resetRange");
 		mRangeMin = -1;
@@ -9285,14 +9109,14 @@ window.CloudPlayer = function(elid, options){
 	self.showPTZControl = function (isShow) {
 		self.mPTZShow = isShow;
 		if (isShow) {
-			if ((self.mPTZActions !== undefined) && (self.mPTZActions != null) && (self.mPTZActions.length > 0)){
+			if ((self.mPTZActions !== undefined) && (self.mPTZActions != null) && (self.mPTZActions.length > 0)){ 
 				el_controls_ptz_switcher.style.display = 'block';
 			}
 		}  else {
 			el_controls_ptz_switcher.style.display = 'none';
 		}
 	}
-
+	
 	/* end public functions */
 	function _applyFuncTo(arr, val, func) {
 		//for (var i in arr) {
@@ -9300,7 +9124,7 @@ window.CloudPlayer = function(elid, options){
 			func(arr[i], val);
 		}
 	}
-
+	
 	function _initZoomControls(){
 		self.currentZoom = 0;
 
@@ -9311,7 +9135,7 @@ window.CloudPlayer = function(elid, options){
 		var el_zoomDown = self.player.getElementsByClassName('cloudplayer-zoom-down')[0];
 		var el_zoomProgress = self.player.getElementsByClassName('cloudplayer-zoom-progress')[0];
 		var el_zoomPositionCursor = self.player.getElementsByClassName('cloudplayer-zoom-position-cursor')[0];
-
+		
 		var _players = [];
 		_players.push(document.getElementById(elid + '_vjs'));
 		//_players.push(document.getElementById(elid + '_vjs2'));
@@ -9320,7 +9144,7 @@ window.CloudPlayer = function(elid, options){
 		_players.push(self.player.getElementsByClassName('cloudplayer-webrtc')[0]);
 		_players.push(self.player.getElementsByClassName('cloudplayer-jpeg')[0]);
 		_players.push(self.player.getElementsByClassName('cloudplayer-vxgcloudplayer')[0]);
-
+		
 		if(self.options.disableZoomControl && self.options.disableZoomControl == true){
 			el_controls_zoom_switcher.style.display = 'none';
 		}
@@ -9336,7 +9160,7 @@ window.CloudPlayer = function(elid, options){
 		self.setNewZoom = function(v) {
 			if(v >= 30){ v = 30; }
 			if(v <= 10){ v = 10; }
-
+			
 			if (self.currentZoom != v) {
 				self.currentZoom = v;
 				var _scale_transform = "scale(" + (self.currentZoom/10) + ")";
@@ -9357,7 +9181,7 @@ window.CloudPlayer = function(elid, options){
 		}
 
 		self.setNewZoom(10);
-
+		
 		self.zoomUp = function() {
 			self.setNewZoom(self.currentZoom + 5)
 		}
@@ -9375,7 +9199,7 @@ window.CloudPlayer = function(elid, options){
 				var height = el_zoomProgress.offsetHeight;
 				var steps = height/5;
 				y = 10*(Math.floor((height-y)/steps)/2 + 1);
-				self.setNewZoom(y);
+				self.setNewZoom(y);				
 			}
 		}
 		self.zoomProgressLeave = function(e){
@@ -9387,7 +9211,7 @@ window.CloudPlayer = function(elid, options){
 				var height = el_zoomProgress.offsetHeight;
 				var steps = height/5;
 				y = 10*(Math.floor((height-y)/steps)/2 + 1);
-				self.setNewZoom(y);
+				self.setNewZoom(y);	
 			}
 			self.zoomProgressDownBool = false;
 		}
@@ -9407,12 +9231,12 @@ window.CloudPlayer = function(elid, options){
 			self.zoomControlsHeight = el_controls_zoom_position.offsetHeight;
 			self.zoomCursorDownBool = true;
 		}
-
+		
 		self.zoomCursorUp = function(e){
 			console.log("zoomCursorUp");
 			self.zoomCursorDownBool = false;
 		}
-
+		
 		self.zoomCursorMove = function(e){
 			if(self.zoomCursorDownBool == true){
 				if (e.pageX === undefined) {
@@ -9440,15 +9264,15 @@ window.CloudPlayer = function(elid, options){
 				if (newy >= maxY) newy = maxY;
 				el_zoomPositionCursor.style.left = newx + "px";
 				el_zoomPositionCursor.style.top = newy + "px";
-
-
+				
+				
 				var zoom = self.currentZoom/10 - 1;
 				var left = Math.floor(-100*((newx/d2x)*zoom));
 				var top = Math.floor(-100*((newy/d2y)*zoom));
-
+				
 				//console.log("<binary> top:" + top + "; left:" + left + ";");
-
-
+								
+				
 				var h = self.vjs.videoHeight();
 				var w = self.vjs.videoWidth();
 				//var top_px = h*top/500;
@@ -9457,7 +9281,7 @@ window.CloudPlayer = function(elid, options){
 					plr_el.style.left = val;
 				});
 
-
+				
 				_applyFuncTo(_players, top  + '%', function(plr_el, val) {
 					plr_el.style.top = val;
 				});
@@ -9479,11 +9303,11 @@ window.CloudPlayer = function(elid, options){
 		el_zoomPositionCursor.addEventListener('touchend',self.zoomCursorUp,false);
 	}
 	_initZoomControls();
-
-	/*
+	
+	/* 
 	 * check audio channels
 	 * */
-
+	
 	self.isAudioChannelExists = function(){
 		// console.log("self.mstreams.current = " + self.mstreams.current);
 		// console.log("self.mstreams.audio_on = " + self.mstreams.audio_on);
@@ -9520,14 +9344,14 @@ window.CloudPlayer = function(elid, options){
 			}
 
 			if(!self.isAudioChannelExists()){
-
+				
 			}
 		}).fail(function(r){
 			console.error(r);
 			el_info_audio_stream.style.display = "none";
 		})
 	}
-
+	
 	/*
 	 * volume controls begin
 	 * */
@@ -9539,7 +9363,7 @@ window.CloudPlayer = function(elid, options){
 		var el_volumeUp = self.player.getElementsByClassName('cloudplayer-volume-up')[0];
 		var el_volumeContainer = self.player.getElementsByClassName('cloudplayer-volume-container')[0];
 		var el_volumeSlider = self.player.getElementsByClassName('cloudplayer-volume')[0];
-
+	
 		self.m = self.m || {};
 		self.m.volume = 1.0;
 
@@ -9548,7 +9372,7 @@ window.CloudPlayer = function(elid, options){
 		if (self.isMobile) {
 			el_volumeContainer.style.display='none';
 		}
-
+		
 		if (self.m.mute) {
 			el_volumeContainer.style.display='none';
 			el_volumeMute.classList.add("unmute");
@@ -9569,7 +9393,7 @@ window.CloudPlayer = function(elid, options){
 			var player_nv2		= document.getElementById(self.elid+"_nv2");
 */
 			var player_webrtc		= document.getElementById(self.elid+"_webrtc");
-
+	
 
 			if(player_native_hls != null && typeof player_native_hls !== "undefined") player_native_hls.muted = muted;
 			//if(player_vjs2 != null && typeof player_vjs2       !== "undefined") player_vjs2.muted = muted;
@@ -9634,7 +9458,7 @@ window.CloudPlayer = function(elid, options){
 			if (!self.isAudioChannelExists()) {
 				return;
 			}
-
+			
 			if (Math.round(self.m.volume*10) < 10) {
 				self.m.volume = self.m.volume + 0.1;
 				var v = self.m.mute ? 0 : self.m.volume.toFixed(1);
@@ -9654,7 +9478,7 @@ window.CloudPlayer = function(elid, options){
 				el_volumeProgress.className = el_volumeProgress.className.replace(/vol\d+/g,'vol' + Math.floor(self.m.volume*10));
 			}
 		};
-
+		
 		el_volumeMute.onclick = self.mute;
 		el_volumeDown.onclick = self.voldown;
 		el_volumeUp.onclick = self.volup;
@@ -9665,46 +9489,40 @@ window.CloudPlayer = function(elid, options){
 
 		// init volume
 		self.vjs.ready(function(){
-			//self.vjs.currentTime(-1);
-			//self.vjs.playbackRate(4);
-			//setTimeout(function(){
-			//	self.vjs.playbackRate(1);					
-			//	},1000);
-			
 			if (!self.isAudioChannelExists()) {
 				return
 			}
-			
-			self.vjs.muted(true);
-			self.volume(self.m.volume);
-		});
 
+			self.vjs.muted(true);
+			self.volume(self.m.volume);	
+		});
+		
 		if (!self.isAudioChannelExists()) {
 			el_volumeDown.style.display='none';
 			el_volumeProgress.style.display='none';
 			el_volumeUp.style.display='none';
 			el_volumeMute.style.display='none';
 		}
-
+		
 		if ( self.options.disableAudioControl && self.options.disableAudioControl == true) {
 		    self.m.volume = 1;
 		    self.m.mute = false;
-
+		
 		    el_volumeMute.style.display = 'none';
 		    el_volumeDown.style.display = 'none';
 		    el_volumeProgress.style.display = 'none';
 		    el_volumeUp.style.display = 'none';
 		    el_volumeContainer.style.display = 'none';
 		    el_volumeSlider.style.display = 'none';
-
+		    
 		    return;
 		}
 
 	}
 	_initVolumeControls();
-
-	// ---- volume controls end ----
-
+	
+	// ---- volume controls end ---- 
+	
 	function _polingCameraHLSList(live_urls, _uniqPlay){
 		if(_uniqPlay != mUniqPlay) {
 			console.warn("_uniqPlay not current [_polingCameraHLSList]");
@@ -9725,25 +9543,10 @@ window.CloudPlayer = function(elid, options){
 				// self._startPolingMediaTicket(_uniqPlay);
 				// For debug
 				// live_urls.hls = live_urls.hls.replace("/hls/", "/hls1/");
-
-				// 
-				if (self.vsFormat == null || self.vsFormat == "H264")
-				{
-					self.vjs.src([{
-						src: live_urls.hls,
-						type: 'application/x-mpegURL'
-					}]);
-				}
-				else if ('dash' in live_urls)
-				{
-					self.vjs.src([{
-						src: live_urls.dash,
-						type: 'application/dash+xml'
-					}]);
-
-				}
-
-
+				self.vjs.src([{
+					src: live_urls.hls,
+					type: 'application/x-mpegURL'
+				}]);
 				xhr = null;
 			}else if(xhr.status === 404){
 				if(_uniqPlay != mUniqPlay){
@@ -9756,7 +9559,7 @@ window.CloudPlayer = function(elid, options){
 					if (self.count_ERROR_STREAM_UNREACHABLE>3){
 						self._showerror(CloudReturnCode.ERROR_STREAM_UNREACHABLE_HLS);
 						self.count_ERROR_STREAM_UNREACHABLE=0;
-					} else {
+					} else {	
 						self.stop();
 						self.play();
 					}
@@ -9836,7 +9639,7 @@ window.CloudPlayer = function(elid, options){
 		mJpegPlayer_el.style.display = "none";
 		mNativeHLS_el.style.display = "none";
 		mWebRTC_el.style.display = "block";
-
+		
 		if(!window['CloudPlayerWebRTC0']){
 			console.error("Not found module CloudPlayerWebRTC0");
 			return;
@@ -9894,8 +9697,8 @@ window.CloudPlayer = function(elid, options){
 		mNativeHLS_el.style.display = "none";
 		mJpegPlayer_el.style.display = "none";
 		mWebRTC_el.style.display = "block";
-
-
+		
+		
 		if(!window['CloudPlayerWebRTC2']){ // webrtc2
 			console.error("Not found module CloudPlayerWebRTC2");
 			return;
@@ -9905,7 +9708,7 @@ window.CloudPlayer = function(elid, options){
 		if (CloudHelpers.compareVersions(CloudPlayerWebRTC2.version, live_urls.webrtc.version) > 0) {
 			console.warn("Expected version webrtc.version (v" + live_urls.webrtc.version + ") "
 			+ " mismatch with included CloudPlayerWebRTC (v" + CloudPlayerWebRTC2.version + ")");
-			p = CloudHelpers.requestJS(live_urls.webrtc.scripts.player, function(r) {
+			p = CloudHelpers.requestJS(live_urls.webrtc.scripts.player, function(r) { 
 				r = r.replace("CloudPlayerWebRTC =", "CloudPlayerWebRTC2 =");
 				while (r.indexOf("CloudPlayerWebRTC.") !== -1) {
 					r = r.replace("CloudPlayerWebRTC.", "CloudPlayerWebRTC2.");
@@ -9949,7 +9752,7 @@ window.CloudPlayer = function(elid, options){
 			self.vjs.src([{src: live_urls.rtmp, type: 'rtmp/mp4'}]);
 			_showBlackScreen();
 		});
-
+	
 		// vxgcloudplayer.vjs_play(vcp);
 		self.vjs.off('ended');
 		self.vjs.on('ended', function() {
@@ -9965,7 +9768,7 @@ window.CloudPlayer = function(elid, options){
 				console.warn("[PLAYER]  _uniqPlay not current [loadeddata]");
 				return;
 			}
-
+			
 			_hideloading();
 			//_initZoomControls();
 			_initVolumeControls();
@@ -9992,7 +9795,7 @@ window.CloudPlayer = function(elid, options){
 
 		_stopPolingTime();
 		_startPolingTime();
-
+		
 		if (CloudHelpers.isChrome() && !CloudHelpers.autoPlayAllowed) {
 			_vjs_play_live();
 		} else {
@@ -10021,13 +9824,13 @@ window.CloudPlayer = function(elid, options){
 		mWebRTC_el.style.display = "none";
 		mJpegPlayer_el.style.display = "none";
 		mNativeHLS_el.style.display = "block";
-
+		
 		if(!window['CloudPlayerNativeHLS']){
 			console.error("[PLAYER]  Not found module CloudPlayerNativeHLS");
 			return;
 		}
-
-
+		
+		
 		mNativeHLS_Player = new CloudPlayerNativeHLS(mNativeHLS_el, live_urls.hls);
 		mNativeHLS_Player.play();
 		_beforePlay();
@@ -10052,7 +9855,7 @@ window.CloudPlayer = function(elid, options){
 			console.error("[PLAYER]  Not found module CloudPlayerJpegLive");
 			return;
 		}
-
+		
 		var redrawPeriod = self.options.jpegRedrawPeriod || 1000;
 		mJpegPlayer.play( mConn._getAPI(), self.mSrc, redrawPeriod );
 		//mNativeHLS_Player = new CloudPlayerNativeHLS(mNativeHLS_el, live_urls.hls);
@@ -10117,7 +9920,7 @@ window.CloudPlayer = function(elid, options){
 				console.warn("_uniqPlay not current [loadeddata]");
 				return;
 			}
-
+			
 			_hideloading();
 			//_initZoomControls();
 			_initVolumeControls();
@@ -10152,7 +9955,7 @@ window.CloudPlayer = function(elid, options){
 
 		_stopPolingTime();
 		_startPolingTime();
-
+		
 		if (CloudHelpers.isChrome() && !CloudHelpers.autoPlayAllowed) {
 			_vjs_play_live();
 		} else {
@@ -10191,7 +9994,7 @@ window.CloudPlayer = function(elid, options){
 				&& self.m.waitSourceActivation != 0
 				&& mWaitSourceActivationCounter > self.m.waitSourceActivation) {
 				//self.player.querySelector(".cloudplayer-calendar-container").classList.add("offline");
-				//self.player.querySelector(".cloudplayer-controls-container").classList.add("offline");
+				//self.player.querySelector(".cloudplayer-controls-container").classList.add("offline");	
 				self._showerror(CloudReturnCode.ERROR_CAMERA_OFFLINE);
 				mWaitSourceActivationCounter = 0;
 			}
@@ -10221,7 +10024,7 @@ window.CloudPlayer = function(elid, options){
 			console.error("[_polingCameraStatus] ",err);
 			self.mSrc._origJson()['status'] = 'error';
 		});
-		//
+		// 
 	}
 
 	function _startPolingCameraStatus(_uniqPlay){
@@ -10252,7 +10055,7 @@ window.CloudPlayer = function(elid, options){
 			console.warn("_uniqPlay not current [_polingLoadCameraLiveUrl]");
 			return;
 		}
-
+		
 		if(self.mSrc.type != 'camera'){
 			self._showerror(CloudReturnCode.ERROR_INVALID_SOURCE);
 			return;
@@ -10263,109 +10066,86 @@ window.CloudPlayer = function(elid, options){
 		}
 		_source_type = 'camera_live';
 		mUsedPlayer = '';
+		mConn._getAPI().cameraLiveUrls(self.mSrc.getID()).done(function(live_urls){
+			if(_uniqPlay != mUniqPlay) {
+				console.warn("_uniqPlay not current [_polingLoadCameraLiveUrl.done]");
+				return;
+			}
 
-		var streamid = "";
-		//if (hasMultipleStreams)
-		{
+			_updatePlayerFormatUI(live_urls);
+
+			var webrtc_major_version = 1;
+			if (live_urls.webrtc) {
+				webrtc_major_version = live_urls.webrtc.version.split(".")[0];
+				webrtc_major_version = parseInt(webrtc_major_version, 10);
+			}
+
+			if (!live_urls.hls && !live_urls.rtmp) {
+				mPlayerFormatForced = 'webrtc';
+			}
+
+			if (mPlayerFormatForced !== null) {
+				if (mPlayerFormatForced === 'flash') {
+					_polingLoadCameraLiveUrl_RTMP(_uniqPlay, live_urls);
+				} else if (mPlayerFormatForced === 'html5') {
+					_polingLoadCameraLiveUrl_HLS(_uniqPlay, live_urls);
+				} else if (live_urls.rtc && mPlayerFormatForced === 'webrtc') {
+					_polingLoadCameraLiveUrl_WebRTC0(_uniqPlay, live_urls);
+				} else if (live_urls.webrtc && webrtc_major_version === 2 && mPlayerFormatForced === 'webrtc') {
+					_polingLoadCameraLiveUrl_WebRTC2(_uniqPlay, live_urls);
+				} else if ( mPlayerFormatForced === 'jpeg') {
+					_polingLoadCameraLiveUrl_Jpeg(_uniqPlay, live_urls);
+				} else {
+					self._showerror(CloudReturnCode.NOT_SUPPORTED_FORMAT);
+				}
+				return;
+			}
+
+			if(self.mPlayerFormat == 'webrtc'){
+				if(live_urls.rtc && CloudHelpers.supportWebRTC()){
+					_polingLoadCameraLiveUrl_WebRTC0(_uniqPlay, live_urls);
+				} else if (live_urls.webrtc && webrtc_major_version === 2 && CloudHelpers.supportWebRTC()){
+					_polingLoadCameraLiveUrl_WebRTC2(_uniqPlay, live_urls);
+				} else {
+					_polingLoadCameraLiveUrl_HLS(_uniqPlay, live_urls);
+				}
+			}
 			
-			if (mainResId && liveResId) {
-				streamid = streamQuality == "main" ? mainResId : liveResId;
-				videoid = streamQuality == "main" ? mainVsId : liveVsId;
-				console.log("changing stream quality to: " + streamQuality + " on id: " + streamid + " video_id: " +  videoid);
+			if(self.mPlayerFormat == 'flash'){
+				if(!CloudHelpers.useHls()){
+					_polingLoadCameraLiveUrl_RTMP(_uniqPlay, live_urls);
+				}else{
+					_polingLoadCameraLiveUrl_HLS(_uniqPlay, live_urls);
+				}
+			}
 
-			    mConn._getAPI().getCameraVideoStream(self.mSrc.getID(),videoid).done(function(video_stream){
-
-								if (video_stream)
-									self.vsFormat = video_stream.format;
-
-								mConn._getAPI().cameraLiveUrls(self.mSrc.getID(), streamid).done(function(live_urls){
-									// Konst TODO
-									//if(_uniqPlay != mUniqPlay) {
-									//	console.warn("_uniqPlay not current [_polingLoadCameraLiveUrl.done]");
-									//	return;
-									//}
-
-									_updatePlayerFormatUI(live_urls);
-
-									var webrtc_major_version = 1;
-									if (live_urls.webrtc) {
-										webrtc_major_version = live_urls.webrtc.version.split(".")[0];
-										webrtc_major_version = parseInt(webrtc_major_version, 10);
-									}
-
-									if (!live_urls.hls && !live_urls.rtmp) {
-										mPlayerFormatForced = 'webrtc';
-									}
-
-									if (mPlayerFormatForced !== null) {
-										if (mPlayerFormatForced === 'flash') {
-											_polingLoadCameraLiveUrl_RTMP(_uniqPlay, live_urls);
-										} else if (mPlayerFormatForced === 'html5') {
-											_polingLoadCameraLiveUrl_HLS(_uniqPlay, live_urls);
-										} else if (live_urls.rtc && mPlayerFormatForced === 'webrtc') {
-											_polingLoadCameraLiveUrl_WebRTC0(_uniqPlay, live_urls);
-										} else if (live_urls.webrtc && webrtc_major_version === 2 && mPlayerFormatForced === 'webrtc') {
-											_polingLoadCameraLiveUrl_WebRTC2(_uniqPlay, live_urls);
-										} else if ( mPlayerFormatForced === 'jpeg') {
-											_polingLoadCameraLiveUrl_Jpeg(_uniqPlay, live_urls);
-										} else {
-											self._showerror(CloudReturnCode.NOT_SUPPORTED_FORMAT);
-										}
-										return;
-									}
-
-									if(self.mPlayerFormat == 'webrtc'){
-										if(live_urls.rtc && CloudHelpers.supportWebRTC()){
-											_polingLoadCameraLiveUrl_WebRTC0(_uniqPlay, live_urls);
-										} else if (live_urls.webrtc && webrtc_major_version === 2 && CloudHelpers.supportWebRTC()){
-											_polingLoadCameraLiveUrl_WebRTC2(_uniqPlay, live_urls);
-										} else {
-											_polingLoadCameraLiveUrl_HLS(_uniqPlay, live_urls);
-										}
-									}
-
-									if(self.mPlayerFormat == 'flash'){
-										if(!CloudHelpers.useHls()){
-											_polingLoadCameraLiveUrl_RTMP(_uniqPlay, live_urls);
-										}else{
-											_polingLoadCameraLiveUrl_HLS(_uniqPlay, live_urls);
-										}
-									}
-
-									if(self.mPlayerFormat == 'html5'){
-										_polingLoadCameraLiveUrl_HLS(_uniqPlay, live_urls);
-									}
-
-									if(self.mPlayerFormat == 'jpeg'){
-										_polingLoadCameraLiveUrl_Jpeg(_uniqPlay, live_urls);
-									}
-								}).fail(function(r){
-									console.error(r);
-									if(_uniqPlay != mUniqPlay) {
-										console.warn("_uniqPlay not current [_polingLoadCameraLiveUrl.fail]");
-										return;
-									}
-									if(r.status && r.status == 503){
-										// try load urls
-										mTimeWaitStartStream++;
-										if(mTimeWaitStartStream < self.timePolingLiveUrls){
-											setTimeout(function(){
-												self._polingLoadCameraLiveUrl(_uniqPlay);
-											}, 1000);
-										}else{
-											console.error(r);
-										}
-										return;
-									}
-									console.error(r);
-								});
-				}).fail(function(r){
-					console.error("Can can get video stream:" +  r);
-				});
-			}	
-			//});
-		}
-
+			if(self.mPlayerFormat == 'html5'){
+				_polingLoadCameraLiveUrl_HLS(_uniqPlay, live_urls);
+			}
+			
+			if(self.mPlayerFormat == 'jpeg'){
+				_polingLoadCameraLiveUrl_Jpeg(_uniqPlay, live_urls);
+			}
+		}).fail(function(r){
+			console.error(r);
+			if(_uniqPlay != mUniqPlay) {
+				console.warn("_uniqPlay not current [_polingLoadCameraLiveUrl.fail]");
+				return;
+			}
+			if(r.status && r.status == 503){
+				// try load urls
+				mTimeWaitStartStream++;
+				if(mTimeWaitStartStream < self.timePolingLiveUrls){
+					setTimeout(function(){
+						self._polingLoadCameraLiveUrl(_uniqPlay);
+					}, 1000);
+				}else{
+					console.error(r);
+				}
+				return;
+			}
+			console.error(r);
+		});
 	}
 
 	self._reset_players = function() {
@@ -10379,7 +10159,7 @@ window.CloudPlayer = function(elid, options){
 		self.vjs.autoplay(true);
 		self.vjs.volume(0);
 		self.vjs.el().style.display = "none";
-
+		
 		//self.vjs2.reset();
 		//self.vjs2.controls(false);
 		//self.vjs2.muted(true);
@@ -10402,7 +10182,7 @@ window.CloudPlayer = function(elid, options){
 		}
 		mJpegPlayer.reset();
 		mJpegPlayer_el.style.display = "none";
-
+		
 		mTimelapsePlayer.reset();
 		mTimelapsePlayer_el.style.display = "none";
 
@@ -10434,7 +10214,7 @@ window.CloudPlayer = function(elid, options){
 		var el_selectcliptime = self.player.getElementsByClassName('cloudplayer-selectcliptime')[0];
 		if (!parseInt(val) && el_selectcliptime) el_selectcliptime.style.display = "none";
 	}
-
+	
 	var mShouldHide = true;
 
 	el_controls_container.addEventListener('mouseover', function(evt){
@@ -10454,7 +10234,7 @@ window.CloudPlayer = function(elid, options){
 		}
 		self.set_controls_opacity("1");
 		clearTimeout(self.timeout);
-
+		
 		self.timeout = setTimeout(function(){
 			if (mShouldHide) {
 				self.set_controls_opacity("0");
@@ -10463,9 +10243,9 @@ window.CloudPlayer = function(elid, options){
 			}
 		},self.m.autohide);
 	};
-
+	
 	self.restartTimeout();
-
+	
 	self.player.addEventListener('mousedown', self.restartTimeout, true);
 	self.player.addEventListener('mousemove', self.restartTimeout, true);
 	self.player.addEventListener('touchmove', self.restartTimeout, true);
@@ -10474,15 +10254,15 @@ window.CloudPlayer = function(elid, options){
 	mElementPlay.onclick = function() {
 	    self.play('by_button_click');
 	}
-
+	
 	el_pause.onclick = function() {
 	    self.pause('by_button_click');
 	}
-
+	
 	el_stop.onclick = function() {
 	    self.stop('by_button_click');
 	}
-
+	
 	self.size = function(width, height){
 		// redesign
 		console.error("[CloudPlayer] size not support");
@@ -10502,7 +10282,7 @@ window.CloudPlayer = function(elid, options){
 			return  { width: self.playerWidth, height: self.playerHeight };
 		}*/
 	};
-
+	
 	self.setFullscreenCallback = function(func) {
 		self.f_callbackFullscreenFunc = func;
 	}
@@ -10534,7 +10314,7 @@ window.CloudPlayer = function(elid, options){
 		var dbg = self.player.getElementsByClassName('cloudplayer-debug')[0];
 		dbg.style.display = "block";
 		var t = document.createTextNode(what + '\n');
-		dbg.appendChild(t);
+		dbg.appendChild(t); 
 	}
 
 	self.initFullscreenControls = function(){
@@ -10547,14 +10327,14 @@ window.CloudPlayer = function(elid, options){
 				_prevWidth = self.player.style.width;
 				_prevMaxH = self.player.style.maxHeight;
 				_prevMaxW = self.player.style.maxWidth;
-
+				
 				self.player.style.height ='100%';
 				self.player.style.width = '100%';
 				self.player.style.maxHeight = '100%';
 				self.player.style.maxWidth = '100%';
 				// self.size('100%', '100%');
 				console.log('changedFullscreen -> fullscreen');
-
+				
 				if (screen.orientation && screen.orientation.lock) {
 					screen.orientation.lock('landscape');
 				}
@@ -10566,7 +10346,7 @@ window.CloudPlayer = function(elid, options){
 				//_prevHeight
 				self.player.style.height = _prevHeight;
 				self.player.style.width = _prevWidth;
-
+				
 				self.player.style.maxHeight =_prevMaxH;
 				self.player.style.maxWidth = _prevMaxW;
 
@@ -10604,13 +10384,13 @@ window.CloudPlayer = function(elid, options){
 					self.player.webkitRequestFullscreen();
 				} else if(self.player.msRequestFullscreen) {
 					self.player.msRequestFullscreen();
-				}
+				} 
 			}
 		};
 		el_fullscreen.onclick = self.fullscreen;
 	}
 	self.initFullscreenControls();
-
+	
 	self.initHLSMechanism = function(){
 
 		self._applyMediaTiket = function(url_hls, expire){
@@ -10647,19 +10427,18 @@ window.CloudPlayer = function(elid, options){
 	self.disableModeSetting = function () {
 		mElSettings_format_container.classList.remove('enabled');
 	}
-
+	
 	self.collapseMenu = function(){
 		el_player.classList.remove('showing-format-selection');
 		el_player.classList.remove('showing-dewarping-selection');
 		el_player.classList.remove('showing-speed-selection');
-		el_player.classList.remove('showing-quality-selection');
 	}
 
 	if (options.useOnlyPlayerFormat !== undefined)
 		self.disableModeSetting();
-	else
+	else	
 		self.enableModeSetting();
-
+		
 }
 
 CloudPlayer.POSITION_LIVE = -1;
@@ -10676,12 +10455,12 @@ CloudShareClipModel.prototype.createClip = function ( cloudcamera, accessToken, 
 	this.camera = cloudcamera;
 	this.accessToken = accessToken;
 	var self = this;
-
+    
 	this.camera.createClip (clipname, start_time, end_time, delete_at, this.accessToken)
 	.done(function(r){
 	    var clipid = r.id;
 	    var status = r.status;
-
+	    
 	    if (status === "pending") {
 		setTimeout( function() { self.clipStatus(clipid) }, 3000 );
 	    } else if (status === "done") {
@@ -10692,7 +10471,7 @@ CloudShareClipModel.prototype.createClip = function ( cloudcamera, accessToken, 
 	})
 	.fail(function(r){
 	    self.controller.processDone('error');
-	});
+	});    
     }
 }
 
@@ -10701,9 +10480,9 @@ CloudShareClipModel.prototype.clipStatus = function ( clipid ) {
     if (this.camera && this.camera !== undefined) {
 	this.camera.getClip(clipid, this.accessToken)
 	.done(function(r){
-	    console.log('Clip Status OK:' + r.status);
+	    console.log('Clip Status OK:' + r.status);	
 	    var status = r.status;
-
+	    
 	    if ((status === "") || (status === "pending")){
 		setTimeout( function() { self.clipStatus(clipid) }, 3000 );
 	    } else if (status === "done") {
@@ -10726,12 +10505,12 @@ var CloudShareClipView = function CloudShareClipView(element) {
 
 
 CloudShareClipView.prototype.initDraw = function initDraw(controller) {
-    this.element.innerHTML =
+    this.element.innerHTML = 
     	'<div class= "CloudShareClipContainer">'
     +	'</div>';
     var element = this.element;
 
-    this.container = this.element.getElementsByClassName('CloudShareClipContainer')[0];
+    this.container = this.element.getElementsByClassName('CloudShareClipContainer')[0]; 
 
     this.render(controller);
 }
@@ -10747,7 +10526,7 @@ CloudShareClipView.prototype.showWait = function showWait(isWait) {
     if (isWait) {
         $(element).addClass("waitdata");
     } else {
-        $(element).removeClass("waitdata");
+        $(element).removeClass("waitdata");    
     }
 };
 
@@ -10759,9 +10538,9 @@ var CloudShareClipController = function CloudShareClipController( element) {
     }
 
     this.callback_func = null;
-
+    
     this.inProcess = false;
-
+    
     this.clModel	= new CloudShareClipModel(this);
     this.clView		= new CloudShareClipView(element);
 
@@ -10780,7 +10559,7 @@ CloudShareClipController.prototype.processDone = function processDone ( descript
 CloudShareClipController.prototype.createClip = function createClip ( cloudcamera, accessToken, callback, start_time, clip_duration) {
     if (callback !== undefined) {
 	this.callback_func = callback;
-    }
+    }   
 
     if (this.inProcess) {
 	console.warn('CloudShareClip in process..');
@@ -10794,7 +10573,7 @@ CloudShareClipController.prototype.createClip = function createClip ( cloudcamer
     if (this.callback_func) {
 	this.callback_func( this.inProcess, 'CloudShareClip started');
     }
-
+     
     if (clip_duration === undefined) {
 	clip_duration = 20*1000; //ms
     }
@@ -10802,7 +10581,7 @@ CloudShareClipController.prototype.createClip = function createClip ( cloudcamer
     var clipname = 'clip_' + start_time;
     var now = new Date();
     var delete_at = now.getTime() + 15*60*1000; //delete at 15min after create
-
+    
     console.log('DEBUG create clip ' + cloudcamera.getName() + ' time:' +  start_time + ' dur:' + clip_duration);
     this.clModel.createClip( cloudcamera, accessToken, clipname, start_time, end_time, delete_at );
 }
@@ -10811,6 +10590,7 @@ CloudShareClipController.prototype.showWait = function showWait (isWait) {
     console.log('DEBUG swhoWait '+ isWait);
     this.clView.showWait(isWait);
 };
+
 
 window.CloudPlayerNativeHLS = function(videoEl, hlsUrl){
 	var mVideoEl = videoEl;
@@ -10825,7 +10605,7 @@ window.CloudPlayerNativeHLS = function(videoEl, hlsUrl){
 		if (mVideoEl.children.length > 0) {
 			mVideoEl.removeChild(mVideoEl.children[0]);
 		}
-
+		
 		var source = document.createElement('source');
 		source.src = mHLSUrl;
 		source.type="video/mp4";
@@ -10921,7 +10701,7 @@ window.CloudPlayerNativeHLS = function(videoEl, hlsUrl){
 	mVideoEl.addEventListener("waiting", function() {
 		console.warn("[NativeHLS] waiting");
 	}, true);
-
+	
 };
 
 
@@ -11066,7 +10846,7 @@ window.CloudPlayerNativeVideo = function(elId){
 		}
 		return mVideoEl.currentTime || mCurrentTime;
 	}
-
+	
 	self.play = function() {
 		_checkAutoPlay(mVideoEl.play());
 	}
@@ -11097,7 +10877,7 @@ window.CloudPlayerNativeVideo = function(elId){
 		console.warn(_TAG + "ended");
 	}, true);
 	mVideoEl.addEventListener("error", function(err0, err1) {
-		console.error(_TAG + "err0 ", err0);
+		console.error(_TAG + "err0 ", err0);	
 		/*if (mResetCalled == true) {
 			console.warn(_TAG + "Skip error after reset");
 			mResetCalled = false;
@@ -11164,7 +10944,7 @@ window.CloudPlayerNativeVideo = function(elId){
 	mVideoEl.addEventListener("waiting", function() {
 		// console.warn(_TAG + "waiting");
 	}, true);
-
+	
 };
 
 
@@ -11189,18 +10969,18 @@ window.CloudPlayerWebRTC0 = function(videoEl, srv, rtmpUrl){
 	]};
 
 	var self = this;
-
+	
 	var ws_conn;
 	var mPeerId = Math.floor(Math.random() * (9000 - 10) + 10).toString();
 	self.onWsError = function(msg){
 		console.error(msg);
 	}
-
+	
 	self.onAutoplayBlocked = function() {
         // nothing
         console.error(_TAG + "onAutoplayBlocked");
     }
-
+    
     function _checkAutoPlay(p) {
 		var s = '';
 		if (window['Promise']) {
@@ -11232,7 +11012,7 @@ window.CloudPlayerWebRTC0 = function(videoEl, srv, rtmpUrl){
 			console.error(_TAG + "_checkAutoplay: could not work in your browser ", p);
 		}
 	}
-
+	
 	if (CloudHelpers.isSafari() ) {
         navigator.mediaDevices.getUserMedia({ "audio": false, "video": true}).then(function (stream) {
             console.log(_TAG + "Camera permission granted");
@@ -11408,7 +11188,7 @@ window.CloudPlayerWebRTC0 = function(videoEl, srv, rtmpUrl){
 
 		console.log("[WEBRTC0] Created peer connection for call, waiting for SDP");
 	}
-
+	
 	self.startWS = function() {
 		self.connect_attempts++;
 		if (self.connect_attempts > 3) {
@@ -11417,7 +11197,7 @@ window.CloudPlayerWebRTC0 = function(videoEl, srv, rtmpUrl){
 		}
 		console.log("[WEBRTC0] Connecting to server...");
 		loc = null;
-
+		
 		ws_conn = new WebSocket(mWSServer);
 		/* When connected, immediately register with the server */
 		ws_conn.addEventListener('open', function(event) {
@@ -11431,7 +11211,7 @@ window.CloudPlayerWebRTC0 = function(videoEl, srv, rtmpUrl){
 
 		var constraints = {video: true, audio: true};
 	}
-
+	
 };
 
 
@@ -11457,7 +11237,7 @@ window.CloudPlayerWebRTC2 = function(objVideoEl, strConnectionUrl, arrIceServers
 	self.onWsError = function(msg) {
 		console.error("[WEBRTC2] onWsError, ", msg);
 	}
-
+	
 	/*if (CloudHelpers.isSafari()) {
         navigator.mediaDevices.getUserMedia({ "audio": true, "video": true}).then(function (stream) {
             console.log("[WEBRTC2] Camera permission granted");
@@ -11487,7 +11267,7 @@ window.CloudPlayerWebRTC2 = function(objVideoEl, strConnectionUrl, arrIceServers
 	    m_objVideoEl.play();
 	}
     }
-
+    
     self.reset = function() {
         if (m_objVideoEl && m_objVideoEl.srcObject) {
             m_objVideoEl.pause();
@@ -11506,7 +11286,7 @@ window.CloudPlayerWebRTC2 = function(objVideoEl, strConnectionUrl, arrIceServers
         // nothing
         console.error(_TAG + "onAutoplayBlocked");
     }
-
+    
 	function _checkAutoPlay(p) {
 		var s = '';
 		if (window['Promise']) {
@@ -11538,7 +11318,7 @@ window.CloudPlayerWebRTC2 = function(objVideoEl, strConnectionUrl, arrIceServers
 			console.error(_TAG + "_checkAutoplay: could not work in your browser ", p);
 		}
 	}
-
+    
 	function _videoOnLoadedData() {
 		console.warn(_TAG + "loadeddata");
 		console.warn(_TAG + "currentTime = " + m_objVideoEl.currentTime);
@@ -11766,7 +11546,7 @@ window.CloudPlayerWebRTC2 = function(objVideoEl, strConnectionUrl, arrIceServers
 	self.onServerError = function(event) {
 		console.error("[WEBRTC2] Unable to connect to server, did you add an exception for the certificate?", event)
 	}
-
+	
 	self.onStartStreaming = function() {
 		//stub for event
 	}
@@ -11796,7 +11576,7 @@ window.CloudPlayerWebRTC2 = function(objVideoEl, strConnectionUrl, arrIceServers
 			return;
 		}
 		console.log("[WEBRTC2] Connecting to server...");
-
+		
 		m_objWS = new WebSocket(m_strConnectionUrl);
 
 		/* When connected, immediately register with the server */
@@ -12265,7 +12045,6 @@ window.CloudPlayerJpegLive = function(element, api, camera) {
 	}
 
 	self.reset = function() {
-		console.warn(_TAG, "reset");
 		self.stop();
 	}
 
@@ -12425,9 +12204,9 @@ window.CloudPlayerJpegTimelapse = function (element, api ) {
 
 	self.play = function( redrawPeriod = 1000, start_position) {
 		mRedrawPeriod = redrawPeriod;
-
+		
 		restoreDefaults();
-
+		
 		if ( api !== undefined) {
 			mApi = api;
 		}
@@ -12436,7 +12215,7 @@ window.CloudPlayerJpegTimelapse = function (element, api ) {
 			mVideoEl.setLowDataCB( updateImages );
 			mVideoEl.setTimeCB( updateTime );
 		}
-
+		
 		self.rewind(start_position);
 	}
 
@@ -12447,12 +12226,12 @@ window.CloudPlayerJpegTimelapse = function (element, api ) {
 	self.pause = function() {
 		mVideoEl.stop();
 	}
-
+	
 	self.rewind = function(start_position) {
 		if (!mApi || mApi === undefined) {
 		    return;
 		}
-
+	
 		direction = "-time";
 		var position = undefined;
 		if (start_position !== undefined){
@@ -12463,7 +12242,7 @@ window.CloudPlayerJpegTimelapse = function (element, api ) {
 		mVideoEl.stop();
 		mVideoEl.run (mRedrawPeriod, position);
 	}
-
+	
 	self.fastforward = function(start_position) {
 		if (!mApi || mApi === undefined) {
 		    return;
@@ -12483,7 +12262,7 @@ window.CloudPlayerJpegTimelapse = function (element, api ) {
 
 	self.stop = function() {
 		restoreDefaults();
-
+		
 		if (mController) {
 			mVideoEl.stop();
 		}
@@ -12494,10 +12273,9 @@ window.CloudPlayerJpegTimelapse = function (element, api ) {
 	}
 
 	self.reset = function() {
-		console.warn(_TAG, "reset");
 		self.stop();
 	}
-
+	    
 	self.setTimeUpdateCallback = function ( func ) {
 		timeUpdateCallback = func;
 	}
@@ -12601,22 +12379,23 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 	var mRangeLenModeMs = 3*60*60*1000 + 60*1000; // 3 hours
 
 	var mDefaultMode = clone(mModes["MINUTES_MODE"]);
-
+	
 	var timeline_target = document.createElement("div");
 	// default
 	timeline_target.classList.add("cloudcameratimeline");
 	timeline_target.classList.add("green");
 	timeline_target.classList.add("black");
-
+	
 	if (parent && parent.player) {
 	    el_timeline_container	= parent.player.getElementsByClassName('cloudplayer-timeline-container')[0];
 	    el_calendar_container 	= parent.player.getElementsByClassName('cloudplayer-calendar-container')[0];
-	    el_live_container	= parent.player.getElementsByClassName('cloudplayer-live-container')[0];
+	    el_live_container	= parent.player.getElementsByClassName('cloudplayer-live-container')[0];	
 	} else {
 	    el_timeline_container	= document.getElementsByClassName('cloudplayer-timeline-container')[0];
 	    el_calendar_container 	= document.getElementsByClassName('cloudplayer-calendar-container')[0];
 	    el_live_container	= document.getElementsByClassName('cloudplayer-live-container')[0];
 	}
+
 
 /*	timeline_target.innerHTML = ''
 		+ '<div class="cloudcameratimeline-calendar" style="display: none"></div>'
@@ -12632,11 +12411,10 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		+ '<div class="cloudcameratimeline-shift shift-plus">+1h</div>'
 		+ '<div class="cloudcameratimeline-goto-live disabled">Live</div>'
 		+ '';
-*/
-
+*/	
 	self.left_border = Math.floor(CloudHelpers.getCurrentTimeUTC() - mDefaultMode.len_ms/2);
 	self.right_border = Math.floor(self.left_border + mDefaultMode.len_ms);
-
+	
 	var mElementContent = timeline_target.getElementsByClassName('cloudcameratimeline-content')[0];
 	var mElementData = timeline_target.getElementsByClassName('cloudcameratimeline-data')[0];
 	var mElementCalendar = timeline_target.getElementsByClassName('cloudcameratimeline-calendar')[0];
@@ -12657,9 +12435,8 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 	    timeline_range_or_not = self.elem;
 	} else {
 	    el_timeline_container.appendChild(timeline_target);
-	    timeline_range_or_not = el_timeline_container;
+	    timeline_range_or_not = el_timeline_container;	    
 	}
-
 
 	
 	self.elem = document.getElementById(viewid);
@@ -12668,12 +12445,12 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		console.error("[CloudCameraTimeline] Not found element");
 		return null;
 	}
-
+	
 	if(self.elem.tagName != 'DIV'){
 		console.error("[CloudCameraTimeline] Expected DIV tag but got " + self.elem.tagName);
 		return null;
 	}
-
+	
 	// default
 	self.elem.classList.add("cloudcameratimeline");
 	self.elem.classList.add("green");
@@ -12698,7 +12475,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		+ '<div class="cloudcameratimeline-shift shift-plus">+1h</div>'
 		+ '<div class="cloudcameratimeline-goto-live disabled">Live</div>'
 		+ '';
-
+	
 	self.left_border = Math.floor(CloudHelpers.getCurrentTimeUTC() - mDefaultMode.len_ms/2);
 	self.right_border = Math.floor(self.left_border + mDefaultMode.len_ms);
 	var mElementContent = self.elem.getElementsByClassName('cloudcameratimeline-content')[0];
@@ -12746,44 +12523,40 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		}
 	}
 
-	function _minusHour() {
-		var t = mPlayer.getPosition();
-		// Live video and position is not detected
-		if (t == 0)
-			t = CloudHelpers.getCurrentTimeUTC();
-		if (t != 0)
-		{
-			mPlayer.stop("by_timeline_2");
-			mPlayer.setPosition(t - 3600*1000);
-			mPlayer.play();
-		}
-		else
-			console.log("Invalid current position");
-	}
+	mShiftMinus.onclick = function() {
+				var t = mPlayer.getPosition();
+  				// Live video and position is not detected
+				if (t == 0)
+				    t = CloudHelpers.getCurrentTimeUTC();
+				if (t != 0)
+				{	
+					mPlayer.stop("by_timeline_2");
+					mPlayer.setPosition(t - 3600*1000);
+					self.moveToPosition(t - 3600*1000);
+					mPlayer.play();
+				}
+				else
+					console.log("Invalid current position");
+	};
 
-	function _plusHour() {
-		var isLive = mPlayer.isLive();
-		if (isLive == true){
-			return;
-		}
-		var t = mPlayer.getPosition();
-		if (t == 0)
-			t = CloudHelpers.getCurrentTimeUTC();
-		if (t != 0)
-		{
-			mPlayer.stop("by_timeline_2");
-			mPlayer.setPosition(t + 3600*1000);
-			mPlayer.play();
-		}
-		else
-			console.log("Invalid current position ");
-	}
-
-	mShiftPlus.onclick = _plusHour;
-	mRightArrow.onclick = _plusHour;
-
-	mShiftMinus.onclick = _minusHour;
-	mLeftArrow.onclick = _minusHour;
+	mShiftPlus.onclick = function() {
+				var isLive = mPlayer.isLive();
+				if (isLive == true){
+				    return;
+				}
+				var t = mPlayer.getPosition();
+				if (t == 0)
+				    t = CloudHelpers.getCurrentTimeUTC();
+				if (t != 0)
+				{	
+					mPlayer.stop("by_timeline_2");
+					mPlayer.setPosition(t + 3600*1000);
+					self.moveToPosition(t + 3600*1000);
+					mPlayer.play();
+				}
+				else
+					console.log("Invalid current position ");
+	};
 
 	function _gotoLive(e){
 		if(mPlayer != null && mPlayer.getSource() != null){
@@ -12815,7 +12588,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		tmp = tmp - tmp % mCacheDurationGrid;
 		return tmp;
 	}
-
+	
 	function _stopPolingCursor(){
 		clearInterval(self._polingCursor);
 		mElementGotoLive.classList.remove("now");
@@ -12836,7 +12609,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 					var record = r.objects[i];
 					var startUTCTime = CloudHelpers.parseUTCTime(record.start);
 					var endUTCTime = CloudHelpers.parseUTCTime(record.end);
-
+					
 					var nsta = _normalizeT(startUTCTime);
 					var nend = _normalizeT(endUTCTime);
 					if (!mCacheRecords[nsta]) {
@@ -12892,7 +12665,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		clearInterval(mIntervalPolingData);
 		mIntervalPolingData = null;
 	}
-
+	
 	function _startPolingData(){
 		clearInterval(mIntervalPolingData);
 		mPolingDataMax = CloudHelpers.getCurrentTimeUTC() - CloudHelpers.ONE_MINUTE;
@@ -12906,7 +12679,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 	self.removeCallback = function(uniqname){
 		mCallbacks.removeCallback(uniqname);
 	}
-
+	
 	self.addCallback = function(uniqname, func){
 		mCallbacks.addCallback(uniqname, func);
 	}
@@ -12943,7 +12716,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 			if(le > -5 && le < mContainerWidth){
 
 				mElementCursor.style.left = (le + mLeftDataPadding + leftPositionAdjustment) + 'px';
-
+				
 				// automove if near to ritght border
 				var diff = mContainerWidth - le;
 				var ritgh_diff_procents = (diff*100/mContainerWidth);
@@ -13020,13 +12793,13 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 				console.error("[ERROR] Going beyond the range (start)");
 				return false;
 			}
-
+			
 			if(end > mRangeMax_Normalize){
 				console.error("[ERROR] Going beyond the range (end)");
 				return false;
 			}
 		}
-
+		
 		// document.getElementsByClassName("cloudcameratimeline-data")[0].getElementsByClassName("crect")
 		// var crectList = document.getElementsByClassName("cloudcameratimeline-data")[0].getElementsByTagName("crect");
 		var crectList = mElementData.getElementsByTagName("crect");
@@ -13065,7 +12838,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		}
 		// console.log("_updatedRecords() end " + (new Date().getTime() - calltime) + " ms, count elements: " + mElementData.childElementCount);
 	}
-
+	
 	function _loadRecordsPortion(i){
 		// console.log("_loadRecordsPortion(" + i + ")");
 		var p = CloudHelpers.promise();
@@ -13074,7 +12847,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 			p.resolve();
 			return p;
 		}
-
+		
 		if(mSource != null){
 			mCacheRecords[i] = {};
 			mCacheRecords[i].status = 0;
@@ -13098,7 +12871,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		}
 		return p;
 	}
-
+	
 	function _loadData(left,right){
 		// console.log("_loadData(" + left + "," + right + ")");
 		var start = _normalizeT(left);
@@ -13107,13 +12880,13 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 			console.error("[ERROR] start must be more than end");
 			return false;
 		}
-
+		
 		if(self.isRange()){
 			if(left < mRangeMin_Normalize){
 				console.error("[ERROR] Going beyond the range (left)");
 				return false;
 			}
-
+			
 			if(end > mRangeMax_Normalize){
 				console.error("[ERROR] Going beyond the range (right)");
 				return false;
@@ -13130,7 +12903,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 			}
 		}
 	}
-
+	
 	function _isDifferentTimelinePeriods(data1, data2) {
 		if (data1.length == 0 && data2.length == 0) {
 			return false;
@@ -13165,7 +12938,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		}
 		return false;
 	}
-
+	
 	function _reloadData(i) {
 		mSource.getTimeline(i, i + mCacheDurationGrid).done(function(timeline){
 			if (_isDifferentTimelinePeriods(mCacheRecords[i].data, timeline.periods)) {
@@ -13182,7 +12955,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		if (mSource != null) {
 			for(var i = start; i <= end; i = i + mCacheDurationGrid){
 				var c = mCacheRecords[i];
-				if (c && c.status == 1) {
+				if (c && c.status == 1) { 
 					_reloadData(i);
 				}
 			}
@@ -13223,7 +12996,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 			mCalendar.dispose();
 		}
 	}
-
+	
 	function _changedSource(){
 		console.warn("_changedSource");
 		_disposeTimeline();
@@ -13235,7 +13008,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 				} else {
 					mTimezoneOffset = CloudHelpers.getOffsetTimezone(mSource.getTimezone());
 				}
-				mConn = mSource._getConn();
+				mConn = mSource._getConn();	
 				if (mCalendar != null) {
 					mCalendar.setSource(mSource);
 				}
@@ -13252,7 +13025,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		}
 		self.redrawTimeline({sender: "changed_source"});
 	}
-
+	
 	function _playerEvent(evnt, args){
 		console.warn("_playerEvent ", evnt);
 		if(evnt.name == "SOURCE_CHANGED"){
@@ -13263,7 +13036,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 			mCursorPosition = args.new_pos;
 			_updateCursorPosition({sender: "pos jumped"});
 			self.moveToPosition(args.new_pos);
-
+			
 		} else if (evnt.name == 'STOPED' ){
 			//console.log("Timeline catch event: Player stoped " + args );
 			_stopPolingData();
@@ -13387,8 +13160,8 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 
 	self.setPlayer = function(player){
 		_disposeTimeline();
-
-
+		
+		
 		if (mPlayer) {
 			mPlayer.removeCallback(mViewID);
 		}
@@ -13397,7 +13170,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 			_initCalendar();
 			_changedSource();
 			mPlayer.addCallback(mViewID, _playerEvent);
-
+			
 			mPlayer.setFullscreenCallback (function(){
 				console.warn("fullscreenCallback");
 				self.redrawTimeline();
@@ -13414,14 +13187,14 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		mRangeMax = endPos;
 		mRangeMin_Normalize = _normalizeT(startPos);
 		mRangeMax_Normalize = _normalizeT(endPos) + mCacheDurationGrid;
-
+		
 		timeline_range_or_not.classList.add("range");
 		//self.elem.classList.add("range");
 		_updateScale();
 		var range_len = mRangeMax - mRangeMin;
 		var start_t = mRangeMin;
 		var end_t = mRangeMax;
-
+		
 		if (range_len <= mRangeLenModeMs) {
 			self.hideArrowsButtons();
 			self.hideShiftButtons();
@@ -13454,7 +13227,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 	self.isRange = function(){
 		return mRangeMin != -1 && mRangeMax != -1;
 	}
-
+	
 	self.resetRange = function(){
 		console.warn("[TIMELINE] resetRange");
 		mRangeMin = -1;
@@ -13511,10 +13284,10 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		}
 		mTimelineDrawing = true;
 		_updateScale();
-
+		
 		var left_border_short = Math.floor(self.left_border / mDefaultMode.step_short);
 		var right_border_short = Math.floor(self.right_border / mDefaultMode.step_short) + 1;
-
+		
 		// left and right arrows
 		if(self.isRange()){
 			if(self.left_border <= mRangeMin){
@@ -13522,14 +13295,14 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 			}else{
 				mLeftArrow.classList.remove("disabled");
 			}
-
+				
 			if(self.right_border >= mRangeMax){
 				mRightArrow.classList.add("disabled");
 			}else{
 				mRightArrow.classList.remove("disabled");
 			}
 		}
-
+		
 		// mElementData.innerHTML = '';
 		mElementScale.innerHTML = '<vtext id="texttimelinetest"><vtext>';
 		var test_text = document.getElementById('texttimelinetest');
@@ -13546,9 +13319,9 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		while((textWidth)*mDistSec > step_long){
 			step_long += mDefaultMode.step_long;
 		};
-
+		
 		var nTextWithMonth = step_long*2;
-
+		
 		mElementScale.innerHTML += '<hline></hline>';
 		for(var i = left_border_short; i < right_border_short; i++){
 			var t = i*mDefaultMode.step_short;
@@ -13557,11 +13330,11 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 				var bTextWithMonth = t % nTextWithMonth == 0;
 				var tw = (bTextWithMonth ? textWidthWithMonth : textWidth);
 				var tpos = pos - tw/2;
-
+				
 				mElementScale.innerHTML += '<vline style="left: ' + pos + 'px"></vline>';
 
 				if(t % step_long == 0){
-					mElementScale.innerHTML += '<vtext style="left: ' + tpos + 'px">' + self.dateFormat(t,bTextWithMonth, self.options.timelineampm===true) + '</vtext>';
+					mElementScale.innerHTML += '<vtext style="left: ' + tpos + 'px">' + self.dateFormat(t,bTextWithMonth, self.options.timelineampm===true) + '</vtext>';	
 				}
 			}else{
 				mElementScale.innerHTML += '<vline style="left: ' + pos + 'px"></vline>';
@@ -13574,7 +13347,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 			if(_isLoadedData(self.left_border, self.right_border)){
 				_updatedRecords();
 			}else{
-
+	
 				if(self.isRange()){
 					if(self.left_border < mRangeMin_Normalize || self.right_border > mRangeMax_Normalize){
 						// console.log("skip");
@@ -13589,7 +13362,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		mTimelineDrawing = false;
 	}
 	self.redrawTimeline();
-
+	
 	self.onTimeLineResize = function() {
 //		console.warn("resize "  + document.webkitIsFullScreen);
 		self.redrawTimeline();
@@ -13655,7 +13428,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		function anumation_timeline_(){
 			self.left_border = Math.floor(st[counter].left);
 			self.right_border = Math.floor(st[counter].right);
-
+			
 			if(bChangedSteps){
 				mDefaultMode.step_short = Math.floor(st[counter].step_short);
 				mDefaultMode.step_long = Math.floor(st[counter].step_long);
@@ -13682,7 +13455,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		var res = {};
 		res.left = left_b;
 		res.right = right_b;
-
+		
 		if(self.isRange()){
 			if(res.right > mRangeMax){
 				res.right = mRangeMax;
@@ -13754,7 +13527,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 			}catch(e){
 				console.error(e)
 			}
-
+			
 		}
 	}
 
@@ -13780,7 +13553,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		if(mStartMove){
 			// console.log("mouseup", event);
 			mElementContent.style.cursor = "default";
-			mStartMove = false;
+			mStartMove = false;	
 		}
 	}
 
@@ -13812,7 +13585,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 			console.log("[CloudCameraTimeline] player is null");
 			return;
 		}
-
+		
 		if (mSource == null) {
 			console.log("[CloudCameraTimeline] source is null");
 			return;
@@ -13872,7 +13645,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 	    }
 	    clearInterval(mIntervalPolingData);
 	}
-
+	
 	// apply options
 	if(options["arrows"] !== undefined){
 		if(options["arrows"] == true){
@@ -13911,7 +13684,6 @@ window.CloudCameraCalendarView = function(elem, options){
 	var mConn = null;
 	var mActivity = {};
 	var mCamID = null;
-	var camIDsConns = [];
 	var mLastUpdated = null;
 	var mSelectedMonth = new Date().getMonth();
 	var mSelectedYear = new Date().getFullYear();
@@ -14012,18 +13784,16 @@ window.CloudCameraCalendarView = function(elem, options){
 	// 	mElementContent.style.display = "";
 	// 	return true;
 	// }
-
+	
 	self.renderContent = function() {
 		// console.log("[CALENDAR] ", mActivity);
-		var t = mActivity;
 		mElementTitle.innerHTML = _generateMonthName(mSelectedYear, mSelectedMonth);
 		mElementTable.innerHTML = _generateMonthDays(mSelectedYear, mSelectedMonth);
 
 		var active_days = mElementContent.getElementsByClassName('active-day');
 		for (var i = 0; i < active_days.length; i++) {
 			active_days[i].onclick = function(ev){
-				var _dt = new Date(this.getAttribute('dt').replace(/-/g, '\/'));
-				_dt.setHours(8);
+				var _dt = this.getAttribute('dt');
 				if (self.onChangeDate) {
 					self.onChangeDate(Date.parse(_dt), ev);
 				}
@@ -14045,63 +13815,33 @@ window.CloudCameraCalendarView = function(elem, options){
 	self.renderContent();
 
 	self.updateActivity = function() {
-		if (mConn == null && camIDsConns.length == 0) {
+		if (mConn == null) {
 			console.log("[CALENDAR] mConn is null");
 			mActivity = [];
 			self.renderContent();
 			return;
 		}
-
-		if ((camIDsConns.length != 0)) {
-			var bar = new Promise((resolve, reject) => {
-				mActivity = [];
-				for(var c = 0; c < camIDsConns.length; c++) {
-					cApi = camIDsConns[c].conn._getAPI();
-					cApi.storageActivity(camIDsConns[c].camID, true).done(function(r){
-						mLastUpdated = new Date();
-						for (var i = 0; i <r.objects.length; i++) {
-							if (!mActivity.some(m => m == r.objects[i])) {
-								mActivity.push(r.objects[i]);
-								var s = r.objects[i].split("-");
-								var _month = parseInt(s[1],10)-1;
-								var val = parseInt(s[0],10)*100 + _month;
-								if (i == 0) {
-									mMinMonth = val;
-									mMaxMonth = val;
-								} else {
-									mMinMonth = Math.min(val, mMinMonth);
-									mMaxMonth = Math.max(val, mMaxMonth);
-								}
-							}
-						}
-					})
+		mApi = mConn._getAPI();
+		if (!mApi) {
+		    return;
+		}
+		mApi.storageActivity(mCamID, true).done(function(r){
+			mLastUpdated = new Date();
+			mActivity = r.objects;
+			for (var i = 0; i < mActivity.length; i++) {
+				var s = mActivity[i].split("-");
+				var _month = parseInt(s[1],10)-1;
+				var val = parseInt(s[0],10)*100 + _month;
+				if (i == 0) {
+					mMinMonth = val;
+					mMaxMonth = val;
+				} else {
+					mMinMonth = Math.min(val, mMinMonth);
+					mMaxMonth = Math.max(val, mMaxMonth);
 				}
-				if (c == camIDsConns.length) resolve();
-			});
-			bar.then(() => { self.renderContent()});
-		} else {
-			mApi = mConn._getAPI();
-			if (!mApi) {
-				return;
 			}
-			mApi.storageActivity(mCamID, true).done(function(r){
-				mLastUpdated = new Date();
-				mActivity = r.objects;
-				for (var i = 0; i < mActivity.length; i++) {
-					var s = mActivity[i].split("-");
-					var _month = parseInt(s[1],10)-1;
-					var val = parseInt(s[0],10)*100 + _month;
-					if (i == 0) {
-						mMinMonth = val;
-						mMaxMonth = val;
-					} else {
-						mMinMonth = Math.min(val, mMinMonth);
-						mMaxMonth = Math.max(val, mMaxMonth);
-					}
-				}
-				self.renderContent();
-			})
-		}		
+			self.renderContent();
+		})
 	}
 
 	self.setSource = function(mSource) {
@@ -14109,17 +13849,8 @@ window.CloudCameraCalendarView = function(elem, options){
 		mSelectedYear = new Date().getFullYear();
 		mLastUpdated = null;
 
-		if (Array.isArray(mSource)) {
-			mSource.forEach(s => {
-				var source = s.player.getSource();
-				if (source) {
-					camIDsConns.push({"conn": source._getConn(), "camID": source.getID()});
-					mTimezoneOffset = CloudHelpers.getOffsetTimezone(source.getTimezone());
-				}
-			})
-			self.updateActivity();
-		} else if (mSource != null) {
-			mConn = mSource._getConn();
+		if (mSource != null) {
+			mConn = mSource._getConn();	
 			mCamID = mSource.getID();
 			// reset month and year
 			mTimezoneOffset = CloudHelpers.getOffsetTimezone(mSource.getTimezone());
@@ -14153,7 +13884,7 @@ window.CloudCameraCalendarView = function(elem, options){
 		}
 		self.renderContent();
 	}
-
+	
 	self.isVisible = function() {
 		return mElementContent.style.display !== '';
 	}
@@ -14195,6 +13926,7 @@ window.CloudCameraCalendarView = function(elem, options){
 		}
 	}
 };
+
 window.CloudSessionTimeline = function(viewid){
 	var self = this;
 	var mSource = null;
@@ -14202,7 +13934,7 @@ window.CloudSessionTimeline = function(viewid){
 	mModes["h12"] = { to: "min", len_ms: 9*60*60*1000, step_short: 30*60*1000, step_long: 150*60*1000 }; // 2,5 hr, step 30 min
 	mModes["hr"] = { to: "h12", len_ms: 90*60*1000, step_short: 5*60*1000, step_long: 30*60*1000 }; // 30 min, step 5 min
 	mModes["min"] = { to: "hr", len_ms: 15*60*1000, step_short: 1*60*1000, step_long: 5*60*1000 }; // 5 min, step 1 min
-
+	
 	function clone(obj) {
 		if (null == obj || "object" != typeof obj) return obj;
 		var copy = obj.constructor();
@@ -14213,34 +13945,34 @@ window.CloudSessionTimeline = function(viewid){
 	}
 
 	var mDefaultMode = clone(mModes["min"]);
-
+	
 	self.elem = document.getElementById(viewid);
-
+	
 	if(self.elem == null){
 		console.error("[CloudPlayerTimeline] Not found element");
 		return null;
 	}
-
+	
 	if(self.elem.tagName != 'DIV'){
 		console.error("[CloudPlayerTimeline] Expected DIV tag but got " + self.elem.tagName);
 		return null;
 	}
-
+	
 	// default
 	self.elem.classList.add("cloudplayertimeline");
 	self.elem.classList.add("green");
 	self.elem.classList.add("black");
-
+	
 	self.elem.innerHTML = ''
 		+ '<div class="cloudplayertimeline-content">'
 		+ '		<div class="cloudplayertimeline-scale session"></div>'
 		+ '		<div class="cloudplayertimeline-data session"></div>'
 		+ '		<div class="cloudplayertimeline-cursor"></div>'
 		+ '</div>';
-
+		
 	self.left_border = CloudHelpers.getCurrentTimeUTC() - mDefaultMode.len_ms/2;
 	self.right_border = self.left_border + mDefaultMode.len_ms;
-
+	
 	self.el_data = self.elem.getElementsByClassName('cloudplayertimeline-data')[0];
 	var el_cursor = self.elem.getElementsByClassName('cloudplayertimeline-cursor')[0];
 	self.el_scale = self.elem.getElementsByClassName('cloudplayertimeline-scale')[0];
@@ -14248,7 +13980,7 @@ window.CloudSessionTimeline = function(viewid){
 	function _stopPolingCursor(){
 		clearInterval(self._polingCursor);
 	}
-
+	
 	function _startPolingCursor(){
 		_stopPolingCursor();
 		self._polingCursor = setInterval(function(){
@@ -14267,7 +13999,7 @@ window.CloudSessionTimeline = function(viewid){
 			}
 		},1000);
 	}
-
+	
 	self.setPlayer = function(player){
 		_stopPolingCursor();
 		self.plr = player;
@@ -14281,7 +14013,7 @@ window.CloudSessionTimeline = function(viewid){
 	}
 
 	self.months = ['Jan','Feb','Mar','Apr','May','Jun', 'Jul', 'Aug', 'Spt', 'Oct', 'Nov', 'Dec'];
-
+	
 	self.dateFormat = function(t, bMonth){
 		var d = new Date();
 		d.setTime(t);
@@ -14291,7 +14023,7 @@ window.CloudSessionTimeline = function(viewid){
 			str += " (" + d.getUTCDate() + " " + self.months[d.getUTCMonth()] + ")";
 		return str;
 	}
-
+	
 	self.redrawTimeline = function(){
 		if(self.plr != null){
 			mSource = self.plr.getSource();
@@ -14302,18 +14034,18 @@ window.CloudSessionTimeline = function(viewid){
 			self.left_border = mSource.getStartTime();
 			self.right_border = mSource.getEndTime();
 			mDefaultMode.step_short = (self.right_border - self.left_border)/20;
-			// TODO
+			// TODO 
 			// 120000
 		}
 		el_cursor.style.display = 'none'; // hide
-
+		
 		self.containerWidth = self.el_scale.offsetWidth;
 		self.distPx = self.containerWidth / (self.right_border - self.left_border); // TODO on init mode
 		self.distSec = (self.right_border - self.left_border) / self.containerWidth; // TODO on init mode
-
+		
 		var left_border_short = Math.floor(self.left_border / mDefaultMode.step_short);
 		var right_border_short = Math.floor(self.right_border / mDefaultMode.step_short) + 1;
-
+		
 		self.el_data.innerHTML = '';
 		self.el_scale.innerHTML = '<vtext id="texttimelinetest"><vtext>';
 		var test_text = document.getElementById('texttimelinetest');
@@ -14342,20 +14074,20 @@ window.CloudSessionTimeline = function(viewid){
 				self.el_scale.innerHTML += '<vline style="left: ' + pos + 'px"></vline>';
 
 				if(t % step_long == 0){
-					self.el_scale.innerHTML += '<vtext style="left: ' + tpos + 'px">' + self.dateFormat(t,bTextWithMonth) + '</vtext>';
+					self.el_scale.innerHTML += '<vtext style="left: ' + tpos + 'px">' + self.dateFormat(t,bTextWithMonth) + '</vtext>';	
 				}
 			}else{
 				self.el_scale.innerHTML += '<vline style="left: ' + pos + 'px"></vline>';
 			}
 		}
-
+		
 		self.el_data.innerHTML = '';
 			if(mSource != null){
-
+				
 				// mSource._getAPI().getCamsessRecords();
-
+				
 				mSource.getTimeline(self.left_border, self.right_border).done(function(timeline){
-
+				
 				var per = timeline.periods;
 				self.el_data.innerHTML = '';
 				for(var i = 0; i < per.length; i++){
@@ -14370,9 +14102,9 @@ window.CloudSessionTimeline = function(viewid){
 		}
 	}
 	self.redrawTimeline();
-
+	
 	window.addEventListener("resize", self.redrawTimeline);
-
+	
 	self.animationTo = function(l,r, mode_new){
 		mode_new = mode_new || mDefaultMode;
 		// TODO lock timeline
@@ -14402,12 +14134,12 @@ window.CloudSessionTimeline = function(viewid){
 				steps_step_long.push(k*(len_step_long/sum));
 			}
 		}
-
+		
 		var counter = 0;
 		function anumation_timeline_(){
 			self.left_border += steps_left[counter];
 			self.right_border += steps_right[counter];
-
+			
 			if(bChangedSteps){
 				mDefaultMode.step_short += steps_step_short[counter];
 				mDefaultMode.step_long += steps_step_long[counter];
@@ -14426,7 +14158,7 @@ window.CloudSessionTimeline = function(viewid){
 		}
 		setTimeout(anumation_timeline_, 15);
 	}
-
+	
 	self.fixBorderLimit = function(left_b,right_b){
 		var res = {};
 		res.left = left_b;
@@ -14439,13 +14171,13 @@ window.CloudSessionTimeline = function(viewid){
 		}
 		return res;
 	}
-
+	
 	self._clickOnData = function(e){
 		if(self.plr == null){
 			console.log("[CloudCameraTimeline] player is null");
 			return;
 		}
-
+		
 		if(mSource == null){
 			console.log("[CloudCameraTimeline] source is null");
 			return;
@@ -14469,7 +14201,7 @@ window.CloudSessionTimeline = function(viewid){
 		self._lastMoveX =  event.offsetX;
 		self._startMove = true;
 		self.el_data.style.cursor = "move";
-
+		
 		// console.log("down", self._lastMoveX);
 	}
 
@@ -14584,7 +14316,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 	var mRangeLenModeMs = 3*60*60*1000 + 60*1000; // 3 hours
 
 	var mDefaultMode = clone(mModes["MINUTES_MODE"]);
-
+	
 	if (parent && parent.player) {
 	    el_timeline_container	= parent.player.getElementsByClassName('cloudplayer-timeline-container')[0];
 	    el_calendar_container 	= parent.player.getElementsByClassName('cloudplayer-calendar-container')[0];
@@ -14601,28 +14333,28 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 	timeline_target.classList.add("cloudcameratimeline");
 	timeline_target.classList.add("green");
 	timeline_target.classList.add("black");
-	timeline_target.classList.add("row");
-	timeline_target.classList.add("no-gutters");
 
-	/*
 	timeline_target.innerHTML = ''
 		+ '<div id="' + viewid +'_timeline" class="ktimepicker-container" style="color:white;background:rgba(0,0,0,0);width:100%;height:36px;position:absolute;bottom:0;"></div>'
-                + '<div class="cloudcameratimeline-calendar" style="display: none"></div>'
+		+ '<div class="cloudcameratimeline-calendar" style="display: none"></div>'
 		+ '<div class="cloudcameratimeline-goto-live disabled" style="position:absolute;right:0;top:0;">Live</div>'
-*/
 
+/*
 	timeline_target.innerHTML = ''
-	+ '<div class="cloudcameratimeline-calendar" style="display: none"></div>'
-	+ '<div class="cloudcameratimeline-goto-live disabled">Live</div>'
-	+ '<div class="cloudcameratimeline-shift shift-minus col-1">-1h</div>'
-	+ '<div class="cloudcameratimeline-left col-1"></div>'
-	+ '<div id="' + viewid +'_timeline" class="ktimepicker-container" style="color:white;background:rgba(0,0,0,0);height:36px;max-width:80%!important;flex: 0 0 80%;margin-top: 8px;"></div>'
-//		+ '<div class="cloudcameratimeline-calendar" style="display: none"></div>'
-	+ '</div>'
-	+ '<div class="cloudcameratimeline-right col-1"></div>'
-	+ '<div class="cloudcameratimeline-shift shift-plus col-1">+1h</div>'
-//		+ '<div class="cloudcameratimeline-goto-live disabled">Live</div>'
-	+ '';
+		+ '<div class="cloudcameratimeline-calendar" style="display: none"></div>'
+		+ '<div class="cloudcameratimeline-shift shift-minus">-1h</div>'
+		+ '<div class="cloudcameratimeline-left"></div>'
+		+ '<div class="cloudcameratimeline-content">'
+		+ '		<div class="cloudcameratimeline-scale"></div>'
+		+ '		<div class="cloudcameratimeline-data"></div>'
+		+ '		<div class="cloudcameratimeline-cursor"></div>'
+		+ '</div>'
+		+ '</div>'
+		+ '<div class="cloudcameratimeline-right"></div>'
+		+ '<div class="cloudcameratimeline-shift shift-plus">+1h</div>'
+		+ '<div class="cloudcameratimeline-goto-live disabled">Live</div>'
+		+ '';
+*/
 
 	var mElementContent = timeline_target.getElementsByClassName('cloudcameratimeline-content')[0];
 	var mElementData = timeline_target.getElementsByClassName('cloudcameratimeline-data')[0];
@@ -14636,7 +14368,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 	var mShiftPlus = timeline_target.getElementsByClassName('shift-plus')[0];
 
 	el_calendar_container.appendChild(mElementCalendar);
-	el_live_container.appendChild(mElementGotoLive);
+//	el_live_container.appendChild(mElementGotoLive);
 
 //	self.elem = document.getElementById(viewid);
 //	if ((self.elem != null) && (self.elem.tagName === 'DIV')){
@@ -14644,7 +14376,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 //	    timeline_range_or_not = self.elem;
 //	} else {
 	    el_timeline_container.appendChild(timeline_target);
-//	    timeline_range_or_not = el_timeline_container;
+//	    timeline_range_or_not = el_timeline_container;	    
 //	}
 	el_vxgcloudplayer.setAttribute('timelineselector', '#' + viewid +'_timeline');
 
@@ -14705,13 +14437,14 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 					console.error("[TIMELINE] player is null") ;
 					return;
 				}
-				mPlayer.setPosition(t);
+				mPlayer.setPosition(t - mTimezoneOffset);
 				//self.moveToPosition(t - mTimezoneOffset);
 				mPlayer.play(e);
 			};
 			self.calendar = mCalendar;
 		}
 	}
+
 
 	mElementCalendar.onclick = function() {
 		if (mCalendar != null) {
@@ -14721,45 +14454,43 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		}
 	}
 
-	function _minusHour() {
-		var t = mPlayer.getPosition();
-		// Live video and position is not detected
-		if (t == 0)
-			t = CloudHelpers.getCurrentTimeUTC();
-		if (t != 0)
-		{
-			mPlayer.stop("by_timeline_2");
-			mPlayer.setPosition(t - 3600*1000);
-			mPlayer.play();
-		}
-		else
-			console.log("Invalid current position");
-	}
-
-	function _plusHour() {
-		var isLive = mPlayer.isLive();
-		if (isLive == true){
-			return;
-		}
-		var t = mPlayer.getPosition();
-		if (t == 0)
-			t = CloudHelpers.getCurrentTimeUTC();
-		if (t != 0)
-		{
-			mPlayer.stop("by_timeline_2");
-			mPlayer.setPosition(t + 3600*1000);
-			mPlayer.play();
-		}
-		else
-			console.log("Invalid current position ");
-	}
-
-	mShiftPlus.onclick = _plusHour;
-	mRightArrow.onclick = _plusHour;
-
-	mShiftMinus.onclick = _minusHour;
-	mLeftArrow.onclick = _minusHour;
-
+/*
+	mShiftMinus.onclick = function() {
+				var t = mPlayer.getPosition();
+  				// Live video and position is not detected
+				if (t == 0)
+				    t = CloudHelpers.getCurrentTimeUTC();
+				if (t != 0)
+				{	
+					mPlayer.stop("by_timeline_2");
+					mPlayer.setPosition(t - 3600*1000);
+					self.moveToPosition(t - 3600*1000);
+					mPlayer.play();
+				}
+				else
+					console.log("Invalid current position");
+	};
+*/
+/*
+	mShiftPlus.onclick = function() {
+				var isLive = mPlayer.isLive();
+				if (isLive == true){
+				    return;
+				}
+				var t = mPlayer.getPosition();
+				if (t == 0)
+				    t = CloudHelpers.getCurrentTimeUTC();
+				if (t != 0)
+				{	
+					mPlayer.stop("by_timeline_2");
+					mPlayer.setPosition(t + 3600*1000);
+					self.moveToPosition(t + 3600*1000);
+					mPlayer.play();
+				}
+				else
+					console.log("Invalid current position ");
+	};
+*/
 	function _gotoLive(e){
 		if (parent.mSrc === undefined || parent.mSrc == null) {
 			return;
@@ -14795,7 +14526,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		tmp = tmp - tmp % mCacheDurationGrid;
 		return tmp;
 	}
-*/
+*/	
 	function _stopPolingCursor(){
 		clearInterval(self._polingCursor);
 		mElementGotoLive.classList.remove("now");
@@ -14816,7 +14547,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 					var record = r.objects[i];
 					var startUTCTime = CloudHelpers.parseUTCTime(record.start);
 					var endUTCTime = CloudHelpers.parseUTCTime(record.end);
-
+					
 					var nsta = _normalizeT(startUTCTime);
 					var nend = _normalizeT(endUTCTime);
 					if (!mCacheRecords[nsta]) {
@@ -14915,7 +14646,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		}
 
 		el_timelinepicker = el_timeline_container.getElementsByTagName('k-timeline-picker')[0];
-
+		
 		if (el_timelinepicker && mCursorPosition!=0 && !mNoUpdateTimeline ) {
 			if (parent.isLive()) {
 				var vcp = parent.player.getElementsByTagName('vxg-cloud-player')[0];
@@ -14942,7 +14673,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 			if(le > -5 && le < mContainerWidth){
 
 				mElementCursor.style.left = (le + mLeftDataPadding + leftPositionAdjustment) + 'px';
-
+				
 				// automove if near to ritght border
 				var diff = mContainerWidth - le;
 				var ritgh_diff_procents = (diff*100/mContainerWidth);
@@ -15021,13 +14752,13 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 				console.error("[ERROR] Going beyond the range (start)");
 				return false;
 			}
-
+			
 			if(end > mRangeMax_Normalize){
 				console.error("[ERROR] Going beyond the range (end)");
 				return false;
 			}
 		}
-
+		
 		// document.getElementsByClassName("cloudcameratimeline-data")[0].getElementsByClassName("crect")
 		// var crectList = document.getElementsByClassName("cloudcameratimeline-data")[0].getElementsByTagName("crect");
 		var crectList = mElementData.getElementsByTagName("crect");
@@ -15076,7 +14807,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 			p.resolve();
 			return p;
 		}
-
+		
 		if(mSource != null){
 			mCacheRecords[i] = {};
 			mCacheRecords[i].status = 0;
@@ -15110,13 +14841,13 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 			console.error("[ERROR] start must be more than end");
 			return false;
 		}
-
+		
 		if(self.isRange()){
 			if(left < mRangeMin_Normalize){
 				console.error("[ERROR] Going beyond the range (left)");
 				return false;
 			}
-
+			
 			if(end > mRangeMax_Normalize){
 				console.error("[ERROR] Going beyond the range (right)");
 				return false;
@@ -15188,7 +14919,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		if (mSource != null) {
 			for(var i = start; i <= end; i = i + mCacheDurationGrid){
 				var c = mCacheRecords[i];
-				if (c && c.status == 1) {
+				if (c && c.status == 1) { 
 					_reloadData(i);
 				}
 			}
@@ -15237,7 +14968,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 
 	function _changedSource(){
 		console.warn("_changedSource");
-
+		
 		if(mPlayer != null){
 			mSource = mPlayer.getSource();
 			if(mSource){
@@ -15252,7 +14983,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 				}
 			}
 		}
-
+		
 		if(parent != null){
 			_startPolingCursor();
 		}
@@ -15267,7 +14998,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 			mCursorPosition = args.new_pos;
 			//_updateCursorPosition({sender: "pos jumped"});
 			//self.moveToPosition(args.new_pos);
-
+			
 		} else if (evnt.name == 'STOPED' ){
 			console.log("Timeline catch event: Player stoped " + args );
 			//_stopPolingData();
@@ -15398,7 +15129,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 
 	self.setPlayer = function(player){
 		//_disposeTimeline();
-
+		
 		if (mPlayer) {
 			mPlayer.removeCallback(mViewID);
 		}
@@ -15407,7 +15138,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 			_initCalendar();
 			//_changedSource();
 			mPlayer.addCallback(mViewID, _playerEvent);
-
+			
 			mPlayer.setFullscreenCallback (function(){
 				console.warn("fullscreenCallback");
 			//	self.redrawTimeline();
@@ -15424,14 +15155,14 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		mRangeMax = endPos;
 		mRangeMin_Normalize = _normalizeT(startPos);
 		mRangeMax_Normalize = _normalizeT(endPos) + mCacheDurationGrid;
-
+		
 		timeline_range_or_not.classList.add("range");
 		//self.elem.classList.add("range");
 		_updateScale();
 		var range_len = mRangeMax - mRangeMin;
 		var start_t = mRangeMin;
 		var end_t = mRangeMax;
-
+		
 		if (range_len <= mRangeLenModeMs) {
 			self.hideArrowsButtons();
 			self.hideShiftButtons();
@@ -15466,7 +15197,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		return mRangeMin != -1 && mRangeMax != -1;
 	}
 */
-/*
+/*	
 	self.resetRange = function(){
 		console.warn("[TIMELINE] resetRange");
 		mRangeMin = -1;
@@ -15523,10 +15254,10 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		}
 		mTimelineDrawing = true;
 		_updateScale();
-
+		
 		var left_border_short = Math.floor(self.left_border / mDefaultMode.step_short);
 		var right_border_short = Math.floor(self.right_border / mDefaultMode.step_short) + 1;
-
+		
 		// left and right arrows
 		if(self.isRange()){
 			if(self.left_border <= mRangeMin){
@@ -15534,14 +15265,14 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 			}else{
 				mLeftArrow.classList.remove("disabled");
 			}
-
+				
 			if(self.right_border >= mRangeMax){
 				mRightArrow.classList.add("disabled");
 			}else{
 				mRightArrow.classList.remove("disabled");
 			}
 		}
-
+		
 		// mElementData.innerHTML = '';
 		mElementScale.innerHTML = '<vtext id="texttimelinetest"><vtext>';
 		var test_text = document.getElementById('texttimelinetest');
@@ -15558,9 +15289,9 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		while((textWidth)*mDistSec > step_long){
 			step_long += mDefaultMode.step_long;
 		};
-
+		
 		var nTextWithMonth = step_long*2;
-
+		
 		mElementScale.innerHTML += '<hline></hline>';
 		for(var i = left_border_short; i < right_border_short; i++){
 			var t = i*mDefaultMode.step_short;
@@ -15569,11 +15300,11 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 				var bTextWithMonth = t % nTextWithMonth == 0;
 				var tw = (bTextWithMonth ? textWidthWithMonth : textWidth);
 				var tpos = pos - tw/2;
-
+				
 				mElementScale.innerHTML += '<vline style="left: ' + pos + 'px"></vline>';
 
 				if(t % step_long == 0){
-					mElementScale.innerHTML += '<vtext style="left: ' + tpos + 'px">' + self.dateFormat(t,bTextWithMonth, self.options.timelineampm===true) + '</vtext>';
+					mElementScale.innerHTML += '<vtext style="left: ' + tpos + 'px">' + self.dateFormat(t,bTextWithMonth, self.options.timelineampm===true) + '</vtext>';	
 				}
 			}else{
 				mElementScale.innerHTML += '<vline style="left: ' + pos + 'px"></vline>';
@@ -15586,7 +15317,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 			if(_isLoadedData(self.left_border, self.right_border)){
 				_updatedRecords();
 			}else{
-
+	
 				if(self.isRange()){
 					if(self.left_border < mRangeMin_Normalize || self.right_border > mRangeMax_Normalize){
 						// console.log("skip");
@@ -15669,7 +15400,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		function anumation_timeline_(){
 			self.left_border = Math.floor(st[counter].left);
 			self.right_border = Math.floor(st[counter].right);
-
+			
 			if(bChangedSteps){
 				mDefaultMode.step_short = Math.floor(st[counter].step_short);
 				mDefaultMode.step_long = Math.floor(st[counter].step_long);
@@ -15697,7 +15428,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		var res = {};
 		res.left = left_b;
 		res.right = right_b;
-
+		
 		if(self.isRange()){
 			if(res.right > mRangeMax){
 				res.right = mRangeMax;
@@ -15772,7 +15503,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 			}catch(e){
 				console.error(e)
 			}
-
+			
 		}
 	}
 */
@@ -15800,7 +15531,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		if(mStartMove){
 			// console.log("mouseup", event);
 			mElementContent.style.cursor = "default";
-			mStartMove = false;
+			mStartMove = false;	
 		}
 	}
 */
@@ -15835,7 +15566,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 			console.log("[CloudCameraTimeline] player is null");
 			return;
 		}
-
+		
 		if (mSource == null) {
 			console.log("[CloudCameraTimeline] source is null");
 			return;
@@ -15938,628 +15669,10 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 window.CloudSDK = window.CloudSDK || {};
 
 // Automaticlly generated
-CloudSDK.version = '3.3.19';
-CloudSDK.datebuild = '240226';
+CloudSDK.version = '3.2.6';
+CloudSDK.datebuild = '230502';
 console.log('CloudSDK.version='+CloudSDK.version + '_' + CloudSDK.datebuild);
 
-window.CloudPlayerList = function(timelineId, o) {
-	var self = this;
-	self.playerList = null;
-	self.options = o || {};
-	self.timeline = null;
-	self.fullPlayer = null;
-	self.killSync = false;
-	
-	self.synchronize = function(prevStopArr = [], first = true) {
-		var stopArr = [];
-		if (first && self.playerList) self.joinedTimeline();
-		var playing = self.playerList.filter(p => p.mCameraID != null);
-		if (playing) {
-			var allTimes = playing.map(t => ({"id": t.playerElementID, "time": t.getPosition()}));
-			var ts = allTimes.map(t => t.time);
-			var timeDiff = Math.max(...ts) - Math.min(...ts) <= 1500 ? false : true;
-			if (timeDiff) {
-				var minTime = Math.min(...ts);
-				playing.forEach(p => {
-					var timeObj = allTimes.find(t => t.id == p.playerElementID);
-					var currTime = timeObj.time;
-					if(currTime - minTime > 1500) {
-						if (!prevStopArr.some(s => s.playerElementID == p.playerElementID)) {
-							if (self.killSync) return;
-							var i = self.playerList.indexOf(p);
-							self.playerList[i].pause();
-						}
-						stopArr.push(p); 
-					} else {
-						if (prevStopArr.some(s => s.playerElementID == p.playerElementID)) {
-							if (self.killSync) return;
-							var i = self.playerList.indexOf(p);
-							self.playerList[i].play();
-						}
-					}
-				})
-			} else {
-				if (self.killSync) return;
-				prevStopArr.forEach(p => {
-					p.play();
-				})
-			}
-			setTimeout(function() {if (!self.killSync) return self.synchronize(stopArr, false)}, 500);
-			
-		} else {
-			setTimeout(function() {if (!self.killSync) return self.synchronize([], true)}, 500);
-		} 
-	}
-
-	self.joinedTimeline = function() {
-		if (self.playerList.find(p => p.player.elid == self.fullPlayer.elid).mCameraID == null) {
-			var anyPlaying = self.playerList.filter(p => p.mCameraID != null);
-			if (anyPlaying) {
-				self.fullPlayer = anyPlaying[0].player;
-				self.timeline.assignNewPrimary(anyPlaying[0], self.playerList);
-			}
-		}
-		self.timeline.setPlayer(self.fullPlayer, self.playerList);
-		self.fullPlayer.calendar = self.timeline.calendar;
-		self.timeline._initTimeline(self.playerList);
-	}
-
-	self.addPlayerToList = function(newPlayer) {
-		if(self.timeline == null && self.options.timeline){
-			self.options.joinedTimeline = true;
-			self.timeline = new JoinedTimelineView(timelineId, newPlayer, self.options);
-			self.fullPlayer = newPlayer.player;
-		}
-				
-		if (self.playerList == null) {
-			self.playerList = [newPlayer];
-		} else if (!self.playerList.some(p => p.playerElementID == newPlayer.playerElementID)) {
-			self.playerList.push(newPlayer);
-		} else if (self.playerList.find(p => p.player.elid == self.fullPlayer.elid).mCameraID == null) {
-			self.fullPlayer = newPlayer.player;
-			self.timeline.assignNewPrimary(newPlayer, self.playerList);
-		}
-
-		return self.playerList;
-	}
-
-	self.removePlayerFromList = function(player) {
-		var index = self.playerList.indexOf(player);
-		if (index != -1) {
-			self.playerList.splice(index, 1);
-		} 
-		var playing = self.playerList.filter(p => p.mCameraID != null);
-		if (player.player.elid == self.fullPlayer.elid && playing.length != 0) {
-			self.fullPlayer = playing[0].player;
-			self.timeline.assignNewPrimary(playing[0], self.playerList);
-		}
-	}
-
-	self.updatePlayerCamera = function(updatedPlayer) {
-		var oldPlayer = self.playerList.findIndex(p => p.playerElementID == updatedPlayer.playerElementID);
-		if (oldPlayer != -1) {
-			self.playerList[oldPlayer].mCameraID = updatedPlayer.mCameraID;
-		}
-	}
-
-	self.getPlayerList = function() {
-		return self.playerList;
-	}
-
-	self.killSyncPromise = function(kill) {
-		return new Promise((resolve, reject) => { self.killSync = kill; return resolve(true); });
-	}
-}
-window.JoinedTimelineView = function (viewid, playersdk, options) {
-	var self = this;
-	options = self.options = options || {};
-	var playerList = null;
-	var primaryPlayer = null;
-	var primaryPlayerSDK = playersdk;
-	var mViewID = viewid;
-
-	var mSource = null;
-	var mTimezoneOffset = 0;
-	var mConn = null;
-
-	// cache by every 3 hours
-	var mCacheDurationGrid = 10800000;
-	var mCacheRecords = {};
-	var mCursorPosition = 0;
-	var mTimelineDrawing = false;
-	var mContainerWidth = 0;
-	var mDistPx = 0;
-	var mDistSec = 0;
-	var mIntervalPolingData = null;
-	var mPolingDataMax = 0;
-	var mRangeMin = -1;
-	var mRangeMax = -1;
-	var mNavArrowsHided = false;
-	var mStartMove = false;
-	var mFirstMoveX = 0;
-	var mLastMoveX = 0;
-	var mAnimationToProgress = false;
-	var mLeftDataPadding = 0;
-	var mRightDataPadding = 0;
-	var mOptionCalendar = false;
-	var mUseTimezone = null;
-	var mRangePolingDataEveryInSec = null;
-	var mPolingRangeDataInterval = null;
-	var mCallbacks = CloudHelpers.createCallbacks();
-	var el_timeline_container	= null;
-	var el_calendar_container 	= null;
-	var el_live_container		= null;
-	var el_vxgcloudplayer 		= null;
-	var el_timelinepicker		= null;
-	var timeline_range_or_not	= null;
-	var mNoUpdateTimeline		= false;
-
-	if (options.useTimezone) {
-		mUseTimezone = options.useTimezone;
-		console.warn("[CloudTimeline] useTimezone: " + mUseTimezone);
-	}
-
-	if(options.calendar !== undefined){
-		mOptionCalendar = options.calendar == true;
-	}
-
-	if(options["polingRangeDataEveryInSec"] !== undefined) {
-		mRangePolingDataEveryInSec = parseInt(options["polingRangeDataEveryInSec"]);
-	}
-
-	function clone(obj) {
-		if (null == obj || "object" != typeof obj) return obj;
-		var copy = obj.constructor();
-		for (var attr in obj) {
-			if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-		}
-		return copy;
-	}
-
-	var mModes = {};
-	mModes["HOURS_12_MODE"] = {
-		len_ms: 9*60*60*1000, // 9 hours
-		step_short: 30*60*1000, // 30 minutes
-		step_long: 150*60*1000 // 2 hours and 30 minutes
-	};
-	mModes["HOUR_MODE"] = {
-		len_ms: 90*60*1000, // 1 hour and 30 minutes
-		step_short: 5*60*1000, // 5 minutes
-		step_long: 30*60*1000 // 30 minutes
-	};
-	mModes["MINUTES_MODE"] = {
-		len_ms: 15*60*1000,  // 15 minutes
-		step_short: 1*60*1000,  // 1 minute
-		step_long: 5*60*1000  // 5 minutes
-	};
-	var mRangeLenModeMs = 3*60*60*1000 + 60*1000; // 3 hours
-
-	var mDefaultMode = clone(mModes["MINUTES_MODE"]);
-
-
-//	el_timeline_container	= document.getElementsByClassName('cloudplayer-timeline-container')[0];
-//	el_calendar_container 	= document.getElementsByClassName('cloudplayer-calendar-container')[0];
-//	el_live_container		= document.getElementsByClassName('cloudplayer-live-container')[0];
-//	el_vxgcloudplayer		= document.getElementsByClassName('cloudplayer-vxgcloudplayer')[0];
-
-	el_timeline_container	= document.getElementById(mViewID).getElementsByClassName('cloudplayer-timeline-container')[0];
-	el_calendar_container 	= document.getElementById(mViewID).getElementsByClassName('cloudplayer-calendar-container')[0];
-	el_live_container		= document.getElementById(mViewID).getElementsByClassName('cloudplayer-live-container')[0];
-	el_vxgcloudplayer		= primaryPlayerSDK.element.getElementsByClassName('cloudplayer-vxgcloudplayer')[0];
-
-
-	var timeline_target = document.createElement("div");
-	timeline_target.classList.add("cloudcameratimeline");
-	timeline_target.classList.add("green");
-	timeline_target.classList.add("black");
-
-	timeline_target.innerHTML = ''
-	+ '<div class="cloudcameratimeline-calendar single-timeline" style="display: none" id="single-timeline-calendar-toggle"></div>'
-	+ '<div class="cloudplayer-pause single-timeline"></div>'
-	+ '<div class="cloudcameratimeline-goto-live single-timeline disabled">Live</div>'
-	+ '<div class="cloudcameratimeline-shift shift-minus">-1h</div>'
-	+ '<div class="cloudcameratimeline-left"></div>'
-	+ '<div class="timeline-container" style="width:85%;height:35px;">'
-	+ '<div id="' + viewid +'_timeline" class="ktimepicker-container" style="color:white;background:rgba(0,0,0,0);width:100%;height:36px;bottom:5px;left:75px;"></div>'
-	+ '</div>'
-	+ '<div class="cloudcameratimeline-right single-timeline"></div>'
-	+ '<div class="cloudcameratimeline-shift shift-plus single-timeline">+1h</div>'
-	+ '';
-
-	var mElementContent = timeline_target.getElementsByClassName('cloudcameratimeline-content')[0];
-	var mElementData = timeline_target.getElementsByClassName('cloudcameratimeline-data')[0];
-	var mElementPlayPause = timeline_target.getElementsByClassName('cloudplayer-pause')[0];
-	var mElementCalendar = timeline_target.getElementsByClassName('cloudcameratimeline-calendar')[0];
-	var mElementCursor = timeline_target.getElementsByClassName('cloudcameratimeline-cursor')[0];
-	var mElementScale = timeline_target.getElementsByClassName('cloudcameratimeline-scale')[0];
-	var mElementGotoLive = timeline_target.getElementsByClassName('cloudcameratimeline-goto-live')[0];
-	var mLeftArrow = timeline_target.getElementsByClassName('cloudcameratimeline-left')[0];
-	var mRightArrow = timeline_target.getElementsByClassName('cloudcameratimeline-right')[0];
-	var mShiftMinus = timeline_target.getElementsByClassName('shift-minus')[0];
-	var mShiftPlus = timeline_target.getElementsByClassName('shift-plus')[0];
-
-	el_calendar_container.appendChild(mElementCalendar);
-	el_calendar_container.appendChild(mElementPlayPause);
-	el_calendar_container.appendChild(mElementGotoLive);
-
-    el_timeline_container.appendChild(timeline_target);
-
-	el_vxgcloudplayer.setAttribute('timelineselector', '#' + viewid +'_timeline');
-
-	var mCalendar = null;
-
-	var obs  = null;
-	var targetNode = el_timeline_container.getElementsByClassName("ktimepicker-container")[0];
-	var observe_config = { childList: true };
-	var observe_callback = function(mutationsList) {
-		console.log("observe_callback");
-		for(var mutation of mutationsList) {
-		if (mutation.type == 'childList') {
-			console.log('A child node has been added or removed.');
-			el_timelinepicker = el_timeline_container.getElementsByTagName('k-timeline-picker')[0];
-			if (el_timelinepicker) {
-				el_timelinepicker.addEventListener("change", function(event){
-					if (primaryPlayer === undefined || primaryPlayer == null) {
-						return;
-					}
-					mNoUpdateTimeline = true;
-					var  centertime = Number(el_timelinepicker.getAttribute('centerutctime'));
-
-					var player_position = primaryPlayer.getPosition();
-					// TODO_el: setPosition for all the sources 
-					if (centertime > Date.now()) {
-						var isLive = primaryPlayer.isLive();
-						if (!isLive) {
-							playerList.forEach(p => {
-								p.setPosition(CloudHelpers.POSITION_LIVE);
-								p.play('timepicker');
-							})
-						}
-					} else {
-						if (player_position != centertime) {
-							playerList.forEach(p => {
-								if (p.player.mSrc) {
-									p.player.setPosition(centertime);
-									p.player.play('timepicker');
-								}
-							})
-							mElementPlayPause.classList.add('play');
-						}
-					}
-					mNoUpdateTimeline = false;
-				});
-				obs.disconnect();
-			}
-		}
-		}
-	};
-	var observer = new MutationObserver(observe_callback);
-	obs = observer;
-	observer.observe(targetNode, observe_config);
-
-	self._initTimeline = function(players) {
-		playerList = players;
-		_changedSource();
-	}
-
-	self.assignNewPrimary = function(playerSDK, playerList) {
-		var prev_primary = primaryPlayerSDK;
-		var prev_vxgcloudplayer = prev_primary.element.getElementsByClassName('cloudplayer-vxgcloudplayer')[0];
-		prev_vxgcloudplayer.setAttribute('timelineselector', '#');
-
-		primaryPlayerSDK = playerSDK;
-		el_vxgcloudplayer = primaryPlayerSDK.element.getElementsByClassName('cloudplayer-vxgcloudplayer')[0];
-		el_vxgcloudplayer.setAttribute('timelineselector', '#' + mViewID +'_timeline');
-		var ktimepicker = el_vxgcloudplayer.shadowRoot.querySelector("k-control-timepicker").shadowRoot.querySelector("k-timeline-picker");
-		if (ktimepicker) ktimepicker.remove();
-
-		var prev_picker = el_vxgcloudplayer.shadowRoot.querySelector("k-control-timepicker");
-		var kpicker = document.getElementById(mViewID + "_timeline").querySelector("k-timeline-picker");
-
-		prev_picker.picker = kpicker;
-
-		prev_picker.picker.addEventListener("moving", function(e){
-			prev_picker.early_playing = prev_picker.player.isPlaying();
-			prev_picker.player.pause().catch(function(){});
-		},{once:false});
-
-		prev_picker.player.addEventListener("timeupdate", function(e){
-			if (prev_picker.skip_next_timeupdate){
-				delete prev_picker.skip_next_timeupdate;
-				return;
-			}
-			if (!e.detail.currentUtcTime) return;
-			if (e.detail.currentUtcTime < new Date('Jan 1 2000 0:00:00').getTime()){
-				debugger;
-				return;
-			}
-			prev_picker.picker.setAttribute('centerutctime',e.detail.currentUtcTime);
-		},{once:false});
-		prev_picker.picker.addEventListener("change", function(e){
-			clearTimeout(prev_picker.change_time_timer);
-			prev_picker.change_time_timer = setTimeout(function(){
-				let time = parseInt(prev_picker.picker.getAttribute('centerutctime'));
-				prev_picker.player.pause();
-				prev_picker.player.currentUtcTime = time;
-				prev_picker.skip_next_timeupdate=true;
-				prev_picker.player.sendTimeUpdate();
-
-				let step = parseInt(prev_picker.picker.getAttribute('step'));
-				if (!isNaN(step))
-					prev_picker.player.player.storage.posters_cache.autoPreload(time, step);
-			},10);
-		},{once:false});
-
-		prev_picker.picker.addEventListener("getrange", function(e){
-			prev_picker.range = prev_picker.player.player.rangeRequest(e.detail.time_from, e.detail.time_to, e.detail.from_out?5000:0);
-			e.detail.ranges = prev_picker.range!==undefined ? prev_picker.range : {times:[],durations:[]};
-		});
-
-		self.setPlayer(playerSDK.player, playerList);
-		self._initTimeline(playerList)
-	}
-
-	function _initCalendar() {
-		if (primaryPlayer == null) {
-			console.error("[TIMELINE] player is null") ;
-			return;
-		}
-
-		if (mOptionCalendar) {
-			var timelineCalendar = document.getElementById("single-timeline-calendar");
-			mCalendar = new CloudCameraCalendarView(timelineCalendar, options);
-			mCalendar.onChangeDate = function(t, e) {
-				if (primaryPlayer == null) {
-					console.error("[TIMELINE] player is null") ;
-					return;
-				}
-				playerList.forEach(p => {
-					p.setPosition(t);
-					p.play(e);
-				})
-			};
-			self.calendar = mCalendar;
-		}
-	}
-
-	mElementCalendar.onclick = function() {
-		if (mCalendar != null) {
-			console.log(primaryPlayer);
-			primaryPlayer.player.classList.remove('showing-settings', 'showing-zoom');
-			mCalendar.toggleCalendar(mElementCalendar);
-		}
-	}
-
-	function _pausePlayAll() {
-		if (primaryPlayer) {
-			if(primaryPlayer.isPlaying()) {
-				playerList.forEach(p => {
-					if (p.player.mSrc) p.player.pause();
-				});
-				mElementPlayPause.classList.add('play')
-			} else {
-				playerList.forEach(p => {
-					if (p.player.mSrc) p.player.play();
-				})
-				mElementPlayPause.classList.remove('play')
-			}
-		}
-	}
-
-	mElementPlayPause.onclick = _pausePlayAll;
-
-	function _minusHour() {
-		var t = primaryPlayer.getPosition();
-		if (t == 0)
-			t = CloudHelpers.getCurrentTimeUTC();
-		if (t != 0) {
-			playerList.forEach(p => {
-				p.setPosition(t - 3600*1000);
-				p.play();
-			});
-		}
-		else
-			console.log("Invalid current position");
-	}
-
-	function _plusHour() {
-		var isLive = primaryPlayer.isLive();
-		if (isLive == true){
-			return;
-		}
-		var t = primaryPlayer.getPosition();
-		if (t == 0)
-			t = CloudHelpers.getCurrentTimeUTC();
-
-		if (t != 0) {
-			if (t + 3600*1000 > CloudHelpers.getCurrentTimeUTC()) {
-				playerList.forEach(p => {
-					p.setPosition(CloudHelpers.POSITION_LIVE);
-					p.play();
-				})
-			} else {
-				playerList.forEach(p => {
-					p.setPosition(t + 3600*1000);
-					p.play();
-				})
-			}
-		}
-		else
-			console.log("Invalid current position ");
-	}
-
-	mShiftPlus.onclick = _plusHour;
-	mRightArrow.onclick = _plusHour;
-
-	mShiftMinus.onclick = _minusHour;
-	mLeftArrow.onclick = _minusHour;
-
-	function _gotoLive(e){
-		if (primaryPlayer.mSrc === undefined || primaryPlayer.mSrc == null) {
-			return;
-		}
-		if(primaryPlayer != null && primaryPlayer.getSource() != null){
-			var sClasses = mElementGotoLive.classList;
-			if(sClasses.contains('now') == false && sClasses.contains('disabled') == false){
-				playerList.forEach(p => {
-					p.setPosition(CloudPlayer.POSITION_LIVE);
-					p.play();
-				})
-			}
-		}
-	}
-	mElementGotoLive.onclick = _gotoLive;
-
-	function _stopPolingCursor(){
-		clearInterval(self._polingCursor);
-		mElementGotoLive.classList.remove("now");
-		mElementGotoLive.classList.add("disabled");
-	}
-
-	function _updateCursorPosition(opt){
-		opt = opt || {};
-
-		if (primaryPlayer.mSrc === undefined || primaryPlayer.mSrc == null) {
-			mElementGotoLive.classList.remove("now");
-			mElementGotoLive.classList.add("disabled");
-		} else {
-			if(primaryPlayer.isLive()){
-				mElementGotoLive.classList.remove("disabled");
-				mElementGotoLive.classList.add("now");
-			}else{
-				mElementGotoLive.classList.remove("disabled");
-				mElementGotoLive.classList.remove("now");
-			}
-		}
-
-		el_timelinepicker = el_timeline_container.getElementsByTagName('k-timeline-picker')[0];
-
-		if (el_timelinepicker && mCursorPosition!=0 && !mNoUpdateTimeline ) {
-			if (primaryPlayer.isLive()) {
-				var vcp = primaryPlayer.player.getElementsByTagName('vxg-cloud-player')[0];
-				vcp.setTimePromise( mCursorPosition ).then(function(res){
-				}).catch(function(exc){
-				});
-			}
-		}
-	}
-
-	function _startPolingCursor(){
-		_stopPolingCursor();
-		self._polingCursor = setInterval(function(){
-			if(primaryPlayer != null){
-				var currPos = primaryPlayer.getPosition();
-				if (currPos != 0) {
-					mCursorPosition = primaryPlayer.getPosition();
-				}
-			}else{
-				mCursorPosition = 0;
-			}
-			_updateCursorPosition({sender: "poling"});
-		},1000);
-	}
-
-	function _changedSource(){
-		console.warn("_changedSource");
-		playerSources = [];
-		if(playerList) {
-			playerList.forEach(p => {
-				if(!playerSources.some(ps => ps == p.getSource())) playerSources.push(p.getSource());
-			})
-		}
-
-		if(primaryPlayer != null){
-			mSource = primaryPlayer.getSource();
-			if(mSource){
-				if (mUseTimezone) {
-					mTimezoneOffset = CloudHelpers.getOffsetTimezone(mUseTimezone);
-				} else {
-					mTimezoneOffset = CloudHelpers.getOffsetTimezone(mSource.getTimezone());
-				}				
-				
-				if (mCalendar != null) {
-					if (playerSources) {
-						mCalendar.setSource(playerList);
-					} else {
-						mCalendar.setSource(mSource);
-					}
-				}
-			}
-		}
-
-		if(primaryPlayer != null){
-			_startPolingCursor();
-		}
-	}
-
-	function _playerEvent(evnt, args){
-		console.warn("_playerEvent ", evnt);
-		if(evnt.name == "SOURCE_CHANGED"){
-			_changedSource();
-		}else if(evnt.name == "POSITION_JUMPED"){
-			console.warn("POSITION_JUMPED", primaryPlayer)
-			mCursorPosition = args.new_pos;
-		} else if (evnt.name == 'STOPED' ){
-			console.log("Timeline catch event: Player stoped " + args );
-		} else if (evnt.name == 'PLAYED') {
-			console.log("Timeline catch event: Player played " + args);
-		}
-	}
-
-	self.hideCalendarButton = function(){
-		if(mElementCalendar.style.display != "none"){
-			mElementCalendar.style.display = "none";
-		}
-	}
-
-	self.showCalendarButton = function(){
-		if(mElementCalendar.style.display == "none"){
-			mElementCalendar.style.display = "";
-		}
-	}
-
-	self.hideGotoLiveButton = function(){
-		if(mElementGotoLive.style.display != "none"){
-			mElementGotoLive.style.display = "none";
-		}
-	}
-
-	self.showGotoLiveButton = function(){
-		if(mElementGotoLive.style.display == "none"){
-			mElementGotoLive.style.display = "";
-		}
-	}
-
-	self.setPlayer = function(player, players){
-		if (primaryPlayer) {
-			primaryPlayer.removeCallback(mViewID);
-		}
-		if (players) {
-			playerList = players;
-		}
-		if (player) {
-			primaryPlayer = player;
-			_initCalendar();
-			primaryPlayer.addCallback(mViewID, _playerEvent);
-		} else {
-			primaryPlayer = null;
-		}
-	}
-
-	if(options["gotoLive"] !== undefined){
-		if(options["gotoLive"] == true){
-			self.showGotoLiveButton();
-		}else{
-			self.hideGotoLiveButton();
-		}
-	}
-
-	if(mOptionCalendar){
-		self.showCalendarButton();
-	}else{
-		self.hideCalendarButton();
-	}
-}
 // Wrapper for VXGCloudPlayer & CloudSDK
 
 window.CloudPlayerSDK = function(playerElementID, o) {
@@ -16578,8 +15691,7 @@ window.CloudPlayerSDK = function(playerElementID, o) {
     self.sharedKey = null;
     self.playerElementID = null;
     self.tokenExpire = null;
-    var isLocalPlayer = false;
-
+    
     window['_CloudPlayerSDK'] = window['_CloudPlayerSDK'] || {};
 
     if (!playerElementID || playerElementID === '') throw 'Player container element ID is required.';
@@ -16593,22 +15705,8 @@ window.CloudPlayerSDK = function(playerElementID, o) {
         throw 'Oops! CloudPlayerSDK instance with player element ID: ' + playerElementID + ' already exist. Try use another ID.';
 	}
 
-
     window['_CloudPlayerSDK'][playerElementID] = {};
-
-    self.element = document.getElementById(playerElementID);
-    self.element.classList.add("cloudplayersdk");
-    self.element.classList.add("cloudplayer");
-    self.element.classList.add("green");
-    self.element.classList.add("black");
-
-    self.element.innerHTML = ''
-    + '<div class="cplayer" id="'+playerElementID+'_cplayer"></div>'
-    + '<div class="lplayer" id="'+playerElementID+'_lplayer" style="display: none;"></div>';
-
-    self.local_player = new vxgplayer(playerElementID+'_lplayer', self.options);
-    self.player = new CloudPlayer(playerElementID+'_cplayer', self.options);
-
+    self.player = new CloudPlayer(playerElementID, self.options);
     console.log("self.options: ", self.options);
 
 /*
@@ -16640,39 +15738,6 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 //		self.player.showErrorText(msg);
 		return CloudReturnCode.ERROR_ACCESS_TOKEN_REQUIRED;
 	}
-
-	var isUri = (key.url && CloudHelpers.parseUri(key.url).host)? true : false;
-	if (key.url && !isUri) {
-		if (key.options) {
-			Object.assign(self.options, key.options);
-		}
-		key = key.url;
-	}
-
-
-	if ( key !== undefined
-	&& key.url !== undefined
-	&& isUri
-	) {
-		isLocalPlayer = true;
-		//self.player.close();
-		self.svcp_url = '';
-		self.mCameraID = '';
-		var cplayer = self.element.getElementsByClassName('cplayer')[0];
-		cplayer.style.display = "none";
-		var lplayer = self.element.getElementsByClassName('lplayer')[0];
-		lplayer.style.display = "";
-		self.local_player.setSource(key);
-	} 
-        else 
-        {
-		isLocalPlayer = false;
-        	self.local_player.stop();
-		var cplayer = self.element.getElementsByClassName('cplayer')[0];
-		cplayer.style.display = "";
-		var lplayer = self.element.getElementsByClassName('lplayer')[0];
-		lplayer.style.display = "none";
-
 	var camid = 0;
 	var same_svcp = false;
 	var same_camid = false;
@@ -16686,7 +15751,7 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 			var expire	= CloudHelpers.parseUTCTime(self.tokenExpire);
 			var dtime	= new Date();
 			var now 	= dtime.getTime();
-
+			
 			if ((expire - now) < 0) {
 				self.player._showerror(CloudReturnCode.ERROR_ACCESS_TOKEN_EXPIRED);
 				return CloudReturnCode.ERROR_ACCESS_TOKEN_EXPIRED;
@@ -16731,6 +15796,7 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 		self.player._showerror(CloudReturnCode.ERROR_INVALID_ACCESS_TOKEN_FORMAT);
 //		self.player.showErrorText(msg);
 	}
+
 	if (same_camid && same_svcp) {
 		console.log("DEBUG: Same camid and svcp for newly token");
 		self.conn.updateToken(self.sharedKey);
@@ -16745,20 +15811,19 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 			if (self.conn) {
 				self.cm = new CloudCameraList(self.conn);
 				self.cm.getCamera(self.mCameraID).done (function (cam) {
-						self.camera = cam;
 					self.player.setAccessToken(key);
 					self.player.setAccessTokenExpire(self.tokenExpire);
-					self.player.setSource(self.camera).then(function() {
-						console.log(self.camera)
-						console.log(self.camera._origJson())
-						self.player.setPosition(mPosition);
-						self.player.play();
-					});
+					self.player.setSource(cam);
+					self.camera = cam;
+					console.log(self.camera)
+					console.log(self.camera._origJson())
+					self.player.setPosition(mPosition);
 /*
 					if (self.timeline && mPosition != -1) {
 						self.timeline.moveToPosition(mPosition);
 					}
 */
+					self.player.play();
 				}).fail(function (err) {
 					console.log(err); if (!self.player) return;
 					self.player._showerror(CloudReturnCode.ERROR_CHANNEL_NOT_FOUND);
@@ -16772,11 +15837,10 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 			self.player._showerror(CloudReturnCode.ERROR_NETWORK_ERROR);
 //			self.player._setError("Network error");
 //			self.player.showErrorText("Network error");
-		});
+		});        
 		//self.player.showErrorText("Access token invalid");
 		//return CloudReturnCode.ERROR_NO_CLOUD_CONNECTION;
-	  }
-       }
+	}
     };
 
 	self.getSource = function () {
@@ -16784,45 +15848,26 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 			return CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED;
 		return self.sharedKey;
 	};
-
+	
 	self.play = function(){
-		if (isLocalPlayer) {
-			self.local_player.play();
-		} else {
         if (!self.camera)
             return CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED;
         self.player.play();
-		}
 	};
 
 	self.stop = function(){
+		self.svcp_url = null;
 		self.mCameraID = null;
-
-		if (isLocalPlayer) {
-			self.local_player.stop();
-		} else {
-			if (!self.camera)
-				return CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED;
-			self.player.stop("by_plrsdk_1");
-			//self.player.setSource(null);
-		}
+		self.player.stop("by_plrsdk_1");
 	};
 
     self.pause = function(){
-		if(isLocalPlayer) {
-			self.local_player.pause();
-		} else {
         if (!self.camera)
             return CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED;
         // TODO: what to do here ...
-			self.player.pause();
-		}
     };
 
 	self.close = function(){
-		self.local_player.stop();
-		self.local_player.dispose();
-
         self.player.stop("by_plrsdk_2");
         self.player.close();
         self.player.player.innerHTML = '';
@@ -16831,7 +15876,7 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 			delete window['_CloudPlayerSDK'][playerElementID];
 		}
     };
-
+    
     self.sendBackwardAudio = function() {
 	return self.player.sendBackwardAudio();
     }
@@ -16847,17 +15892,11 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 	self.player.player.innerHTML = '';
 	self.player = null;
 
-	self.local_player.dispose();
-	self.local_player = null;
-
-	self.element.remove();
-	self.element = null;
-
         if(window['_CloudPlayerSDK'][self.playerElementID]){
 		delete window['_CloudPlayerSDK'][self.playerElementID];
 	}
     }
-
+    
     self.isPlaying = function(){
         if (!self.camera)
             return CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED;
@@ -16865,13 +15904,14 @@ window.CloudPlayerSDK = function(playerElementID, o) {
     };
 
     self.setPosition = function(time){
-        mPosition = parseInt(time);
+	time = Number(time);
+        mPosition = time;
         if (!self.camera) {
             return CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED;
         }
         self.player.stop("by_plrsdk_2");
         self.player.setPosition(time);
-/*
+/*        
         if (self.timeline) {
 	    var timelinepos = 0;
 	    if (time > 0){
@@ -16881,18 +15921,19 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 	    }
 	    self.timeline.moveToPosition(timelinepos);
         }
-*/
+*/        
         self.player.play();
     };
-
+    
     self.getPosition = function(){
         if (!self.camera)
             return CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED;
         return self.player.getPosition();
     };
 
-    self.showTimeline = function(show){
 
+    self.showTimeline = function(show){
+/*
         if (!self.camera) {
             console.error(CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED.text);
             return null;
@@ -16901,13 +15942,13 @@ window.CloudPlayerSDK = function(playerElementID, o) {
             console.error(CloudReturnCode.ERROR_NOT_CONFIGURED.text);
             return null;
         }
-        // I did not test with many players on one page
-        document.getElementById("tagsplayer_timeline").style.display = show ? '' : 'none';
-
+        document.getElementById(self.options.timeline).style.display = show ? 'block' : 'hide';
+*/        
         return true;
     };
-
+    
     self.showCalendarControl = function(show){
+/*
 	if(!self.timeline){
 		console.error(CloudReturnCode.ERROR_NOT_CONFIGURED.text);
 		return null;
@@ -16917,14 +15958,15 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 	} else {
 		self.timeline.hideCalendarButton();
 	}
+*/	
     }
-
+    
     self.getChannelName = function () {
         if (!self.camera)
             return CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED;
         return self.camera.getName();
     };
-
+    
     self.setRange = function(startPos,endPos){
         self.player.setRange(startPos,endPos);
 /*
@@ -16940,21 +15982,21 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 		if(self.timeline){
 			self.timeline.resetRange();
 		}
-*/
+*/		
     }
-
+    
     self.showZoomControl = function(isShow) {
 	if (self.player) {
 		self.player._showZoomControl(isShow);
 	}
     }
-
+    
     self.showPTZControl = function(isShow) {
 	if (self.player) {
 		self.player.showPTZControl(isShow);
 	}
     }
-
+    
     self.mOnError_callback = null;
     self.onError = function(callback) {
         if (!callback) {
@@ -16982,14 +16024,14 @@ window.CloudPlayerSDK = function(playerElementID, o) {
     self.setIOsFullscreenCallback = function (func) {
 	self.player.setIOsFullscreenCallback(func)
     }
-
+    
     self.addCallback = function(uniqname, func) {
         self.player.addCallback(uniqname, func);
 /*
         if (self.timeline) {
             self.timeline.addCallback(uniqname, func);
         }
-*/
+*/        
     }
 
     self.removeCallback = function(uniqname) {
@@ -16998,20 +16040,238 @@ window.CloudPlayerSDK = function(playerElementID, o) {
         if (self.timeline) {
             self.timeline.removeCallback(uniqname, func);
         }
-*/
+*/        
     }
-
+    
     self.getImages = function() {
 	self.player.getImages();
     }
-
-   self.sendBackwardAudio = function() {
-	return self.player.sendBackwardAudio();
-    }
-
 };
 
-// video_container_selector - DOM-element with video-elements.
+window.StreamerSWF = window.StreamerSWF || {};
+StreamerSWF.elemId = "streamer_swf";
+StreamerSWF.obj = undefined;
+StreamerSWF.log = function(s){
+	console.log("[StreamerSWF] " + s);
+}
+
+StreamerSWF.warn = function(s){
+	console.warn("[StreamerSWF] " + s);
+}
+	
+StreamerSWF.error = function(s){
+	console.error("[StreamerSWF] " + s);
+}
+
+/* override functions */
+StreamerSWF.startedPublish = function(){ /* you can override */ }
+StreamerSWF.stoppedPublish = function(){ /* you can override */ }
+StreamerSWF.showSecuritySettings = function(){ /* you can override */ }
+StreamerSWF.hideSecuritySettings = function(){ /* you can override */ }
+
+StreamerSWF.activityLevel = function(lvl){
+	console.log("audio lvl " + lvl);
+}
+
+StreamerSWF.flash = function(){
+	if(!StreamerSWF.obj){
+		StreamerSWF.obj = document.getElementById(StreamerSWF.elemId);
+		if(!StreamerSWF.obj){
+			StreamerSWF.error("Element '" + StreamerSWF.elemId + "' not found");
+		}
+		StreamerSWF.log("Init");
+	}else if(!StreamerSWF.obj.vjs_activate){
+		// try again
+		StreamerSWF.obj = document.getElementById(StreamerSWF.elemId);
+		if(!StreamerSWF.obj){
+			StreamerSWF.error("Element '" + StreamerSWF.elemId + "' not found");
+		}
+		StreamerSWF.log("reinit");
+	}
+	return StreamerSWF.obj;
+};
+	
+StreamerSWF.activate = function(rtmpUrl, codec){
+
+	var f = StreamerSWF.flash();
+	if(!f) return;
+	if(f.vjs_activate){
+		var is_private = StreamerSWF.private.is() || false;
+		f.vjs_activate(rtmpUrl, is_private, codec);
+	}else{
+		StreamerSWF.error("Function vjs_activate not found");
+		StreamerSWF.obj = undefined;
+	}
+};
+
+StreamerSWF.support = function(){
+	var f = StreamerSWF.flash();
+	if(!f) return;
+	if(f.vjs_support)
+		return f.vjs_support();
+	else{
+		StreamerSWF.error("Function vjs_support not found");
+		StreamerSWF.obj = undefined;
+	}
+};
+
+StreamerSWF.status = function(){
+	var f = StreamerSWF.flash();
+	if(!f) return;
+	if(f.vjs_status)
+		return f.vjs_status();
+	else{
+		StreamerSWF.error("Function vjs_status not found");
+		StreamerSWF.obj = undefined;
+	}
+};
+	
+StreamerSWF.deactivate = function(){
+	var f = StreamerSWF.flash();
+	if(!f) return;
+	if(f.vjs_deactivate)
+		f.vjs_deactivate();
+	else{
+		console.error("Function vjs_deactivate not found");
+		StreamerSWF.obj = undefined;
+	}
+};
+
+StreamerSWF.isActivated = function(){
+	return (StreamerSWF.status() == "activated");
+};
+
+StreamerSWF.isDeactivated = function(){
+	return (StreamerSWF.status() == "deactivated");
+};
+
+StreamerSWF.isTransitive = function(){
+	return (StreamerSWF.status() == "transitive");
+};
+
+/* private mode opened */
+StreamerSWF.private = {};
+StreamerSWF.private.retry = function(isDone, next) {
+    var current_trial = 0, max_retry = 50, interval = 10, is_timeout = false;
+    var id = window.setInterval(
+        function() {
+            if (isDone()) {
+                window.clearInterval(id);
+                next(is_timeout);
+            }
+            if (current_trial++ > max_retry) {
+                window.clearInterval(id);
+                is_timeout = true;
+                next(is_timeout);
+            }
+        },
+        10
+    );
+}
+
+StreamerSWF.private.isIE10OrLater = function(user_agent) {
+    var ua = user_agent.toLowerCase();
+    if (ua.indexOf('msie') === 0 && ua.indexOf('trident') === 0) {
+        return false;
+    }
+    var match = /(?:msie|rv:)\s?([\d\.]+)/.exec(ua);
+    if (match && parseInt(match[1], 10) >= 10) {
+        return true;
+    }
+    var edge = /edge/.exec(ua);
+	if(edge && edge[0] == "edge"){
+		return true;
+	}
+    return false;
+}
+
+StreamerSWF.private.detectPrivateMode = function(callback) {
+    var is_private;
+
+    if (window.webkitRequestFileSystem) {
+        window.webkitRequestFileSystem(
+            window.TEMPORARY, 1,
+            function() {
+                is_private = false;
+            },
+            function(e) {
+                console.log(e);
+                is_private = true;
+            }
+        );
+    } else if (window.indexedDB && /Firefox/.test(window.navigator.userAgent)) {
+        var db;
+        try {
+            db = window.indexedDB.open('test');
+        } catch(e) {
+            is_private = true;
+        }
+
+        if (typeof is_private === 'undefined') {
+            StreamerSWF.private.retry(
+                function isDone() {
+                    return db.readyState === 'done' ? true : false;
+                },
+                function next(is_timeout) {
+                    if (!is_timeout) {
+                        is_private = db.result ? false : true;
+                    }
+                }
+            );
+        }
+    } else if (StreamerSWF.private.isIE10OrLater(window.navigator.userAgent)) {
+        is_private = false;
+        try {
+            if (!window.indexedDB) {
+                is_private = true;
+            }                 
+        } catch (e) {
+            is_private = true;
+        }
+    } else if (window.localStorage && /Safari/.test(window.navigator.userAgent)) {
+        try {
+            window.localStorage.setItem('test', 1);
+        } catch(e) {
+            is_private = true;
+        }
+
+        if (typeof is_private === 'undefined') {
+            is_private = false;
+            window.localStorage.removeItem('test');
+        }
+    }
+
+    StreamerSWF.private.retry(
+        function isDone() {
+			return typeof is_private !== 'undefined' ? true : false;
+        },
+        function next(is_timeout) {
+            callback(is_private);
+        }
+    );
+}
+
+StreamerSWF.private.is = function(){
+	if(typeof StreamerSWF.private.is_ === 'undefined'){
+		console.error('[StreamerSWF.private] cannot detect');
+	}
+	return StreamerSWF.private.is_;
+}
+
+StreamerSWF.private.detectPrivateMode(
+	function(is_private) {
+		StreamerSWF.private.is_ = is_private;
+		
+		if(typeof is_private === 'undefined'){
+			console.error('[StreamerSWF.private] cannot detect');
+		}else{
+			StreamerSWF.private.is_ = is_private;
+			console.log(is_private ? '[StreamerSWF.private] private' : '[StreamerSWF.private] not private')
+		}
+	}
+);
+
+// video_container_selector - DOM-element with video-elements. 
 // First non-hidden video-element will be showed in canvas
 
 var ptzconfig = {
@@ -17028,11 +16288,11 @@ var ptzconfig = {
     divider: 4 // The number of lines that will make up the circles around the sphere. Exponentially affects the number of triangles
 }
 
-var jsscript = document.getElementsByTagName("script");
-for (var i = 0; i < jsscript.length; i++) {
-      var pattern = /CloudSDK/i;
+var jsscript = document.getElementsByTagName("script"); 
+for (var i = 0; i < jsscript.length; i++) { 
+      var pattern = /CloudSDK/i; 
       if ( pattern.test( jsscript[i].getAttribute("src") ) )
-         ptzconfig.src = jsscript[i].getAttribute("src").replace(/(\/[^\/]+)$/,'\/');
+         ptzconfig.src = jsscript[i].getAttribute("src").replace(/(\/[^\/]+)$/,'\/'); 
  }
 
 function changepztconfig(v,c){
@@ -17049,9 +16309,7 @@ player1_vjs_html5_api.play();
 
 window.CloudPano = function(video_container, cloudplayer){
     var self = {};
-    
     self.container = video_container;
-
     self.pano_player = cloudplayer;
     self.ptzconfig = Object.assign({}, ptzconfig);
 
@@ -17065,7 +16323,7 @@ window.CloudPano = function(video_container, cloudplayer){
         if (self.textureBuffer)
             return;
         var xhr;
-
+    
         try { xhr = new ActiveXObject('Msxml2.XMLHTTP'); }
         catch(e)
         {
@@ -17076,7 +16334,7 @@ window.CloudPano = function(video_container, cloudplayer){
                 catch(e3) { xhr = false; }
             }
         }
-
+    
         xhr.onreadystatechange = function()
         {
             if (self.textureBuffer)
@@ -17093,12 +16351,12 @@ window.CloudPano = function(video_container, cloudplayer){
                     self.gl.bindBuffer(self.gl.ARRAY_BUFFER, self.vertexBuffer);
                     self.gl.bufferData(self.gl.ARRAY_BUFFER, new Float32Array(self.model.vertex), self.gl.STATIC_DRAW);
                     self.gl.bindBuffer(self.gl.ARRAY_BUFFER, null);
-
+                
                     self.indexBuffer = self.gl.createBuffer();
                     self.gl.bindBuffer(self.gl.ELEMENT_ARRAY_BUFFER, self.indexBuffer);
                     self.gl.bufferData(self.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(self.model.indices), self.gl.STATIC_DRAW);
                     self.gl.bindBuffer(self.gl.ELEMENT_ARRAY_BUFFER, null);
-
+                
                     self.textureBuffer = self.gl.createBuffer();
                     self.gl.bindBuffer(self.gl.ARRAY_BUFFER, self.textureBuffer);
                     self.gl.bufferData(self.gl.ARRAY_BUFFER, new Float32Array(self.model.texture), self.gl.STATIC_DRAW);
@@ -17112,11 +16370,9 @@ window.CloudPano = function(video_container, cloudplayer){
             xhr.open('GET', self.pano_player.options.model3d, true);
         else
             xhr.open('GET', self.ptzconfig.src+'model.json', true);
-
         xhr.send(null);
         // return xhr;
     }
-
 
     self.mouseMoveHandler = function(e) {
         var x = e.clientX;
@@ -17137,10 +16393,11 @@ window.CloudPano = function(video_container, cloudplayer){
         self.ptzconfig.xRot = self.bexRot + (self.beY-y)/5.0;
         if (self.ptzconfig.xRot>0) self.ptzconfig.xRot=0;
         if (self.ptzconfig.xRot<-65.2) self.ptzconfig.xRot=-65.2;
+
     }
-    
     self.mouseWheelHandler = function(e) {
         e = e || window.event;
+
         var delta = e.deltaY || e.detail || e.wheelDelta;
         self.ptzconfig.zZoom-= delta/1000;
         if (self.ptzconfig.zZoom>0.6) self.ptzconfig.zZoom=0.6;
@@ -17148,13 +16405,13 @@ window.CloudPano = function(video_container, cloudplayer){
         e.preventDefault();
     }
 
-
     self.createGLContext = function(){
         var sliders = document.createElement("div");
         sliders.style.top="90px";
         sliders.style.position="absolute";
         sliders.style.color="black";
         sliders.style.fontSize="12px";
+
         sliders.innerHTML = '\
             <span style="background:rgba(255,255,255,.7);padding:0 5px">Vertical camera move</span><br/>               <input style="width:250px" id="zCamShift" type="range" min="-1" max="2" step=".01" value="'+self.ptzconfig.zCamShift+'" onchange="changepztconfig(this.value,\'zCamShift\')"><br/>\
             <span for="zZoom" style="background:rgba(255,255,255,.7);padding:0 5px">Zooming</span><br/>                    <input style="width:250px" id="zZoom" type="range" min="-5" max="2" step=".1" value="'+self.ptzconfig.zZoom+'" onchange="changepztconfig(this.value,\'zZoom\')"><br/>\
@@ -17202,9 +16459,9 @@ window.CloudPano = function(video_container, cloudplayer){
             }
             if (gl) return gl;
         }
-
         throw new Error("WebGL is not supported!");
     }
+    
     self.compileShader = function(gl, vertexSrc, fragmentSrc){
         var vertexShader = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(vertexShader, vertexSrc);
@@ -17233,6 +16490,7 @@ window.CloudPano = function(video_container, cloudplayer){
             }
         }
     }
+
     self.run = function(onframe){
         var f = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
             window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -17342,33 +16600,33 @@ window.CloudPano = function(video_container, cloudplayer){
             model.vertex[vx++]=v2[0];model.vertex[vx++]=v2[1];model.vertex[vx++]=v2[2];
             model.indices = model.indices.concat([vx,vx+1,vx+2]);
             model.vertex[vx++]=v3[0];model.vertex[vx++]=v3[1];model.vertex[vx++]=v3[2];
-
+          
             model.texture.push((v1[0]+1.0)/2.0);
             model.texture.push((v1[1]+1.0)/2.0);
             model.texture.push((v2[0]+1.0)/2.0);
             model.texture.push((v2[1]+1.0)/2.0);
             model.texture.push((v3[0]+1.0)/2.0);
             model.texture.push((v3[1]+1.0)/2.0);
-
-
+          
+          
             model.indices = model.indices.concat([vx,vx+1,vx+2]);
             model.vertex[vx++]=v2[0];model.vertex[vx++]=v2[1];model.vertex[vx++]=v2[2];
             model.indices = model.indices.concat([vx,vx+1,vx+2]);
             model.vertex[vx++]=v3[0];model.vertex[vx++]=v3[1];model.vertex[vx++]=v3[2];
             model.indices = model.indices.concat([vx,vx+1,vx+2]);
             model.vertex[vx++]=v4[0];model.vertex[vx++]=v4[1];model.vertex[vx++]=v4[2];
-
+          
             model.texture.push((v2[0]+1.0)/2.0);
             model.texture.push((v2[1]+1.0)/2.0);
             model.texture.push((v3[0]+1.0)/2.0);
             model.texture.push((v3[1]+1.0)/2.0);
             model.texture.push((v4[0]+1.0)/2.0);
             model.texture.push((v4[1]+1.0)/2.0);
-
-            if (b>pi/2)
+          
+            if (b>pi/2) 
                 break;
         }
-
+        
         function get_point_from_angles(a,b){
             if (b>pi/2) b=pi/2;
             if (b<0) b=0;
@@ -17379,9 +16637,9 @@ window.CloudPano = function(video_container, cloudplayer){
             return [x,y,z];
         }
 */
-
+        
     }
-
+ 
     create_model(self.model);
 
     self.gl = self.createGLContext();
@@ -17398,6 +16656,7 @@ window.CloudPano = function(video_container, cloudplayer){
             gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition.x, aVertexPosition.y, aVertexPosition.z*zLens+fCamShift, 1.0);\n\
             vTextureCoord = aTextureCoord;\n\
         }";
+        
     var fragmentSrc = "\
         precision mediump float;\n\
         varying vec2 vTextureCoord;\n\
@@ -17429,7 +16688,7 @@ window.CloudPano = function(video_container, cloudplayer){
         var videos = self.container.querySelectorAll('video');
         var video = null;
         // search active video container
-        for (var i = 0; i < videos.length; ++i)
+        for (var i = 0; i < videos.length; ++i) 
             if (getComputedStyle(videos[i],null).display!="none" && getComputedStyle(videos[i].parentElement,null).display!="none") {
                 video = videos[i];
                 break;
@@ -17459,7 +16718,7 @@ window.CloudPano = function(video_container, cloudplayer){
 	}
 
         updateTexture(self.gl, self.texture, video);
-
+        
         self.gl.clearColor(0.0, 0.0, 0.0, 1.0);
         self.gl.enable(self.gl.DEPTH_TEST);
         self.gl.clear(self.gl.COLOR_BUFFER_BIT | self.gl.DEPTH_BUFFER_BIT);
@@ -17474,7 +16733,7 @@ window.CloudPano = function(video_container, cloudplayer){
 
         glMatrix.mat4.rotate(self.mvMatrix, self.mvMatrix, degToRad(self.ptzconfig.xRot), [1, 0, 0]);
         glMatrix.mat4.rotate(self.mvMatrix, self.mvMatrix, degToRad(self.ptzconfig.zRot), [0, 0, 1]);
-
+        
         self.gl.enableVertexAttribArray(self.aVertexPosition);
 
         self.gl.bindBuffer(self.gl.ARRAY_BUFFER, self.vertexBuffer);
@@ -17537,6 +16796,9 @@ THE SOFTWARE.
 */
 !function(t,n){"object"==typeof exports&&"undefined"!=typeof module?n(exports):"function"==typeof define&&define.amd?define(["exports"],n):n((t=t||self).glMatrix={})}(this,(function(t){"use strict";var n="undefined"!=typeof Float32Array?Float32Array:Array,a=Math.random;var r=Math.PI/180;Math.hypot||(Math.hypot=function(){for(var t=0,n=arguments.length;n--;)t+=arguments[n]*arguments[n];return Math.sqrt(t)});var e=Object.freeze({__proto__:null,EPSILON:1e-6,get ARRAY_TYPE(){return n},RANDOM:a,setMatrixArrayType:function(t){n=t},toRadian:function(t){return t*r},equals:function(t,n){return Math.abs(t-n)<=1e-6*Math.max(1,Math.abs(t),Math.abs(n))}});function u(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=a[0],h=a[1],c=a[2],s=a[3];return t[0]=r*i+u*h,t[1]=e*i+o*h,t[2]=r*c+u*s,t[3]=e*c+o*s,t}function o(t,n,a){return t[0]=n[0]-a[0],t[1]=n[1]-a[1],t[2]=n[2]-a[2],t[3]=n[3]-a[3],t}var i=u,h=o,c=Object.freeze({__proto__:null,create:function(){var t=new n(4);return n!=Float32Array&&(t[1]=0,t[2]=0),t[0]=1,t[3]=1,t},clone:function(t){var a=new n(4);return a[0]=t[0],a[1]=t[1],a[2]=t[2],a[3]=t[3],a},copy:function(t,n){return t[0]=n[0],t[1]=n[1],t[2]=n[2],t[3]=n[3],t},identity:function(t){return t[0]=1,t[1]=0,t[2]=0,t[3]=1,t},fromValues:function(t,a,r,e){var u=new n(4);return u[0]=t,u[1]=a,u[2]=r,u[3]=e,u},set:function(t,n,a,r,e){return t[0]=n,t[1]=a,t[2]=r,t[3]=e,t},transpose:function(t,n){if(t===n){var a=n[1];t[1]=n[2],t[2]=a}else t[0]=n[0],t[1]=n[2],t[2]=n[1],t[3]=n[3];return t},invert:function(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=a*u-e*r;return o?(o=1/o,t[0]=u*o,t[1]=-r*o,t[2]=-e*o,t[3]=a*o,t):null},adjoint:function(t,n){var a=n[0];return t[0]=n[3],t[1]=-n[1],t[2]=-n[2],t[3]=a,t},determinant:function(t){return t[0]*t[3]-t[2]*t[1]},multiply:u,rotate:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=Math.sin(a),h=Math.cos(a);return t[0]=r*h+u*i,t[1]=e*h+o*i,t[2]=r*-i+u*h,t[3]=e*-i+o*h,t},scale:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=a[0],h=a[1];return t[0]=r*i,t[1]=e*i,t[2]=u*h,t[3]=o*h,t},fromRotation:function(t,n){var a=Math.sin(n),r=Math.cos(n);return t[0]=r,t[1]=a,t[2]=-a,t[3]=r,t},fromScaling:function(t,n){return t[0]=n[0],t[1]=0,t[2]=0,t[3]=n[1],t},str:function(t){return"mat2("+t[0]+", "+t[1]+", "+t[2]+", "+t[3]+")"},frob:function(t){return Math.hypot(t[0],t[1],t[2],t[3])},LDU:function(t,n,a,r){return t[2]=r[2]/r[0],a[0]=r[0],a[1]=r[1],a[3]=r[3]-t[2]*a[1],[t,n,a]},add:function(t,n,a){return t[0]=n[0]+a[0],t[1]=n[1]+a[1],t[2]=n[2]+a[2],t[3]=n[3]+a[3],t},subtract:o,exactEquals:function(t,n){return t[0]===n[0]&&t[1]===n[1]&&t[2]===n[2]&&t[3]===n[3]},equals:function(t,n){var a=t[0],r=t[1],e=t[2],u=t[3],o=n[0],i=n[1],h=n[2],c=n[3];return Math.abs(a-o)<=1e-6*Math.max(1,Math.abs(a),Math.abs(o))&&Math.abs(r-i)<=1e-6*Math.max(1,Math.abs(r),Math.abs(i))&&Math.abs(e-h)<=1e-6*Math.max(1,Math.abs(e),Math.abs(h))&&Math.abs(u-c)<=1e-6*Math.max(1,Math.abs(u),Math.abs(c))},multiplyScalar:function(t,n,a){return t[0]=n[0]*a,t[1]=n[1]*a,t[2]=n[2]*a,t[3]=n[3]*a,t},multiplyScalarAndAdd:function(t,n,a,r){return t[0]=n[0]+a[0]*r,t[1]=n[1]+a[1]*r,t[2]=n[2]+a[2]*r,t[3]=n[3]+a[3]*r,t},mul:i,sub:h});function s(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=n[4],h=n[5],c=a[0],s=a[1],M=a[2],f=a[3],l=a[4],v=a[5];return t[0]=r*c+u*s,t[1]=e*c+o*s,t[2]=r*M+u*f,t[3]=e*M+o*f,t[4]=r*l+u*v+i,t[5]=e*l+o*v+h,t}function M(t,n,a){return t[0]=n[0]-a[0],t[1]=n[1]-a[1],t[2]=n[2]-a[2],t[3]=n[3]-a[3],t[4]=n[4]-a[4],t[5]=n[5]-a[5],t}var f=s,l=M,v=Object.freeze({__proto__:null,create:function(){var t=new n(6);return n!=Float32Array&&(t[1]=0,t[2]=0,t[4]=0,t[5]=0),t[0]=1,t[3]=1,t},clone:function(t){var a=new n(6);return a[0]=t[0],a[1]=t[1],a[2]=t[2],a[3]=t[3],a[4]=t[4],a[5]=t[5],a},copy:function(t,n){return t[0]=n[0],t[1]=n[1],t[2]=n[2],t[3]=n[3],t[4]=n[4],t[5]=n[5],t},identity:function(t){return t[0]=1,t[1]=0,t[2]=0,t[3]=1,t[4]=0,t[5]=0,t},fromValues:function(t,a,r,e,u,o){var i=new n(6);return i[0]=t,i[1]=a,i[2]=r,i[3]=e,i[4]=u,i[5]=o,i},set:function(t,n,a,r,e,u,o){return t[0]=n,t[1]=a,t[2]=r,t[3]=e,t[4]=u,t[5]=o,t},invert:function(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=n[4],i=n[5],h=a*u-r*e;return h?(h=1/h,t[0]=u*h,t[1]=-r*h,t[2]=-e*h,t[3]=a*h,t[4]=(e*i-u*o)*h,t[5]=(r*o-a*i)*h,t):null},determinant:function(t){return t[0]*t[3]-t[1]*t[2]},multiply:s,rotate:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=n[4],h=n[5],c=Math.sin(a),s=Math.cos(a);return t[0]=r*s+u*c,t[1]=e*s+o*c,t[2]=r*-c+u*s,t[3]=e*-c+o*s,t[4]=i,t[5]=h,t},scale:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=n[4],h=n[5],c=a[0],s=a[1];return t[0]=r*c,t[1]=e*c,t[2]=u*s,t[3]=o*s,t[4]=i,t[5]=h,t},translate:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=n[4],h=n[5],c=a[0],s=a[1];return t[0]=r,t[1]=e,t[2]=u,t[3]=o,t[4]=r*c+u*s+i,t[5]=e*c+o*s+h,t},fromRotation:function(t,n){var a=Math.sin(n),r=Math.cos(n);return t[0]=r,t[1]=a,t[2]=-a,t[3]=r,t[4]=0,t[5]=0,t},fromScaling:function(t,n){return t[0]=n[0],t[1]=0,t[2]=0,t[3]=n[1],t[4]=0,t[5]=0,t},fromTranslation:function(t,n){return t[0]=1,t[1]=0,t[2]=0,t[3]=1,t[4]=n[0],t[5]=n[1],t},str:function(t){return"mat2d("+t[0]+", "+t[1]+", "+t[2]+", "+t[3]+", "+t[4]+", "+t[5]+")"},frob:function(t){return Math.hypot(t[0],t[1],t[2],t[3],t[4],t[5],1)},add:function(t,n,a){return t[0]=n[0]+a[0],t[1]=n[1]+a[1],t[2]=n[2]+a[2],t[3]=n[3]+a[3],t[4]=n[4]+a[4],t[5]=n[5]+a[5],t},subtract:M,multiplyScalar:function(t,n,a){return t[0]=n[0]*a,t[1]=n[1]*a,t[2]=n[2]*a,t[3]=n[3]*a,t[4]=n[4]*a,t[5]=n[5]*a,t},multiplyScalarAndAdd:function(t,n,a,r){return t[0]=n[0]+a[0]*r,t[1]=n[1]+a[1]*r,t[2]=n[2]+a[2]*r,t[3]=n[3]+a[3]*r,t[4]=n[4]+a[4]*r,t[5]=n[5]+a[5]*r,t},exactEquals:function(t,n){return t[0]===n[0]&&t[1]===n[1]&&t[2]===n[2]&&t[3]===n[3]&&t[4]===n[4]&&t[5]===n[5]},equals:function(t,n){var a=t[0],r=t[1],e=t[2],u=t[3],o=t[4],i=t[5],h=n[0],c=n[1],s=n[2],M=n[3],f=n[4],l=n[5];return Math.abs(a-h)<=1e-6*Math.max(1,Math.abs(a),Math.abs(h))&&Math.abs(r-c)<=1e-6*Math.max(1,Math.abs(r),Math.abs(c))&&Math.abs(e-s)<=1e-6*Math.max(1,Math.abs(e),Math.abs(s))&&Math.abs(u-M)<=1e-6*Math.max(1,Math.abs(u),Math.abs(M))&&Math.abs(o-f)<=1e-6*Math.max(1,Math.abs(o),Math.abs(f))&&Math.abs(i-l)<=1e-6*Math.max(1,Math.abs(i),Math.abs(l))},mul:f,sub:l});function b(){var t=new n(9);return n!=Float32Array&&(t[1]=0,t[2]=0,t[3]=0,t[5]=0,t[6]=0,t[7]=0),t[0]=1,t[4]=1,t[8]=1,t}function m(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=n[4],h=n[5],c=n[6],s=n[7],M=n[8],f=a[0],l=a[1],v=a[2],b=a[3],m=a[4],d=a[5],p=a[6],x=a[7],y=a[8];return t[0]=f*r+l*o+v*c,t[1]=f*e+l*i+v*s,t[2]=f*u+l*h+v*M,t[3]=b*r+m*o+d*c,t[4]=b*e+m*i+d*s,t[5]=b*u+m*h+d*M,t[6]=p*r+x*o+y*c,t[7]=p*e+x*i+y*s,t[8]=p*u+x*h+y*M,t}function d(t,n,a){return t[0]=n[0]-a[0],t[1]=n[1]-a[1],t[2]=n[2]-a[2],t[3]=n[3]-a[3],t[4]=n[4]-a[4],t[5]=n[5]-a[5],t[6]=n[6]-a[6],t[7]=n[7]-a[7],t[8]=n[8]-a[8],t}var p=m,x=d,y=Object.freeze({__proto__:null,create:b,fromMat4:function(t,n){return t[0]=n[0],t[1]=n[1],t[2]=n[2],t[3]=n[4],t[4]=n[5],t[5]=n[6],t[6]=n[8],t[7]=n[9],t[8]=n[10],t},clone:function(t){var a=new n(9);return a[0]=t[0],a[1]=t[1],a[2]=t[2],a[3]=t[3],a[4]=t[4],a[5]=t[5],a[6]=t[6],a[7]=t[7],a[8]=t[8],a},copy:function(t,n){return t[0]=n[0],t[1]=n[1],t[2]=n[2],t[3]=n[3],t[4]=n[4],t[5]=n[5],t[6]=n[6],t[7]=n[7],t[8]=n[8],t},fromValues:function(t,a,r,e,u,o,i,h,c){var s=new n(9);return s[0]=t,s[1]=a,s[2]=r,s[3]=e,s[4]=u,s[5]=o,s[6]=i,s[7]=h,s[8]=c,s},set:function(t,n,a,r,e,u,o,i,h,c){return t[0]=n,t[1]=a,t[2]=r,t[3]=e,t[4]=u,t[5]=o,t[6]=i,t[7]=h,t[8]=c,t},identity:function(t){return t[0]=1,t[1]=0,t[2]=0,t[3]=0,t[4]=1,t[5]=0,t[6]=0,t[7]=0,t[8]=1,t},transpose:function(t,n){if(t===n){var a=n[1],r=n[2],e=n[5];t[1]=n[3],t[2]=n[6],t[3]=a,t[5]=n[7],t[6]=r,t[7]=e}else t[0]=n[0],t[1]=n[3],t[2]=n[6],t[3]=n[1],t[4]=n[4],t[5]=n[7],t[6]=n[2],t[7]=n[5],t[8]=n[8];return t},invert:function(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=n[4],i=n[5],h=n[6],c=n[7],s=n[8],M=s*o-i*c,f=-s*u+i*h,l=c*u-o*h,v=a*M+r*f+e*l;return v?(v=1/v,t[0]=M*v,t[1]=(-s*r+e*c)*v,t[2]=(i*r-e*o)*v,t[3]=f*v,t[4]=(s*a-e*h)*v,t[5]=(-i*a+e*u)*v,t[6]=l*v,t[7]=(-c*a+r*h)*v,t[8]=(o*a-r*u)*v,t):null},adjoint:function(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=n[4],i=n[5],h=n[6],c=n[7],s=n[8];return t[0]=o*s-i*c,t[1]=e*c-r*s,t[2]=r*i-e*o,t[3]=i*h-u*s,t[4]=a*s-e*h,t[5]=e*u-a*i,t[6]=u*c-o*h,t[7]=r*h-a*c,t[8]=a*o-r*u,t},determinant:function(t){var n=t[0],a=t[1],r=t[2],e=t[3],u=t[4],o=t[5],i=t[6],h=t[7],c=t[8];return n*(c*u-o*h)+a*(-c*e+o*i)+r*(h*e-u*i)},multiply:m,translate:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=n[4],h=n[5],c=n[6],s=n[7],M=n[8],f=a[0],l=a[1];return t[0]=r,t[1]=e,t[2]=u,t[3]=o,t[4]=i,t[5]=h,t[6]=f*r+l*o+c,t[7]=f*e+l*i+s,t[8]=f*u+l*h+M,t},rotate:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=n[4],h=n[5],c=n[6],s=n[7],M=n[8],f=Math.sin(a),l=Math.cos(a);return t[0]=l*r+f*o,t[1]=l*e+f*i,t[2]=l*u+f*h,t[3]=l*o-f*r,t[4]=l*i-f*e,t[5]=l*h-f*u,t[6]=c,t[7]=s,t[8]=M,t},scale:function(t,n,a){var r=a[0],e=a[1];return t[0]=r*n[0],t[1]=r*n[1],t[2]=r*n[2],t[3]=e*n[3],t[4]=e*n[4],t[5]=e*n[5],t[6]=n[6],t[7]=n[7],t[8]=n[8],t},fromTranslation:function(t,n){return t[0]=1,t[1]=0,t[2]=0,t[3]=0,t[4]=1,t[5]=0,t[6]=n[0],t[7]=n[1],t[8]=1,t},fromRotation:function(t,n){var a=Math.sin(n),r=Math.cos(n);return t[0]=r,t[1]=a,t[2]=0,t[3]=-a,t[4]=r,t[5]=0,t[6]=0,t[7]=0,t[8]=1,t},fromScaling:function(t,n){return t[0]=n[0],t[1]=0,t[2]=0,t[3]=0,t[4]=n[1],t[5]=0,t[6]=0,t[7]=0,t[8]=1,t},fromMat2d:function(t,n){return t[0]=n[0],t[1]=n[1],t[2]=0,t[3]=n[2],t[4]=n[3],t[5]=0,t[6]=n[4],t[7]=n[5],t[8]=1,t},fromQuat:function(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=a+a,i=r+r,h=e+e,c=a*o,s=r*o,M=r*i,f=e*o,l=e*i,v=e*h,b=u*o,m=u*i,d=u*h;return t[0]=1-M-v,t[3]=s-d,t[6]=f+m,t[1]=s+d,t[4]=1-c-v,t[7]=l-b,t[2]=f-m,t[5]=l+b,t[8]=1-c-M,t},normalFromMat4:function(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=n[4],i=n[5],h=n[6],c=n[7],s=n[8],M=n[9],f=n[10],l=n[11],v=n[12],b=n[13],m=n[14],d=n[15],p=a*i-r*o,x=a*h-e*o,y=a*c-u*o,q=r*h-e*i,g=r*c-u*i,_=e*c-u*h,A=s*b-M*v,w=s*m-f*v,R=s*d-l*v,z=M*m-f*b,j=M*d-l*b,P=f*d-l*m,S=p*P-x*j+y*z+q*R-g*w+_*A;return S?(S=1/S,t[0]=(i*P-h*j+c*z)*S,t[1]=(h*R-o*P-c*w)*S,t[2]=(o*j-i*R+c*A)*S,t[3]=(e*j-r*P-u*z)*S,t[4]=(a*P-e*R+u*w)*S,t[5]=(r*R-a*j-u*A)*S,t[6]=(b*_-m*g+d*q)*S,t[7]=(m*y-v*_-d*x)*S,t[8]=(v*g-b*y+d*p)*S,t):null},projection:function(t,n,a){return t[0]=2/n,t[1]=0,t[2]=0,t[3]=0,t[4]=-2/a,t[5]=0,t[6]=-1,t[7]=1,t[8]=1,t},str:function(t){return"mat3("+t[0]+", "+t[1]+", "+t[2]+", "+t[3]+", "+t[4]+", "+t[5]+", "+t[6]+", "+t[7]+", "+t[8]+")"},frob:function(t){return Math.hypot(t[0],t[1],t[2],t[3],t[4],t[5],t[6],t[7],t[8])},add:function(t,n,a){return t[0]=n[0]+a[0],t[1]=n[1]+a[1],t[2]=n[2]+a[2],t[3]=n[3]+a[3],t[4]=n[4]+a[4],t[5]=n[5]+a[5],t[6]=n[6]+a[6],t[7]=n[7]+a[7],t[8]=n[8]+a[8],t},subtract:d,multiplyScalar:function(t,n,a){return t[0]=n[0]*a,t[1]=n[1]*a,t[2]=n[2]*a,t[3]=n[3]*a,t[4]=n[4]*a,t[5]=n[5]*a,t[6]=n[6]*a,t[7]=n[7]*a,t[8]=n[8]*a,t},multiplyScalarAndAdd:function(t,n,a,r){return t[0]=n[0]+a[0]*r,t[1]=n[1]+a[1]*r,t[2]=n[2]+a[2]*r,t[3]=n[3]+a[3]*r,t[4]=n[4]+a[4]*r,t[5]=n[5]+a[5]*r,t[6]=n[6]+a[6]*r,t[7]=n[7]+a[7]*r,t[8]=n[8]+a[8]*r,t},exactEquals:function(t,n){return t[0]===n[0]&&t[1]===n[1]&&t[2]===n[2]&&t[3]===n[3]&&t[4]===n[4]&&t[5]===n[5]&&t[6]===n[6]&&t[7]===n[7]&&t[8]===n[8]},equals:function(t,n){var a=t[0],r=t[1],e=t[2],u=t[3],o=t[4],i=t[5],h=t[6],c=t[7],s=t[8],M=n[0],f=n[1],l=n[2],v=n[3],b=n[4],m=n[5],d=n[6],p=n[7],x=n[8];return Math.abs(a-M)<=1e-6*Math.max(1,Math.abs(a),Math.abs(M))&&Math.abs(r-f)<=1e-6*Math.max(1,Math.abs(r),Math.abs(f))&&Math.abs(e-l)<=1e-6*Math.max(1,Math.abs(e),Math.abs(l))&&Math.abs(u-v)<=1e-6*Math.max(1,Math.abs(u),Math.abs(v))&&Math.abs(o-b)<=1e-6*Math.max(1,Math.abs(o),Math.abs(b))&&Math.abs(i-m)<=1e-6*Math.max(1,Math.abs(i),Math.abs(m))&&Math.abs(h-d)<=1e-6*Math.max(1,Math.abs(h),Math.abs(d))&&Math.abs(c-p)<=1e-6*Math.max(1,Math.abs(c),Math.abs(p))&&Math.abs(s-x)<=1e-6*Math.max(1,Math.abs(s),Math.abs(x))},mul:p,sub:x});function q(t){return t[0]=1,t[1]=0,t[2]=0,t[3]=0,t[4]=0,t[5]=1,t[6]=0,t[7]=0,t[8]=0,t[9]=0,t[10]=1,t[11]=0,t[12]=0,t[13]=0,t[14]=0,t[15]=1,t}function g(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=n[4],h=n[5],c=n[6],s=n[7],M=n[8],f=n[9],l=n[10],v=n[11],b=n[12],m=n[13],d=n[14],p=n[15],x=a[0],y=a[1],q=a[2],g=a[3];return t[0]=x*r+y*i+q*M+g*b,t[1]=x*e+y*h+q*f+g*m,t[2]=x*u+y*c+q*l+g*d,t[3]=x*o+y*s+q*v+g*p,x=a[4],y=a[5],q=a[6],g=a[7],t[4]=x*r+y*i+q*M+g*b,t[5]=x*e+y*h+q*f+g*m,t[6]=x*u+y*c+q*l+g*d,t[7]=x*o+y*s+q*v+g*p,x=a[8],y=a[9],q=a[10],g=a[11],t[8]=x*r+y*i+q*M+g*b,t[9]=x*e+y*h+q*f+g*m,t[10]=x*u+y*c+q*l+g*d,t[11]=x*o+y*s+q*v+g*p,x=a[12],y=a[13],q=a[14],g=a[15],t[12]=x*r+y*i+q*M+g*b,t[13]=x*e+y*h+q*f+g*m,t[14]=x*u+y*c+q*l+g*d,t[15]=x*o+y*s+q*v+g*p,t}function _(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=r+r,h=e+e,c=u+u,s=r*i,M=r*h,f=r*c,l=e*h,v=e*c,b=u*c,m=o*i,d=o*h,p=o*c;return t[0]=1-(l+b),t[1]=M+p,t[2]=f-d,t[3]=0,t[4]=M-p,t[5]=1-(s+b),t[6]=v+m,t[7]=0,t[8]=f+d,t[9]=v-m,t[10]=1-(s+l),t[11]=0,t[12]=a[0],t[13]=a[1],t[14]=a[2],t[15]=1,t}function A(t,n){return t[0]=n[12],t[1]=n[13],t[2]=n[14],t}function w(t,n){var a=n[0],r=n[1],e=n[2],u=n[4],o=n[5],i=n[6],h=n[8],c=n[9],s=n[10];return t[0]=Math.hypot(a,r,e),t[1]=Math.hypot(u,o,i),t[2]=Math.hypot(h,c,s),t}function R(t,a){var r=new n(3);w(r,a);var e=1/r[0],u=1/r[1],o=1/r[2],i=a[0]*e,h=a[1]*u,c=a[2]*o,s=a[4]*e,M=a[5]*u,f=a[6]*o,l=a[8]*e,v=a[9]*u,b=a[10]*o,m=i+M+b,d=0;return m>0?(d=2*Math.sqrt(m+1),t[3]=.25*d,t[0]=(f-v)/d,t[1]=(l-c)/d,t[2]=(h-s)/d):i>M&&i>b?(d=2*Math.sqrt(1+i-M-b),t[3]=(f-v)/d,t[0]=.25*d,t[1]=(h+s)/d,t[2]=(l+c)/d):M>b?(d=2*Math.sqrt(1+M-i-b),t[3]=(l-c)/d,t[0]=(h+s)/d,t[1]=.25*d,t[2]=(f+v)/d):(d=2*Math.sqrt(1+b-i-M),t[3]=(h-s)/d,t[0]=(l+c)/d,t[1]=(f+v)/d,t[2]=.25*d),t}function z(t,n,a){return t[0]=n[0]-a[0],t[1]=n[1]-a[1],t[2]=n[2]-a[2],t[3]=n[3]-a[3],t[4]=n[4]-a[4],t[5]=n[5]-a[5],t[6]=n[6]-a[6],t[7]=n[7]-a[7],t[8]=n[8]-a[8],t[9]=n[9]-a[9],t[10]=n[10]-a[10],t[11]=n[11]-a[11],t[12]=n[12]-a[12],t[13]=n[13]-a[13],t[14]=n[14]-a[14],t[15]=n[15]-a[15],t}var j=g,P=z,S=Object.freeze({__proto__:null,create:function(){var t=new n(16);return n!=Float32Array&&(t[1]=0,t[2]=0,t[3]=0,t[4]=0,t[6]=0,t[7]=0,t[8]=0,t[9]=0,t[11]=0,t[12]=0,t[13]=0,t[14]=0),t[0]=1,t[5]=1,t[10]=1,t[15]=1,t},clone:function(t){var a=new n(16);return a[0]=t[0],a[1]=t[1],a[2]=t[2],a[3]=t[3],a[4]=t[4],a[5]=t[5],a[6]=t[6],a[7]=t[7],a[8]=t[8],a[9]=t[9],a[10]=t[10],a[11]=t[11],a[12]=t[12],a[13]=t[13],a[14]=t[14],a[15]=t[15],a},copy:function(t,n){return t[0]=n[0],t[1]=n[1],t[2]=n[2],t[3]=n[3],t[4]=n[4],t[5]=n[5],t[6]=n[6],t[7]=n[7],t[8]=n[8],t[9]=n[9],t[10]=n[10],t[11]=n[11],t[12]=n[12],t[13]=n[13],t[14]=n[14],t[15]=n[15],t},fromValues:function(t,a,r,e,u,o,i,h,c,s,M,f,l,v,b,m){var d=new n(16);return d[0]=t,d[1]=a,d[2]=r,d[3]=e,d[4]=u,d[5]=o,d[6]=i,d[7]=h,d[8]=c,d[9]=s,d[10]=M,d[11]=f,d[12]=l,d[13]=v,d[14]=b,d[15]=m,d},set:function(t,n,a,r,e,u,o,i,h,c,s,M,f,l,v,b,m){return t[0]=n,t[1]=a,t[2]=r,t[3]=e,t[4]=u,t[5]=o,t[6]=i,t[7]=h,t[8]=c,t[9]=s,t[10]=M,t[11]=f,t[12]=l,t[13]=v,t[14]=b,t[15]=m,t},identity:q,transpose:function(t,n){if(t===n){var a=n[1],r=n[2],e=n[3],u=n[6],o=n[7],i=n[11];t[1]=n[4],t[2]=n[8],t[3]=n[12],t[4]=a,t[6]=n[9],t[7]=n[13],t[8]=r,t[9]=u,t[11]=n[14],t[12]=e,t[13]=o,t[14]=i}else t[0]=n[0],t[1]=n[4],t[2]=n[8],t[3]=n[12],t[4]=n[1],t[5]=n[5],t[6]=n[9],t[7]=n[13],t[8]=n[2],t[9]=n[6],t[10]=n[10],t[11]=n[14],t[12]=n[3],t[13]=n[7],t[14]=n[11],t[15]=n[15];return t},invert:function(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=n[4],i=n[5],h=n[6],c=n[7],s=n[8],M=n[9],f=n[10],l=n[11],v=n[12],b=n[13],m=n[14],d=n[15],p=a*i-r*o,x=a*h-e*o,y=a*c-u*o,q=r*h-e*i,g=r*c-u*i,_=e*c-u*h,A=s*b-M*v,w=s*m-f*v,R=s*d-l*v,z=M*m-f*b,j=M*d-l*b,P=f*d-l*m,S=p*P-x*j+y*z+q*R-g*w+_*A;return S?(S=1/S,t[0]=(i*P-h*j+c*z)*S,t[1]=(e*j-r*P-u*z)*S,t[2]=(b*_-m*g+d*q)*S,t[3]=(f*g-M*_-l*q)*S,t[4]=(h*R-o*P-c*w)*S,t[5]=(a*P-e*R+u*w)*S,t[6]=(m*y-v*_-d*x)*S,t[7]=(s*_-f*y+l*x)*S,t[8]=(o*j-i*R+c*A)*S,t[9]=(r*R-a*j-u*A)*S,t[10]=(v*g-b*y+d*p)*S,t[11]=(M*y-s*g-l*p)*S,t[12]=(i*w-o*z-h*A)*S,t[13]=(a*z-r*w+e*A)*S,t[14]=(b*x-v*q-m*p)*S,t[15]=(s*q-M*x+f*p)*S,t):null},adjoint:function(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=n[4],i=n[5],h=n[6],c=n[7],s=n[8],M=n[9],f=n[10],l=n[11],v=n[12],b=n[13],m=n[14],d=n[15];return t[0]=i*(f*d-l*m)-M*(h*d-c*m)+b*(h*l-c*f),t[1]=-(r*(f*d-l*m)-M*(e*d-u*m)+b*(e*l-u*f)),t[2]=r*(h*d-c*m)-i*(e*d-u*m)+b*(e*c-u*h),t[3]=-(r*(h*l-c*f)-i*(e*l-u*f)+M*(e*c-u*h)),t[4]=-(o*(f*d-l*m)-s*(h*d-c*m)+v*(h*l-c*f)),t[5]=a*(f*d-l*m)-s*(e*d-u*m)+v*(e*l-u*f),t[6]=-(a*(h*d-c*m)-o*(e*d-u*m)+v*(e*c-u*h)),t[7]=a*(h*l-c*f)-o*(e*l-u*f)+s*(e*c-u*h),t[8]=o*(M*d-l*b)-s*(i*d-c*b)+v*(i*l-c*M),t[9]=-(a*(M*d-l*b)-s*(r*d-u*b)+v*(r*l-u*M)),t[10]=a*(i*d-c*b)-o*(r*d-u*b)+v*(r*c-u*i),t[11]=-(a*(i*l-c*M)-o*(r*l-u*M)+s*(r*c-u*i)),t[12]=-(o*(M*m-f*b)-s*(i*m-h*b)+v*(i*f-h*M)),t[13]=a*(M*m-f*b)-s*(r*m-e*b)+v*(r*f-e*M),t[14]=-(a*(i*m-h*b)-o*(r*m-e*b)+v*(r*h-e*i)),t[15]=a*(i*f-h*M)-o*(r*f-e*M)+s*(r*h-e*i),t},determinant:function(t){var n=t[0],a=t[1],r=t[2],e=t[3],u=t[4],o=t[5],i=t[6],h=t[7],c=t[8],s=t[9],M=t[10],f=t[11],l=t[12],v=t[13],b=t[14],m=t[15];return(n*o-a*u)*(M*m-f*b)-(n*i-r*u)*(s*m-f*v)+(n*h-e*u)*(s*b-M*v)+(a*i-r*o)*(c*m-f*l)-(a*h-e*o)*(c*b-M*l)+(r*h-e*i)*(c*v-s*l)},multiply:g,translate:function(t,n,a){var r,e,u,o,i,h,c,s,M,f,l,v,b=a[0],m=a[1],d=a[2];return n===t?(t[12]=n[0]*b+n[4]*m+n[8]*d+n[12],t[13]=n[1]*b+n[5]*m+n[9]*d+n[13],t[14]=n[2]*b+n[6]*m+n[10]*d+n[14],t[15]=n[3]*b+n[7]*m+n[11]*d+n[15]):(r=n[0],e=n[1],u=n[2],o=n[3],i=n[4],h=n[5],c=n[6],s=n[7],M=n[8],f=n[9],l=n[10],v=n[11],t[0]=r,t[1]=e,t[2]=u,t[3]=o,t[4]=i,t[5]=h,t[6]=c,t[7]=s,t[8]=M,t[9]=f,t[10]=l,t[11]=v,t[12]=r*b+i*m+M*d+n[12],t[13]=e*b+h*m+f*d+n[13],t[14]=u*b+c*m+l*d+n[14],t[15]=o*b+s*m+v*d+n[15]),t},scale:function(t,n,a){var r=a[0],e=a[1],u=a[2];return t[0]=n[0]*r,t[1]=n[1]*r,t[2]=n[2]*r,t[3]=n[3]*r,t[4]=n[4]*e,t[5]=n[5]*e,t[6]=n[6]*e,t[7]=n[7]*e,t[8]=n[8]*u,t[9]=n[9]*u,t[10]=n[10]*u,t[11]=n[11]*u,t[12]=n[12],t[13]=n[13],t[14]=n[14],t[15]=n[15],t},rotate:function(t,n,a,r){var e,u,o,i,h,c,s,M,f,l,v,b,m,d,p,x,y,q,g,_,A,w,R,z,j=r[0],P=r[1],S=r[2],E=Math.hypot(j,P,S);return E<1e-6?null:(j*=E=1/E,P*=E,S*=E,e=Math.sin(a),o=1-(u=Math.cos(a)),i=n[0],h=n[1],c=n[2],s=n[3],M=n[4],f=n[5],l=n[6],v=n[7],b=n[8],m=n[9],d=n[10],p=n[11],x=j*j*o+u,y=P*j*o+S*e,q=S*j*o-P*e,g=j*P*o-S*e,_=P*P*o+u,A=S*P*o+j*e,w=j*S*o+P*e,R=P*S*o-j*e,z=S*S*o+u,t[0]=i*x+M*y+b*q,t[1]=h*x+f*y+m*q,t[2]=c*x+l*y+d*q,t[3]=s*x+v*y+p*q,t[4]=i*g+M*_+b*A,t[5]=h*g+f*_+m*A,t[6]=c*g+l*_+d*A,t[7]=s*g+v*_+p*A,t[8]=i*w+M*R+b*z,t[9]=h*w+f*R+m*z,t[10]=c*w+l*R+d*z,t[11]=s*w+v*R+p*z,n!==t&&(t[12]=n[12],t[13]=n[13],t[14]=n[14],t[15]=n[15]),t)},rotateX:function(t,n,a){var r=Math.sin(a),e=Math.cos(a),u=n[4],o=n[5],i=n[6],h=n[7],c=n[8],s=n[9],M=n[10],f=n[11];return n!==t&&(t[0]=n[0],t[1]=n[1],t[2]=n[2],t[3]=n[3],t[12]=n[12],t[13]=n[13],t[14]=n[14],t[15]=n[15]),t[4]=u*e+c*r,t[5]=o*e+s*r,t[6]=i*e+M*r,t[7]=h*e+f*r,t[8]=c*e-u*r,t[9]=s*e-o*r,t[10]=M*e-i*r,t[11]=f*e-h*r,t},rotateY:function(t,n,a){var r=Math.sin(a),e=Math.cos(a),u=n[0],o=n[1],i=n[2],h=n[3],c=n[8],s=n[9],M=n[10],f=n[11];return n!==t&&(t[4]=n[4],t[5]=n[5],t[6]=n[6],t[7]=n[7],t[12]=n[12],t[13]=n[13],t[14]=n[14],t[15]=n[15]),t[0]=u*e-c*r,t[1]=o*e-s*r,t[2]=i*e-M*r,t[3]=h*e-f*r,t[8]=u*r+c*e,t[9]=o*r+s*e,t[10]=i*r+M*e,t[11]=h*r+f*e,t},rotateZ:function(t,n,a){var r=Math.sin(a),e=Math.cos(a),u=n[0],o=n[1],i=n[2],h=n[3],c=n[4],s=n[5],M=n[6],f=n[7];return n!==t&&(t[8]=n[8],t[9]=n[9],t[10]=n[10],t[11]=n[11],t[12]=n[12],t[13]=n[13],t[14]=n[14],t[15]=n[15]),t[0]=u*e+c*r,t[1]=o*e+s*r,t[2]=i*e+M*r,t[3]=h*e+f*r,t[4]=c*e-u*r,t[5]=s*e-o*r,t[6]=M*e-i*r,t[7]=f*e-h*r,t},fromTranslation:function(t,n){return t[0]=1,t[1]=0,t[2]=0,t[3]=0,t[4]=0,t[5]=1,t[6]=0,t[7]=0,t[8]=0,t[9]=0,t[10]=1,t[11]=0,t[12]=n[0],t[13]=n[1],t[14]=n[2],t[15]=1,t},fromScaling:function(t,n){return t[0]=n[0],t[1]=0,t[2]=0,t[3]=0,t[4]=0,t[5]=n[1],t[6]=0,t[7]=0,t[8]=0,t[9]=0,t[10]=n[2],t[11]=0,t[12]=0,t[13]=0,t[14]=0,t[15]=1,t},fromRotation:function(t,n,a){var r,e,u,o=a[0],i=a[1],h=a[2],c=Math.hypot(o,i,h);return c<1e-6?null:(o*=c=1/c,i*=c,h*=c,r=Math.sin(n),u=1-(e=Math.cos(n)),t[0]=o*o*u+e,t[1]=i*o*u+h*r,t[2]=h*o*u-i*r,t[3]=0,t[4]=o*i*u-h*r,t[5]=i*i*u+e,t[6]=h*i*u+o*r,t[7]=0,t[8]=o*h*u+i*r,t[9]=i*h*u-o*r,t[10]=h*h*u+e,t[11]=0,t[12]=0,t[13]=0,t[14]=0,t[15]=1,t)},fromXRotation:function(t,n){var a=Math.sin(n),r=Math.cos(n);return t[0]=1,t[1]=0,t[2]=0,t[3]=0,t[4]=0,t[5]=r,t[6]=a,t[7]=0,t[8]=0,t[9]=-a,t[10]=r,t[11]=0,t[12]=0,t[13]=0,t[14]=0,t[15]=1,t},fromYRotation:function(t,n){var a=Math.sin(n),r=Math.cos(n);return t[0]=r,t[1]=0,t[2]=-a,t[3]=0,t[4]=0,t[5]=1,t[6]=0,t[7]=0,t[8]=a,t[9]=0,t[10]=r,t[11]=0,t[12]=0,t[13]=0,t[14]=0,t[15]=1,t},fromZRotation:function(t,n){var a=Math.sin(n),r=Math.cos(n);return t[0]=r,t[1]=a,t[2]=0,t[3]=0,t[4]=-a,t[5]=r,t[6]=0,t[7]=0,t[8]=0,t[9]=0,t[10]=1,t[11]=0,t[12]=0,t[13]=0,t[14]=0,t[15]=1,t},fromRotationTranslation:_,fromQuat2:function(t,a){var r=new n(3),e=-a[0],u=-a[1],o=-a[2],i=a[3],h=a[4],c=a[5],s=a[6],M=a[7],f=e*e+u*u+o*o+i*i;return f>0?(r[0]=2*(h*i+M*e+c*o-s*u)/f,r[1]=2*(c*i+M*u+s*e-h*o)/f,r[2]=2*(s*i+M*o+h*u-c*e)/f):(r[0]=2*(h*i+M*e+c*o-s*u),r[1]=2*(c*i+M*u+s*e-h*o),r[2]=2*(s*i+M*o+h*u-c*e)),_(t,a,r),t},getTranslation:A,getScaling:w,getRotation:R,fromRotationTranslationScale:function(t,n,a,r){var e=n[0],u=n[1],o=n[2],i=n[3],h=e+e,c=u+u,s=o+o,M=e*h,f=e*c,l=e*s,v=u*c,b=u*s,m=o*s,d=i*h,p=i*c,x=i*s,y=r[0],q=r[1],g=r[2];return t[0]=(1-(v+m))*y,t[1]=(f+x)*y,t[2]=(l-p)*y,t[3]=0,t[4]=(f-x)*q,t[5]=(1-(M+m))*q,t[6]=(b+d)*q,t[7]=0,t[8]=(l+p)*g,t[9]=(b-d)*g,t[10]=(1-(M+v))*g,t[11]=0,t[12]=a[0],t[13]=a[1],t[14]=a[2],t[15]=1,t},fromRotationTranslationScaleOrigin:function(t,n,a,r,e){var u=n[0],o=n[1],i=n[2],h=n[3],c=u+u,s=o+o,M=i+i,f=u*c,l=u*s,v=u*M,b=o*s,m=o*M,d=i*M,p=h*c,x=h*s,y=h*M,q=r[0],g=r[1],_=r[2],A=e[0],w=e[1],R=e[2],z=(1-(b+d))*q,j=(l+y)*q,P=(v-x)*q,S=(l-y)*g,E=(1-(f+d))*g,O=(m+p)*g,T=(v+x)*_,D=(m-p)*_,F=(1-(f+b))*_;return t[0]=z,t[1]=j,t[2]=P,t[3]=0,t[4]=S,t[5]=E,t[6]=O,t[7]=0,t[8]=T,t[9]=D,t[10]=F,t[11]=0,t[12]=a[0]+A-(z*A+S*w+T*R),t[13]=a[1]+w-(j*A+E*w+D*R),t[14]=a[2]+R-(P*A+O*w+F*R),t[15]=1,t},fromQuat:function(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=a+a,i=r+r,h=e+e,c=a*o,s=r*o,M=r*i,f=e*o,l=e*i,v=e*h,b=u*o,m=u*i,d=u*h;return t[0]=1-M-v,t[1]=s+d,t[2]=f-m,t[3]=0,t[4]=s-d,t[5]=1-c-v,t[6]=l+b,t[7]=0,t[8]=f+m,t[9]=l-b,t[10]=1-c-M,t[11]=0,t[12]=0,t[13]=0,t[14]=0,t[15]=1,t},frustum:function(t,n,a,r,e,u,o){var i=1/(a-n),h=1/(e-r),c=1/(u-o);return t[0]=2*u*i,t[1]=0,t[2]=0,t[3]=0,t[4]=0,t[5]=2*u*h,t[6]=0,t[7]=0,t[8]=(a+n)*i,t[9]=(e+r)*h,t[10]=(o+u)*c,t[11]=-1,t[12]=0,t[13]=0,t[14]=o*u*2*c,t[15]=0,t},perspective:function(t,n,a,r,e){var u,o=1/Math.tan(n/2);return t[0]=o/a,t[1]=0,t[2]=0,t[3]=0,t[4]=0,t[5]=o,t[6]=0,t[7]=0,t[8]=0,t[9]=0,t[11]=-1,t[12]=0,t[13]=0,t[15]=0,null!=e&&e!==1/0?(u=1/(r-e),t[10]=(e+r)*u,t[14]=2*e*r*u):(t[10]=-1,t[14]=-2*r),t},perspectiveFromFieldOfView:function(t,n,a,r){var e=Math.tan(n.upDegrees*Math.PI/180),u=Math.tan(n.downDegrees*Math.PI/180),o=Math.tan(n.leftDegrees*Math.PI/180),i=Math.tan(n.rightDegrees*Math.PI/180),h=2/(o+i),c=2/(e+u);return t[0]=h,t[1]=0,t[2]=0,t[3]=0,t[4]=0,t[5]=c,t[6]=0,t[7]=0,t[8]=-(o-i)*h*.5,t[9]=(e-u)*c*.5,t[10]=r/(a-r),t[11]=-1,t[12]=0,t[13]=0,t[14]=r*a/(a-r),t[15]=0,t},ortho:function(t,n,a,r,e,u,o){var i=1/(n-a),h=1/(r-e),c=1/(u-o);return t[0]=-2*i,t[1]=0,t[2]=0,t[3]=0,t[4]=0,t[5]=-2*h,t[6]=0,t[7]=0,t[8]=0,t[9]=0,t[10]=2*c,t[11]=0,t[12]=(n+a)*i,t[13]=(e+r)*h,t[14]=(o+u)*c,t[15]=1,t},lookAt:function(t,n,a,r){var e,u,o,i,h,c,s,M,f,l,v=n[0],b=n[1],m=n[2],d=r[0],p=r[1],x=r[2],y=a[0],g=a[1],_=a[2];return Math.abs(v-y)<1e-6&&Math.abs(b-g)<1e-6&&Math.abs(m-_)<1e-6?q(t):(s=v-y,M=b-g,f=m-_,e=p*(f*=l=1/Math.hypot(s,M,f))-x*(M*=l),u=x*(s*=l)-d*f,o=d*M-p*s,(l=Math.hypot(e,u,o))?(e*=l=1/l,u*=l,o*=l):(e=0,u=0,o=0),i=M*o-f*u,h=f*e-s*o,c=s*u-M*e,(l=Math.hypot(i,h,c))?(i*=l=1/l,h*=l,c*=l):(i=0,h=0,c=0),t[0]=e,t[1]=i,t[2]=s,t[3]=0,t[4]=u,t[5]=h,t[6]=M,t[7]=0,t[8]=o,t[9]=c,t[10]=f,t[11]=0,t[12]=-(e*v+u*b+o*m),t[13]=-(i*v+h*b+c*m),t[14]=-(s*v+M*b+f*m),t[15]=1,t)},targetTo:function(t,n,a,r){var e=n[0],u=n[1],o=n[2],i=r[0],h=r[1],c=r[2],s=e-a[0],M=u-a[1],f=o-a[2],l=s*s+M*M+f*f;l>0&&(s*=l=1/Math.sqrt(l),M*=l,f*=l);var v=h*f-c*M,b=c*s-i*f,m=i*M-h*s;return(l=v*v+b*b+m*m)>0&&(v*=l=1/Math.sqrt(l),b*=l,m*=l),t[0]=v,t[1]=b,t[2]=m,t[3]=0,t[4]=M*m-f*b,t[5]=f*v-s*m,t[6]=s*b-M*v,t[7]=0,t[8]=s,t[9]=M,t[10]=f,t[11]=0,t[12]=e,t[13]=u,t[14]=o,t[15]=1,t},str:function(t){return"mat4("+t[0]+", "+t[1]+", "+t[2]+", "+t[3]+", "+t[4]+", "+t[5]+", "+t[6]+", "+t[7]+", "+t[8]+", "+t[9]+", "+t[10]+", "+t[11]+", "+t[12]+", "+t[13]+", "+t[14]+", "+t[15]+")"},frob:function(t){return Math.hypot(t[0],t[1],t[2],t[3],t[4],t[5],t[6],t[7],t[8],t[9],t[10],t[11],t[12],t[13],t[14],t[15])},add:function(t,n,a){return t[0]=n[0]+a[0],t[1]=n[1]+a[1],t[2]=n[2]+a[2],t[3]=n[3]+a[3],t[4]=n[4]+a[4],t[5]=n[5]+a[5],t[6]=n[6]+a[6],t[7]=n[7]+a[7],t[8]=n[8]+a[8],t[9]=n[9]+a[9],t[10]=n[10]+a[10],t[11]=n[11]+a[11],t[12]=n[12]+a[12],t[13]=n[13]+a[13],t[14]=n[14]+a[14],t[15]=n[15]+a[15],t},subtract:z,multiplyScalar:function(t,n,a){return t[0]=n[0]*a,t[1]=n[1]*a,t[2]=n[2]*a,t[3]=n[3]*a,t[4]=n[4]*a,t[5]=n[5]*a,t[6]=n[6]*a,t[7]=n[7]*a,t[8]=n[8]*a,t[9]=n[9]*a,t[10]=n[10]*a,t[11]=n[11]*a,t[12]=n[12]*a,t[13]=n[13]*a,t[14]=n[14]*a,t[15]=n[15]*a,t},multiplyScalarAndAdd:function(t,n,a,r){return t[0]=n[0]+a[0]*r,t[1]=n[1]+a[1]*r,t[2]=n[2]+a[2]*r,t[3]=n[3]+a[3]*r,t[4]=n[4]+a[4]*r,t[5]=n[5]+a[5]*r,t[6]=n[6]+a[6]*r,t[7]=n[7]+a[7]*r,t[8]=n[8]+a[8]*r,t[9]=n[9]+a[9]*r,t[10]=n[10]+a[10]*r,t[11]=n[11]+a[11]*r,t[12]=n[12]+a[12]*r,t[13]=n[13]+a[13]*r,t[14]=n[14]+a[14]*r,t[15]=n[15]+a[15]*r,t},exactEquals:function(t,n){return t[0]===n[0]&&t[1]===n[1]&&t[2]===n[2]&&t[3]===n[3]&&t[4]===n[4]&&t[5]===n[5]&&t[6]===n[6]&&t[7]===n[7]&&t[8]===n[8]&&t[9]===n[9]&&t[10]===n[10]&&t[11]===n[11]&&t[12]===n[12]&&t[13]===n[13]&&t[14]===n[14]&&t[15]===n[15]},equals:function(t,n){var a=t[0],r=t[1],e=t[2],u=t[3],o=t[4],i=t[5],h=t[6],c=t[7],s=t[8],M=t[9],f=t[10],l=t[11],v=t[12],b=t[13],m=t[14],d=t[15],p=n[0],x=n[1],y=n[2],q=n[3],g=n[4],_=n[5],A=n[6],w=n[7],R=n[8],z=n[9],j=n[10],P=n[11],S=n[12],E=n[13],O=n[14],T=n[15];return Math.abs(a-p)<=1e-6*Math.max(1,Math.abs(a),Math.abs(p))&&Math.abs(r-x)<=1e-6*Math.max(1,Math.abs(r),Math.abs(x))&&Math.abs(e-y)<=1e-6*Math.max(1,Math.abs(e),Math.abs(y))&&Math.abs(u-q)<=1e-6*Math.max(1,Math.abs(u),Math.abs(q))&&Math.abs(o-g)<=1e-6*Math.max(1,Math.abs(o),Math.abs(g))&&Math.abs(i-_)<=1e-6*Math.max(1,Math.abs(i),Math.abs(_))&&Math.abs(h-A)<=1e-6*Math.max(1,Math.abs(h),Math.abs(A))&&Math.abs(c-w)<=1e-6*Math.max(1,Math.abs(c),Math.abs(w))&&Math.abs(s-R)<=1e-6*Math.max(1,Math.abs(s),Math.abs(R))&&Math.abs(M-z)<=1e-6*Math.max(1,Math.abs(M),Math.abs(z))&&Math.abs(f-j)<=1e-6*Math.max(1,Math.abs(f),Math.abs(j))&&Math.abs(l-P)<=1e-6*Math.max(1,Math.abs(l),Math.abs(P))&&Math.abs(v-S)<=1e-6*Math.max(1,Math.abs(v),Math.abs(S))&&Math.abs(b-E)<=1e-6*Math.max(1,Math.abs(b),Math.abs(E))&&Math.abs(m-O)<=1e-6*Math.max(1,Math.abs(m),Math.abs(O))&&Math.abs(d-T)<=1e-6*Math.max(1,Math.abs(d),Math.abs(T))},mul:j,sub:P});function E(){var t=new n(3);return n!=Float32Array&&(t[0]=0,t[1]=0,t[2]=0),t}function O(t){var n=t[0],a=t[1],r=t[2];return Math.hypot(n,a,r)}function T(t,a,r){var e=new n(3);return e[0]=t,e[1]=a,e[2]=r,e}function D(t,n,a){return t[0]=n[0]-a[0],t[1]=n[1]-a[1],t[2]=n[2]-a[2],t}function F(t,n,a){return t[0]=n[0]*a[0],t[1]=n[1]*a[1],t[2]=n[2]*a[2],t}function I(t,n,a){return t[0]=n[0]/a[0],t[1]=n[1]/a[1],t[2]=n[2]/a[2],t}function L(t,n){var a=n[0]-t[0],r=n[1]-t[1],e=n[2]-t[2];return Math.hypot(a,r,e)}function V(t,n){var a=n[0]-t[0],r=n[1]-t[1],e=n[2]-t[2];return a*a+r*r+e*e}function Q(t){var n=t[0],a=t[1],r=t[2];return n*n+a*a+r*r}function Y(t,n){var a=n[0],r=n[1],e=n[2],u=a*a+r*r+e*e;return u>0&&(u=1/Math.sqrt(u)),t[0]=n[0]*u,t[1]=n[1]*u,t[2]=n[2]*u,t}function X(t,n){return t[0]*n[0]+t[1]*n[1]+t[2]*n[2]}function Z(t,n,a){var r=n[0],e=n[1],u=n[2],o=a[0],i=a[1],h=a[2];return t[0]=e*h-u*i,t[1]=u*o-r*h,t[2]=r*i-e*o,t}var B,N=D,k=F,U=I,W=L,C=V,G=O,H=Q,J=(B=E(),function(t,n,a,r,e,u){var o,i;for(n||(n=3),a||(a=0),i=r?Math.min(r*n+a,t.length):t.length,o=a;o<i;o+=n)B[0]=t[o],B[1]=t[o+1],B[2]=t[o+2],e(B,B,u),t[o]=B[0],t[o+1]=B[1],t[o+2]=B[2];return t}),K=Object.freeze({__proto__:null,create:E,clone:function(t){var a=new n(3);return a[0]=t[0],a[1]=t[1],a[2]=t[2],a},length:O,fromValues:T,copy:function(t,n){return t[0]=n[0],t[1]=n[1],t[2]=n[2],t},set:function(t,n,a,r){return t[0]=n,t[1]=a,t[2]=r,t},add:function(t,n,a){return t[0]=n[0]+a[0],t[1]=n[1]+a[1],t[2]=n[2]+a[2],t},subtract:D,multiply:F,divide:I,ceil:function(t,n){return t[0]=Math.ceil(n[0]),t[1]=Math.ceil(n[1]),t[2]=Math.ceil(n[2]),t},floor:function(t,n){return t[0]=Math.floor(n[0]),t[1]=Math.floor(n[1]),t[2]=Math.floor(n[2]),t},min:function(t,n,a){return t[0]=Math.min(n[0],a[0]),t[1]=Math.min(n[1],a[1]),t[2]=Math.min(n[2],a[2]),t},max:function(t,n,a){return t[0]=Math.max(n[0],a[0]),t[1]=Math.max(n[1],a[1]),t[2]=Math.max(n[2],a[2]),t},round:function(t,n){return t[0]=Math.round(n[0]),t[1]=Math.round(n[1]),t[2]=Math.round(n[2]),t},scale:function(t,n,a){return t[0]=n[0]*a,t[1]=n[1]*a,t[2]=n[2]*a,t},scaleAndAdd:function(t,n,a,r){return t[0]=n[0]+a[0]*r,t[1]=n[1]+a[1]*r,t[2]=n[2]+a[2]*r,t},distance:L,squaredDistance:V,squaredLength:Q,negate:function(t,n){return t[0]=-n[0],t[1]=-n[1],t[2]=-n[2],t},inverse:function(t,n){return t[0]=1/n[0],t[1]=1/n[1],t[2]=1/n[2],t},normalize:Y,dot:X,cross:Z,lerp:function(t,n,a,r){var e=n[0],u=n[1],o=n[2];return t[0]=e+r*(a[0]-e),t[1]=u+r*(a[1]-u),t[2]=o+r*(a[2]-o),t},hermite:function(t,n,a,r,e,u){var o=u*u,i=o*(2*u-3)+1,h=o*(u-2)+u,c=o*(u-1),s=o*(3-2*u);return t[0]=n[0]*i+a[0]*h+r[0]*c+e[0]*s,t[1]=n[1]*i+a[1]*h+r[1]*c+e[1]*s,t[2]=n[2]*i+a[2]*h+r[2]*c+e[2]*s,t},bezier:function(t,n,a,r,e,u){var o=1-u,i=o*o,h=u*u,c=i*o,s=3*u*i,M=3*h*o,f=h*u;return t[0]=n[0]*c+a[0]*s+r[0]*M+e[0]*f,t[1]=n[1]*c+a[1]*s+r[1]*M+e[1]*f,t[2]=n[2]*c+a[2]*s+r[2]*M+e[2]*f,t},random:function(t,n){n=n||1;var r=2*a()*Math.PI,e=2*a()-1,u=Math.sqrt(1-e*e)*n;return t[0]=Math.cos(r)*u,t[1]=Math.sin(r)*u,t[2]=e*n,t},transformMat4:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=a[3]*r+a[7]*e+a[11]*u+a[15];return o=o||1,t[0]=(a[0]*r+a[4]*e+a[8]*u+a[12])/o,t[1]=(a[1]*r+a[5]*e+a[9]*u+a[13])/o,t[2]=(a[2]*r+a[6]*e+a[10]*u+a[14])/o,t},transformMat3:function(t,n,a){var r=n[0],e=n[1],u=n[2];return t[0]=r*a[0]+e*a[3]+u*a[6],t[1]=r*a[1]+e*a[4]+u*a[7],t[2]=r*a[2]+e*a[5]+u*a[8],t},transformQuat:function(t,n,a){var r=a[0],e=a[1],u=a[2],o=a[3],i=n[0],h=n[1],c=n[2],s=e*c-u*h,M=u*i-r*c,f=r*h-e*i,l=e*f-u*M,v=u*s-r*f,b=r*M-e*s,m=2*o;return s*=m,M*=m,f*=m,l*=2,v*=2,b*=2,t[0]=i+s+l,t[1]=h+M+v,t[2]=c+f+b,t},rotateX:function(t,n,a,r){var e=[],u=[];return e[0]=n[0]-a[0],e[1]=n[1]-a[1],e[2]=n[2]-a[2],u[0]=e[0],u[1]=e[1]*Math.cos(r)-e[2]*Math.sin(r),u[2]=e[1]*Math.sin(r)+e[2]*Math.cos(r),t[0]=u[0]+a[0],t[1]=u[1]+a[1],t[2]=u[2]+a[2],t},rotateY:function(t,n,a,r){var e=[],u=[];return e[0]=n[0]-a[0],e[1]=n[1]-a[1],e[2]=n[2]-a[2],u[0]=e[2]*Math.sin(r)+e[0]*Math.cos(r),u[1]=e[1],u[2]=e[2]*Math.cos(r)-e[0]*Math.sin(r),t[0]=u[0]+a[0],t[1]=u[1]+a[1],t[2]=u[2]+a[2],t},rotateZ:function(t,n,a,r){var e=[],u=[];return e[0]=n[0]-a[0],e[1]=n[1]-a[1],e[2]=n[2]-a[2],u[0]=e[0]*Math.cos(r)-e[1]*Math.sin(r),u[1]=e[0]*Math.sin(r)+e[1]*Math.cos(r),u[2]=e[2],t[0]=u[0]+a[0],t[1]=u[1]+a[1],t[2]=u[2]+a[2],t},angle:function(t,n){var a=t[0],r=t[1],e=t[2],u=n[0],o=n[1],i=n[2],h=Math.sqrt(a*a+r*r+e*e)*Math.sqrt(u*u+o*o+i*i),c=h&&X(t,n)/h;return Math.acos(Math.min(Math.max(c,-1),1))},zero:function(t){return t[0]=0,t[1]=0,t[2]=0,t},str:function(t){return"vec3("+t[0]+", "+t[1]+", "+t[2]+")"},exactEquals:function(t,n){return t[0]===n[0]&&t[1]===n[1]&&t[2]===n[2]},equals:function(t,n){var a=t[0],r=t[1],e=t[2],u=n[0],o=n[1],i=n[2];return Math.abs(a-u)<=1e-6*Math.max(1,Math.abs(a),Math.abs(u))&&Math.abs(r-o)<=1e-6*Math.max(1,Math.abs(r),Math.abs(o))&&Math.abs(e-i)<=1e-6*Math.max(1,Math.abs(e),Math.abs(i))},sub:N,mul:k,div:U,dist:W,sqrDist:C,len:G,sqrLen:H,forEach:J});function $(){var t=new n(4);return n!=Float32Array&&(t[0]=0,t[1]=0,t[2]=0,t[3]=0),t}function tt(t){var a=new n(4);return a[0]=t[0],a[1]=t[1],a[2]=t[2],a[3]=t[3],a}function nt(t,a,r,e){var u=new n(4);return u[0]=t,u[1]=a,u[2]=r,u[3]=e,u}function at(t,n){return t[0]=n[0],t[1]=n[1],t[2]=n[2],t[3]=n[3],t}function rt(t,n,a,r,e){return t[0]=n,t[1]=a,t[2]=r,t[3]=e,t}function et(t,n,a){return t[0]=n[0]+a[0],t[1]=n[1]+a[1],t[2]=n[2]+a[2],t[3]=n[3]+a[3],t}function ut(t,n,a){return t[0]=n[0]-a[0],t[1]=n[1]-a[1],t[2]=n[2]-a[2],t[3]=n[3]-a[3],t}function ot(t,n,a){return t[0]=n[0]*a[0],t[1]=n[1]*a[1],t[2]=n[2]*a[2],t[3]=n[3]*a[3],t}function it(t,n,a){return t[0]=n[0]/a[0],t[1]=n[1]/a[1],t[2]=n[2]/a[2],t[3]=n[3]/a[3],t}function ht(t,n,a){return t[0]=n[0]*a,t[1]=n[1]*a,t[2]=n[2]*a,t[3]=n[3]*a,t}function ct(t,n){var a=n[0]-t[0],r=n[1]-t[1],e=n[2]-t[2],u=n[3]-t[3];return Math.hypot(a,r,e,u)}function st(t,n){var a=n[0]-t[0],r=n[1]-t[1],e=n[2]-t[2],u=n[3]-t[3];return a*a+r*r+e*e+u*u}function Mt(t){var n=t[0],a=t[1],r=t[2],e=t[3];return Math.hypot(n,a,r,e)}function ft(t){var n=t[0],a=t[1],r=t[2],e=t[3];return n*n+a*a+r*r+e*e}function lt(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=a*a+r*r+e*e+u*u;return o>0&&(o=1/Math.sqrt(o)),t[0]=a*o,t[1]=r*o,t[2]=e*o,t[3]=u*o,t}function vt(t,n){return t[0]*n[0]+t[1]*n[1]+t[2]*n[2]+t[3]*n[3]}function bt(t,n,a,r){var e=n[0],u=n[1],o=n[2],i=n[3];return t[0]=e+r*(a[0]-e),t[1]=u+r*(a[1]-u),t[2]=o+r*(a[2]-o),t[3]=i+r*(a[3]-i),t}function mt(t,n){return t[0]===n[0]&&t[1]===n[1]&&t[2]===n[2]&&t[3]===n[3]}function dt(t,n){var a=t[0],r=t[1],e=t[2],u=t[3],o=n[0],i=n[1],h=n[2],c=n[3];return Math.abs(a-o)<=1e-6*Math.max(1,Math.abs(a),Math.abs(o))&&Math.abs(r-i)<=1e-6*Math.max(1,Math.abs(r),Math.abs(i))&&Math.abs(e-h)<=1e-6*Math.max(1,Math.abs(e),Math.abs(h))&&Math.abs(u-c)<=1e-6*Math.max(1,Math.abs(u),Math.abs(c))}var pt=ut,xt=ot,yt=it,qt=ct,gt=st,_t=Mt,At=ft,wt=function(){var t=$();return function(n,a,r,e,u,o){var i,h;for(a||(a=4),r||(r=0),h=e?Math.min(e*a+r,n.length):n.length,i=r;i<h;i+=a)t[0]=n[i],t[1]=n[i+1],t[2]=n[i+2],t[3]=n[i+3],u(t,t,o),n[i]=t[0],n[i+1]=t[1],n[i+2]=t[2],n[i+3]=t[3];return n}}(),Rt=Object.freeze({__proto__:null,create:$,clone:tt,fromValues:nt,copy:at,set:rt,add:et,subtract:ut,multiply:ot,divide:it,ceil:function(t,n){return t[0]=Math.ceil(n[0]),t[1]=Math.ceil(n[1]),t[2]=Math.ceil(n[2]),t[3]=Math.ceil(n[3]),t},floor:function(t,n){return t[0]=Math.floor(n[0]),t[1]=Math.floor(n[1]),t[2]=Math.floor(n[2]),t[3]=Math.floor(n[3]),t},min:function(t,n,a){return t[0]=Math.min(n[0],a[0]),t[1]=Math.min(n[1],a[1]),t[2]=Math.min(n[2],a[2]),t[3]=Math.min(n[3],a[3]),t},max:function(t,n,a){return t[0]=Math.max(n[0],a[0]),t[1]=Math.max(n[1],a[1]),t[2]=Math.max(n[2],a[2]),t[3]=Math.max(n[3],a[3]),t},round:function(t,n){return t[0]=Math.round(n[0]),t[1]=Math.round(n[1]),t[2]=Math.round(n[2]),t[3]=Math.round(n[3]),t},scale:ht,scaleAndAdd:function(t,n,a,r){return t[0]=n[0]+a[0]*r,t[1]=n[1]+a[1]*r,t[2]=n[2]+a[2]*r,t[3]=n[3]+a[3]*r,t},distance:ct,squaredDistance:st,length:Mt,squaredLength:ft,negate:function(t,n){return t[0]=-n[0],t[1]=-n[1],t[2]=-n[2],t[3]=-n[3],t},inverse:function(t,n){return t[0]=1/n[0],t[1]=1/n[1],t[2]=1/n[2],t[3]=1/n[3],t},normalize:lt,dot:vt,cross:function(t,n,a,r){var e=a[0]*r[1]-a[1]*r[0],u=a[0]*r[2]-a[2]*r[0],o=a[0]*r[3]-a[3]*r[0],i=a[1]*r[2]-a[2]*r[1],h=a[1]*r[3]-a[3]*r[1],c=a[2]*r[3]-a[3]*r[2],s=n[0],M=n[1],f=n[2],l=n[3];return t[0]=M*c-f*h+l*i,t[1]=-s*c+f*o-l*u,t[2]=s*h-M*o+l*e,t[3]=-s*i+M*u-f*e,t},lerp:bt,random:function(t,n){var r,e,u,o,i,h;n=n||1;do{i=(r=2*a()-1)*r+(e=2*a()-1)*e}while(i>=1);do{h=(u=2*a()-1)*u+(o=2*a()-1)*o}while(h>=1);var c=Math.sqrt((1-i)/h);return t[0]=n*r,t[1]=n*e,t[2]=n*u*c,t[3]=n*o*c,t},transformMat4:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3];return t[0]=a[0]*r+a[4]*e+a[8]*u+a[12]*o,t[1]=a[1]*r+a[5]*e+a[9]*u+a[13]*o,t[2]=a[2]*r+a[6]*e+a[10]*u+a[14]*o,t[3]=a[3]*r+a[7]*e+a[11]*u+a[15]*o,t},transformQuat:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=a[0],i=a[1],h=a[2],c=a[3],s=c*r+i*u-h*e,M=c*e+h*r-o*u,f=c*u+o*e-i*r,l=-o*r-i*e-h*u;return t[0]=s*c+l*-o+M*-h-f*-i,t[1]=M*c+l*-i+f*-o-s*-h,t[2]=f*c+l*-h+s*-i-M*-o,t[3]=n[3],t},zero:function(t){return t[0]=0,t[1]=0,t[2]=0,t[3]=0,t},str:function(t){return"vec4("+t[0]+", "+t[1]+", "+t[2]+", "+t[3]+")"},exactEquals:mt,equals:dt,sub:pt,mul:xt,div:yt,dist:qt,sqrDist:gt,len:_t,sqrLen:At,forEach:wt});function zt(){var t=new n(4);return n!=Float32Array&&(t[0]=0,t[1]=0,t[2]=0),t[3]=1,t}function jt(t,n,a){a*=.5;var r=Math.sin(a);return t[0]=r*n[0],t[1]=r*n[1],t[2]=r*n[2],t[3]=Math.cos(a),t}function Pt(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=a[0],h=a[1],c=a[2],s=a[3];return t[0]=r*s+o*i+e*c-u*h,t[1]=e*s+o*h+u*i-r*c,t[2]=u*s+o*c+r*h-e*i,t[3]=o*s-r*i-e*h-u*c,t}function St(t,n,a){a*=.5;var r=n[0],e=n[1],u=n[2],o=n[3],i=Math.sin(a),h=Math.cos(a);return t[0]=r*h+o*i,t[1]=e*h+u*i,t[2]=u*h-e*i,t[3]=o*h-r*i,t}function Et(t,n,a){a*=.5;var r=n[0],e=n[1],u=n[2],o=n[3],i=Math.sin(a),h=Math.cos(a);return t[0]=r*h-u*i,t[1]=e*h+o*i,t[2]=u*h+r*i,t[3]=o*h-e*i,t}function Ot(t,n,a){a*=.5;var r=n[0],e=n[1],u=n[2],o=n[3],i=Math.sin(a),h=Math.cos(a);return t[0]=r*h+e*i,t[1]=e*h-r*i,t[2]=u*h+o*i,t[3]=o*h-u*i,t}function Tt(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=Math.sqrt(a*a+r*r+e*e),i=Math.exp(u),h=o>0?i*Math.sin(o)/o:0;return t[0]=a*h,t[1]=r*h,t[2]=e*h,t[3]=i*Math.cos(o),t}function Dt(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=Math.sqrt(a*a+r*r+e*e),i=o>0?Math.atan2(o,u)/o:0;return t[0]=a*i,t[1]=r*i,t[2]=e*i,t[3]=.5*Math.log(a*a+r*r+e*e+u*u),t}function Ft(t,n,a,r){var e,u,o,i,h,c=n[0],s=n[1],M=n[2],f=n[3],l=a[0],v=a[1],b=a[2],m=a[3];return(u=c*l+s*v+M*b+f*m)<0&&(u=-u,l=-l,v=-v,b=-b,m=-m),1-u>1e-6?(e=Math.acos(u),o=Math.sin(e),i=Math.sin((1-r)*e)/o,h=Math.sin(r*e)/o):(i=1-r,h=r),t[0]=i*c+h*l,t[1]=i*s+h*v,t[2]=i*M+h*b,t[3]=i*f+h*m,t}function It(t,n){var a,r=n[0]+n[4]+n[8];if(r>0)a=Math.sqrt(r+1),t[3]=.5*a,a=.5/a,t[0]=(n[5]-n[7])*a,t[1]=(n[6]-n[2])*a,t[2]=(n[1]-n[3])*a;else{var e=0;n[4]>n[0]&&(e=1),n[8]>n[3*e+e]&&(e=2);var u=(e+1)%3,o=(e+2)%3;a=Math.sqrt(n[3*e+e]-n[3*u+u]-n[3*o+o]+1),t[e]=.5*a,a=.5/a,t[3]=(n[3*u+o]-n[3*o+u])*a,t[u]=(n[3*u+e]+n[3*e+u])*a,t[o]=(n[3*o+e]+n[3*e+o])*a}return t}var Lt,Vt,Qt,Yt,Xt,Zt,Bt=tt,Nt=nt,kt=at,Ut=rt,Wt=et,Ct=Pt,Gt=ht,Ht=vt,Jt=bt,Kt=Mt,$t=Kt,tn=ft,nn=tn,an=lt,rn=mt,en=dt,un=(Lt=E(),Vt=T(1,0,0),Qt=T(0,1,0),function(t,n,a){var r=X(n,a);return r<-.999999?(Z(Lt,Vt,n),G(Lt)<1e-6&&Z(Lt,Qt,n),Y(Lt,Lt),jt(t,Lt,Math.PI),t):r>.999999?(t[0]=0,t[1]=0,t[2]=0,t[3]=1,t):(Z(Lt,n,a),t[0]=Lt[0],t[1]=Lt[1],t[2]=Lt[2],t[3]=1+r,an(t,t))}),on=(Yt=zt(),Xt=zt(),function(t,n,a,r,e,u){return Ft(Yt,n,e,u),Ft(Xt,a,r,u),Ft(t,Yt,Xt,2*u*(1-u)),t}),hn=(Zt=b(),function(t,n,a,r){return Zt[0]=a[0],Zt[3]=a[1],Zt[6]=a[2],Zt[1]=r[0],Zt[4]=r[1],Zt[7]=r[2],Zt[2]=-n[0],Zt[5]=-n[1],Zt[8]=-n[2],an(t,It(t,Zt))}),cn=Object.freeze({__proto__:null,create:zt,identity:function(t){return t[0]=0,t[1]=0,t[2]=0,t[3]=1,t},setAxisAngle:jt,getAxisAngle:function(t,n){var a=2*Math.acos(n[3]),r=Math.sin(a/2);return r>1e-6?(t[0]=n[0]/r,t[1]=n[1]/r,t[2]=n[2]/r):(t[0]=1,t[1]=0,t[2]=0),a},getAngle:function(t,n){var a=Ht(t,n);return Math.acos(2*a*a-1)},multiply:Pt,rotateX:St,rotateY:Et,rotateZ:Ot,calculateW:function(t,n){var a=n[0],r=n[1],e=n[2];return t[0]=a,t[1]=r,t[2]=e,t[3]=Math.sqrt(Math.abs(1-a*a-r*r-e*e)),t},exp:Tt,ln:Dt,pow:function(t,n,a){return Dt(t,n),Gt(t,t,a),Tt(t,t),t},slerp:Ft,random:function(t){var n=a(),r=a(),e=a(),u=Math.sqrt(1-n),o=Math.sqrt(n);return t[0]=u*Math.sin(2*Math.PI*r),t[1]=u*Math.cos(2*Math.PI*r),t[2]=o*Math.sin(2*Math.PI*e),t[3]=o*Math.cos(2*Math.PI*e),t},invert:function(t,n){var a=n[0],r=n[1],e=n[2],u=n[3],o=a*a+r*r+e*e+u*u,i=o?1/o:0;return t[0]=-a*i,t[1]=-r*i,t[2]=-e*i,t[3]=u*i,t},conjugate:function(t,n){return t[0]=-n[0],t[1]=-n[1],t[2]=-n[2],t[3]=n[3],t},fromMat3:It,fromEuler:function(t,n,a,r){var e=.5*Math.PI/180;n*=e,a*=e,r*=e;var u=Math.sin(n),o=Math.cos(n),i=Math.sin(a),h=Math.cos(a),c=Math.sin(r),s=Math.cos(r);return t[0]=u*h*s-o*i*c,t[1]=o*i*s+u*h*c,t[2]=o*h*c-u*i*s,t[3]=o*h*s+u*i*c,t},str:function(t){return"quat("+t[0]+", "+t[1]+", "+t[2]+", "+t[3]+")"},clone:Bt,fromValues:Nt,copy:kt,set:Ut,add:Wt,mul:Ct,scale:Gt,dot:Ht,lerp:Jt,length:Kt,len:$t,squaredLength:tn,sqrLen:nn,normalize:an,exactEquals:rn,equals:en,rotationTo:un,sqlerp:on,setAxes:hn});function sn(t,n,a){var r=.5*a[0],e=.5*a[1],u=.5*a[2],o=n[0],i=n[1],h=n[2],c=n[3];return t[0]=o,t[1]=i,t[2]=h,t[3]=c,t[4]=r*c+e*h-u*i,t[5]=e*c+u*o-r*h,t[6]=u*c+r*i-e*o,t[7]=-r*o-e*i-u*h,t}function Mn(t,n){return t[0]=n[0],t[1]=n[1],t[2]=n[2],t[3]=n[3],t[4]=n[4],t[5]=n[5],t[6]=n[6],t[7]=n[7],t}var fn=kt;var ln=kt;function vn(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=a[4],h=a[5],c=a[6],s=a[7],M=n[4],f=n[5],l=n[6],v=n[7],b=a[0],m=a[1],d=a[2],p=a[3];return t[0]=r*p+o*b+e*d-u*m,t[1]=e*p+o*m+u*b-r*d,t[2]=u*p+o*d+r*m-e*b,t[3]=o*p-r*b-e*m-u*d,t[4]=r*s+o*i+e*c-u*h+M*p+v*b+f*d-l*m,t[5]=e*s+o*h+u*i-r*c+f*p+v*m+l*b-M*d,t[6]=u*s+o*c+r*h-e*i+l*p+v*d+M*m-f*b,t[7]=o*s-r*i-e*h-u*c+v*p-M*b-f*m-l*d,t}var bn=vn;var mn=Ht;var dn=Kt,pn=dn,xn=tn,yn=xn;var qn=Object.freeze({__proto__:null,create:function(){var t=new n(8);return n!=Float32Array&&(t[0]=0,t[1]=0,t[2]=0,t[4]=0,t[5]=0,t[6]=0,t[7]=0),t[3]=1,t},clone:function(t){var a=new n(8);return a[0]=t[0],a[1]=t[1],a[2]=t[2],a[3]=t[3],a[4]=t[4],a[5]=t[5],a[6]=t[6],a[7]=t[7],a},fromValues:function(t,a,r,e,u,o,i,h){var c=new n(8);return c[0]=t,c[1]=a,c[2]=r,c[3]=e,c[4]=u,c[5]=o,c[6]=i,c[7]=h,c},fromRotationTranslationValues:function(t,a,r,e,u,o,i){var h=new n(8);h[0]=t,h[1]=a,h[2]=r,h[3]=e;var c=.5*u,s=.5*o,M=.5*i;return h[4]=c*e+s*r-M*a,h[5]=s*e+M*t-c*r,h[6]=M*e+c*a-s*t,h[7]=-c*t-s*a-M*r,h},fromRotationTranslation:sn,fromTranslation:function(t,n){return t[0]=0,t[1]=0,t[2]=0,t[3]=1,t[4]=.5*n[0],t[5]=.5*n[1],t[6]=.5*n[2],t[7]=0,t},fromRotation:function(t,n){return t[0]=n[0],t[1]=n[1],t[2]=n[2],t[3]=n[3],t[4]=0,t[5]=0,t[6]=0,t[7]=0,t},fromMat4:function(t,a){var r=zt();R(r,a);var e=new n(3);return A(e,a),sn(t,r,e),t},copy:Mn,identity:function(t){return t[0]=0,t[1]=0,t[2]=0,t[3]=1,t[4]=0,t[5]=0,t[6]=0,t[7]=0,t},set:function(t,n,a,r,e,u,o,i,h){return t[0]=n,t[1]=a,t[2]=r,t[3]=e,t[4]=u,t[5]=o,t[6]=i,t[7]=h,t},getReal:fn,getDual:function(t,n){return t[0]=n[4],t[1]=n[5],t[2]=n[6],t[3]=n[7],t},setReal:ln,setDual:function(t,n){return t[4]=n[0],t[5]=n[1],t[6]=n[2],t[7]=n[3],t},getTranslation:function(t,n){var a=n[4],r=n[5],e=n[6],u=n[7],o=-n[0],i=-n[1],h=-n[2],c=n[3];return t[0]=2*(a*c+u*o+r*h-e*i),t[1]=2*(r*c+u*i+e*o-a*h),t[2]=2*(e*c+u*h+a*i-r*o),t},translate:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=.5*a[0],h=.5*a[1],c=.5*a[2],s=n[4],M=n[5],f=n[6],l=n[7];return t[0]=r,t[1]=e,t[2]=u,t[3]=o,t[4]=o*i+e*c-u*h+s,t[5]=o*h+u*i-r*c+M,t[6]=o*c+r*h-e*i+f,t[7]=-r*i-e*h-u*c+l,t},rotateX:function(t,n,a){var r=-n[0],e=-n[1],u=-n[2],o=n[3],i=n[4],h=n[5],c=n[6],s=n[7],M=i*o+s*r+h*u-c*e,f=h*o+s*e+c*r-i*u,l=c*o+s*u+i*e-h*r,v=s*o-i*r-h*e-c*u;return St(t,n,a),r=t[0],e=t[1],u=t[2],o=t[3],t[4]=M*o+v*r+f*u-l*e,t[5]=f*o+v*e+l*r-M*u,t[6]=l*o+v*u+M*e-f*r,t[7]=v*o-M*r-f*e-l*u,t},rotateY:function(t,n,a){var r=-n[0],e=-n[1],u=-n[2],o=n[3],i=n[4],h=n[5],c=n[6],s=n[7],M=i*o+s*r+h*u-c*e,f=h*o+s*e+c*r-i*u,l=c*o+s*u+i*e-h*r,v=s*o-i*r-h*e-c*u;return Et(t,n,a),r=t[0],e=t[1],u=t[2],o=t[3],t[4]=M*o+v*r+f*u-l*e,t[5]=f*o+v*e+l*r-M*u,t[6]=l*o+v*u+M*e-f*r,t[7]=v*o-M*r-f*e-l*u,t},rotateZ:function(t,n,a){var r=-n[0],e=-n[1],u=-n[2],o=n[3],i=n[4],h=n[5],c=n[6],s=n[7],M=i*o+s*r+h*u-c*e,f=h*o+s*e+c*r-i*u,l=c*o+s*u+i*e-h*r,v=s*o-i*r-h*e-c*u;return Ot(t,n,a),r=t[0],e=t[1],u=t[2],o=t[3],t[4]=M*o+v*r+f*u-l*e,t[5]=f*o+v*e+l*r-M*u,t[6]=l*o+v*u+M*e-f*r,t[7]=v*o-M*r-f*e-l*u,t},rotateByQuatAppend:function(t,n,a){var r=a[0],e=a[1],u=a[2],o=a[3],i=n[0],h=n[1],c=n[2],s=n[3];return t[0]=i*o+s*r+h*u-c*e,t[1]=h*o+s*e+c*r-i*u,t[2]=c*o+s*u+i*e-h*r,t[3]=s*o-i*r-h*e-c*u,i=n[4],h=n[5],c=n[6],s=n[7],t[4]=i*o+s*r+h*u-c*e,t[5]=h*o+s*e+c*r-i*u,t[6]=c*o+s*u+i*e-h*r,t[7]=s*o-i*r-h*e-c*u,t},rotateByQuatPrepend:function(t,n,a){var r=n[0],e=n[1],u=n[2],o=n[3],i=a[0],h=a[1],c=a[2],s=a[3];return t[0]=r*s+o*i+e*c-u*h,t[1]=e*s+o*h+u*i-r*c,t[2]=u*s+o*c+r*h-e*i,t[3]=o*s-r*i-e*h-u*c,i=a[4],h=a[5],c=a[6],s=a[7],t[4]=r*s+o*i+e*c-u*h,t[5]=e*s+o*h+u*i-r*c,t[6]=u*s+o*c+r*h-e*i,t[7]=o*s-r*i-e*h-u*c,t},rotateAroundAxis:function(t,n,a,r){if(Math.abs(r)<1e-6)return Mn(t,n);var e=Math.hypot(a[0],a[1],a[2]);r*=.5;var u=Math.sin(r),o=u*a[0]/e,i=u*a[1]/e,h=u*a[2]/e,c=Math.cos(r),s=n[0],M=n[1],f=n[2],l=n[3];t[0]=s*c+l*o+M*h-f*i,t[1]=M*c+l*i+f*o-s*h,t[2]=f*c+l*h+s*i-M*o,t[3]=l*c-s*o-M*i-f*h;var v=n[4],b=n[5],m=n[6],d=n[7];return t[4]=v*c+d*o+b*h-m*i,t[5]=b*c+d*i+m*o-v*h,t[6]=m*c+d*h+v*i-b*o,t[7]=d*c-v*o-b*i-m*h,t},add:function(t,n,a){return t[0]=n[0]+a[0],t[1]=n[1]+a[1],t[2]=n[2]+a[2],t[3]=n[3]+a[3],t[4]=n[4]+a[4],t[5]=n[5]+a[5],t[6]=n[6]+a[6],t[7]=n[7]+a[7],t},multiply:vn,mul:bn,scale:function(t,n,a){return t[0]=n[0]*a,t[1]=n[1]*a,t[2]=n[2]*a,t[3]=n[3]*a,t[4]=n[4]*a,t[5]=n[5]*a,t[6]=n[6]*a,t[7]=n[7]*a,t},dot:mn,lerp:function(t,n,a,r){var e=1-r;return mn(n,a)<0&&(r=-r),t[0]=n[0]*e+a[0]*r,t[1]=n[1]*e+a[1]*r,t[2]=n[2]*e+a[2]*r,t[3]=n[3]*e+a[3]*r,t[4]=n[4]*e+a[4]*r,t[5]=n[5]*e+a[5]*r,t[6]=n[6]*e+a[6]*r,t[7]=n[7]*e+a[7]*r,t},invert:function(t,n){var a=xn(n);return t[0]=-n[0]/a,t[1]=-n[1]/a,t[2]=-n[2]/a,t[3]=n[3]/a,t[4]=-n[4]/a,t[5]=-n[5]/a,t[6]=-n[6]/a,t[7]=n[7]/a,t},conjugate:function(t,n){return t[0]=-n[0],t[1]=-n[1],t[2]=-n[2],t[3]=n[3],t[4]=-n[4],t[5]=-n[5],t[6]=-n[6],t[7]=n[7],t},length:dn,len:pn,squaredLength:xn,sqrLen:yn,normalize:function(t,n){var a=xn(n);if(a>0){a=Math.sqrt(a);var r=n[0]/a,e=n[1]/a,u=n[2]/a,o=n[3]/a,i=n[4],h=n[5],c=n[6],s=n[7],M=r*i+e*h+u*c+o*s;t[0]=r,t[1]=e,t[2]=u,t[3]=o,t[4]=(i-r*M)/a,t[5]=(h-e*M)/a,t[6]=(c-u*M)/a,t[7]=(s-o*M)/a}return t},str:function(t){return"quat2("+t[0]+", "+t[1]+", "+t[2]+", "+t[3]+", "+t[4]+", "+t[5]+", "+t[6]+", "+t[7]+")"},exactEquals:function(t,n){return t[0]===n[0]&&t[1]===n[1]&&t[2]===n[2]&&t[3]===n[3]&&t[4]===n[4]&&t[5]===n[5]&&t[6]===n[6]&&t[7]===n[7]},equals:function(t,n){var a=t[0],r=t[1],e=t[2],u=t[3],o=t[4],i=t[5],h=t[6],c=t[7],s=n[0],M=n[1],f=n[2],l=n[3],v=n[4],b=n[5],m=n[6],d=n[7];return Math.abs(a-s)<=1e-6*Math.max(1,Math.abs(a),Math.abs(s))&&Math.abs(r-M)<=1e-6*Math.max(1,Math.abs(r),Math.abs(M))&&Math.abs(e-f)<=1e-6*Math.max(1,Math.abs(e),Math.abs(f))&&Math.abs(u-l)<=1e-6*Math.max(1,Math.abs(u),Math.abs(l))&&Math.abs(o-v)<=1e-6*Math.max(1,Math.abs(o),Math.abs(v))&&Math.abs(i-b)<=1e-6*Math.max(1,Math.abs(i),Math.abs(b))&&Math.abs(h-m)<=1e-6*Math.max(1,Math.abs(h),Math.abs(m))&&Math.abs(c-d)<=1e-6*Math.max(1,Math.abs(c),Math.abs(d))}});function gn(){var t=new n(2);return n!=Float32Array&&(t[0]=0,t[1]=0),t}function _n(t,n,a){return t[0]=n[0]-a[0],t[1]=n[1]-a[1],t}function An(t,n,a){return t[0]=n[0]*a[0],t[1]=n[1]*a[1],t}function wn(t,n,a){return t[0]=n[0]/a[0],t[1]=n[1]/a[1],t}function Rn(t,n){var a=n[0]-t[0],r=n[1]-t[1];return Math.hypot(a,r)}function zn(t,n){var a=n[0]-t[0],r=n[1]-t[1];return a*a+r*r}function jn(t){var n=t[0],a=t[1];return Math.hypot(n,a)}function Pn(t){var n=t[0],a=t[1];return n*n+a*a}var Sn=jn,En=_n,On=An,Tn=wn,Dn=Rn,Fn=zn,In=Pn,Ln=function(){var t=gn();return function(n,a,r,e,u,o){var i,h;for(a||(a=2),r||(r=0),h=e?Math.min(e*a+r,n.length):n.length,i=r;i<h;i+=a)t[0]=n[i],t[1]=n[i+1],u(t,t,o),n[i]=t[0],n[i+1]=t[1];return n}}(),Vn=Object.freeze({__proto__:null,create:gn,clone:function(t){var a=new n(2);return a[0]=t[0],a[1]=t[1],a},fromValues:function(t,a){var r=new n(2);return r[0]=t,r[1]=a,r},copy:function(t,n){return t[0]=n[0],t[1]=n[1],t},set:function(t,n,a){return t[0]=n,t[1]=a,t},add:function(t,n,a){return t[0]=n[0]+a[0],t[1]=n[1]+a[1],t},subtract:_n,multiply:An,divide:wn,ceil:function(t,n){return t[0]=Math.ceil(n[0]),t[1]=Math.ceil(n[1]),t},floor:function(t,n){return t[0]=Math.floor(n[0]),t[1]=Math.floor(n[1]),t},min:function(t,n,a){return t[0]=Math.min(n[0],a[0]),t[1]=Math.min(n[1],a[1]),t},max:function(t,n,a){return t[0]=Math.max(n[0],a[0]),t[1]=Math.max(n[1],a[1]),t},round:function(t,n){return t[0]=Math.round(n[0]),t[1]=Math.round(n[1]),t},scale:function(t,n,a){return t[0]=n[0]*a,t[1]=n[1]*a,t},scaleAndAdd:function(t,n,a,r){return t[0]=n[0]+a[0]*r,t[1]=n[1]+a[1]*r,t},distance:Rn,squaredDistance:zn,length:jn,squaredLength:Pn,negate:function(t,n){return t[0]=-n[0],t[1]=-n[1],t},inverse:function(t,n){return t[0]=1/n[0],t[1]=1/n[1],t},normalize:function(t,n){var a=n[0],r=n[1],e=a*a+r*r;return e>0&&(e=1/Math.sqrt(e)),t[0]=n[0]*e,t[1]=n[1]*e,t},dot:function(t,n){return t[0]*n[0]+t[1]*n[1]},cross:function(t,n,a){var r=n[0]*a[1]-n[1]*a[0];return t[0]=t[1]=0,t[2]=r,t},lerp:function(t,n,a,r){var e=n[0],u=n[1];return t[0]=e+r*(a[0]-e),t[1]=u+r*(a[1]-u),t},random:function(t,n){n=n||1;var r=2*a()*Math.PI;return t[0]=Math.cos(r)*n,t[1]=Math.sin(r)*n,t},transformMat2:function(t,n,a){var r=n[0],e=n[1];return t[0]=a[0]*r+a[2]*e,t[1]=a[1]*r+a[3]*e,t},transformMat2d:function(t,n,a){var r=n[0],e=n[1];return t[0]=a[0]*r+a[2]*e+a[4],t[1]=a[1]*r+a[3]*e+a[5],t},transformMat3:function(t,n,a){var r=n[0],e=n[1];return t[0]=a[0]*r+a[3]*e+a[6],t[1]=a[1]*r+a[4]*e+a[7],t},transformMat4:function(t,n,a){var r=n[0],e=n[1];return t[0]=a[0]*r+a[4]*e+a[12],t[1]=a[1]*r+a[5]*e+a[13],t},rotate:function(t,n,a,r){var e=n[0]-a[0],u=n[1]-a[1],o=Math.sin(r),i=Math.cos(r);return t[0]=e*i-u*o+a[0],t[1]=e*o+u*i+a[1],t},angle:function(t,n){var a=t[0],r=t[1],e=n[0],u=n[1],o=Math.sqrt(a*a+r*r)*Math.sqrt(e*e+u*u),i=o&&(a*e+r*u)/o;return Math.acos(Math.min(Math.max(i,-1),1))},zero:function(t){return t[0]=0,t[1]=0,t},str:function(t){return"vec2("+t[0]+", "+t[1]+")"},exactEquals:function(t,n){return t[0]===n[0]&&t[1]===n[1]},equals:function(t,n){var a=t[0],r=t[1],e=n[0],u=n[1];return Math.abs(a-e)<=1e-6*Math.max(1,Math.abs(a),Math.abs(e))&&Math.abs(r-u)<=1e-6*Math.max(1,Math.abs(r),Math.abs(u))},len:Sn,sub:En,mul:On,div:Tn,dist:Dn,sqrDist:Fn,sqrLen:In,forEach:Ln});t.glMatrix=e,t.mat2=c,t.mat2d=v,t.mat3=y,t.mat4=S,t.quat=cn,t.quat2=qn,t.vec2=Vn,t.vec3=K,t.vec4=Rt,Object.defineProperty(t,"__esModule",{value:!0})}));
 
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):e.moment=t()}(this,function(){"use strict";var e,i;function f(){return e.apply(null,arguments)}function o(e){return e instanceof Array||"[object Array]"===Object.prototype.toString.call(e)}function u(e){return null!=e&&"[object Object]"===Object.prototype.toString.call(e)}function m(e,t){return Object.prototype.hasOwnProperty.call(e,t)}function l(e){if(Object.getOwnPropertyNames)return 0===Object.getOwnPropertyNames(e).length;for(var t in e)if(m(e,t))return;return 1}function r(e){return void 0===e}function h(e){return"number"==typeof e||"[object Number]"===Object.prototype.toString.call(e)}function a(e){return e instanceof Date||"[object Date]"===Object.prototype.toString.call(e)}function d(e,t){for(var n=[],s=0;s<e.length;++s)n.push(t(e[s],s));return n}function c(e,t){for(var n in t)m(t,n)&&(e[n]=t[n]);return m(t,"toString")&&(e.toString=t.toString),m(t,"valueOf")&&(e.valueOf=t.valueOf),e}function _(e,t,n,s){return xt(e,t,n,s,!0).utc()}function y(e){return null==e._pf&&(e._pf={empty:!1,unusedTokens:[],unusedInput:[],overflow:-2,charsLeftOver:0,nullInput:!1,invalidEra:null,invalidMonth:null,invalidFormat:!1,userInvalidated:!1,iso:!1,parsedDateParts:[],era:null,meridiem:null,rfc2822:!1,weekdayMismatch:!1}),e._pf}function g(e){if(null==e._isValid){var t=y(e),n=i.call(t.parsedDateParts,function(e){return null!=e}),s=!isNaN(e._d.getTime())&&t.overflow<0&&!t.empty&&!t.invalidEra&&!t.invalidMonth&&!t.invalidWeekday&&!t.weekdayMismatch&&!t.nullInput&&!t.invalidFormat&&!t.userInvalidated&&(!t.meridiem||t.meridiem&&n);if(e._strict&&(s=s&&0===t.charsLeftOver&&0===t.unusedTokens.length&&void 0===t.bigHour),null!=Object.isFrozen&&Object.isFrozen(e))return s;e._isValid=s}return e._isValid}function w(e){var t=_(NaN);return null!=e?c(y(t),e):y(t).userInvalidated=!0,t}i=Array.prototype.some?Array.prototype.some:function(e){for(var t=Object(this),n=t.length>>>0,s=0;s<n;s++)if(s in t&&e.call(this,t[s],s,t))return!0;return!1};var p=f.momentProperties=[],t=!1;function v(e,t){var n,s,i;if(r(t._isAMomentObject)||(e._isAMomentObject=t._isAMomentObject),r(t._i)||(e._i=t._i),r(t._f)||(e._f=t._f),r(t._l)||(e._l=t._l),r(t._strict)||(e._strict=t._strict),r(t._tzm)||(e._tzm=t._tzm),r(t._isUTC)||(e._isUTC=t._isUTC),r(t._offset)||(e._offset=t._offset),r(t._pf)||(e._pf=y(t)),r(t._locale)||(e._locale=t._locale),0<p.length)for(n=0;n<p.length;n++)r(i=t[s=p[n]])||(e[s]=i);return e}function k(e){v(this,e),this._d=new Date(null!=e._d?e._d.getTime():NaN),this.isValid()||(this._d=new Date(NaN)),!1===t&&(t=!0,f.updateOffset(this),t=!1)}function M(e){return e instanceof k||null!=e&&null!=e._isAMomentObject}function D(e){!1===f.suppressDeprecationWarnings&&"undefined"!=typeof console&&console.warn&&console.warn("Deprecation warning: "+e)}function n(i,r){var a=!0;return c(function(){if(null!=f.deprecationHandler&&f.deprecationHandler(null,i),a){for(var e,t,n=[],s=0;s<arguments.length;s++){if(e="","object"==typeof arguments[s]){for(t in e+="\n["+s+"] ",arguments[0])m(arguments[0],t)&&(e+=t+": "+arguments[0][t]+", ");e=e.slice(0,-2)}else e=arguments[s];n.push(e)}D(i+"\nArguments: "+Array.prototype.slice.call(n).join("")+"\n"+(new Error).stack),a=!1}return r.apply(this,arguments)},r)}var s,S={};function Y(e,t){null!=f.deprecationHandler&&f.deprecationHandler(e,t),S[e]||(D(t),S[e]=!0)}function O(e){return"undefined"!=typeof Function&&e instanceof Function||"[object Function]"===Object.prototype.toString.call(e)}function b(e,t){var n,s=c({},e);for(n in t)m(t,n)&&(u(e[n])&&u(t[n])?(s[n]={},c(s[n],e[n]),c(s[n],t[n])):null!=t[n]?s[n]=t[n]:delete s[n]);for(n in e)m(e,n)&&!m(t,n)&&u(e[n])&&(s[n]=c({},s[n]));return s}function x(e){null!=e&&this.set(e)}f.suppressDeprecationWarnings=!1,f.deprecationHandler=null,s=Object.keys?Object.keys:function(e){var t,n=[];for(t in e)m(e,t)&&n.push(t);return n};function T(e,t,n){var s=""+Math.abs(e),i=t-s.length;return(0<=e?n?"+":"":"-")+Math.pow(10,Math.max(0,i)).toString().substr(1)+s}var N=/(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|N{1,5}|YYYYYY|YYYYY|YYYY|YY|y{2,4}|yo?|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g,P=/(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,R={},W={};function C(e,t,n,s){var i="string"==typeof s?function(){return this[s]()}:s;e&&(W[e]=i),t&&(W[t[0]]=function(){return T(i.apply(this,arguments),t[1],t[2])}),n&&(W[n]=function(){return this.localeData().ordinal(i.apply(this,arguments),e)})}function U(e,t){return e.isValid()?(t=H(t,e.localeData()),R[t]=R[t]||function(s){for(var e,i=s.match(N),t=0,r=i.length;t<r;t++)W[i[t]]?i[t]=W[i[t]]:i[t]=(e=i[t]).match(/\[[\s\S]/)?e.replace(/^\[|\]$/g,""):e.replace(/\\/g,"");return function(e){for(var t="",n=0;n<r;n++)t+=O(i[n])?i[n].call(e,s):i[n];return t}}(t),R[t](e)):e.localeData().invalidDate()}function H(e,t){var n=5;function s(e){return t.longDateFormat(e)||e}for(P.lastIndex=0;0<=n&&P.test(e);)e=e.replace(P,s),P.lastIndex=0,--n;return e}var F={};function L(e,t){var n=e.toLowerCase();F[n]=F[n+"s"]=F[t]=e}function V(e){return"string"==typeof e?F[e]||F[e.toLowerCase()]:void 0}function G(e){var t,n,s={};for(n in e)m(e,n)&&(t=V(n))&&(s[t]=e[n]);return s}var E={};function A(e,t){E[e]=t}function j(e){return e%4==0&&e%100!=0||e%400==0}function I(e){return e<0?Math.ceil(e)||0:Math.floor(e)}function Z(e){var t=+e,n=0;return 0!=t&&isFinite(t)&&(n=I(t)),n}function z(t,n){return function(e){return null!=e?(q(this,t,e),f.updateOffset(this,n),this):$(this,t)}}function $(e,t){return e.isValid()?e._d["get"+(e._isUTC?"UTC":"")+t]():NaN}function q(e,t,n){e.isValid()&&!isNaN(n)&&("FullYear"===t&&j(e.year())&&1===e.month()&&29===e.date()?(n=Z(n),e._d["set"+(e._isUTC?"UTC":"")+t](n,e.month(),xe(n,e.month()))):e._d["set"+(e._isUTC?"UTC":"")+t](n))}var B,J=/\d/,Q=/\d\d/,X=/\d{3}/,K=/\d{4}/,ee=/[+-]?\d{6}/,te=/\d\d?/,ne=/\d\d\d\d?/,se=/\d\d\d\d\d\d?/,ie=/\d{1,3}/,re=/\d{1,4}/,ae=/[+-]?\d{1,6}/,oe=/\d+/,ue=/[+-]?\d+/,le=/Z|[+-]\d\d:?\d\d/gi,he=/Z|[+-]\d\d(?::?\d\d)?/gi,de=/[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFF07\uFF10-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i;function ce(e,n,s){B[e]=O(n)?n:function(e,t){return e&&s?s:n}}function fe(e,t){return m(B,e)?B[e](t._strict,t._locale):new RegExp(me(e.replace("\\","").replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g,function(e,t,n,s,i){return t||n||s||i})))}function me(e){return e.replace(/[-\/\\^$*+?.()|[\]{}]/g,"\\$&")}B={};var _e={};function ye(e,n){var t,s=n;for("string"==typeof e&&(e=[e]),h(n)&&(s=function(e,t){t[n]=Z(e)}),t=0;t<e.length;t++)_e[e[t]]=s}function ge(e,i){ye(e,function(e,t,n,s){n._w=n._w||{},i(e,n._w,n,s)})}var we,pe=0,ve=1,ke=2,Me=3,De=4,Se=5,Ye=6,Oe=7,be=8;function xe(e,t){if(isNaN(e)||isNaN(t))return NaN;var n,s=(t%(n=12)+n)%n;return e+=(t-s)/12,1==s?j(e)?29:28:31-s%7%2}we=Array.prototype.indexOf?Array.prototype.indexOf:function(e){for(var t=0;t<this.length;++t)if(this[t]===e)return t;return-1},C("M",["MM",2],"Mo",function(){return this.month()+1}),C("MMM",0,0,function(e){return this.localeData().monthsShort(this,e)}),C("MMMM",0,0,function(e){return this.localeData().months(this,e)}),L("month","M"),A("month",8),ce("M",te),ce("MM",te,Q),ce("MMM",function(e,t){return t.monthsShortRegex(e)}),ce("MMMM",function(e,t){return t.monthsRegex(e)}),ye(["M","MM"],function(e,t){t[ve]=Z(e)-1}),ye(["MMM","MMMM"],function(e,t,n,s){var i=n._locale.monthsParse(e,s,n._strict);null!=i?t[ve]=i:y(n).invalidMonth=e});var Te="January_February_March_April_May_June_July_August_September_October_November_December".split("_"),Ne="Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec".split("_"),Pe=/D[oD]?(\[[^\[\]]*\]|\s)+MMMM?/,Re=de,We=de;function Ce(e,t){var n;if(!e.isValid())return e;if("string"==typeof t)if(/^\d+$/.test(t))t=Z(t);else if(!h(t=e.localeData().monthsParse(t)))return e;return n=Math.min(e.date(),xe(e.year(),t)),e._d["set"+(e._isUTC?"UTC":"")+"Month"](t,n),e}function Ue(e){return null!=e?(Ce(this,e),f.updateOffset(this,!0),this):$(this,"Month")}function He(){function e(e,t){return t.length-e.length}for(var t,n=[],s=[],i=[],r=0;r<12;r++)t=_([2e3,r]),n.push(this.monthsShort(t,"")),s.push(this.months(t,"")),i.push(this.months(t,"")),i.push(this.monthsShort(t,""));for(n.sort(e),s.sort(e),i.sort(e),r=0;r<12;r++)n[r]=me(n[r]),s[r]=me(s[r]);for(r=0;r<24;r++)i[r]=me(i[r]);this._monthsRegex=new RegExp("^("+i.join("|")+")","i"),this._monthsShortRegex=this._monthsRegex,this._monthsStrictRegex=new RegExp("^("+s.join("|")+")","i"),this._monthsShortStrictRegex=new RegExp("^("+n.join("|")+")","i")}function Fe(e){return j(e)?366:365}C("Y",0,0,function(){var e=this.year();return e<=9999?T(e,4):"+"+e}),C(0,["YY",2],0,function(){return this.year()%100}),C(0,["YYYY",4],0,"year"),C(0,["YYYYY",5],0,"year"),C(0,["YYYYYY",6,!0],0,"year"),L("year","y"),A("year",1),ce("Y",ue),ce("YY",te,Q),ce("YYYY",re,K),ce("YYYYY",ae,ee),ce("YYYYYY",ae,ee),ye(["YYYYY","YYYYYY"],pe),ye("YYYY",function(e,t){t[pe]=2===e.length?f.parseTwoDigitYear(e):Z(e)}),ye("YY",function(e,t){t[pe]=f.parseTwoDigitYear(e)}),ye("Y",function(e,t){t[pe]=parseInt(e,10)}),f.parseTwoDigitYear=function(e){return Z(e)+(68<Z(e)?1900:2e3)};var Le=z("FullYear",!0);function Ve(e){var t,n;return e<100&&0<=e?((n=Array.prototype.slice.call(arguments))[0]=e+400,t=new Date(Date.UTC.apply(null,n)),isFinite(t.getUTCFullYear())&&t.setUTCFullYear(e)):t=new Date(Date.UTC.apply(null,arguments)),t}function Ge(e,t,n){var s=7+t-n;return s-(7+Ve(e,0,s).getUTCDay()-t)%7-1}function Ee(e,t,n,s,i){var r,a=1+7*(t-1)+(7+n-s)%7+Ge(e,s,i),o=a<=0?Fe(r=e-1)+a:a>Fe(e)?(r=e+1,a-Fe(e)):(r=e,a);return{year:r,dayOfYear:o}}function Ae(e,t,n){var s,i,r=Ge(e.year(),t,n),a=Math.floor((e.dayOfYear()-r-1)/7)+1;return a<1?s=a+je(i=e.year()-1,t,n):a>je(e.year(),t,n)?(s=a-je(e.year(),t,n),i=e.year()+1):(i=e.year(),s=a),{week:s,year:i}}function je(e,t,n){var s=Ge(e,t,n),i=Ge(e+1,t,n);return(Fe(e)-s+i)/7}C("w",["ww",2],"wo","week"),C("W",["WW",2],"Wo","isoWeek"),L("week","w"),L("isoWeek","W"),A("week",5),A("isoWeek",5),ce("w",te),ce("ww",te,Q),ce("W",te),ce("WW",te,Q),ge(["w","ww","W","WW"],function(e,t,n,s){t[s.substr(0,1)]=Z(e)});function Ie(e,t){return e.slice(t,7).concat(e.slice(0,t))}C("d",0,"do","day"),C("dd",0,0,function(e){return this.localeData().weekdaysMin(this,e)}),C("ddd",0,0,function(e){return this.localeData().weekdaysShort(this,e)}),C("dddd",0,0,function(e){return this.localeData().weekdays(this,e)}),C("e",0,0,"weekday"),C("E",0,0,"isoWeekday"),L("day","d"),L("weekday","e"),L("isoWeekday","E"),A("day",11),A("weekday",11),A("isoWeekday",11),ce("d",te),ce("e",te),ce("E",te),ce("dd",function(e,t){return t.weekdaysMinRegex(e)}),ce("ddd",function(e,t){return t.weekdaysShortRegex(e)}),ce("dddd",function(e,t){return t.weekdaysRegex(e)}),ge(["dd","ddd","dddd"],function(e,t,n,s){var i=n._locale.weekdaysParse(e,s,n._strict);null!=i?t.d=i:y(n).invalidWeekday=e}),ge(["d","e","E"],function(e,t,n,s){t[s]=Z(e)});var Ze="Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),ze="Sun_Mon_Tue_Wed_Thu_Fri_Sat".split("_"),$e="Su_Mo_Tu_We_Th_Fr_Sa".split("_"),qe=de,Be=de,Je=de;function Qe(){function e(e,t){return t.length-e.length}for(var t,n,s,i,r=[],a=[],o=[],u=[],l=0;l<7;l++)t=_([2e3,1]).day(l),n=me(this.weekdaysMin(t,"")),s=me(this.weekdaysShort(t,"")),i=me(this.weekdays(t,"")),r.push(n),a.push(s),o.push(i),u.push(n),u.push(s),u.push(i);r.sort(e),a.sort(e),o.sort(e),u.sort(e),this._weekdaysRegex=new RegExp("^("+u.join("|")+")","i"),this._weekdaysShortRegex=this._weekdaysRegex,this._weekdaysMinRegex=this._weekdaysRegex,this._weekdaysStrictRegex=new RegExp("^("+o.join("|")+")","i"),this._weekdaysShortStrictRegex=new RegExp("^("+a.join("|")+")","i"),this._weekdaysMinStrictRegex=new RegExp("^("+r.join("|")+")","i")}function Xe(){return this.hours()%12||12}function Ke(e,t){C(e,0,0,function(){return this.localeData().meridiem(this.hours(),this.minutes(),t)})}function et(e,t){return t._meridiemParse}C("H",["HH",2],0,"hour"),C("h",["hh",2],0,Xe),C("k",["kk",2],0,function(){return this.hours()||24}),C("hmm",0,0,function(){return""+Xe.apply(this)+T(this.minutes(),2)}),C("hmmss",0,0,function(){return""+Xe.apply(this)+T(this.minutes(),2)+T(this.seconds(),2)}),C("Hmm",0,0,function(){return""+this.hours()+T(this.minutes(),2)}),C("Hmmss",0,0,function(){return""+this.hours()+T(this.minutes(),2)+T(this.seconds(),2)}),Ke("a",!0),Ke("A",!1),L("hour","h"),A("hour",13),ce("a",et),ce("A",et),ce("H",te),ce("h",te),ce("k",te),ce("HH",te,Q),ce("hh",te,Q),ce("kk",te,Q),ce("hmm",ne),ce("hmmss",se),ce("Hmm",ne),ce("Hmmss",se),ye(["H","HH"],Me),ye(["k","kk"],function(e,t,n){var s=Z(e);t[Me]=24===s?0:s}),ye(["a","A"],function(e,t,n){n._isPm=n._locale.isPM(e),n._meridiem=e}),ye(["h","hh"],function(e,t,n){t[Me]=Z(e),y(n).bigHour=!0}),ye("hmm",function(e,t,n){var s=e.length-2;t[Me]=Z(e.substr(0,s)),t[De]=Z(e.substr(s)),y(n).bigHour=!0}),ye("hmmss",function(e,t,n){var s=e.length-4,i=e.length-2;t[Me]=Z(e.substr(0,s)),t[De]=Z(e.substr(s,2)),t[Se]=Z(e.substr(i)),y(n).bigHour=!0}),ye("Hmm",function(e,t,n){var s=e.length-2;t[Me]=Z(e.substr(0,s)),t[De]=Z(e.substr(s))}),ye("Hmmss",function(e,t,n){var s=e.length-4,i=e.length-2;t[Me]=Z(e.substr(0,s)),t[De]=Z(e.substr(s,2)),t[Se]=Z(e.substr(i))});var tt=z("Hours",!0);var nt,st={calendar:{sameDay:"[Today at] LT",nextDay:"[Tomorrow at] LT",nextWeek:"dddd [at] LT",lastDay:"[Yesterday at] LT",lastWeek:"[Last] dddd [at] LT",sameElse:"L"},longDateFormat:{LTS:"h:mm:ss A",LT:"h:mm A",L:"MM/DD/YYYY",LL:"MMMM D, YYYY",LLL:"MMMM D, YYYY h:mm A",LLLL:"dddd, MMMM D, YYYY h:mm A"},invalidDate:"Invalid date",ordinal:"%d",dayOfMonthOrdinalParse:/\d{1,2}/,relativeTime:{future:"in %s",past:"%s ago",s:"a few seconds",ss:"%d seconds",m:"a minute",mm:"%d minutes",h:"an hour",hh:"%d hours",d:"a day",dd:"%d days",w:"a week",ww:"%d weeks",M:"a month",MM:"%d months",y:"a year",yy:"%d years"},months:Te,monthsShort:Ne,week:{dow:0,doy:6},weekdays:Ze,weekdaysMin:$e,weekdaysShort:ze,meridiemParse:/[ap]\.?m?\.?/i},it={},rt={};function at(e){return e?e.toLowerCase().replace("_","-"):e}function ot(e){for(var t,n,s,i,r=0;r<e.length;){for(t=(i=at(e[r]).split("-")).length,n=(n=at(e[r+1]))?n.split("-"):null;0<t;){if(s=ut(i.slice(0,t).join("-")))return s;if(n&&n.length>=t&&function(e,t){for(var n=Math.min(e.length,t.length),s=0;s<n;s+=1)if(e[s]!==t[s])return s;return n}(i,n)>=t-1)break;t--}r++}return nt}function ut(t){var e;if(void 0===it[t]&&"undefined"!=typeof module&&module&&module.exports)try{e=nt._abbr,require("./locale/"+t),lt(e)}catch(e){it[t]=null}return it[t]}function lt(e,t){var n;return e&&((n=r(t)?dt(e):ht(e,t))?nt=n:"undefined"!=typeof console&&console.warn&&console.warn("Locale "+e+" not found. Did you forget to load it?")),nt._abbr}function ht(e,t){if(null===t)return delete it[e],null;var n,s=st;if(t.abbr=e,null!=it[e])Y("defineLocaleOverride","use moment.updateLocale(localeName, config) to change an existing locale. moment.defineLocale(localeName, config) should only be used for creating a new locale See http://momentjs.com/guides/#/warnings/define-locale/ for more info."),s=it[e]._config;else if(null!=t.parentLocale)if(null!=it[t.parentLocale])s=it[t.parentLocale]._config;else{if(null==(n=ut(t.parentLocale)))return rt[t.parentLocale]||(rt[t.parentLocale]=[]),rt[t.parentLocale].push({name:e,config:t}),null;s=n._config}return it[e]=new x(b(s,t)),rt[e]&&rt[e].forEach(function(e){ht(e.name,e.config)}),lt(e),it[e]}function dt(e){var t;if(e&&e._locale&&e._locale._abbr&&(e=e._locale._abbr),!e)return nt;if(!o(e)){if(t=ut(e))return t;e=[e]}return ot(e)}function ct(e){var t,n=e._a;return n&&-2===y(e).overflow&&(t=n[ve]<0||11<n[ve]?ve:n[ke]<1||n[ke]>xe(n[pe],n[ve])?ke:n[Me]<0||24<n[Me]||24===n[Me]&&(0!==n[De]||0!==n[Se]||0!==n[Ye])?Me:n[De]<0||59<n[De]?De:n[Se]<0||59<n[Se]?Se:n[Ye]<0||999<n[Ye]?Ye:-1,y(e)._overflowDayOfYear&&(t<pe||ke<t)&&(t=ke),y(e)._overflowWeeks&&-1===t&&(t=Oe),y(e)._overflowWeekday&&-1===t&&(t=be),y(e).overflow=t),e}var ft=/^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$/,mt=/^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d|))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([+-]\d\d(?::?\d\d)?|\s*Z)?)?$/,_t=/Z|[+-]\d\d(?::?\d\d)?/,yt=[["YYYYYY-MM-DD",/[+-]\d{6}-\d\d-\d\d/],["YYYY-MM-DD",/\d{4}-\d\d-\d\d/],["GGGG-[W]WW-E",/\d{4}-W\d\d-\d/],["GGGG-[W]WW",/\d{4}-W\d\d/,!1],["YYYY-DDD",/\d{4}-\d{3}/],["YYYY-MM",/\d{4}-\d\d/,!1],["YYYYYYMMDD",/[+-]\d{10}/],["YYYYMMDD",/\d{8}/],["GGGG[W]WWE",/\d{4}W\d{3}/],["GGGG[W]WW",/\d{4}W\d{2}/,!1],["YYYYDDD",/\d{7}/],["YYYYMM",/\d{6}/,!1],["YYYY",/\d{4}/,!1]],gt=[["HH:mm:ss.SSSS",/\d\d:\d\d:\d\d\.\d+/],["HH:mm:ss,SSSS",/\d\d:\d\d:\d\d,\d+/],["HH:mm:ss",/\d\d:\d\d:\d\d/],["HH:mm",/\d\d:\d\d/],["HHmmss.SSSS",/\d\d\d\d\d\d\.\d+/],["HHmmss,SSSS",/\d\d\d\d\d\d,\d+/],["HHmmss",/\d\d\d\d\d\d/],["HHmm",/\d\d\d\d/],["HH",/\d\d/]],wt=/^\/?Date\((-?\d+)/i,pt=/^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s)?(\d{1,2})\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2,4})\s(\d\d):(\d\d)(?::(\d\d))?\s(?:(UT|GMT|[ECMP][SD]T)|([Zz])|([+-]\d{4}))$/,vt={UT:0,GMT:0,EDT:-240,EST:-300,CDT:-300,CST:-360,MDT:-360,MST:-420,PDT:-420,PST:-480};function kt(e){var t,n,s,i,r,a,o=e._i,u=ft.exec(o)||mt.exec(o);if(u){for(y(e).iso=!0,t=0,n=yt.length;t<n;t++)if(yt[t][1].exec(u[1])){i=yt[t][0],s=!1!==yt[t][2];break}if(null==i)return void(e._isValid=!1);if(u[3]){for(t=0,n=gt.length;t<n;t++)if(gt[t][1].exec(u[3])){r=(u[2]||" ")+gt[t][0];break}if(null==r)return void(e._isValid=!1)}if(!s&&null!=r)return void(e._isValid=!1);if(u[4]){if(!_t.exec(u[4]))return void(e._isValid=!1);a="Z"}e._f=i+(r||"")+(a||""),Ot(e)}else e._isValid=!1}function Mt(e,t,n,s,i,r){var a=[function(e){var t=parseInt(e,10);{if(t<=49)return 2e3+t;if(t<=999)return 1900+t}return t}(e),Ne.indexOf(t),parseInt(n,10),parseInt(s,10),parseInt(i,10)];return r&&a.push(parseInt(r,10)),a}function Dt(e){var t,n,s,i,r=pt.exec(e._i.replace(/\([^)]*\)|[\n\t]/g," ").replace(/(\s\s+)/g," ").replace(/^\s\s*/,"").replace(/\s\s*$/,""));if(r){if(t=Mt(r[4],r[3],r[2],r[5],r[6],r[7]),n=r[1],s=t,i=e,n&&ze.indexOf(n)!==new Date(s[0],s[1],s[2]).getDay()&&(y(i).weekdayMismatch=!0,!void(i._isValid=!1)))return;e._a=t,e._tzm=function(e,t,n){if(e)return vt[e];if(t)return 0;var s=parseInt(n,10),i=s%100;return 60*((s-i)/100)+i}(r[8],r[9],r[10]),e._d=Ve.apply(null,e._a),e._d.setUTCMinutes(e._d.getUTCMinutes()-e._tzm),y(e).rfc2822=!0}else e._isValid=!1}function St(e,t,n){return null!=e?e:null!=t?t:n}function Yt(e){var t,n,s,i,r,a,o,u=[];if(!e._d){for(a=e,o=new Date(f.now()),s=a._useUTC?[o.getUTCFullYear(),o.getUTCMonth(),o.getUTCDate()]:[o.getFullYear(),o.getMonth(),o.getDate()],e._w&&null==e._a[ke]&&null==e._a[ve]&&function(e){var t,n,s,i,r,a,o,u,l;null!=(t=e._w).GG||null!=t.W||null!=t.E?(r=1,a=4,n=St(t.GG,e._a[pe],Ae(Tt(),1,4).year),s=St(t.W,1),((i=St(t.E,1))<1||7<i)&&(u=!0)):(r=e._locale._week.dow,a=e._locale._week.doy,l=Ae(Tt(),r,a),n=St(t.gg,e._a[pe],l.year),s=St(t.w,l.week),null!=t.d?((i=t.d)<0||6<i)&&(u=!0):null!=t.e?(i=t.e+r,(t.e<0||6<t.e)&&(u=!0)):i=r);s<1||s>je(n,r,a)?y(e)._overflowWeeks=!0:null!=u?y(e)._overflowWeekday=!0:(o=Ee(n,s,i,r,a),e._a[pe]=o.year,e._dayOfYear=o.dayOfYear)}(e),null!=e._dayOfYear&&(r=St(e._a[pe],s[pe]),(e._dayOfYear>Fe(r)||0===e._dayOfYear)&&(y(e)._overflowDayOfYear=!0),n=Ve(r,0,e._dayOfYear),e._a[ve]=n.getUTCMonth(),e._a[ke]=n.getUTCDate()),t=0;t<3&&null==e._a[t];++t)e._a[t]=u[t]=s[t];for(;t<7;t++)e._a[t]=u[t]=null==e._a[t]?2===t?1:0:e._a[t];24===e._a[Me]&&0===e._a[De]&&0===e._a[Se]&&0===e._a[Ye]&&(e._nextDay=!0,e._a[Me]=0),e._d=(e._useUTC?Ve:function(e,t,n,s,i,r,a){var o;return e<100&&0<=e?(o=new Date(e+400,t,n,s,i,r,a),isFinite(o.getFullYear())&&o.setFullYear(e)):o=new Date(e,t,n,s,i,r,a),o}).apply(null,u),i=e._useUTC?e._d.getUTCDay():e._d.getDay(),null!=e._tzm&&e._d.setUTCMinutes(e._d.getUTCMinutes()-e._tzm),e._nextDay&&(e._a[Me]=24),e._w&&void 0!==e._w.d&&e._w.d!==i&&(y(e).weekdayMismatch=!0)}}function Ot(e){if(e._f!==f.ISO_8601)if(e._f!==f.RFC_2822){e._a=[],y(e).empty=!0;for(var t,n,s,i,r,a,o,u=""+e._i,l=u.length,h=0,d=H(e._f,e._locale).match(N)||[],c=0;c<d.length;c++)n=d[c],(t=(u.match(fe(n,e))||[])[0])&&(0<(s=u.substr(0,u.indexOf(t))).length&&y(e).unusedInput.push(s),u=u.slice(u.indexOf(t)+t.length),h+=t.length),W[n]?(t?y(e).empty=!1:y(e).unusedTokens.push(n),r=n,o=e,null!=(a=t)&&m(_e,r)&&_e[r](a,o._a,o,r)):e._strict&&!t&&y(e).unusedTokens.push(n);y(e).charsLeftOver=l-h,0<u.length&&y(e).unusedInput.push(u),e._a[Me]<=12&&!0===y(e).bigHour&&0<e._a[Me]&&(y(e).bigHour=void 0),y(e).parsedDateParts=e._a.slice(0),y(e).meridiem=e._meridiem,e._a[Me]=function(e,t,n){var s;if(null==n)return t;return null!=e.meridiemHour?e.meridiemHour(t,n):(null!=e.isPM&&((s=e.isPM(n))&&t<12&&(t+=12),s||12!==t||(t=0)),t)}(e._locale,e._a[Me],e._meridiem),null!==(i=y(e).era)&&(e._a[pe]=e._locale.erasConvertYear(i,e._a[pe])),Yt(e),ct(e)}else Dt(e);else kt(e)}function bt(e){var t,n,s=e._i,i=e._f;return e._locale=e._locale||dt(e._l),null===s||void 0===i&&""===s?w({nullInput:!0}):("string"==typeof s&&(e._i=s=e._locale.preparse(s)),M(s)?new k(ct(s)):(a(s)?e._d=s:o(i)?function(e){var t,n,s,i,r,a,o=!1;if(0===e._f.length)return y(e).invalidFormat=!0,e._d=new Date(NaN);for(i=0;i<e._f.length;i++)r=0,a=!1,t=v({},e),null!=e._useUTC&&(t._useUTC=e._useUTC),t._f=e._f[i],Ot(t),g(t)&&(a=!0),r+=y(t).charsLeftOver,r+=10*y(t).unusedTokens.length,y(t).score=r,o?r<s&&(s=r,n=t):(null==s||r<s||a)&&(s=r,n=t,a&&(o=!0));c(e,n||t)}(e):i?Ot(e):r(n=(t=e)._i)?t._d=new Date(f.now()):a(n)?t._d=new Date(n.valueOf()):"string"==typeof n?function(e){var t=wt.exec(e._i);null===t?(kt(e),!1===e._isValid&&(delete e._isValid,Dt(e),!1===e._isValid&&(delete e._isValid,e._strict?e._isValid=!1:f.createFromInputFallback(e)))):e._d=new Date(+t[1])}(t):o(n)?(t._a=d(n.slice(0),function(e){return parseInt(e,10)}),Yt(t)):u(n)?function(e){var t,n;e._d||(n=void 0===(t=G(e._i)).day?t.date:t.day,e._a=d([t.year,t.month,n,t.hour,t.minute,t.second,t.millisecond],function(e){return e&&parseInt(e,10)}),Yt(e))}(t):h(n)?t._d=new Date(n):f.createFromInputFallback(t),g(e)||(e._d=null),e))}function xt(e,t,n,s,i){var r,a={};return!0!==t&&!1!==t||(s=t,t=void 0),!0!==n&&!1!==n||(s=n,n=void 0),(u(e)&&l(e)||o(e)&&0===e.length)&&(e=void 0),a._isAMomentObject=!0,a._useUTC=a._isUTC=i,a._l=n,a._i=e,a._f=t,a._strict=s,(r=new k(ct(bt(a))))._nextDay&&(r.add(1,"d"),r._nextDay=void 0),r}function Tt(e,t,n,s){return xt(e,t,n,s,!1)}f.createFromInputFallback=n("value provided is not in a recognized RFC2822 or ISO format. moment construction falls back to js Date(), which is not reliable across all browsers and versions. Non RFC2822/ISO date formats are discouraged. Please refer to http://momentjs.com/guides/#/warnings/js-date/ for more info.",function(e){e._d=new Date(e._i+(e._useUTC?" UTC":""))}),f.ISO_8601=function(){},f.RFC_2822=function(){};var Nt=n("moment().min is deprecated, use moment.max instead. http://momentjs.com/guides/#/warnings/min-max/",function(){var e=Tt.apply(null,arguments);return this.isValid()&&e.isValid()?e<this?this:e:w()}),Pt=n("moment().max is deprecated, use moment.min instead. http://momentjs.com/guides/#/warnings/min-max/",function(){var e=Tt.apply(null,arguments);return this.isValid()&&e.isValid()?this<e?this:e:w()});function Rt(e,t){var n,s;if(1===t.length&&o(t[0])&&(t=t[0]),!t.length)return Tt();for(n=t[0],s=1;s<t.length;++s)t[s].isValid()&&!t[s][e](n)||(n=t[s]);return n}var Wt=["year","quarter","month","week","day","hour","minute","second","millisecond"];function Ct(e){var t=G(e),n=t.year||0,s=t.quarter||0,i=t.month||0,r=t.week||t.isoWeek||0,a=t.day||0,o=t.hour||0,u=t.minute||0,l=t.second||0,h=t.millisecond||0;this._isValid=function(e){var t,n,s=!1;for(t in e)if(m(e,t)&&(-1===we.call(Wt,t)||null!=e[t]&&isNaN(e[t])))return!1;for(n=0;n<Wt.length;++n)if(e[Wt[n]]){if(s)return!1;parseFloat(e[Wt[n]])!==Z(e[Wt[n]])&&(s=!0)}return!0}(t),this._milliseconds=+h+1e3*l+6e4*u+1e3*o*60*60,this._days=+a+7*r,this._months=+i+3*s+12*n,this._data={},this._locale=dt(),this._bubble()}function Ut(e){return e instanceof Ct}function Ht(e){return e<0?-1*Math.round(-1*e):Math.round(e)}function Ft(e,n){C(e,0,0,function(){var e=this.utcOffset(),t="+";return e<0&&(e=-e,t="-"),t+T(~~(e/60),2)+n+T(~~e%60,2)})}Ft("Z",":"),Ft("ZZ",""),ce("Z",he),ce("ZZ",he),ye(["Z","ZZ"],function(e,t,n){n._useUTC=!0,n._tzm=Vt(he,e)});var Lt=/([\+\-]|\d\d)/gi;function Vt(e,t){var n,s,i=(t||"").match(e);return null===i?null:0===(s=60*(n=((i[i.length-1]||[])+"").match(Lt)||["-",0,0])[1]+Z(n[2]))?0:"+"===n[0]?s:-s}function Gt(e,t){var n,s;return t._isUTC?(n=t.clone(),s=(M(e)||a(e)?e.valueOf():Tt(e).valueOf())-n.valueOf(),n._d.setTime(n._d.valueOf()+s),f.updateOffset(n,!1),n):Tt(e).local()}function Et(e){return-Math.round(e._d.getTimezoneOffset())}function At(){return!!this.isValid()&&(this._isUTC&&0===this._offset)}f.updateOffset=function(){};var jt=/^(-|\+)?(?:(\d*)[. ])?(\d+):(\d+)(?::(\d+)(\.\d*)?)?$/,It=/^(-|\+)?P(?:([-+]?[0-9,.]*)Y)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)W)?(?:([-+]?[0-9,.]*)D)?(?:T(?:([-+]?[0-9,.]*)H)?(?:([-+]?[0-9,.]*)M)?(?:([-+]?[0-9,.]*)S)?)?$/;function Zt(e,t){var n,s,i,r=e,a=null;return Ut(e)?r={ms:e._milliseconds,d:e._days,M:e._months}:h(e)||!isNaN(+e)?(r={},t?r[t]=+e:r.milliseconds=+e):(a=jt.exec(e))?(n="-"===a[1]?-1:1,r={y:0,d:Z(a[ke])*n,h:Z(a[Me])*n,m:Z(a[De])*n,s:Z(a[Se])*n,ms:Z(Ht(1e3*a[Ye]))*n}):(a=It.exec(e))?(n="-"===a[1]?-1:1,r={y:zt(a[2],n),M:zt(a[3],n),w:zt(a[4],n),d:zt(a[5],n),h:zt(a[6],n),m:zt(a[7],n),s:zt(a[8],n)}):null==r?r={}:"object"==typeof r&&("from"in r||"to"in r)&&(i=function(e,t){var n;if(!e.isValid()||!t.isValid())return{milliseconds:0,months:0};t=Gt(t,e),e.isBefore(t)?n=$t(e,t):((n=$t(t,e)).milliseconds=-n.milliseconds,n.months=-n.months);return n}(Tt(r.from),Tt(r.to)),(r={}).ms=i.milliseconds,r.M=i.months),s=new Ct(r),Ut(e)&&m(e,"_locale")&&(s._locale=e._locale),Ut(e)&&m(e,"_isValid")&&(s._isValid=e._isValid),s}function zt(e,t){var n=e&&parseFloat(e.replace(",","."));return(isNaN(n)?0:n)*t}function $t(e,t){var n={};return n.months=t.month()-e.month()+12*(t.year()-e.year()),e.clone().add(n.months,"M").isAfter(t)&&--n.months,n.milliseconds=t-e.clone().add(n.months,"M"),n}function qt(s,i){return function(e,t){var n;return null===t||isNaN(+t)||(Y(i,"moment()."+i+"(period, number) is deprecated. Please use moment()."+i+"(number, period). See http://momentjs.com/guides/#/warnings/add-inverted-param/ for more info."),n=e,e=t,t=n),Bt(this,Zt(e,t),s),this}}function Bt(e,t,n,s){var i=t._milliseconds,r=Ht(t._days),a=Ht(t._months);e.isValid()&&(s=null==s||s,a&&Ce(e,$(e,"Month")+a*n),r&&q(e,"Date",$(e,"Date")+r*n),i&&e._d.setTime(e._d.valueOf()+i*n),s&&f.updateOffset(e,r||a))}Zt.fn=Ct.prototype,Zt.invalid=function(){return Zt(NaN)};var Jt=qt(1,"add"),Qt=qt(-1,"subtract");function Xt(e){return"string"==typeof e||e instanceof String}function Kt(e){return M(e)||a(e)||Xt(e)||h(e)||function(t){var e=o(t),n=!1;e&&(n=0===t.filter(function(e){return!h(e)&&Xt(t)}).length);return e&&n}(e)||function(e){var t,n,s=u(e)&&!l(e),i=!1,r=["years","year","y","months","month","M","days","day","d","dates","date","D","hours","hour","h","minutes","minute","m","seconds","second","s","milliseconds","millisecond","ms"];for(t=0;t<r.length;t+=1)n=r[t],i=i||m(e,n);return s&&i}(e)||null==e}function en(e,t){if(e.date()<t.date())return-en(t,e);var n=12*(t.year()-e.year())+(t.month()-e.month()),s=e.clone().add(n,"months"),i=t-s<0?(t-s)/(s-e.clone().add(n-1,"months")):(t-s)/(e.clone().add(1+n,"months")-s);return-(n+i)||0}function tn(e){var t;return void 0===e?this._locale._abbr:(null!=(t=dt(e))&&(this._locale=t),this)}f.defaultFormat="YYYY-MM-DDTHH:mm:ssZ",f.defaultFormatUtc="YYYY-MM-DDTHH:mm:ss[Z]";var nn=n("moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.",function(e){return void 0===e?this.localeData():this.locale(e)});function sn(){return this._locale}var rn=126227808e5;function an(e,t){return(e%t+t)%t}function on(e,t,n){return e<100&&0<=e?new Date(e+400,t,n)-rn:new Date(e,t,n).valueOf()}function un(e,t,n){return e<100&&0<=e?Date.UTC(e+400,t,n)-rn:Date.UTC(e,t,n)}function ln(e,t){return t.erasAbbrRegex(e)}function hn(){for(var e=[],t=[],n=[],s=[],i=this.eras(),r=0,a=i.length;r<a;++r)t.push(me(i[r].name)),e.push(me(i[r].abbr)),n.push(me(i[r].narrow)),s.push(me(i[r].name)),s.push(me(i[r].abbr)),s.push(me(i[r].narrow));this._erasRegex=new RegExp("^("+s.join("|")+")","i"),this._erasNameRegex=new RegExp("^("+t.join("|")+")","i"),this._erasAbbrRegex=new RegExp("^("+e.join("|")+")","i"),this._erasNarrowRegex=new RegExp("^("+n.join("|")+")","i")}function dn(e,t){C(0,[e,e.length],0,t)}function cn(e,t,n,s,i){var r;return null==e?Ae(this,s,i).year:((r=je(e,s,i))<t&&(t=r),function(e,t,n,s,i){var r=Ee(e,t,n,s,i),a=Ve(r.year,0,r.dayOfYear);return this.year(a.getUTCFullYear()),this.month(a.getUTCMonth()),this.date(a.getUTCDate()),this}.call(this,e,t,n,s,i))}C("N",0,0,"eraAbbr"),C("NN",0,0,"eraAbbr"),C("NNN",0,0,"eraAbbr"),C("NNNN",0,0,"eraName"),C("NNNNN",0,0,"eraNarrow"),C("y",["y",1],"yo","eraYear"),C("y",["yy",2],0,"eraYear"),C("y",["yyy",3],0,"eraYear"),C("y",["yyyy",4],0,"eraYear"),ce("N",ln),ce("NN",ln),ce("NNN",ln),ce("NNNN",function(e,t){return t.erasNameRegex(e)}),ce("NNNNN",function(e,t){return t.erasNarrowRegex(e)}),ye(["N","NN","NNN","NNNN","NNNNN"],function(e,t,n,s){var i=n._locale.erasParse(e,s,n._strict);i?y(n).era=i:y(n).invalidEra=e}),ce("y",oe),ce("yy",oe),ce("yyy",oe),ce("yyyy",oe),ce("yo",function(e,t){return t._eraYearOrdinalRegex||oe}),ye(["y","yy","yyy","yyyy"],pe),ye(["yo"],function(e,t,n,s){var i;n._locale._eraYearOrdinalRegex&&(i=e.match(n._locale._eraYearOrdinalRegex)),n._locale.eraYearOrdinalParse?t[pe]=n._locale.eraYearOrdinalParse(e,i):t[pe]=parseInt(e,10)}),C(0,["gg",2],0,function(){return this.weekYear()%100}),C(0,["GG",2],0,function(){return this.isoWeekYear()%100}),dn("gggg","weekYear"),dn("ggggg","weekYear"),dn("GGGG","isoWeekYear"),dn("GGGGG","isoWeekYear"),L("weekYear","gg"),L("isoWeekYear","GG"),A("weekYear",1),A("isoWeekYear",1),ce("G",ue),ce("g",ue),ce("GG",te,Q),ce("gg",te,Q),ce("GGGG",re,K),ce("gggg",re,K),ce("GGGGG",ae,ee),ce("ggggg",ae,ee),ge(["gggg","ggggg","GGGG","GGGGG"],function(e,t,n,s){t[s.substr(0,2)]=Z(e)}),ge(["gg","GG"],function(e,t,n,s){t[s]=f.parseTwoDigitYear(e)}),C("Q",0,"Qo","quarter"),L("quarter","Q"),A("quarter",7),ce("Q",J),ye("Q",function(e,t){t[ve]=3*(Z(e)-1)}),C("D",["DD",2],"Do","date"),L("date","D"),A("date",9),ce("D",te),ce("DD",te,Q),ce("Do",function(e,t){return e?t._dayOfMonthOrdinalParse||t._ordinalParse:t._dayOfMonthOrdinalParseLenient}),ye(["D","DD"],ke),ye("Do",function(e,t){t[ke]=Z(e.match(te)[0])});var fn=z("Date",!0);C("DDD",["DDDD",3],"DDDo","dayOfYear"),L("dayOfYear","DDD"),A("dayOfYear",4),ce("DDD",ie),ce("DDDD",X),ye(["DDD","DDDD"],function(e,t,n){n._dayOfYear=Z(e)}),C("m",["mm",2],0,"minute"),L("minute","m"),A("minute",14),ce("m",te),ce("mm",te,Q),ye(["m","mm"],De);var mn=z("Minutes",!1);C("s",["ss",2],0,"second"),L("second","s"),A("second",15),ce("s",te),ce("ss",te,Q),ye(["s","ss"],Se);var _n,yn,gn=z("Seconds",!1);for(C("S",0,0,function(){return~~(this.millisecond()/100)}),C(0,["SS",2],0,function(){return~~(this.millisecond()/10)}),C(0,["SSS",3],0,"millisecond"),C(0,["SSSS",4],0,function(){return 10*this.millisecond()}),C(0,["SSSSS",5],0,function(){return 100*this.millisecond()}),C(0,["SSSSSS",6],0,function(){return 1e3*this.millisecond()}),C(0,["SSSSSSS",7],0,function(){return 1e4*this.millisecond()}),C(0,["SSSSSSSS",8],0,function(){return 1e5*this.millisecond()}),C(0,["SSSSSSSSS",9],0,function(){return 1e6*this.millisecond()}),L("millisecond","ms"),A("millisecond",16),ce("S",ie,J),ce("SS",ie,Q),ce("SSS",ie,X),_n="SSSS";_n.length<=9;_n+="S")ce(_n,oe);function wn(e,t){t[Ye]=Z(1e3*("0."+e))}for(_n="S";_n.length<=9;_n+="S")ye(_n,wn);yn=z("Milliseconds",!1),C("z",0,0,"zoneAbbr"),C("zz",0,0,"zoneName");var pn=k.prototype;function vn(e){return e}pn.add=Jt,pn.calendar=function(e,t){1===arguments.length&&(arguments[0]?Kt(arguments[0])?(e=arguments[0],t=void 0):function(e){for(var t=u(e)&&!l(e),n=!1,s=["sameDay","nextDay","lastDay","nextWeek","lastWeek","sameElse"],i=0;i<s.length;i+=1)n=n||m(e,s[i]);return t&&n}(arguments[0])&&(t=arguments[0],e=void 0):t=e=void 0);var n=e||Tt(),s=Gt(n,this).startOf("day"),i=f.calendarFormat(this,s)||"sameElse",r=t&&(O(t[i])?t[i].call(this,n):t[i]);return this.format(r||this.localeData().calendar(i,this,Tt(n)))},pn.clone=function(){return new k(this)},pn.diff=function(e,t,n){var s,i,r;if(!this.isValid())return NaN;if(!(s=Gt(e,this)).isValid())return NaN;switch(i=6e4*(s.utcOffset()-this.utcOffset()),t=V(t)){case"year":r=en(this,s)/12;break;case"month":r=en(this,s);break;case"quarter":r=en(this,s)/3;break;case"second":r=(this-s)/1e3;break;case"minute":r=(this-s)/6e4;break;case"hour":r=(this-s)/36e5;break;case"day":r=(this-s-i)/864e5;break;case"week":r=(this-s-i)/6048e5;break;default:r=this-s}return n?r:I(r)},pn.endOf=function(e){var t,n;if(void 0===(e=V(e))||"millisecond"===e||!this.isValid())return this;switch(n=this._isUTC?un:on,e){case"year":t=n(this.year()+1,0,1)-1;break;case"quarter":t=n(this.year(),this.month()-this.month()%3+3,1)-1;break;case"month":t=n(this.year(),this.month()+1,1)-1;break;case"week":t=n(this.year(),this.month(),this.date()-this.weekday()+7)-1;break;case"isoWeek":t=n(this.year(),this.month(),this.date()-(this.isoWeekday()-1)+7)-1;break;case"day":case"date":t=n(this.year(),this.month(),this.date()+1)-1;break;case"hour":t=this._d.valueOf(),t+=36e5-an(t+(this._isUTC?0:6e4*this.utcOffset()),36e5)-1;break;case"minute":t=this._d.valueOf(),t+=6e4-an(t,6e4)-1;break;case"second":t=this._d.valueOf(),t+=1e3-an(t,1e3)-1;break}return this._d.setTime(t),f.updateOffset(this,!0),this},pn.format=function(e){e=e||(this.isUtc()?f.defaultFormatUtc:f.defaultFormat);var t=U(this,e);return this.localeData().postformat(t)},pn.from=function(e,t){return this.isValid()&&(M(e)&&e.isValid()||Tt(e).isValid())?Zt({to:this,from:e}).locale(this.locale()).humanize(!t):this.localeData().invalidDate()},pn.fromNow=function(e){return this.from(Tt(),e)},pn.to=function(e,t){return this.isValid()&&(M(e)&&e.isValid()||Tt(e).isValid())?Zt({from:this,to:e}).locale(this.locale()).humanize(!t):this.localeData().invalidDate()},pn.toNow=function(e){return this.to(Tt(),e)},pn.get=function(e){return O(this[e=V(e)])?this[e]():this},pn.invalidAt=function(){return y(this).overflow},pn.isAfter=function(e,t){var n=M(e)?e:Tt(e);return!(!this.isValid()||!n.isValid())&&("millisecond"===(t=V(t)||"millisecond")?this.valueOf()>n.valueOf():n.valueOf()<this.clone().startOf(t).valueOf())},pn.isBefore=function(e,t){var n=M(e)?e:Tt(e);return!(!this.isValid()||!n.isValid())&&("millisecond"===(t=V(t)||"millisecond")?this.valueOf()<n.valueOf():this.clone().endOf(t).valueOf()<n.valueOf())},pn.isBetween=function(e,t,n,s){var i=M(e)?e:Tt(e),r=M(t)?t:Tt(t);return!!(this.isValid()&&i.isValid()&&r.isValid())&&(("("===(s=s||"()")[0]?this.isAfter(i,n):!this.isBefore(i,n))&&(")"===s[1]?this.isBefore(r,n):!this.isAfter(r,n)))},pn.isSame=function(e,t){var n,s=M(e)?e:Tt(e);return!(!this.isValid()||!s.isValid())&&("millisecond"===(t=V(t)||"millisecond")?this.valueOf()===s.valueOf():(n=s.valueOf(),this.clone().startOf(t).valueOf()<=n&&n<=this.clone().endOf(t).valueOf()))},pn.isSameOrAfter=function(e,t){return this.isSame(e,t)||this.isAfter(e,t)},pn.isSameOrBefore=function(e,t){return this.isSame(e,t)||this.isBefore(e,t)},pn.isValid=function(){return g(this)},pn.lang=nn,pn.locale=tn,pn.localeData=sn,pn.max=Pt,pn.min=Nt,pn.parsingFlags=function(){return c({},y(this))},pn.set=function(e,t){if("object"==typeof e)for(var n=function(e){var t,n=[];for(t in e)m(e,t)&&n.push({unit:t,priority:E[t]});return n.sort(function(e,t){return e.priority-t.priority}),n}(e=G(e)),s=0;s<n.length;s++)this[n[s].unit](e[n[s].unit]);else if(O(this[e=V(e)]))return this[e](t);return this},pn.startOf=function(e){var t,n;if(void 0===(e=V(e))||"millisecond"===e||!this.isValid())return this;switch(n=this._isUTC?un:on,e){case"year":t=n(this.year(),0,1);break;case"quarter":t=n(this.year(),this.month()-this.month()%3,1);break;case"month":t=n(this.year(),this.month(),1);break;case"week":t=n(this.year(),this.month(),this.date()-this.weekday());break;case"isoWeek":t=n(this.year(),this.month(),this.date()-(this.isoWeekday()-1));break;case"day":case"date":t=n(this.year(),this.month(),this.date());break;case"hour":t=this._d.valueOf(),t-=an(t+(this._isUTC?0:6e4*this.utcOffset()),36e5);break;case"minute":t=this._d.valueOf(),t-=an(t,6e4);break;case"second":t=this._d.valueOf(),t-=an(t,1e3);break}return this._d.setTime(t),f.updateOffset(this,!0),this},pn.subtract=Qt,pn.toArray=function(){var e=this;return[e.year(),e.month(),e.date(),e.hour(),e.minute(),e.second(),e.millisecond()]},pn.toObject=function(){var e=this;return{years:e.year(),months:e.month(),date:e.date(),hours:e.hours(),minutes:e.minutes(),seconds:e.seconds(),milliseconds:e.milliseconds()}},pn.toDate=function(){return new Date(this.valueOf())},pn.toISOString=function(e){if(!this.isValid())return null;var t=!0!==e,n=t?this.clone().utc():this;return n.year()<0||9999<n.year()?U(n,t?"YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]":"YYYYYY-MM-DD[T]HH:mm:ss.SSSZ"):O(Date.prototype.toISOString)?t?this.toDate().toISOString():new Date(this.valueOf()+60*this.utcOffset()*1e3).toISOString().replace("Z",U(n,"Z")):U(n,t?"YYYY-MM-DD[T]HH:mm:ss.SSS[Z]":"YYYY-MM-DD[T]HH:mm:ss.SSSZ")},pn.inspect=function(){if(!this.isValid())return"moment.invalid(/* "+this._i+" */)";var e,t,n,s="moment",i="";return this.isLocal()||(s=0===this.utcOffset()?"moment.utc":"moment.parseZone",i="Z"),e="["+s+'("]',t=0<=this.year()&&this.year()<=9999?"YYYY":"YYYYYY",n=i+'[")]',this.format(e+t+"-MM-DD[T]HH:mm:ss.SSS"+n)},"undefined"!=typeof Symbol&&null!=Symbol.for&&(pn[Symbol.for("nodejs.util.inspect.custom")]=function(){return"Moment<"+this.format()+">"}),pn.toJSON=function(){return this.isValid()?this.toISOString():null},pn.toString=function(){return this.clone().locale("en").format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ")},pn.unix=function(){return Math.floor(this.valueOf()/1e3)},pn.valueOf=function(){return this._d.valueOf()-6e4*(this._offset||0)},pn.creationData=function(){return{input:this._i,format:this._f,locale:this._locale,isUTC:this._isUTC,strict:this._strict}},pn.eraName=function(){for(var e,t=this.localeData().eras(),n=0,s=t.length;n<s;++n){if(e=this.clone().startOf("day").valueOf(),t[n].since<=e&&e<=t[n].until)return t[n].name;if(t[n].until<=e&&e<=t[n].since)return t[n].name}return""},pn.eraNarrow=function(){for(var e,t=this.localeData().eras(),n=0,s=t.length;n<s;++n){if(e=this.clone().startOf("day").valueOf(),t[n].since<=e&&e<=t[n].until)return t[n].narrow;if(t[n].until<=e&&e<=t[n].since)return t[n].narrow}return""},pn.eraAbbr=function(){for(var e,t=this.localeData().eras(),n=0,s=t.length;n<s;++n){if(e=this.clone().startOf("day").valueOf(),t[n].since<=e&&e<=t[n].until)return t[n].abbr;if(t[n].until<=e&&e<=t[n].since)return t[n].abbr}return""},pn.eraYear=function(){for(var e,t,n=this.localeData().eras(),s=0,i=n.length;s<i;++s)if(e=n[s].since<=n[s].until?1:-1,t=this.clone().startOf("day").valueOf(),n[s].since<=t&&t<=n[s].until||n[s].until<=t&&t<=n[s].since)return(this.year()-f(n[s].since).year())*e+n[s].offset;return this.year()},pn.year=Le,pn.isLeapYear=function(){return j(this.year())},pn.weekYear=function(e){return cn.call(this,e,this.week(),this.weekday(),this.localeData()._week.dow,this.localeData()._week.doy)},pn.isoWeekYear=function(e){return cn.call(this,e,this.isoWeek(),this.isoWeekday(),1,4)},pn.quarter=pn.quarters=function(e){return null==e?Math.ceil((this.month()+1)/3):this.month(3*(e-1)+this.month()%3)},pn.month=Ue,pn.daysInMonth=function(){return xe(this.year(),this.month())},pn.week=pn.weeks=function(e){var t=this.localeData().week(this);return null==e?t:this.add(7*(e-t),"d")},pn.isoWeek=pn.isoWeeks=function(e){var t=Ae(this,1,4).week;return null==e?t:this.add(7*(e-t),"d")},pn.weeksInYear=function(){var e=this.localeData()._week;return je(this.year(),e.dow,e.doy)},pn.weeksInWeekYear=function(){var e=this.localeData()._week;return je(this.weekYear(),e.dow,e.doy)},pn.isoWeeksInYear=function(){return je(this.year(),1,4)},pn.isoWeeksInISOWeekYear=function(){return je(this.isoWeekYear(),1,4)},pn.date=fn,pn.day=pn.days=function(e){if(!this.isValid())return null!=e?this:NaN;var t,n,s=this._isUTC?this._d.getUTCDay():this._d.getDay();return null!=e?(t=e,n=this.localeData(),e="string"!=typeof t?t:isNaN(t)?"number"==typeof(t=n.weekdaysParse(t))?t:null:parseInt(t,10),this.add(e-s,"d")):s},pn.weekday=function(e){if(!this.isValid())return null!=e?this:NaN;var t=(this.day()+7-this.localeData()._week.dow)%7;return null==e?t:this.add(e-t,"d")},pn.isoWeekday=function(e){if(!this.isValid())return null!=e?this:NaN;if(null==e)return this.day()||7;var t,n,s=(t=e,n=this.localeData(),"string"==typeof t?n.weekdaysParse(t)%7||7:isNaN(t)?null:t);return this.day(this.day()%7?s:s-7)},pn.dayOfYear=function(e){var t=Math.round((this.clone().startOf("day")-this.clone().startOf("year"))/864e5)+1;return null==e?t:this.add(e-t,"d")},pn.hour=pn.hours=tt,pn.minute=pn.minutes=mn,pn.second=pn.seconds=gn,pn.millisecond=pn.milliseconds=yn,pn.utcOffset=function(e,t,n){var s,i=this._offset||0;if(!this.isValid())return null!=e?this:NaN;if(null==e)return this._isUTC?i:Et(this);if("string"==typeof e){if(null===(e=Vt(he,e)))return this}else Math.abs(e)<16&&!n&&(e*=60);return!this._isUTC&&t&&(s=Et(this)),this._offset=e,this._isUTC=!0,null!=s&&this.add(s,"m"),i!==e&&(!t||this._changeInProgress?Bt(this,Zt(e-i,"m"),1,!1):this._changeInProgress||(this._changeInProgress=!0,f.updateOffset(this,!0),this._changeInProgress=null)),this},pn.utc=function(e){return this.utcOffset(0,e)},pn.local=function(e){return this._isUTC&&(this.utcOffset(0,e),this._isUTC=!1,e&&this.subtract(Et(this),"m")),this},pn.parseZone=function(){var e;return null!=this._tzm?this.utcOffset(this._tzm,!1,!0):"string"==typeof this._i&&(null!=(e=Vt(le,this._i))?this.utcOffset(e):this.utcOffset(0,!0)),this},pn.hasAlignedHourOffset=function(e){return!!this.isValid()&&(e=e?Tt(e).utcOffset():0,(this.utcOffset()-e)%60==0)},pn.isDST=function(){return this.utcOffset()>this.clone().month(0).utcOffset()||this.utcOffset()>this.clone().month(5).utcOffset()},pn.isLocal=function(){return!!this.isValid()&&!this._isUTC},pn.isUtcOffset=function(){return!!this.isValid()&&this._isUTC},pn.isUtc=At,pn.isUTC=At,pn.zoneAbbr=function(){return this._isUTC?"UTC":""},pn.zoneName=function(){return this._isUTC?"Coordinated Universal Time":""},pn.dates=n("dates accessor is deprecated. Use date instead.",fn),pn.months=n("months accessor is deprecated. Use month instead",Ue),pn.years=n("years accessor is deprecated. Use year instead",Le),pn.zone=n("moment().zone is deprecated, use moment().utcOffset instead. http://momentjs.com/guides/#/warnings/zone/",function(e,t){return null!=e?("string"!=typeof e&&(e=-e),this.utcOffset(e,t),this):-this.utcOffset()}),pn.isDSTShifted=n("isDSTShifted is deprecated. See http://momentjs.com/guides/#/warnings/dst-shifted/ for more information",function(){if(!r(this._isDSTShifted))return this._isDSTShifted;var e,t={};return v(t,this),(t=bt(t))._a?(e=(t._isUTC?_:Tt)(t._a),this._isDSTShifted=this.isValid()&&0<function(e,t,n){for(var s=Math.min(e.length,t.length),i=Math.abs(e.length-t.length),r=0,a=0;a<s;a++)(n&&e[a]!==t[a]||!n&&Z(e[a])!==Z(t[a]))&&r++;return r+i}(t._a,e.toArray())):this._isDSTShifted=!1,this._isDSTShifted});var kn=x.prototype;function Mn(e,t,n,s){var i=dt(),r=_().set(s,t);return i[n](r,e)}function Dn(e,t,n){if(h(e)&&(t=e,e=void 0),e=e||"",null!=t)return Mn(e,t,n,"month");for(var s=[],i=0;i<12;i++)s[i]=Mn(e,i,n,"month");return s}function Sn(e,t,n,s){t=("boolean"==typeof e?h(t)&&(n=t,t=void 0):(t=e,e=!1,h(n=t)&&(n=t,t=void 0)),t||"");var i,r=dt(),a=e?r._week.dow:0,o=[];if(null!=n)return Mn(t,(n+a)%7,s,"day");for(i=0;i<7;i++)o[i]=Mn(t,(i+a)%7,s,"day");return o}kn.calendar=function(e,t,n){var s=this._calendar[e]||this._calendar.sameElse;return O(s)?s.call(t,n):s},kn.longDateFormat=function(e){var t=this._longDateFormat[e],n=this._longDateFormat[e.toUpperCase()];return t||!n?t:(this._longDateFormat[e]=n.match(N).map(function(e){return"MMMM"===e||"MM"===e||"DD"===e||"dddd"===e?e.slice(1):e}).join(""),this._longDateFormat[e])},kn.invalidDate=function(){return this._invalidDate},kn.ordinal=function(e){return this._ordinal.replace("%d",e)},kn.preparse=vn,kn.postformat=vn,kn.relativeTime=function(e,t,n,s){var i=this._relativeTime[n];return O(i)?i(e,t,n,s):i.replace(/%d/i,e)},kn.pastFuture=function(e,t){var n=this._relativeTime[0<e?"future":"past"];return O(n)?n(t):n.replace(/%s/i,t)},kn.set=function(e){var t,n;for(n in e)m(e,n)&&(O(t=e[n])?this[n]=t:this["_"+n]=t);this._config=e,this._dayOfMonthOrdinalParseLenient=new RegExp((this._dayOfMonthOrdinalParse.source||this._ordinalParse.source)+"|"+/\d{1,2}/.source)},kn.eras=function(e,t){for(var n,s=this._eras||dt("en")._eras,i=0,r=s.length;i<r;++i){switch(typeof s[i].since){case"string":n=f(s[i].since).startOf("day"),s[i].since=n.valueOf();break}switch(typeof s[i].until){case"undefined":s[i].until=1/0;break;case"string":n=f(s[i].until).startOf("day").valueOf(),s[i].until=n.valueOf();break}}return s},kn.erasParse=function(e,t,n){var s,i,r,a,o,u=this.eras();for(e=e.toUpperCase(),s=0,i=u.length;s<i;++s)if(r=u[s].name.toUpperCase(),a=u[s].abbr.toUpperCase(),o=u[s].narrow.toUpperCase(),n)switch(t){case"N":case"NN":case"NNN":if(a===e)return u[s];break;case"NNNN":if(r===e)return u[s];break;case"NNNNN":if(o===e)return u[s];break}else if(0<=[r,a,o].indexOf(e))return u[s]},kn.erasConvertYear=function(e,t){var n=e.since<=e.until?1:-1;return void 0===t?f(e.since).year():f(e.since).year()+(t-e.offset)*n},kn.erasAbbrRegex=function(e){return m(this,"_erasAbbrRegex")||hn.call(this),e?this._erasAbbrRegex:this._erasRegex},kn.erasNameRegex=function(e){return m(this,"_erasNameRegex")||hn.call(this),e?this._erasNameRegex:this._erasRegex},kn.erasNarrowRegex=function(e){return m(this,"_erasNarrowRegex")||hn.call(this),e?this._erasNarrowRegex:this._erasRegex},kn.months=function(e,t){return e?o(this._months)?this._months[e.month()]:this._months[(this._months.isFormat||Pe).test(t)?"format":"standalone"][e.month()]:o(this._months)?this._months:this._months.standalone},kn.monthsShort=function(e,t){return e?o(this._monthsShort)?this._monthsShort[e.month()]:this._monthsShort[Pe.test(t)?"format":"standalone"][e.month()]:o(this._monthsShort)?this._monthsShort:this._monthsShort.standalone},kn.monthsParse=function(e,t,n){var s,i,r;if(this._monthsParseExact)return function(e,t,n){var s,i,r,a=e.toLocaleLowerCase();if(!this._monthsParse)for(this._monthsParse=[],this._longMonthsParse=[],this._shortMonthsParse=[],s=0;s<12;++s)r=_([2e3,s]),this._shortMonthsParse[s]=this.monthsShort(r,"").toLocaleLowerCase(),this._longMonthsParse[s]=this.months(r,"").toLocaleLowerCase();return n?"MMM"===t?-1!==(i=we.call(this._shortMonthsParse,a))?i:null:-1!==(i=we.call(this._longMonthsParse,a))?i:null:"MMM"===t?-1!==(i=we.call(this._shortMonthsParse,a))||-1!==(i=we.call(this._longMonthsParse,a))?i:null:-1!==(i=we.call(this._longMonthsParse,a))||-1!==(i=we.call(this._shortMonthsParse,a))?i:null}.call(this,e,t,n);for(this._monthsParse||(this._monthsParse=[],this._longMonthsParse=[],this._shortMonthsParse=[]),s=0;s<12;s++){if(i=_([2e3,s]),n&&!this._longMonthsParse[s]&&(this._longMonthsParse[s]=new RegExp("^"+this.months(i,"").replace(".","")+"$","i"),this._shortMonthsParse[s]=new RegExp("^"+this.monthsShort(i,"").replace(".","")+"$","i")),n||this._monthsParse[s]||(r="^"+this.months(i,"")+"|^"+this.monthsShort(i,""),this._monthsParse[s]=new RegExp(r.replace(".",""),"i")),n&&"MMMM"===t&&this._longMonthsParse[s].test(e))return s;if(n&&"MMM"===t&&this._shortMonthsParse[s].test(e))return s;if(!n&&this._monthsParse[s].test(e))return s}},kn.monthsRegex=function(e){return this._monthsParseExact?(m(this,"_monthsRegex")||He.call(this),e?this._monthsStrictRegex:this._monthsRegex):(m(this,"_monthsRegex")||(this._monthsRegex=We),this._monthsStrictRegex&&e?this._monthsStrictRegex:this._monthsRegex)},kn.monthsShortRegex=function(e){return this._monthsParseExact?(m(this,"_monthsRegex")||He.call(this),e?this._monthsShortStrictRegex:this._monthsShortRegex):(m(this,"_monthsShortRegex")||(this._monthsShortRegex=Re),this._monthsShortStrictRegex&&e?this._monthsShortStrictRegex:this._monthsShortRegex)},kn.week=function(e){return Ae(e,this._week.dow,this._week.doy).week},kn.firstDayOfYear=function(){return this._week.doy},kn.firstDayOfWeek=function(){return this._week.dow},kn.weekdays=function(e,t){var n=o(this._weekdays)?this._weekdays:this._weekdays[e&&!0!==e&&this._weekdays.isFormat.test(t)?"format":"standalone"];return!0===e?Ie(n,this._week.dow):e?n[e.day()]:n},kn.weekdaysMin=function(e){return!0===e?Ie(this._weekdaysMin,this._week.dow):e?this._weekdaysMin[e.day()]:this._weekdaysMin},kn.weekdaysShort=function(e){return!0===e?Ie(this._weekdaysShort,this._week.dow):e?this._weekdaysShort[e.day()]:this._weekdaysShort},kn.weekdaysParse=function(e,t,n){var s,i,r;if(this._weekdaysParseExact)return function(e,t,n){var s,i,r,a=e.toLocaleLowerCase();if(!this._weekdaysParse)for(this._weekdaysParse=[],this._shortWeekdaysParse=[],this._minWeekdaysParse=[],s=0;s<7;++s)r=_([2e3,1]).day(s),this._minWeekdaysParse[s]=this.weekdaysMin(r,"").toLocaleLowerCase(),this._shortWeekdaysParse[s]=this.weekdaysShort(r,"").toLocaleLowerCase(),this._weekdaysParse[s]=this.weekdays(r,"").toLocaleLowerCase();return n?"dddd"===t?-1!==(i=we.call(this._weekdaysParse,a))?i:null:"ddd"===t?-1!==(i=we.call(this._shortWeekdaysParse,a))?i:null:-1!==(i=we.call(this._minWeekdaysParse,a))?i:null:"dddd"===t?-1!==(i=we.call(this._weekdaysParse,a))||-1!==(i=we.call(this._shortWeekdaysParse,a))||-1!==(i=we.call(this._minWeekdaysParse,a))?i:null:"ddd"===t?-1!==(i=we.call(this._shortWeekdaysParse,a))||-1!==(i=we.call(this._weekdaysParse,a))||-1!==(i=we.call(this._minWeekdaysParse,a))?i:null:-1!==(i=we.call(this._minWeekdaysParse,a))||-1!==(i=we.call(this._weekdaysParse,a))||-1!==(i=we.call(this._shortWeekdaysParse,a))?i:null}.call(this,e,t,n);for(this._weekdaysParse||(this._weekdaysParse=[],this._minWeekdaysParse=[],this._shortWeekdaysParse=[],this._fullWeekdaysParse=[]),s=0;s<7;s++){if(i=_([2e3,1]).day(s),n&&!this._fullWeekdaysParse[s]&&(this._fullWeekdaysParse[s]=new RegExp("^"+this.weekdays(i,"").replace(".","\\.?")+"$","i"),this._shortWeekdaysParse[s]=new RegExp("^"+this.weekdaysShort(i,"").replace(".","\\.?")+"$","i"),this._minWeekdaysParse[s]=new RegExp("^"+this.weekdaysMin(i,"").replace(".","\\.?")+"$","i")),this._weekdaysParse[s]||(r="^"+this.weekdays(i,"")+"|^"+this.weekdaysShort(i,"")+"|^"+this.weekdaysMin(i,""),this._weekdaysParse[s]=new RegExp(r.replace(".",""),"i")),n&&"dddd"===t&&this._fullWeekdaysParse[s].test(e))return s;if(n&&"ddd"===t&&this._shortWeekdaysParse[s].test(e))return s;if(n&&"dd"===t&&this._minWeekdaysParse[s].test(e))return s;if(!n&&this._weekdaysParse[s].test(e))return s}},kn.weekdaysRegex=function(e){return this._weekdaysParseExact?(m(this,"_weekdaysRegex")||Qe.call(this),e?this._weekdaysStrictRegex:this._weekdaysRegex):(m(this,"_weekdaysRegex")||(this._weekdaysRegex=qe),this._weekdaysStrictRegex&&e?this._weekdaysStrictRegex:this._weekdaysRegex)},kn.weekdaysShortRegex=function(e){return this._weekdaysParseExact?(m(this,"_weekdaysRegex")||Qe.call(this),e?this._weekdaysShortStrictRegex:this._weekdaysShortRegex):(m(this,"_weekdaysShortRegex")||(this._weekdaysShortRegex=Be),this._weekdaysShortStrictRegex&&e?this._weekdaysShortStrictRegex:this._weekdaysShortRegex)},kn.weekdaysMinRegex=function(e){return this._weekdaysParseExact?(m(this,"_weekdaysRegex")||Qe.call(this),e?this._weekdaysMinStrictRegex:this._weekdaysMinRegex):(m(this,"_weekdaysMinRegex")||(this._weekdaysMinRegex=Je),this._weekdaysMinStrictRegex&&e?this._weekdaysMinStrictRegex:this._weekdaysMinRegex)},kn.isPM=function(e){return"p"===(e+"").toLowerCase().charAt(0)},kn.meridiem=function(e,t,n){return 11<e?n?"pm":"PM":n?"am":"AM"},lt("en",{eras:[{since:"0001-01-01",until:1/0,offset:1,name:"Anno Domini",narrow:"AD",abbr:"AD"},{since:"0000-12-31",until:-1/0,offset:1,name:"Before Christ",narrow:"BC",abbr:"BC"}],dayOfMonthOrdinalParse:/\d{1,2}(th|st|nd|rd)/,ordinal:function(e){var t=e%10;return e+(1===Z(e%100/10)?"th":1==t?"st":2==t?"nd":3==t?"rd":"th")}}),f.lang=n("moment.lang is deprecated. Use moment.locale instead.",lt),f.langData=n("moment.langData is deprecated. Use moment.localeData instead.",dt);var Yn=Math.abs;function On(e,t,n,s){var i=Zt(t,n);return e._milliseconds+=s*i._milliseconds,e._days+=s*i._days,e._months+=s*i._months,e._bubble()}function bn(e){return e<0?Math.floor(e):Math.ceil(e)}function xn(e){return 4800*e/146097}function Tn(e){return 146097*e/4800}function Nn(e){return function(){return this.as(e)}}var Pn=Nn("ms"),Rn=Nn("s"),Wn=Nn("m"),Cn=Nn("h"),Un=Nn("d"),Hn=Nn("w"),Fn=Nn("M"),Ln=Nn("Q"),Vn=Nn("y");function Gn(e){return function(){return this.isValid()?this._data[e]:NaN}}var En=Gn("milliseconds"),An=Gn("seconds"),jn=Gn("minutes"),In=Gn("hours"),Zn=Gn("days"),zn=Gn("months"),$n=Gn("years");var qn=Math.round,Bn={ss:44,s:45,m:45,h:22,d:26,w:null,M:11};function Jn(e,t,n,s){var i=Zt(e).abs(),r=qn(i.as("s")),a=qn(i.as("m")),o=qn(i.as("h")),u=qn(i.as("d")),l=qn(i.as("M")),h=qn(i.as("w")),d=qn(i.as("y")),c=(r<=n.ss?["s",r]:r<n.s&&["ss",r])||a<=1&&["m"]||a<n.m&&["mm",a]||o<=1&&["h"]||o<n.h&&["hh",o]||u<=1&&["d"]||u<n.d&&["dd",u];return null!=n.w&&(c=c||h<=1&&["w"]||h<n.w&&["ww",h]),(c=c||l<=1&&["M"]||l<n.M&&["MM",l]||d<=1&&["y"]||["yy",d])[2]=t,c[3]=0<+e,c[4]=s,function(e,t,n,s,i){return i.relativeTime(t||1,!!n,e,s)}.apply(null,c)}var Qn=Math.abs;function Xn(e){return(0<e)-(e<0)||+e}function Kn(){if(!this.isValid())return this.localeData().invalidDate();var e,t,n,s,i,r,a,o,u=Qn(this._milliseconds)/1e3,l=Qn(this._days),h=Qn(this._months),d=this.asSeconds();return d?(e=I(u/60),t=I(e/60),u%=60,e%=60,n=I(h/12),h%=12,s=u?u.toFixed(3).replace(/\.?0+$/,""):"",i=d<0?"-":"",r=Xn(this._months)!==Xn(d)?"-":"",a=Xn(this._days)!==Xn(d)?"-":"",o=Xn(this._milliseconds)!==Xn(d)?"-":"",i+"P"+(n?r+n+"Y":"")+(h?r+h+"M":"")+(l?a+l+"D":"")+(t||e||u?"T":"")+(t?o+t+"H":"")+(e?o+e+"M":"")+(u?o+s+"S":"")):"P0D"}var es=Ct.prototype;return es.isValid=function(){return this._isValid},es.abs=function(){var e=this._data;return this._milliseconds=Yn(this._milliseconds),this._days=Yn(this._days),this._months=Yn(this._months),e.milliseconds=Yn(e.milliseconds),e.seconds=Yn(e.seconds),e.minutes=Yn(e.minutes),e.hours=Yn(e.hours),e.months=Yn(e.months),e.years=Yn(e.years),this},es.add=function(e,t){return On(this,e,t,1)},es.subtract=function(e,t){return On(this,e,t,-1)},es.as=function(e){if(!this.isValid())return NaN;var t,n,s=this._milliseconds;if("month"===(e=V(e))||"quarter"===e||"year"===e)switch(t=this._days+s/864e5,n=this._months+xn(t),e){case"month":return n;case"quarter":return n/3;case"year":return n/12}else switch(t=this._days+Math.round(Tn(this._months)),e){case"week":return t/7+s/6048e5;case"day":return t+s/864e5;case"hour":return 24*t+s/36e5;case"minute":return 1440*t+s/6e4;case"second":return 86400*t+s/1e3;case"millisecond":return Math.floor(864e5*t)+s;default:throw new Error("Unknown unit "+e)}},es.asMilliseconds=Pn,es.asSeconds=Rn,es.asMinutes=Wn,es.asHours=Cn,es.asDays=Un,es.asWeeks=Hn,es.asMonths=Fn,es.asQuarters=Ln,es.asYears=Vn,es.valueOf=function(){return this.isValid()?this._milliseconds+864e5*this._days+this._months%12*2592e6+31536e6*Z(this._months/12):NaN},es._bubble=function(){var e,t,n,s,i,r=this._milliseconds,a=this._days,o=this._months,u=this._data;return 0<=r&&0<=a&&0<=o||r<=0&&a<=0&&o<=0||(r+=864e5*bn(Tn(o)+a),o=a=0),u.milliseconds=r%1e3,e=I(r/1e3),u.seconds=e%60,t=I(e/60),u.minutes=t%60,n=I(t/60),u.hours=n%24,a+=I(n/24),o+=i=I(xn(a)),a-=bn(Tn(i)),s=I(o/12),o%=12,u.days=a,u.months=o,u.years=s,this},es.clone=function(){return Zt(this)},es.get=function(e){return e=V(e),this.isValid()?this[e+"s"]():NaN},es.milliseconds=En,es.seconds=An,es.minutes=jn,es.hours=In,es.days=Zn,es.weeks=function(){return I(this.days()/7)},es.months=zn,es.years=$n,es.humanize=function(e,t){if(!this.isValid())return this.localeData().invalidDate();var n,s,i=!1,r=Bn;return"object"==typeof e&&(t=e,e=!1),"boolean"==typeof e&&(i=e),"object"==typeof t&&(r=Object.assign({},Bn,t),null!=t.s&&null==t.ss&&(r.ss=t.s-1)),n=this.localeData(),s=Jn(this,!i,r,n),i&&(s=n.pastFuture(+this,s)),n.postformat(s)},es.toISOString=Kn,es.toString=Kn,es.toJSON=Kn,es.locale=tn,es.localeData=sn,es.toIsoString=n("toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)",Kn),es.lang=nn,C("X",0,0,"unix"),C("x",0,0,"valueOf"),ce("x",ue),ce("X",/[+-]?\d+(\.\d{1,3})?/),ye("X",function(e,t,n){n._d=new Date(1e3*parseFloat(e))}),ye("x",function(e,t,n){n._d=new Date(Z(e))}),f.version="2.29.1",e=Tt,f.fn=pn,f.min=function(){return Rt("isBefore",[].slice.call(arguments,0))},f.max=function(){return Rt("isAfter",[].slice.call(arguments,0))},f.now=function(){return Date.now?Date.now():+new Date},f.utc=_,f.unix=function(e){return Tt(1e3*e)},f.months=function(e,t){return Dn(e,t,"months")},f.isDate=a,f.locale=lt,f.invalid=w,f.duration=Zt,f.isMoment=M,f.weekdays=function(e,t,n){return Sn(e,t,n,"weekdays")},f.parseZone=function(){return Tt.apply(null,arguments).parseZone()},f.localeData=dt,f.isDuration=Ut,f.monthsShort=function(e,t){return Dn(e,t,"monthsShort")},f.weekdaysMin=function(e,t,n){return Sn(e,t,n,"weekdaysMin")},f.defineLocale=ht,f.updateLocale=function(e,t){var n,s,i;return null!=t?(i=st,null!=it[e]&&null!=it[e].parentLocale?it[e].set(b(it[e]._config,t)):(null!=(s=ut(e))&&(i=s._config),t=b(i,t),null==s&&(t.abbr=e),(n=new x(t)).parentLocale=it[e],it[e]=n),lt(e)):null!=it[e]&&(null!=it[e].parentLocale?(it[e]=it[e].parentLocale,e===lt()&&lt(e)):null!=it[e]&&delete it[e]),it[e]},f.locales=function(){return s(it)},f.weekdaysShort=function(e,t,n){return Sn(e,t,n,"weekdaysShort")},f.normalizeUnits=V,f.relativeTimeRounding=function(e){return void 0===e?qn:"function"==typeof e&&(qn=e,!0)},f.relativeTimeThreshold=function(e,t){return void 0!==Bn[e]&&(void 0===t?Bn[e]:(Bn[e]=t,"s"===e&&(Bn.ss=t-1),!0))},f.calendarFormat=function(e,t){var n=e.diff(t,"days",!0);return n<-6?"sameElse":n<-1?"lastWeek":n<0?"lastDay":n<1?"sameDay":n<2?"nextDay":n<7?"nextWeek":"sameElse"},f.prototype=pn,f.HTML5_FMT={DATETIME_LOCAL:"YYYY-MM-DDTHH:mm",DATETIME_LOCAL_SECONDS:"YYYY-MM-DDTHH:mm:ss",DATETIME_LOCAL_MS:"YYYY-MM-DDTHH:mm:ss.SSS",DATE:"YYYY-MM-DD",TIME:"HH:mm",TIME_SECONDS:"HH:mm:ss",TIME_MS:"HH:mm:ss.SSS",WEEK:"GGGG-[W]WW",MONTH:"YYYY-MM"},f});
+//# sourceMappingURL=moment.min.js.map
+!function(a,i){"use strict";"object"==typeof module&&module.exports?module.exports=i(require("moment")):"function"==typeof define&&define.amd?define(["moment"],i):i(a.moment)}(this,function(c){"use strict";void 0===c.version&&c.default&&(c=c.default);var i,A={},n={},t={},s={},u={};c&&"string"==typeof c.version||N("Moment Timezone requires Moment.js. See https://momentjs.com/timezone/docs/#/use-it/browser/");var a=c.version.split("."),e=+a[0],r=+a[1];function m(a){return 96<a?a-87:64<a?a-29:a-48}function o(a){var i=0,e=a.split("."),r=e[0],o=e[1]||"",c=1,A=0,n=1;for(45===a.charCodeAt(0)&&(n=-(i=1));i<r.length;i++)A=60*A+m(r.charCodeAt(i));for(i=0;i<o.length;i++)c/=60,A+=m(o.charCodeAt(i))*c;return A*n}function f(a){for(var i=0;i<a.length;i++)a[i]=o(a[i])}function l(a,i){for(var e=[],r=0;r<i.length;r++)e[r]=a[i[r]];return e}function p(a){var i=a.split("|"),e=i[2].split(" "),r=i[3].split(""),o=i[4].split(" ");return f(e),f(r),f(o),function(a,i){for(var e=0;e<i;e++)a[e]=Math.round((a[e-1]||0)+6e4*a[e]);a[i-1]=1/0}(o,r.length),{name:i[0],abbrs:l(i[1].split(" "),r),offsets:l(e,r),untils:o,population:0|i[5]}}function M(a){a&&this._set(p(a))}function b(a,i){this.name=a,this.zones=i}function d(a){var i=a.toTimeString(),e=i.match(/\([a-z ]+\)/i);"GMT"===(e=e&&e[0]?(e=e[0].match(/[A-Z]/g))?e.join(""):void 0:(e=i.match(/[A-Z]{3,5}/g))?e[0]:void 0)&&(e=void 0),this.at=+a,this.abbr=e,this.offset=a.getTimezoneOffset()}function h(a){this.zone=a,this.offsetScore=0,this.abbrScore=0}function E(){for(var a,i,e=(new Date).getFullYear()-2,r=new d(new Date(e,0,1)),o=[r],c=1;c<48;c++)(i=new d(new Date(e,c,1))).offset!==r.offset&&(a=function(a,i){for(var e,r;r=6e4*((i.at-a.at)/12e4|0);)(e=new d(new Date(a.at+r))).offset===a.offset?a=e:i=e;return a}(r,i),o.push(a),o.push(new d(new Date(a.at+6e4)))),r=i;for(c=0;c<4;c++)o.push(new d(new Date(e+c,0,1))),o.push(new d(new Date(e+c,6,1)));return o}function g(a,i){return a.offsetScore!==i.offsetScore?a.offsetScore-i.offsetScore:a.abbrScore!==i.abbrScore?a.abbrScore-i.abbrScore:a.zone.population!==i.zone.population?i.zone.population-a.zone.population:i.zone.name.localeCompare(a.zone.name)}function z(){try{var a=Intl.DateTimeFormat().resolvedOptions().timeZone;if(a&&3<a.length){var i=s[P(a)];if(i)return i;N("Moment Timezone found "+a+" from the Intl api, but did not have that data loaded.")}}catch(a){}for(var e,r,o=E(),c=o.length,A=function(a){for(var i,e,r=a.length,o={},c=[],A=0;A<r;A++)for(i in e=u[a[A].offset]||{})e.hasOwnProperty(i)&&(o[i]=!0);for(A in o)o.hasOwnProperty(A)&&c.push(s[A]);return c}(o),n=[],t=0;t<A.length;t++){for(e=new h(T(A[t])),r=0;r<c;r++)e.scoreOffsetAt(o[r]);n.push(e)}return n.sort(g),0<n.length?n[0].zone.name:void 0}function P(a){return(a||"").toLowerCase().replace(/\//g,"_")}function S(a){var i,e,r,o;for("string"==typeof a&&(a=[a]),i=0;i<a.length;i++)o=P(e=(r=a[i].split("|"))[0]),A[o]=a[i],s[o]=e,function(a,i){var e,r;for(f(i),e=0;e<i.length;e++)r=i[e],u[r]=u[r]||{},u[r][a]=!0}(o,r[2].split(" "))}function T(a,i){a=P(a);var e,r=A[a];return r instanceof M?r:"string"==typeof r?(r=new M(r),A[a]=r):n[a]&&i!==T&&(e=T(n[a],T))?((r=A[a]=new M)._set(e),r.name=s[a],r):null}function _(a){var i,e,r,o;for("string"==typeof a&&(a=[a]),i=0;i<a.length;i++)r=P((e=a[i].split("|"))[0]),o=P(e[1]),n[r]=o,s[r]=e[0],n[o]=r,s[o]=e[1]}function k(a){S(a.zones),_(a.links),function(a){var i,e,r,o;if(a&&a.length)for(i=0;i<a.length;i++)e=(o=a[i].split("|"))[0].toUpperCase(),r=o[1].split(" "),t[e]=new b(e,r)}(a.countries),G.dataVersion=a.version}function C(a){return C.didShowError||(C.didShowError=!0,N("moment.tz.zoneExists('"+a+"') has been deprecated in favor of !moment.tz.zone('"+a+"')")),!!T(a)}function B(a){var i="X"===a._f||"x"===a._f;return!(!a._a||void 0!==a._tzm||i)}function N(a){"undefined"!=typeof console&&"function"==typeof console.error&&console.error(a)}function G(a){var i=Array.prototype.slice.call(arguments,0,-1),e=arguments[arguments.length-1],r=T(e),o=c.utc.apply(null,i);return r&&!c.isMoment(a)&&B(o)&&o.add(r.parse(o),"minutes"),o.tz(e),o}(e<2||2==e&&r<6)&&N("Moment Timezone requires Moment.js >= 2.6.0. You are using Moment.js "+c.version+". See momentjs.com"),M.prototype={_set:function(a){this.name=a.name,this.abbrs=a.abbrs,this.untils=a.untils,this.offsets=a.offsets,this.population=a.population},_index:function(a){for(var i=+a,e=this.untils,r=0;r<e.length;r++)if(i<e[r])return r},countries:function(){var i=this.name;return Object.keys(t).filter(function(a){return-1!==t[a].zones.indexOf(i)})},parse:function(a){for(var i,e,r,o=+a,c=this.offsets,A=this.untils,n=A.length-1,t=0;t<n;t++)if(i=c[t],e=c[t+1],r=c[t?t-1:t],i<e&&G.moveAmbiguousForward?i=e:r<i&&G.moveInvalidForward&&(i=r),o<A[t]-6e4*i)return c[t];return c[n]},abbr:function(a){return this.abbrs[this._index(a)]},offset:function(a){return N("zone.offset has been deprecated in favor of zone.utcOffset"),this.offsets[this._index(a)]},utcOffset:function(a){return this.offsets[this._index(a)]}},h.prototype.scoreOffsetAt=function(a){this.offsetScore+=Math.abs(this.zone.utcOffset(a.at)-a.offset),this.zone.abbr(a.at).replace(/[^A-Z]/g,"")!==a.abbr&&this.abbrScore++},G.version="0.5.32",G.dataVersion="",G._zones=A,G._links=n,G._names=s,G._countries=t,G.add=S,G.link=_,G.load=k,G.zone=T,G.zoneExists=C,G.guess=function(a){return i&&!a||(i=z()),i},G.names=function(){var a,i=[];for(a in s)s.hasOwnProperty(a)&&(A[a]||A[n[a]])&&s[a]&&i.push(s[a]);return i.sort()},G.Zone=M,G.unpack=p,G.unpackBase60=o,G.needsOffset=B,G.moveInvalidForward=!0,G.moveAmbiguousForward=!1,G.countries=function(){return Object.keys(t)},G.zonesForCountry=function(a,i){var e;if(e=(e=a).toUpperCase(),!(a=t[e]||null))return null;var r=a.zones.sort();return i?r.map(function(a){return{name:a,offset:T(a).utcOffset(new Date)}}):r};var y,L=c.fn;function O(a){return function(){return this._z?this._z.abbr(this):a.call(this)}}function D(a){return function(){return this._z=null,a.apply(this,arguments)}}c.tz=G,c.defaultZone=null,c.updateOffset=function(a,i){var e,r,o=c.defaultZone;void 0===a._z&&(o&&B(a)&&!a._isUTC&&(a._d=c.utc(a._a)._d,a.utc().add(o.parse(a),"minutes")),a._z=o),a._z&&(r=a._z.utcOffset(a),Math.abs(r)<16&&(r/=60),void 0!==a.utcOffset?(e=a._z,a.utcOffset(-r,i),a._z=e):a.zone(r,i))},L.tz=function(a,i){if(a){if("string"!=typeof a)throw new Error("Time zone name must be a string, got "+a+" ["+typeof a+"]");return this._z=T(a),this._z?c.updateOffset(this,i):N("Moment Timezone has no data for "+a+". See http://momentjs.com/timezone/docs/#/data-loading/."),this}if(this._z)return this._z.name},L.zoneName=O(L.zoneName),L.zoneAbbr=O(L.zoneAbbr),L.utc=D(L.utc),L.local=D(L.local),L.utcOffset=(y=L.utcOffset,function(){return 0<arguments.length&&(this._z=null),y.apply(this,arguments)}),c.tz.setDefault=function(a){return(e<2||2==e&&r<9)&&N("Moment Timezone setDefault() requires Moment.js >= 2.9.0. You are using Moment.js "+c.version+"."),c.defaultZone=a?T(a):null,c};var v=c.momentProperties;return"[object Array]"===Object.prototype.toString.call(v)?(v.push("_z"),v.push("_a")):v&&(v._z=null),k({version:"2020a",zones:["Africa/Abidjan|GMT|0|0||48e5","Africa/Nairobi|EAT|-30|0||47e5","Africa/Algiers|CET|-10|0||26e5","Africa/Lagos|WAT|-10|0||17e6","Africa/Maputo|CAT|-20|0||26e5","Africa/Cairo|EET EEST|-20 -30|01010|1M2m0 gL0 e10 mn0|15e6","Africa/Casablanca|+00 +01|0 -10|010101010101010101010101010101010101|1H3C0 wM0 co0 go0 1o00 s00 dA0 vc0 11A0 A00 e00 y00 11A0 uM0 e00 Dc0 11A0 s00 e00 IM0 WM0 mo0 gM0 LA0 WM0 jA0 e00 28M0 e00 2600 gM0 2600 e00 2600 gM0|32e5","Europe/Paris|CET CEST|-10 -20|01010101010101010101010|1GNB0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|11e6","Africa/Johannesburg|SAST|-20|0||84e5","Africa/Khartoum|EAT CAT|-30 -20|01|1Usl0|51e5","Africa/Sao_Tome|GMT WAT|0 -10|010|1UQN0 2q00|","Africa/Tripoli|EET CET CEST|-20 -10 -20|0120|1IlA0 TA0 1o00|11e5","Africa/Windhoek|CAT WAT|-20 -10|0101010101010|1GQo0 11B0 1qL0 WN0 1qL0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0|32e4","America/Adak|HST HDT|a0 90|01010101010101010101010|1GIc0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|326","America/Anchorage|AKST AKDT|90 80|01010101010101010101010|1GIb0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|30e4","America/Santo_Domingo|AST|40|0||29e5","America/Araguaina|-03 -02|30 20|010|1IdD0 Lz0|14e4","America/Fortaleza|-03|30|0||34e5","America/Asuncion|-03 -04|30 40|01010101010101010101010|1GTf0 1cN0 17b0 1ip0 17b0 1ip0 17b0 1ip0 19X0 1fB0 19X0 1fB0 19X0 1ip0 17b0 1ip0 17b0 1ip0 19X0 1fB0 19X0 1fB0|28e5","America/Panama|EST|50|0||15e5","America/Mexico_City|CST CDT|60 50|01010101010101010101010|1GQw0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0|20e6","America/Bahia|-02 -03|20 30|01|1GCq0|27e5","America/Managua|CST|60|0||22e5","America/La_Paz|-04|40|0||19e5","America/Lima|-05|50|0||11e6","America/Denver|MST MDT|70 60|01010101010101010101010|1GI90 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|26e5","America/Campo_Grande|-03 -04|30 40|0101010101010101|1GCr0 1zd0 Lz0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 On0 1zd0 On0 1HB0 FX0|77e4","America/Cancun|CST CDT EST|60 50 50|01010102|1GQw0 1nX0 14p0 1lb0 14p0 1lb0 Dd0|63e4","America/Caracas|-0430 -04|4u 40|01|1QMT0|29e5","America/Chicago|CST CDT|60 50|01010101010101010101010|1GI80 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|92e5","America/Chihuahua|MST MDT|70 60|01010101010101010101010|1GQx0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0 11B0 1nX0 14p0 1lb0 14p0 1lb0 14p0 1nX0 11B0 1nX0|81e4","America/Phoenix|MST|70|0||42e5","America/Whitehorse|PST PDT MST|80 70 70|010101010101010102|1GIa0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0|23e3","America/New_York|EST EDT|50 40|01010101010101010101010|1GI70 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|21e6","America/Rio_Branco|-04 -05|40 50|01|1KLE0|31e4","America/Los_Angeles|PST PDT|80 70|01010101010101010101010|1GIa0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|15e6","America/Fort_Nelson|PST PDT MST|80 70 70|01010102|1GIa0 1zb0 Op0 1zb0 Op0 1zb0 Op0|39e2","America/Halifax|AST ADT|40 30|01010101010101010101010|1GI60 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|39e4","America/Godthab|-03 -02|30 20|01010101010101010101010|1GNB0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|17e3","America/Grand_Turk|EST EDT AST|50 40 40|0101010121010101010|1GI70 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 5Ip0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|37e2","America/Havana|CST CDT|50 40|01010101010101010101010|1GQt0 1qM0 Oo0 1zc0 Oo0 1zc0 Oo0 1zc0 Rc0 1zc0 Oo0 1zc0 Oo0 1zc0 Oo0 1zc0 Oo0 1zc0 Rc0 1zc0 Oo0 1zc0|21e5","America/Metlakatla|PST AKST AKDT|80 90 80|01212120121212121|1PAa0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 uM0 jB0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|14e2","America/Miquelon|-03 -02|30 20|01010101010101010101010|1GI50 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|61e2","America/Montevideo|-02 -03|20 30|01010101|1GI40 1o10 11z0 1o10 11z0 1o10 11z0|17e5","America/Noronha|-02|20|0||30e2","America/Port-au-Prince|EST EDT|50 40|010101010101010101010|1GI70 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 3iN0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|23e5","Antarctica/Palmer|-03 -04|30 40|010101010|1H3D0 Op0 1zb0 Rd0 1wn0 Rd0 46n0 Ap0|40","America/Santiago|-03 -04|30 40|010101010101010101010|1H3D0 Op0 1zb0 Rd0 1wn0 Rd0 46n0 Ap0 1Nb0 Ap0 1Nb0 Ap0 1zb0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0|62e5","America/Sao_Paulo|-02 -03|20 30|0101010101010101|1GCq0 1zd0 Lz0 1C10 Lz0 1C10 On0 1zd0 On0 1zd0 On0 1zd0 On0 1HB0 FX0|20e6","Atlantic/Azores|-01 +00|10 0|01010101010101010101010|1GNB0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|25e4","America/St_Johns|NST NDT|3u 2u|01010101010101010101010|1GI5u 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Op0 1zb0 Rd0 1zb0 Op0 1zb0|11e4","Antarctica/Casey|+11 +08|-b0 -80|0101|1GAF0 blz0 3m10|10","Antarctica/Davis|+05 +07|-50 -70|01|1GAI0|70","Pacific/Port_Moresby|+10|-a0|0||25e4","Pacific/Guadalcanal|+11|-b0|0||11e4","Asia/Tashkent|+05|-50|0||23e5","Pacific/Auckland|NZDT NZST|-d0 -c0|01010101010101010101010|1GQe0 1cM0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1cM0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00|14e5","Asia/Baghdad|+03|-30|0||66e5","Antarctica/Troll|+00 +02|0 -20|01010101010101010101010|1GNB0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|40","Asia/Dhaka|+06|-60|0||16e6","Asia/Amman|EET EEST|-20 -30|010101010101010101010|1GPy0 4bX0 Dd0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 11A0 1o00|25e5","Asia/Kamchatka|+12|-c0|0||18e4","Asia/Baku|+04 +05|-40 -50|010101010|1GNA0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00|27e5","Asia/Bangkok|+07|-70|0||15e6","Asia/Barnaul|+07 +06|-70 -60|010|1N7v0 3rd0|","Asia/Beirut|EET EEST|-20 -30|01010101010101010101010|1GNy0 1qL0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0 1qL0 WN0 1qL0 WN0 1qL0 11B0 1nX0 11B0 1nX0 11B0 1qL0 WN0 1qL0|22e5","Asia/Kuala_Lumpur|+08|-80|0||71e5","Asia/Kolkata|IST|-5u|0||15e6","Asia/Chita|+10 +08 +09|-a0 -80 -90|012|1N7s0 3re0|33e4","Asia/Ulaanbaatar|+08 +09|-80 -90|01010|1O8G0 1cJ0 1cP0 1cJ0|12e5","Asia/Shanghai|CST|-80|0||23e6","Asia/Colombo|+0530|-5u|0||22e5","Asia/Damascus|EET EEST|-20 -30|01010101010101010101010|1GPy0 1nX0 11B0 1nX0 11B0 1qL0 WN0 1qL0 WN0 1qL0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0 1qL0 WN0 1qL0 WN0 1qL0|26e5","Asia/Dili|+09|-90|0||19e4","Asia/Dubai|+04|-40|0||39e5","Asia/Famagusta|EET EEST +03|-20 -30 -30|0101010101201010101010|1GNB0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 15U0 2Ks0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|","Asia/Gaza|EET EEST|-20 -30|01010101010101010101010|1GPy0 1a00 1fA0 1cL0 1cN0 1nX0 1210 1nz0 1220 1qL0 WN0 1qL0 WN0 1qL0 11c0 1oo0 11c0 1rc0 Wo0 1rc0 Wo0 1rc0|18e5","Asia/Hong_Kong|HKT|-80|0||73e5","Asia/Hovd|+07 +08|-70 -80|01010|1O8H0 1cJ0 1cP0 1cJ0|81e3","Asia/Irkutsk|+09 +08|-90 -80|01|1N7t0|60e4","Europe/Istanbul|EET EEST +03|-20 -30 -30|01010101012|1GNB0 1qM0 11A0 1o00 1200 1nA0 11A0 1tA0 U00 15w0|13e6","Asia/Jakarta|WIB|-70|0||31e6","Asia/Jayapura|WIT|-90|0||26e4","Asia/Jerusalem|IST IDT|-20 -30|01010101010101010101010|1GPA0 1aL0 1eN0 1oL0 10N0 1oL0 10N0 1oL0 10N0 1rz0 W10 1rz0 W10 1rz0 10N0 1oL0 10N0 1oL0 10N0 1rz0 W10 1rz0|81e4","Asia/Kabul|+0430|-4u|0||46e5","Asia/Karachi|PKT|-50|0||24e6","Asia/Kathmandu|+0545|-5J|0||12e5","Asia/Yakutsk|+10 +09|-a0 -90|01|1N7s0|28e4","Asia/Krasnoyarsk|+08 +07|-80 -70|01|1N7u0|10e5","Asia/Magadan|+12 +10 +11|-c0 -a0 -b0|012|1N7q0 3Cq0|95e3","Asia/Makassar|WITA|-80|0||15e5","Asia/Manila|PST|-80|0||24e6","Europe/Athens|EET EEST|-20 -30|01010101010101010101010|1GNB0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|35e5","Asia/Novosibirsk|+07 +06|-70 -60|010|1N7v0 4eN0|15e5","Asia/Omsk|+07 +06|-70 -60|01|1N7v0|12e5","Asia/Pyongyang|KST KST|-90 -8u|010|1P4D0 6BA0|29e5","Asia/Qyzylorda|+06 +05|-60 -50|01|1Xei0|73e4","Asia/Rangoon|+0630|-6u|0||48e5","Asia/Sakhalin|+11 +10|-b0 -a0|010|1N7r0 3rd0|58e4","Asia/Seoul|KST|-90|0||23e6","Asia/Srednekolymsk|+12 +11|-c0 -b0|01|1N7q0|35e2","Asia/Tehran|+0330 +0430|-3u -4u|01010101010101010101010|1GLUu 1dz0 1cN0 1dz0 1cp0 1dz0 1cp0 1dz0 1cp0 1dz0 1cN0 1dz0 1cp0 1dz0 1cp0 1dz0 1cp0 1dz0 1cN0 1dz0 1cp0 1dz0|14e6","Asia/Tokyo|JST|-90|0||38e6","Asia/Tomsk|+07 +06|-70 -60|010|1N7v0 3Qp0|10e5","Asia/Vladivostok|+11 +10|-b0 -a0|01|1N7r0|60e4","Asia/Yekaterinburg|+06 +05|-60 -50|01|1N7w0|14e5","Europe/Lisbon|WET WEST|0 -10|01010101010101010101010|1GNB0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|27e5","Atlantic/Cape_Verde|-01|10|0||50e4","Australia/Sydney|AEDT AEST|-b0 -a0|01010101010101010101010|1GQg0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0|40e5","Australia/Adelaide|ACDT ACST|-au -9u|01010101010101010101010|1GQgu 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0|11e5","Australia/Brisbane|AEST|-a0|0||20e5","Australia/Darwin|ACST|-9u|0||12e4","Australia/Eucla|+0845|-8J|0||368","Australia/Lord_Howe|+11 +1030|-b0 -au|01010101010101010101010|1GQf0 1fAu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1fAu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu 1cLu 1cMu|347","Australia/Perth|AWST|-80|0||18e5","Pacific/Easter|-05 -06|50 60|010101010101010101010|1H3D0 Op0 1zb0 Rd0 1wn0 Rd0 46n0 Ap0 1Nb0 Ap0 1Nb0 Ap0 1zb0 11B0 1nX0 11B0 1nX0 11B0 1nX0 11B0|30e2","Europe/Dublin|GMT IST|0 -10|01010101010101010101010|1GNB0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|12e5","Etc/GMT-1|+01|-10|0||","Pacific/Fakaofo|+13|-d0|0||483","Pacific/Kiritimati|+14|-e0|0||51e2","Etc/GMT-2|+02|-20|0||","Pacific/Tahiti|-10|a0|0||18e4","Pacific/Niue|-11|b0|0||12e2","Etc/GMT+12|-12|c0|0||","Pacific/Galapagos|-06|60|0||25e3","Etc/GMT+7|-07|70|0||","Pacific/Pitcairn|-08|80|0||56","Pacific/Gambier|-09|90|0||125","Etc/UTC|UTC|0|0||","Europe/Ulyanovsk|+04 +03|-40 -30|010|1N7y0 3rd0|13e5","Europe/London|GMT BST|0 -10|01010101010101010101010|1GNB0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|10e6","Europe/Chisinau|EET EEST|-20 -30|01010101010101010101010|1GNA0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|67e4","Europe/Kaliningrad|+03 EET|-30 -20|01|1N7z0|44e4","Europe/Kirov|+04 +03|-40 -30|01|1N7y0|48e4","Europe/Moscow|MSK MSK|-40 -30|01|1N7y0|16e6","Europe/Saratov|+04 +03|-40 -30|010|1N7y0 5810|","Europe/Simferopol|EET EEST MSK MSK|-20 -30 -40 -30|0101023|1GNB0 1qM0 11A0 1o00 11z0 1nW0|33e4","Europe/Volgograd|+04 +03|-40 -30|010|1N7y0 9Jd0|10e5","Pacific/Honolulu|HST|a0|0||37e4","MET|MET MEST|-10 -20|01010101010101010101010|1GNB0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0|","Pacific/Chatham|+1345 +1245|-dJ -cJ|01010101010101010101010|1GQe0 1cM0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1cM0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00|600","Pacific/Apia|+14 +13|-e0 -d0|01010101010101010101010|1GQe0 1cM0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1cM0 1fA0 1a00 1fA0 1a00 1fA0 1a00 1fA0 1a00|37e3","Pacific/Bougainville|+10 +11|-a0 -b0|01|1NwE0|18e4","Pacific/Fiji|+13 +12|-d0 -c0|01010101010101010101010|1Goe0 1Nc0 Ao0 1Q00 xz0 1SN0 uM0 1SM0 uM0 1VA0 s00 1VA0 s00 1VA0 s00 20o0 pc0 20o0 s00 20o0 pc0 20o0|88e4","Pacific/Guam|ChST|-a0|0||17e4","Pacific/Marquesas|-0930|9u|0||86e2","Pacific/Pago_Pago|SST|b0|0||37e2","Pacific/Norfolk|+1130 +11 +12|-bu -b0 -c0|012121212|1PoCu 9Jcu 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0|25e4","Pacific/Tongatapu|+13 +14|-d0 -e0|010|1S4d0 s00|75e3"],links:["Africa/Abidjan|Africa/Accra","Africa/Abidjan|Africa/Bamako","Africa/Abidjan|Africa/Banjul","Africa/Abidjan|Africa/Bissau","Africa/Abidjan|Africa/Conakry","Africa/Abidjan|Africa/Dakar","Africa/Abidjan|Africa/Freetown","Africa/Abidjan|Africa/Lome","Africa/Abidjan|Africa/Monrovia","Africa/Abidjan|Africa/Nouakchott","Africa/Abidjan|Africa/Ouagadougou","Africa/Abidjan|Africa/Timbuktu","Africa/Abidjan|America/Danmarkshavn","Africa/Abidjan|Atlantic/Reykjavik","Africa/Abidjan|Atlantic/St_Helena","Africa/Abidjan|Etc/GMT","Africa/Abidjan|Etc/GMT+0","Africa/Abidjan|Etc/GMT-0","Africa/Abidjan|Etc/GMT0","Africa/Abidjan|Etc/Greenwich","Africa/Abidjan|GMT","Africa/Abidjan|GMT+0","Africa/Abidjan|GMT-0","Africa/Abidjan|GMT0","Africa/Abidjan|Greenwich","Africa/Abidjan|Iceland","Africa/Algiers|Africa/Tunis","Africa/Cairo|Egypt","Africa/Casablanca|Africa/El_Aaiun","Africa/Johannesburg|Africa/Maseru","Africa/Johannesburg|Africa/Mbabane","Africa/Lagos|Africa/Bangui","Africa/Lagos|Africa/Brazzaville","Africa/Lagos|Africa/Douala","Africa/Lagos|Africa/Kinshasa","Africa/Lagos|Africa/Libreville","Africa/Lagos|Africa/Luanda","Africa/Lagos|Africa/Malabo","Africa/Lagos|Africa/Ndjamena","Africa/Lagos|Africa/Niamey","Africa/Lagos|Africa/Porto-Novo","Africa/Maputo|Africa/Blantyre","Africa/Maputo|Africa/Bujumbura","Africa/Maputo|Africa/Gaborone","Africa/Maputo|Africa/Harare","Africa/Maputo|Africa/Kigali","Africa/Maputo|Africa/Lubumbashi","Africa/Maputo|Africa/Lusaka","Africa/Nairobi|Africa/Addis_Ababa","Africa/Nairobi|Africa/Asmara","Africa/Nairobi|Africa/Asmera","Africa/Nairobi|Africa/Dar_es_Salaam","Africa/Nairobi|Africa/Djibouti","Africa/Nairobi|Africa/Juba","Africa/Nairobi|Africa/Kampala","Africa/Nairobi|Africa/Mogadishu","Africa/Nairobi|Indian/Antananarivo","Africa/Nairobi|Indian/Comoro","Africa/Nairobi|Indian/Mayotte","Africa/Tripoli|Libya","America/Adak|America/Atka","America/Adak|US/Aleutian","America/Anchorage|America/Juneau","America/Anchorage|America/Nome","America/Anchorage|America/Sitka","America/Anchorage|America/Yakutat","America/Anchorage|US/Alaska","America/Campo_Grande|America/Cuiaba","America/Chicago|America/Indiana/Knox","America/Chicago|America/Indiana/Tell_City","America/Chicago|America/Knox_IN","America/Chicago|America/Matamoros","America/Chicago|America/Menominee","America/Chicago|America/North_Dakota/Beulah","America/Chicago|America/North_Dakota/Center","America/Chicago|America/North_Dakota/New_Salem","America/Chicago|America/Rainy_River","America/Chicago|America/Rankin_Inlet","America/Chicago|America/Resolute","America/Chicago|America/Winnipeg","America/Chicago|CST6CDT","America/Chicago|Canada/Central","America/Chicago|US/Central","America/Chicago|US/Indiana-Starke","America/Chihuahua|America/Mazatlan","America/Chihuahua|Mexico/BajaSur","America/Denver|America/Boise","America/Denver|America/Cambridge_Bay","America/Denver|America/Edmonton","America/Denver|America/Inuvik","America/Denver|America/Ojinaga","America/Denver|America/Shiprock","America/Denver|America/Yellowknife","America/Denver|Canada/Mountain","America/Denver|MST7MDT","America/Denver|Navajo","America/Denver|US/Mountain","America/Fortaleza|America/Argentina/Buenos_Aires","America/Fortaleza|America/Argentina/Catamarca","America/Fortaleza|America/Argentina/ComodRivadavia","America/Fortaleza|America/Argentina/Cordoba","America/Fortaleza|America/Argentina/Jujuy","America/Fortaleza|America/Argentina/La_Rioja","America/Fortaleza|America/Argentina/Mendoza","America/Fortaleza|America/Argentina/Rio_Gallegos","America/Fortaleza|America/Argentina/Salta","America/Fortaleza|America/Argentina/San_Juan","America/Fortaleza|America/Argentina/San_Luis","America/Fortaleza|America/Argentina/Tucuman","America/Fortaleza|America/Argentina/Ushuaia","America/Fortaleza|America/Belem","America/Fortaleza|America/Buenos_Aires","America/Fortaleza|America/Catamarca","America/Fortaleza|America/Cayenne","America/Fortaleza|America/Cordoba","America/Fortaleza|America/Jujuy","America/Fortaleza|America/Maceio","America/Fortaleza|America/Mendoza","America/Fortaleza|America/Paramaribo","America/Fortaleza|America/Recife","America/Fortaleza|America/Rosario","America/Fortaleza|America/Santarem","America/Fortaleza|Antarctica/Rothera","America/Fortaleza|Atlantic/Stanley","America/Fortaleza|Etc/GMT+3","America/Godthab|America/Nuuk","America/Halifax|America/Glace_Bay","America/Halifax|America/Goose_Bay","America/Halifax|America/Moncton","America/Halifax|America/Thule","America/Halifax|Atlantic/Bermuda","America/Halifax|Canada/Atlantic","America/Havana|Cuba","America/La_Paz|America/Boa_Vista","America/La_Paz|America/Guyana","America/La_Paz|America/Manaus","America/La_Paz|America/Porto_Velho","America/La_Paz|Brazil/West","America/La_Paz|Etc/GMT+4","America/Lima|America/Bogota","America/Lima|America/Guayaquil","America/Lima|Etc/GMT+5","America/Los_Angeles|America/Ensenada","America/Los_Angeles|America/Santa_Isabel","America/Los_Angeles|America/Tijuana","America/Los_Angeles|America/Vancouver","America/Los_Angeles|Canada/Pacific","America/Los_Angeles|Mexico/BajaNorte","America/Los_Angeles|PST8PDT","America/Los_Angeles|US/Pacific","America/Los_Angeles|US/Pacific-New","America/Managua|America/Belize","America/Managua|America/Costa_Rica","America/Managua|America/El_Salvador","America/Managua|America/Guatemala","America/Managua|America/Regina","America/Managua|America/Swift_Current","America/Managua|America/Tegucigalpa","America/Managua|Canada/Saskatchewan","America/Mexico_City|America/Bahia_Banderas","America/Mexico_City|America/Merida","America/Mexico_City|America/Monterrey","America/Mexico_City|Mexico/General","America/New_York|America/Detroit","America/New_York|America/Fort_Wayne","America/New_York|America/Indiana/Indianapolis","America/New_York|America/Indiana/Marengo","America/New_York|America/Indiana/Petersburg","America/New_York|America/Indiana/Vevay","America/New_York|America/Indiana/Vincennes","America/New_York|America/Indiana/Winamac","America/New_York|America/Indianapolis","America/New_York|America/Iqaluit","America/New_York|America/Kentucky/Louisville","America/New_York|America/Kentucky/Monticello","America/New_York|America/Louisville","America/New_York|America/Montreal","America/New_York|America/Nassau","America/New_York|America/Nipigon","America/New_York|America/Pangnirtung","America/New_York|America/Thunder_Bay","America/New_York|America/Toronto","America/New_York|Canada/Eastern","America/New_York|EST5EDT","America/New_York|US/East-Indiana","America/New_York|US/Eastern","America/New_York|US/Michigan","America/Noronha|Atlantic/South_Georgia","America/Noronha|Brazil/DeNoronha","America/Noronha|Etc/GMT+2","America/Panama|America/Atikokan","America/Panama|America/Cayman","America/Panama|America/Coral_Harbour","America/Panama|America/Jamaica","America/Panama|EST","America/Panama|Jamaica","America/Phoenix|America/Creston","America/Phoenix|America/Dawson_Creek","America/Phoenix|America/Hermosillo","America/Phoenix|MST","America/Phoenix|US/Arizona","America/Rio_Branco|America/Eirunepe","America/Rio_Branco|America/Porto_Acre","America/Rio_Branco|Brazil/Acre","America/Santiago|Chile/Continental","America/Santo_Domingo|America/Anguilla","America/Santo_Domingo|America/Antigua","America/Santo_Domingo|America/Aruba","America/Santo_Domingo|America/Barbados","America/Santo_Domingo|America/Blanc-Sablon","America/Santo_Domingo|America/Curacao","America/Santo_Domingo|America/Dominica","America/Santo_Domingo|America/Grenada","America/Santo_Domingo|America/Guadeloupe","America/Santo_Domingo|America/Kralendijk","America/Santo_Domingo|America/Lower_Princes","America/Santo_Domingo|America/Marigot","America/Santo_Domingo|America/Martinique","America/Santo_Domingo|America/Montserrat","America/Santo_Domingo|America/Port_of_Spain","America/Santo_Domingo|America/Puerto_Rico","America/Santo_Domingo|America/St_Barthelemy","America/Santo_Domingo|America/St_Kitts","America/Santo_Domingo|America/St_Lucia","America/Santo_Domingo|America/St_Thomas","America/Santo_Domingo|America/St_Vincent","America/Santo_Domingo|America/Tortola","America/Santo_Domingo|America/Virgin","America/Sao_Paulo|Brazil/East","America/St_Johns|Canada/Newfoundland","America/Whitehorse|America/Dawson","America/Whitehorse|Canada/Yukon","Antarctica/Palmer|America/Punta_Arenas","Asia/Baghdad|Antarctica/Syowa","Asia/Baghdad|Asia/Aden","Asia/Baghdad|Asia/Bahrain","Asia/Baghdad|Asia/Kuwait","Asia/Baghdad|Asia/Qatar","Asia/Baghdad|Asia/Riyadh","Asia/Baghdad|Etc/GMT-3","Asia/Baghdad|Europe/Minsk","Asia/Bangkok|Asia/Ho_Chi_Minh","Asia/Bangkok|Asia/Novokuznetsk","Asia/Bangkok|Asia/Phnom_Penh","Asia/Bangkok|Asia/Saigon","Asia/Bangkok|Asia/Vientiane","Asia/Bangkok|Etc/GMT-7","Asia/Bangkok|Indian/Christmas","Asia/Dhaka|Antarctica/Vostok","Asia/Dhaka|Asia/Almaty","Asia/Dhaka|Asia/Bishkek","Asia/Dhaka|Asia/Dacca","Asia/Dhaka|Asia/Kashgar","Asia/Dhaka|Asia/Qostanay","Asia/Dhaka|Asia/Thimbu","Asia/Dhaka|Asia/Thimphu","Asia/Dhaka|Asia/Urumqi","Asia/Dhaka|Etc/GMT-6","Asia/Dhaka|Indian/Chagos","Asia/Dili|Etc/GMT-9","Asia/Dili|Pacific/Palau","Asia/Dubai|Asia/Muscat","Asia/Dubai|Asia/Tbilisi","Asia/Dubai|Asia/Yerevan","Asia/Dubai|Etc/GMT-4","Asia/Dubai|Europe/Samara","Asia/Dubai|Indian/Mahe","Asia/Dubai|Indian/Mauritius","Asia/Dubai|Indian/Reunion","Asia/Gaza|Asia/Hebron","Asia/Hong_Kong|Hongkong","Asia/Jakarta|Asia/Pontianak","Asia/Jerusalem|Asia/Tel_Aviv","Asia/Jerusalem|Israel","Asia/Kamchatka|Asia/Anadyr","Asia/Kamchatka|Etc/GMT-12","Asia/Kamchatka|Kwajalein","Asia/Kamchatka|Pacific/Funafuti","Asia/Kamchatka|Pacific/Kwajalein","Asia/Kamchatka|Pacific/Majuro","Asia/Kamchatka|Pacific/Nauru","Asia/Kamchatka|Pacific/Tarawa","Asia/Kamchatka|Pacific/Wake","Asia/Kamchatka|Pacific/Wallis","Asia/Kathmandu|Asia/Katmandu","Asia/Kolkata|Asia/Calcutta","Asia/Kuala_Lumpur|Asia/Brunei","Asia/Kuala_Lumpur|Asia/Kuching","Asia/Kuala_Lumpur|Asia/Singapore","Asia/Kuala_Lumpur|Etc/GMT-8","Asia/Kuala_Lumpur|Singapore","Asia/Makassar|Asia/Ujung_Pandang","Asia/Rangoon|Asia/Yangon","Asia/Rangoon|Indian/Cocos","Asia/Seoul|ROK","Asia/Shanghai|Asia/Chongqing","Asia/Shanghai|Asia/Chungking","Asia/Shanghai|Asia/Harbin","Asia/Shanghai|Asia/Macao","Asia/Shanghai|Asia/Macau","Asia/Shanghai|Asia/Taipei","Asia/Shanghai|PRC","Asia/Shanghai|ROC","Asia/Tashkent|Antarctica/Mawson","Asia/Tashkent|Asia/Aqtau","Asia/Tashkent|Asia/Aqtobe","Asia/Tashkent|Asia/Ashgabat","Asia/Tashkent|Asia/Ashkhabad","Asia/Tashkent|Asia/Atyrau","Asia/Tashkent|Asia/Dushanbe","Asia/Tashkent|Asia/Oral","Asia/Tashkent|Asia/Samarkand","Asia/Tashkent|Etc/GMT-5","Asia/Tashkent|Indian/Kerguelen","Asia/Tashkent|Indian/Maldives","Asia/Tehran|Iran","Asia/Tokyo|Japan","Asia/Ulaanbaatar|Asia/Choibalsan","Asia/Ulaanbaatar|Asia/Ulan_Bator","Asia/Vladivostok|Asia/Ust-Nera","Asia/Yakutsk|Asia/Khandyga","Atlantic/Azores|America/Scoresbysund","Atlantic/Cape_Verde|Etc/GMT+1","Australia/Adelaide|Australia/Broken_Hill","Australia/Adelaide|Australia/South","Australia/Adelaide|Australia/Yancowinna","Australia/Brisbane|Australia/Lindeman","Australia/Brisbane|Australia/Queensland","Australia/Darwin|Australia/North","Australia/Lord_Howe|Australia/LHI","Australia/Perth|Australia/West","Australia/Sydney|Australia/ACT","Australia/Sydney|Australia/Canberra","Australia/Sydney|Australia/Currie","Australia/Sydney|Australia/Hobart","Australia/Sydney|Australia/Melbourne","Australia/Sydney|Australia/NSW","Australia/Sydney|Australia/Tasmania","Australia/Sydney|Australia/Victoria","Etc/UTC|Etc/UCT","Etc/UTC|Etc/Universal","Etc/UTC|Etc/Zulu","Etc/UTC|UCT","Etc/UTC|UTC","Etc/UTC|Universal","Etc/UTC|Zulu","Europe/Athens|Asia/Nicosia","Europe/Athens|EET","Europe/Athens|Europe/Bucharest","Europe/Athens|Europe/Helsinki","Europe/Athens|Europe/Kiev","Europe/Athens|Europe/Mariehamn","Europe/Athens|Europe/Nicosia","Europe/Athens|Europe/Riga","Europe/Athens|Europe/Sofia","Europe/Athens|Europe/Tallinn","Europe/Athens|Europe/Uzhgorod","Europe/Athens|Europe/Vilnius","Europe/Athens|Europe/Zaporozhye","Europe/Chisinau|Europe/Tiraspol","Europe/Dublin|Eire","Europe/Istanbul|Asia/Istanbul","Europe/Istanbul|Turkey","Europe/Lisbon|Atlantic/Canary","Europe/Lisbon|Atlantic/Faeroe","Europe/Lisbon|Atlantic/Faroe","Europe/Lisbon|Atlantic/Madeira","Europe/Lisbon|Portugal","Europe/Lisbon|WET","Europe/London|Europe/Belfast","Europe/London|Europe/Guernsey","Europe/London|Europe/Isle_of_Man","Europe/London|Europe/Jersey","Europe/London|GB","Europe/London|GB-Eire","Europe/Moscow|W-SU","Europe/Paris|Africa/Ceuta","Europe/Paris|Arctic/Longyearbyen","Europe/Paris|Atlantic/Jan_Mayen","Europe/Paris|CET","Europe/Paris|Europe/Amsterdam","Europe/Paris|Europe/Andorra","Europe/Paris|Europe/Belgrade","Europe/Paris|Europe/Berlin","Europe/Paris|Europe/Bratislava","Europe/Paris|Europe/Brussels","Europe/Paris|Europe/Budapest","Europe/Paris|Europe/Busingen","Europe/Paris|Europe/Copenhagen","Europe/Paris|Europe/Gibraltar","Europe/Paris|Europe/Ljubljana","Europe/Paris|Europe/Luxembourg","Europe/Paris|Europe/Madrid","Europe/Paris|Europe/Malta","Europe/Paris|Europe/Monaco","Europe/Paris|Europe/Oslo","Europe/Paris|Europe/Podgorica","Europe/Paris|Europe/Prague","Europe/Paris|Europe/Rome","Europe/Paris|Europe/San_Marino","Europe/Paris|Europe/Sarajevo","Europe/Paris|Europe/Skopje","Europe/Paris|Europe/Stockholm","Europe/Paris|Europe/Tirane","Europe/Paris|Europe/Vaduz","Europe/Paris|Europe/Vatican","Europe/Paris|Europe/Vienna","Europe/Paris|Europe/Warsaw","Europe/Paris|Europe/Zagreb","Europe/Paris|Europe/Zurich","Europe/Paris|Poland","Europe/Ulyanovsk|Europe/Astrakhan","Pacific/Auckland|Antarctica/McMurdo","Pacific/Auckland|Antarctica/South_Pole","Pacific/Auckland|NZ","Pacific/Chatham|NZ-CHAT","Pacific/Easter|Chile/EasterIsland","Pacific/Fakaofo|Etc/GMT-13","Pacific/Fakaofo|Pacific/Enderbury","Pacific/Galapagos|Etc/GMT+6","Pacific/Gambier|Etc/GMT+9","Pacific/Guadalcanal|Antarctica/Macquarie","Pacific/Guadalcanal|Etc/GMT-11","Pacific/Guadalcanal|Pacific/Efate","Pacific/Guadalcanal|Pacific/Kosrae","Pacific/Guadalcanal|Pacific/Noumea","Pacific/Guadalcanal|Pacific/Pohnpei","Pacific/Guadalcanal|Pacific/Ponape","Pacific/Guam|Pacific/Saipan","Pacific/Honolulu|HST","Pacific/Honolulu|Pacific/Johnston","Pacific/Honolulu|US/Hawaii","Pacific/Kiritimati|Etc/GMT-14","Pacific/Niue|Etc/GMT+11","Pacific/Pago_Pago|Pacific/Midway","Pacific/Pago_Pago|Pacific/Samoa","Pacific/Pago_Pago|US/Samoa","Pacific/Pitcairn|Etc/GMT+8","Pacific/Port_Moresby|Antarctica/DumontDUrville","Pacific/Port_Moresby|Etc/GMT-10","Pacific/Port_Moresby|Pacific/Chuuk","Pacific/Port_Moresby|Pacific/Truk","Pacific/Port_Moresby|Pacific/Yap","Pacific/Tahiti|Etc/GMT+10","Pacific/Tahiti|Pacific/Rarotonga"],countries:["AD|Europe/Andorra","AE|Asia/Dubai","AF|Asia/Kabul","AG|America/Port_of_Spain America/Antigua","AI|America/Port_of_Spain America/Anguilla","AL|Europe/Tirane","AM|Asia/Yerevan","AO|Africa/Lagos Africa/Luanda","AQ|Antarctica/Casey Antarctica/Davis Antarctica/DumontDUrville Antarctica/Mawson Antarctica/Palmer Antarctica/Rothera Antarctica/Syowa Antarctica/Troll Antarctica/Vostok Pacific/Auckland Antarctica/McMurdo","AR|America/Argentina/Buenos_Aires America/Argentina/Cordoba America/Argentina/Salta America/Argentina/Jujuy America/Argentina/Tucuman America/Argentina/Catamarca America/Argentina/La_Rioja America/Argentina/San_Juan America/Argentina/Mendoza America/Argentina/San_Luis America/Argentina/Rio_Gallegos America/Argentina/Ushuaia","AS|Pacific/Pago_Pago","AT|Europe/Vienna","AU|Australia/Lord_Howe Antarctica/Macquarie Australia/Hobart Australia/Currie Australia/Melbourne Australia/Sydney Australia/Broken_Hill Australia/Brisbane Australia/Lindeman Australia/Adelaide Australia/Darwin Australia/Perth Australia/Eucla","AW|America/Curacao America/Aruba","AX|Europe/Helsinki Europe/Mariehamn","AZ|Asia/Baku","BA|Europe/Belgrade Europe/Sarajevo","BB|America/Barbados","BD|Asia/Dhaka","BE|Europe/Brussels","BF|Africa/Abidjan Africa/Ouagadougou","BG|Europe/Sofia","BH|Asia/Qatar Asia/Bahrain","BI|Africa/Maputo Africa/Bujumbura","BJ|Africa/Lagos Africa/Porto-Novo","BL|America/Port_of_Spain America/St_Barthelemy","BM|Atlantic/Bermuda","BN|Asia/Brunei","BO|America/La_Paz","BQ|America/Curacao America/Kralendijk","BR|America/Noronha America/Belem America/Fortaleza America/Recife America/Araguaina America/Maceio America/Bahia America/Sao_Paulo America/Campo_Grande America/Cuiaba America/Santarem America/Porto_Velho America/Boa_Vista America/Manaus America/Eirunepe America/Rio_Branco","BS|America/Nassau","BT|Asia/Thimphu","BW|Africa/Maputo Africa/Gaborone","BY|Europe/Minsk","BZ|America/Belize","CA|America/St_Johns America/Halifax America/Glace_Bay America/Moncton America/Goose_Bay America/Blanc-Sablon America/Toronto America/Nipigon America/Thunder_Bay America/Iqaluit America/Pangnirtung America/Atikokan America/Winnipeg America/Rainy_River America/Resolute America/Rankin_Inlet America/Regina America/Swift_Current America/Edmonton America/Cambridge_Bay America/Yellowknife America/Inuvik America/Creston America/Dawson_Creek America/Fort_Nelson America/Vancouver America/Whitehorse America/Dawson","CC|Indian/Cocos","CD|Africa/Maputo Africa/Lagos Africa/Kinshasa Africa/Lubumbashi","CF|Africa/Lagos Africa/Bangui","CG|Africa/Lagos Africa/Brazzaville","CH|Europe/Zurich","CI|Africa/Abidjan","CK|Pacific/Rarotonga","CL|America/Santiago America/Punta_Arenas Pacific/Easter","CM|Africa/Lagos Africa/Douala","CN|Asia/Shanghai Asia/Urumqi","CO|America/Bogota","CR|America/Costa_Rica","CU|America/Havana","CV|Atlantic/Cape_Verde","CW|America/Curacao","CX|Indian/Christmas","CY|Asia/Nicosia Asia/Famagusta","CZ|Europe/Prague","DE|Europe/Zurich Europe/Berlin Europe/Busingen","DJ|Africa/Nairobi Africa/Djibouti","DK|Europe/Copenhagen","DM|America/Port_of_Spain America/Dominica","DO|America/Santo_Domingo","DZ|Africa/Algiers","EC|America/Guayaquil Pacific/Galapagos","EE|Europe/Tallinn","EG|Africa/Cairo","EH|Africa/El_Aaiun","ER|Africa/Nairobi Africa/Asmara","ES|Europe/Madrid Africa/Ceuta Atlantic/Canary","ET|Africa/Nairobi Africa/Addis_Ababa","FI|Europe/Helsinki","FJ|Pacific/Fiji","FK|Atlantic/Stanley","FM|Pacific/Chuuk Pacific/Pohnpei Pacific/Kosrae","FO|Atlantic/Faroe","FR|Europe/Paris","GA|Africa/Lagos Africa/Libreville","GB|Europe/London","GD|America/Port_of_Spain America/Grenada","GE|Asia/Tbilisi","GF|America/Cayenne","GG|Europe/London Europe/Guernsey","GH|Africa/Accra","GI|Europe/Gibraltar","GL|America/Godthab America/Danmarkshavn America/Scoresbysund America/Thule","GM|Africa/Abidjan Africa/Banjul","GN|Africa/Abidjan Africa/Conakry","GP|America/Port_of_Spain America/Guadeloupe","GQ|Africa/Lagos Africa/Malabo","GR|Europe/Athens","GS|Atlantic/South_Georgia","GT|America/Guatemala","GU|Pacific/Guam","GW|Africa/Bissau","GY|America/Guyana","HK|Asia/Hong_Kong","HN|America/Tegucigalpa","HR|Europe/Belgrade Europe/Zagreb","HT|America/Port-au-Prince","HU|Europe/Budapest","ID|Asia/Jakarta Asia/Pontianak Asia/Makassar Asia/Jayapura","IE|Europe/Dublin","IL|Asia/Jerusalem","IM|Europe/London Europe/Isle_of_Man","IN|Asia/Kolkata","IO|Indian/Chagos","IQ|Asia/Baghdad","IR|Asia/Tehran","IS|Atlantic/Reykjavik","IT|Europe/Rome","JE|Europe/London Europe/Jersey","JM|America/Jamaica","JO|Asia/Amman","JP|Asia/Tokyo","KE|Africa/Nairobi","KG|Asia/Bishkek","KH|Asia/Bangkok Asia/Phnom_Penh","KI|Pacific/Tarawa Pacific/Enderbury Pacific/Kiritimati","KM|Africa/Nairobi Indian/Comoro","KN|America/Port_of_Spain America/St_Kitts","KP|Asia/Pyongyang","KR|Asia/Seoul","KW|Asia/Riyadh Asia/Kuwait","KY|America/Panama America/Cayman","KZ|Asia/Almaty Asia/Qyzylorda Asia/Qostanay Asia/Aqtobe Asia/Aqtau Asia/Atyrau Asia/Oral","LA|Asia/Bangkok Asia/Vientiane","LB|Asia/Beirut","LC|America/Port_of_Spain America/St_Lucia","LI|Europe/Zurich Europe/Vaduz","LK|Asia/Colombo","LR|Africa/Monrovia","LS|Africa/Johannesburg Africa/Maseru","LT|Europe/Vilnius","LU|Europe/Luxembourg","LV|Europe/Riga","LY|Africa/Tripoli","MA|Africa/Casablanca","MC|Europe/Monaco","MD|Europe/Chisinau","ME|Europe/Belgrade Europe/Podgorica","MF|America/Port_of_Spain America/Marigot","MG|Africa/Nairobi Indian/Antananarivo","MH|Pacific/Majuro Pacific/Kwajalein","MK|Europe/Belgrade Europe/Skopje","ML|Africa/Abidjan Africa/Bamako","MM|Asia/Yangon","MN|Asia/Ulaanbaatar Asia/Hovd Asia/Choibalsan","MO|Asia/Macau","MP|Pacific/Guam Pacific/Saipan","MQ|America/Martinique","MR|Africa/Abidjan Africa/Nouakchott","MS|America/Port_of_Spain America/Montserrat","MT|Europe/Malta","MU|Indian/Mauritius","MV|Indian/Maldives","MW|Africa/Maputo Africa/Blantyre","MX|America/Mexico_City America/Cancun America/Merida America/Monterrey America/Matamoros America/Mazatlan America/Chihuahua America/Ojinaga America/Hermosillo America/Tijuana America/Bahia_Banderas","MY|Asia/Kuala_Lumpur Asia/Kuching","MZ|Africa/Maputo","NA|Africa/Windhoek","NC|Pacific/Noumea","NE|Africa/Lagos Africa/Niamey","NF|Pacific/Norfolk","NG|Africa/Lagos","NI|America/Managua","NL|Europe/Amsterdam","NO|Europe/Oslo","NP|Asia/Kathmandu","NR|Pacific/Nauru","NU|Pacific/Niue","NZ|Pacific/Auckland Pacific/Chatham","OM|Asia/Dubai Asia/Muscat","PA|America/Panama","PE|America/Lima","PF|Pacific/Tahiti Pacific/Marquesas Pacific/Gambier","PG|Pacific/Port_Moresby Pacific/Bougainville","PH|Asia/Manila","PK|Asia/Karachi","PL|Europe/Warsaw","PM|America/Miquelon","PN|Pacific/Pitcairn","PR|America/Puerto_Rico","PS|Asia/Gaza Asia/Hebron","PT|Europe/Lisbon Atlantic/Madeira Atlantic/Azores","PW|Pacific/Palau","PY|America/Asuncion","QA|Asia/Qatar","RE|Indian/Reunion","RO|Europe/Bucharest","RS|Europe/Belgrade","RU|Europe/Kaliningrad Europe/Moscow Europe/Simferopol Europe/Kirov Europe/Astrakhan Europe/Volgograd Europe/Saratov Europe/Ulyanovsk Europe/Samara Asia/Yekaterinburg Asia/Omsk Asia/Novosibirsk Asia/Barnaul Asia/Tomsk Asia/Novokuznetsk Asia/Krasnoyarsk Asia/Irkutsk Asia/Chita Asia/Yakutsk Asia/Khandyga Asia/Vladivostok Asia/Ust-Nera Asia/Magadan Asia/Sakhalin Asia/Srednekolymsk Asia/Kamchatka Asia/Anadyr","RW|Africa/Maputo Africa/Kigali","SA|Asia/Riyadh","SB|Pacific/Guadalcanal","SC|Indian/Mahe","SD|Africa/Khartoum","SE|Europe/Stockholm","SG|Asia/Singapore","SH|Africa/Abidjan Atlantic/St_Helena","SI|Europe/Belgrade Europe/Ljubljana","SJ|Europe/Oslo Arctic/Longyearbyen","SK|Europe/Prague Europe/Bratislava","SL|Africa/Abidjan Africa/Freetown","SM|Europe/Rome Europe/San_Marino","SN|Africa/Abidjan Africa/Dakar","SO|Africa/Nairobi Africa/Mogadishu","SR|America/Paramaribo","SS|Africa/Juba","ST|Africa/Sao_Tome","SV|America/El_Salvador","SX|America/Curacao America/Lower_Princes","SY|Asia/Damascus","SZ|Africa/Johannesburg Africa/Mbabane","TC|America/Grand_Turk","TD|Africa/Ndjamena","TF|Indian/Reunion Indian/Kerguelen","TG|Africa/Abidjan Africa/Lome","TH|Asia/Bangkok","TJ|Asia/Dushanbe","TK|Pacific/Fakaofo","TL|Asia/Dili","TM|Asia/Ashgabat","TN|Africa/Tunis","TO|Pacific/Tongatapu","TR|Europe/Istanbul","TT|America/Port_of_Spain","TV|Pacific/Funafuti","TW|Asia/Taipei","TZ|Africa/Nairobi Africa/Dar_es_Salaam","UA|Europe/Simferopol Europe/Kiev Europe/Uzhgorod Europe/Zaporozhye","UG|Africa/Nairobi Africa/Kampala","UM|Pacific/Pago_Pago Pacific/Wake Pacific/Honolulu Pacific/Midway","US|America/New_York America/Detroit America/Kentucky/Louisville America/Kentucky/Monticello America/Indiana/Indianapolis America/Indiana/Vincennes America/Indiana/Winamac America/Indiana/Marengo America/Indiana/Petersburg America/Indiana/Vevay America/Chicago America/Indiana/Tell_City America/Indiana/Knox America/Menominee America/North_Dakota/Center America/North_Dakota/New_Salem America/North_Dakota/Beulah America/Denver America/Boise America/Phoenix America/Los_Angeles America/Anchorage America/Juneau America/Sitka America/Metlakatla America/Yakutat America/Nome America/Adak Pacific/Honolulu","UY|America/Montevideo","UZ|Asia/Samarkand Asia/Tashkent","VA|Europe/Rome Europe/Vatican","VC|America/Port_of_Spain America/St_Vincent","VE|America/Caracas","VG|America/Port_of_Spain America/Tortola","VI|America/Port_of_Spain America/St_Thomas","VN|Asia/Bangkok Asia/Ho_Chi_Minh","VU|Pacific/Efate","WF|Pacific/Wallis","WS|Pacific/Apia","YE|Asia/Riyadh Asia/Aden","YT|Africa/Nairobi Indian/Mayotte","ZA|Africa/Johannesburg","ZM|Africa/Maputo Africa/Lusaka","ZW|Africa/Maputo Africa/Harare"]}),c});
 // Wrapper for VXGCloudPlayer & CloudSDK
 
 window.CloudStreamerSDK = function(elid, o) {
@@ -17565,7 +16827,7 @@ window.CloudStreamerSDK = function(elid, o) {
 	self.streamer.classList.add("cloudstreamer");
 	self.streamer.classList.add("green");
 	self.streamer.classList.add("black");
-
+	
 	self.streamer.innerHTML = ''
 		+ '<div class="cloudstreamer-loader" style="display: none"></div>'
 		+ '<div class="cloudstreamer-error" style="display: none">'
@@ -17593,9 +16855,9 @@ window.CloudStreamerSDK = function(elid, o) {
 	var mElVideo = self.streamer.getElementsByClassName('cloudstreamer-webcam-video')[0];
 	var mElStop = self.streamer.getElementsByClassName('cloudplayer-stop')[0];
 	var mElPlay = self.streamer.getElementsByClassName('cloudplayer-play')[0];
-
+	
 	var mShowedLoading = false;
-
+	
 	function _hideerror(){
 		el_error.style.display = "none";
 		el_error_text.style.display = "none";
@@ -17616,7 +16878,7 @@ window.CloudStreamerSDK = function(elid, o) {
 			mShowedLoading = false;
 		}
 	}
-
+	
 	self._setError = function(error){
 		setTimeout(self.stop,10);
 		self.mLastError = error;
@@ -17624,14 +16886,14 @@ window.CloudStreamerSDK = function(elid, o) {
 			self.mCallback_onError(self, error);
 		}
 	}
-
+	
 	function _showerror(err){
 		console.error(err);
 		self._setError(err);
 		self.showErrorText(err.text);
 		console.error(err.text);
 	}
-
+	
 	/*
 	 * Public functions
 	 * */
@@ -17646,7 +16908,7 @@ window.CloudStreamerSDK = function(elid, o) {
 
 		// _hideBlackScreen();
 	}
-
+	
     self.setSource = function (key) {
 		_hideerror();
 		mElPlay.style.display = 'none';
@@ -17693,7 +16955,7 @@ window.CloudStreamerSDK = function(elid, o) {
             console.error(msg);
             return CloudReturnCode.ERROR_INVALID_SOURCE;
 		}
-
+		
 		var base_url = self.api_host;
 
 		if (self.api_host == (self.options.cloud_domain ? self.options.cloud_domain : 'web.skyvr.videoexpertsgroup.com')) {
@@ -17714,17 +16976,17 @@ window.CloudStreamerSDK = function(elid, o) {
 		self.conn.open(self.sharedKey);
 		self.mAccessToken = key;
 		mElPlay.style.display = '';
-
+		
 		/*if(CloudHelpers.isMobile()){
 			self.showErrorText("Mobile streamer is not available yet");
 			return;
 		}
-
+		
 		if(CloudHelpers.isChrome()){
 			self.showErrorText("Streamer is not available yet for Chrome. But you can open this page in Edge or Firefox to start streaming from your web camera.");
 			return;
 		}
-
+		
 		if(!CloudHelpers.supportFlash() && CloudHelpers.isFireFox()){
 			self.showErrorText("In Firefox Streamer available using by flash now.<br>"
 				+ "Please install flash <a href='https://get.adobe.com/flashplayer' target='_blank'>https://get.adobe.com/flashplayer</a><br>"
@@ -17765,7 +17027,7 @@ window.CloudStreamerSDK = function(elid, o) {
 						if (CloudHelpers.compareVersions(CloudPlayerWebRTC2.version, stream_urls.webrtc.version) > 0) {
 							console.warn("Expected version webrtc.version (v" + stream_urls.webrtc.version + ") "
 							+ " mismatch with included CloudPlayerWebRTC (v" + CloudPlayerWebRTC2.version + ")");
-							p = CloudHelpers.requestJS(stream_urls.webrtc.scripts.player, function(r) {
+							p = CloudHelpers.requestJS(stream_urls.webrtc.scripts.player, function(r) { 
 								r = r.replace("CloudPlayerWebRTC =", "CloudPlayerWebRTC2 =");
 								while (r.indexOf("CloudPlayerWebRTC.") !== -1) {
 									r = r.replace("CloudPlayerWebRTC.", "CloudPlayerWebRTC2.");
@@ -17778,7 +17040,7 @@ window.CloudStreamerSDK = function(elid, o) {
 						p.done(function(){
 							// self.mCamera = ;
 							mWebRTC_Streamer = new CloudPlayerWebRTC2(null,
-								stream_urls.webrtc.connection_url,
+								stream_urls.webrtc.connection_url, 
 								stream_urls.webrtc.ice_servers, {
 									send_video: true,
 									send_audio: true,
@@ -17812,7 +17074,7 @@ window.CloudStreamerSDK = function(elid, o) {
 	};
 
 	mElPlay.onclick = self.start;
-
+	
 	self.stop = function(){
 		mElStop.style.display = 'none';
 		mElPlay.style.display = self.mAccessToken ? '' : 'none';
@@ -17874,8 +17136,514 @@ window.CloudStreamerSDK = function(elid, o) {
 				}
 			}
 		};
-
+		
 		el_fullscreen.onclick = self.fullscreen;
 	}
 	self.initFullscreenControls();
+};
+
+// Wrapper for VXGCloudPlayer & CloudSDK
+
+window.CloudStreamerFlash = function(elid, o) {
+	console.log(o);
+
+    var self = this;
+    self.options = o || {};
+    self.conn = null;
+    self.cm = null;
+    self.mCameraID = null;
+    self.camera = null;
+    self.sharedKey = null;
+    self.mAccessToken = "";
+    self.streamer = document.getElementById(elid);
+	self.m = {};
+	self.conn = new CloudShareConnection(self.options);
+	self.config = {};
+	self.config.ws_port = 8888;
+	self.config.wss_port = 8883;
+	self.config.host = "cam.skyvr.videoexpertsgroup.com";
+
+	self.streamer.classList.add("cloudstreamer");
+	self.streamer.classList.add("green");
+	self.streamer.classList.add("black");
+	
+	StreamerSWF.log = function(s){
+		console.log("[CloudStreamerFlash]", s);
+	}
+
+	StreamerSWF.error = function(s){
+		console.error("[CloudStreamerFlash]", s);
+	}
+
+	StreamerSWF.warn = function(s){
+		console.warn("[CloudStreamerFlash]", s);
+	}
+
+	StreamerSWF.startedPublish = function(){
+		console.log("[CloudStreamerFlash] publishing started");
+	}
+
+	StreamerSWF.stoppedPublish = function(){
+		console.log("[CloudStreamerFlash] publishing stopped");
+	}
+
+	StreamerSWF.activityLevel = function(lvl){
+		// sound
+	}
+	
+	self.streamer.innerHTML = ''
+		+ '<div class="cloudstreamer-loader" style="display: none"></div>'
+		+ '<div class="cloudstreamer-error" style="display: none">'
+		+ '	<div class="cloudstreamer-error-text" style="display: none"></div>'
+		+ '</div>'
+		+ '<div class="cloudstreamer-watermark">'
+		+ '</div>'
+		+ '<div class="cloudstreamer-sdkversion">SDK ' + CloudSDK.version + '</div>'
+		+ '<div class="cloudstreamer-black-screen" style="display: none">'
+		+ '		<div class="cloudstreamer-watermark"></div>'
+		+ '		<div class="cloudstreamer-sdkversion">SDK ' + CloudSDK.version + '</div>'
+		+ '</div>'
+		+ '<object class="streamer-swf" id="streamer_swf" type="application/x-shockwave-flash" data="' + CloudSDK.streamer_swf + '" width="100%" height="100%" >'
+		+ '<param name="movie" value="' + CloudSDK.streamer_swf + '" />'
+		+ '<embed src="' + CloudSDK.streamer_swf + '">'
+		+ '<param name="allowScriptAccess" value="always"/>'
+		+ '<param value="allowNetworking" value="all"/>'
+		+ '<param name="wmode" value="transparent"/>'
+		+ '<param name="menu" value="false" />'
+		+ '</object>'
+	;
+	var el_loader = self.streamer.getElementsByClassName('cloudstreamer-loader')[0];
+	var el_error = self.streamer.getElementsByClassName('cloudstreamer-error')[0];
+	var el_error_text = self.streamer.getElementsByClassName('cloudstreamer-error-text')[0];
+	var el_streamer_swf = self.streamer.getElementsByClassName('streamer-swf')[0];
+	console.log(StreamerSWF.flash());
+
+	self.onStarted = function(rtmp_url){
+		console.log("[CloudStreamerFlash] activate streaming to rtmp_url: ", rtmp_url);
+		StreamerSWF.activate(rtmp_url, "PCMU");
+		
+		/*var strm = rtmp_url.split("/").slice(4).join("/");
+		var srv = rtmp_url.split("/").slice(0,4).join("/");
+		if(!el_streamer_swf){
+			self.streamer.innerHTML += '<embed src="' + CloudSDK.webcamswf + '"'
+					+ ' flashvars="server=' + encodeURIComponent(srv) + '&stream=' + encodeURIComponent(strm) + '" '
+					+ ' bgcolor="#000000" '
+					+ ' width="100%" '
+					+ ' height="100%" '
+					+ ' name="haxe" '
+					+ ' quality="high" '
+					+ ' align="center" '
+					+ ' allowScriptAccess="always" '
+					+ ' type="application/x-shockwave-flash" '
+					+ ' pluginspage="http://www.macromedia.com/go/getflashplayer" />';
+		}else{
+			console.warn("TODO already defined streamer_swf element");
+		}*/
+	}
+	
+	self.onStopped = function(){
+		console.log("[CloudStreamerFlash] deactivate");
+		StreamerSWF.deactivate();
+	}
+	var mShowedLoading = false;
+	
+	function _hideerror(){
+		el_error.style.display = "none";
+		el_error_text.style.display = "none";
+	}
+
+	function _showloading(){
+		if(self.mShowedBigPlayButton == true){
+			_hideloading();
+		} else if(!mShowedLoading){
+			el_loader.style.display = "inline-block";
+			mShowedLoading = true;
+		}
+	}
+
+	function _hideloading(){
+		if(mShowedLoading){
+			el_loader.style.display = "none";
+			mShowedLoading = false;
+		}
+	}
+	
+	self._setError = function(error){
+		setTimeout(self.stop,10);
+		self.mLastError = error;
+		if(self.mCallback_onError){
+			self.mCallback_onError(self, error);
+		}
+	}
+	
+	function _showerror(err){
+		console.error(err);
+		self._setError(err);
+		self.showErrorText(err.text);
+		console.error(err.text);
+	}
+
+	/*
+	 * Public functions
+	 * */
+	self.showErrorText = function(text){
+		_hideloading();
+		el_error.style.display = "inline-block";
+		el_error_text.style.display = "inline-block";
+		el_error_text.innerHTML = text;
+		// _hideBlackScreen();
+	}
+	
+    self.setSource = function (key) {
+		_hideerror();
+
+        if (!key || key === '') {
+            var msg = 'Access token required';
+            console.error(msg);
+            self.showErrorText(msg);
+            return CloudReturnCode.ERROR_INVALID_SOURCE;
+		}
+
+		if(CloudHelpers.isMobile()){
+			self.showErrorText("Mobile streamer is not available yet");
+			return;
+		}
+		
+		if(CloudHelpers.isChrome()){
+			self.showErrorText("Streamer is not available yet for Chrome. But you can open this page in Edge or Firefox to start streaming from your web camera.");
+			return;
+		}
+		
+		if(!CloudHelpers.supportFlash() && CloudHelpers.isFireFox()){
+			self.showErrorText("In Firefox Streamer available using by flash now.<br>"
+				+ "Please install flash <a href='https://get.adobe.com/flashplayer' target='_blank'>https://get.adobe.com/flashplayer</a><br>"
+				+ " or maybe enable Plugin 'Shockwave Flash' in your browser <a href='about:addons' target='_blank'>about:addons</a>.");
+			return;
+		}
+
+		if(window.location.protocol == "https:"){
+			self.showErrorText("Streamer are not available yet with https");
+			return;
+		}
+        
+        var camid = 0;
+        try {
+            var obj = atob(key);
+            obj = JSON.parse(obj);
+            console.log(obj);
+            if (obj.token && obj.camid && obj.access && obj.token !== '' && obj.camid !== '' && obj.access !== ''){
+                self.sharedKey = obj.token;
+                self.mCameraID = obj.camid;
+			}
+
+			if(obj.svcp && obj.svcp != ''){
+				self.svcp_url = obj.svcp;
+				console.log('self.svcp_url: ', self.svcp_url);
+			}
+        } catch (err) {
+            var msg = 'Invalid access token format';
+            console.error(msg);
+            return CloudReturnCode.ERROR_INVALID_SOURCE;
+        }
+		
+		self.mAccessToken = key;
+		
+		if(self.svcp_url != null){ // if server is custom
+			self.conn.ServiceProviderUrl = self.svcp_url;
+			var uri = CloudHelpers.parseUri(self.svcp_url);
+			self.config.host = uri.host;
+		}
+        self.conn.open(self.sharedKey);
+        if (self.conn) {
+            self.cm = new CloudCameraList(self.conn);
+            self.cm.getCamera(self.mCameraID).done(function (cam) {
+				self.mCamera = cam;
+				console.log("camera: ", self.mCamera._origJson());
+				/*if(self.mCamera._origJson().rec_mode != 'on'){
+					console.error("Please enable channel recording");
+					self.showErrorText("Please enable channel recording");
+				}*/
+				self.start();
+            }).fail(function (err) {
+                self.showErrorText("Channel for streaming not found");
+				return;
+            });
+            return CloudReturnCode.OK;
+        }
+        return CloudReturnCode.ERROR_NO_CLOUD_CONNECTION;
+    };
+
+    self.getSource = function () {
+        if (!self.sharedKey)
+            return CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED;
+        return self.mAccessToken;
+    };
+	var mPolingPreStartFlash = null;
+
+	function _stopPolingPREStart(){
+		clearInterval(mPolingPreStartFlash);
+	}
+
+	function _startPolingPREStart(){
+		_stopPolingPREStart();
+		mPolingPreStartFlash = setInterval(function(){
+			if(StreamerSWF.flash().vjs_activate){
+				self.start();
+				_stopPolingPREStart();
+			}
+		},1000);
+	}
+
+	self.start = function(){
+        if (!self.mCamera){
+            return CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED;
+		}
+		
+		if(!StreamerSWF.flash().vjs_activate){
+			_startPolingPREStart();
+			return;
+		}
+		
+        console.warn("[CloudStreamerFlash] Start");	
+        self.stop("by_strm_sdk_1");
+		var cmngrid = self.mCamera.getCameraManagerID();
+		self.mCamera._getConn()._getAPI().resetCameraManager(cmngrid, {}).done(function(r){
+			console.log(r);
+			self.config.token = r.token;
+			self.config.camid = self.mCamera.getID();
+			self.initWebSocket();
+		}).fail(function(err){
+			console.error(err);
+		})
+        // self.player.play();
+	};
+	
+	self.stop = function(){
+		_stopPolingPREStart();
+		
+        if (!self.camera)
+            return CloudReturnCode.ERROR_SOURCE_NOT_CONFIGURED;
+        console.warn("Stop");
+        if(self.ws && self.ws.socket){
+			try{self.ws.socket.close();}catch(err){console.error(err)};
+		}
+		
+		
+		// TODO if started
+		try{StreamerSWF.deactivate();}catch(err){console.error(err)};
+		
+	};
+
+	/* *************************************
+	**** Camera Manager Protocol
+	* ************************************ */
+
+	self.initWebSocket = function(){
+
+		var connection_url = self.config.srv || self.config.host;
+		self.ws = {};
+
+		console.log("self.config.host: " + self.config.host);
+		console.log("self.config.srv: " + self.config.srv);
+
+		
+		// dirty hack begin
+		/*var bBaseURL = false;
+		if(connection_url == self.config.host){
+			connection_url = window.location.hostname;
+			bBaseURL = true;
+		}else{
+			connection_url = window.location.hostname;
+		}*/
+		// dirty hack end
+		
+		// protocol
+		if(window.location.protocol == "http:" || window.location.protocol == "file:"){
+			connection_url = "ws://" + connection_url + ":" + self.config.ws_port;
+		}else if(window.location.protocol == "https:"){
+			// connection_url = "wss://" + connection_url + ":" + self.config.wss_port;
+			console.error("Not supported https yet");
+			return;
+		}else{
+			console.error("Expected protocol http or https");
+			return;
+		}
+		
+		// dirty hack begin
+		/*if(!bBaseURL){
+			connection_url += '/' + self.config.srv;
+		}*/
+		// dirty hack end
+
+		// append regtoken
+		connection_url +=  "/ctl/NEW/" + self.config.token + "/";
+
+		self.ws.socket = new WebSocket(connection_url);
+		self.ws.socket.onopen = function() {
+			console.log('WS Opened');
+			self._register();
+		};
+		self.ws.socket.onclose = function(event) {
+			console.log('Closed');
+		};
+		self.ws.socket.onmessage = function(event) {
+			console.log('Received: ' + event.data);
+			try{
+				var response = JSON.parse(event.data);
+				var cmd = response['cmd'];
+				if(self.handlers[cmd]){
+					self.handlers[cmd](response);
+				}else{
+					console.warn("Not found handler " + cmd);
+				}
+			}catch(e){
+				console.error(e);
+			}
+		};
+		self.ws.socket.onerror = function(error) {
+			console.error('Error: ' + error.message);
+		};
+	}
+
+	self.m_nMessageID = 0;
+
+	self.makeCommand = function(cmd){
+		self.m_nMessageID++;
+		return {
+			cmd: cmd,
+			msgid: self.m_nMessageID
+		};
+	}
+	
+	self.makeCommandDone = function(orig_cmd, refid, status){
+		var response = self.makeCommand("done");
+		response["orig_cmd"] = orig_cmd;
+		response["refid"] = refid;
+		response["status"] = status;
+		return response;
+	}
+
+	self._register = function(){
+		var request = self.makeCommand("register");
+		request['pwd'] = '';
+		request['reg_token'] = self.config.token;
+		request["ver"] = '0.1';
+		request["tz"] = 'UTC';
+		request["vendor"] = 'web';
+		self.sendMessage(request);
+	}
+
+	self.sendMessage = function(r){
+		self.ws.socket.send(JSON.stringify(r));
+	}
+
+	self.handlers = {};
+	self.handlers['configure'] = function(response){
+		if(response["server"]){
+			self.config.srv = response["server"];
+		}
+		if(response["uuid"]){
+			self.config.uuid = response["uuid"];
+		}
+	}
+
+	self.handlers['bye'] = function(response){
+		if(response["reason"] && response["reason"] == "RECONNECT"){
+			setTimeout(function(){
+				self.initWebSocket();
+			},1200);
+		}
+	}
+	
+	self.handlers['hello'] = function(response){
+		if(response['media_server']){  // deprecated
+			self.config.media_server = response['media_server'];
+		}
+		if(response['sid']){
+			self.config.sid = response['sid'];
+		}
+		if(response['upload_url']){ 
+			self.config.upload_url = response['upload_url'];
+		}
+		
+		self.sendMessage(self.makeCommandDone('hello', response["msgid"], "OK"));
+		
+		var data = self.makeCommand("cam_register");
+		data["ip"] = '127.0.0.1';
+		data["uuid"] = self.config.uuid;
+		data["brand"] = 'None';
+		data["model"] = 'Unknown';
+		data["sn"] = 'nope';
+		data["type"] = "cm";
+		data["version"] = '0';
+		data["initial_mode"] = 'cloud';
+	
+		self.sendMessage(data);
+	}
+	
+	self.handlers['cam_hello'] = function(response){
+		self.sendMessage(self.makeCommandDone('cam_hello', response["msgid"], "OK"));
+		self.config.camid = response["cam_id"];
+		if(response["media_url"]){ // deprecated
+			self.config.media_url = response["media_url"];
+		}
+		if(response["media_uri"]){ // new
+			self.config.media_server = response["media_uri"];
+		}
+		if(response["path"]){ // new
+			self.config.media_url = response["path"];
+		}
+	}
+	
+	self.handlers['get_cam_status'] = function(response){
+		var data = self.makeCommand('cam_status');
+		data['cam_id'] = self.config.camid;
+		data["ip"] = '127.0.0.1';
+		data["activity"] = true;
+		data["streaming"] = true;
+		data["status_led"] = false;
+		self.sendMessage(data);
+	}
+	
+	
+	self.handlers['get_supported_streams'] = function(response){
+		var data = self.makeCommand('supported_streams');
+		data['cam_id'] = self.config.camid;
+		data["audio_es"] = ['Aud'];
+		data["video_es"] = ['Vid'];
+		data["streams"] = [{
+			id: "Main",
+			"video": "Vid",
+			"audio": "Aud"
+		}]
+		self.sendMessage(data);
+	}
+
+	self.stream_start_counter = 0;
+	self.handlers['stream_start'] = function(response){
+		var stream_url = "rtmp://" + self.config.media_server + "/" + self.config.media_url + "Main";
+		stream_url += "?sid=" + self.config.sid;
+		console.log(stream_url);
+		if(self.stream_start_counter == 0){
+			self.stream_start_counter++;
+			if(self.options.onStarted){
+				self.options.onStarted(stream_url);
+			}else if(!self.options.onStarted){
+				self.onStarted(stream_url);
+			}	
+		}
+		self.sendMessage(self.makeCommandDone('stream_start', response["msgid"], "OK"));
+	}
+	self.handlers['stream_stop'] = function(response){
+		self.stream_start_counter--;
+		self.sendMessage(self.makeCommandDone('stream_start', response["msgid"], "OK"));
+		if(self.stream_start_counter == 0){
+			if(self.options.onStopped){
+				self.options.onStarted(stream_url);
+			}else if(!self.options.onStarted){
+				self.onStopped();
+			}	
+		}
+	}
+	
 };

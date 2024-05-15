@@ -834,8 +834,8 @@ CameraEditControl = function(){
 							self.dispatchEvent(self.submited_event);
 						}
                         
-                        var noLocsCams = localStorage.noLocCams ? JSON.parse(localStorage.noLocCams) : null;
-                        var camExistsInArr = noLocsCams && noLocsCams.some(cam => cam.camera_id == updatedCam.id)
+                        var noLocsCams = localStorage.noLocCams ? JSON.parse(localStorage.noLocCams) : [];
+                        var camExistsInArr = noLocsCams.length != 0 && noLocsCams.some(cam => cam.camera_id == updatedCam.id)
                         if (!camExistsInArr && data.location_str == "") {
                             var formattedCam = new vxg.cameras.objects.Camera(updatedCam.token ? updatedCam.token : updatedCam.id);
                             formattedCam.src = updatedCam;
@@ -843,7 +843,7 @@ CameraEditControl = function(){
                             localStorage.noLocCams = JSON.stringify(noLocsCams);
                         } else if (camExistsInArr && data.location_str != "") {
                             var removeCam = noLocsCams.filter(cam => { return cam.camera_id != updatedCam.id});
-                            if (removeCam.length == 0) localStorage.removeItem(noLocCams)
+                            if (removeCam.length == 0) localStorage.removeItem("noLocCams")
                             else localStorage.noLocCams = JSON.stringify(removeCam);
                         }
 
@@ -1282,7 +1282,7 @@ CameraEditControl = function(){
 
 
         vxg.api.cloudone.user.getPlans().then(function(r) {
-            vxg.user.src.plans = JSON.parse(r.plans);
+            vxg.user.src.plans = r.plans ? JSON.parse(r.plans) : {};
         })
     }
     this.createTimezonesList = function(selector, selected) {

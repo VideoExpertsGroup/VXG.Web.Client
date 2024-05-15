@@ -1,58 +1,11 @@
 # Web SDK for VXG Cloud & Server
-### Web SDK for VXG Cloud & Server 3.3.18
-- Changed profile switching from Quality setting to Stream setting, only allowing user to choose between main (rec) and live
-- Changed default stream for live viewing to rec
-
-### Web SDK for VXG Cloud & Server 3.3.17
-- Fixed backward audio for Bosch camera with f/w v.7.86 
-
-### Web SDK for VXG Cloud & Server 3.3.15_230628
-- UI Scaling issues
-
-### Web SDK for VXG Cloud & Server 3.3.14_230524
-- Fixed for CORS error
-- Fixed pause issue on set source for tokens with only one video stream
-- Fixed jpeg format option, showing in format list now
-
-### Web SDK for VXG Cloud & Server 3.3.13_230516
-- Moment and moment-timezone packages unbundled from sdk
-
-### Web SDK for VXG Cloud & Server 3.3.12_230515
-- Multi channel playback scrubbing pause/play working
-
-### Web SDK for VXG Cloud & Server 3.3.11_230227
-- Multi stream switching between low and high quality resolutions
-
-### Web SDK for VXG Cloud & Server 3.3.10_080519
--   Updated moment-timezone package to with-data-1970-2030
-
-### Web SDK for VXG Cloud & Server 3.3.9_230419
--   Gave SD card it's own example page and disabled it by default
-
-### Web SDK for VXG Cloud & Server 3.3.8_230418
--   Detecting if SD card is enabled through camera type
-
-### Web SDK for VXG Cloud & Server 3.3.7_230411
--   Added logic to skip cloud record create where there's no sd card data in manual backup
-
-### Web SDK for VXG Cloud & Server 3.3.6_230404
+### Web SDK for VXG Cloud & Server 3.2.6_230329
 -   Added manual synchronization call for SD card backup in the UI
 
-### Web SDK for VXG Cloud & Server 3.3.5_230320
+### Web SDK for VXG Cloud & Server 3.2.5_230319
 -   Removing button disabling until more time can be spent making it work with the correct logic
 
-### Web SDK for VXG Cloud & Server 3.3.4_230227
-- Added workaround to the cloud-player for SD recording
-
-### Web SDK for VXG Cloud & Server 3.3.3_230224
--  Fixed labeling of multiplayer timeline in cloud player, fixing bug where white timeline shows when camera is offline
--  Disabled all camera controls when a camera source is offline
--  Fixed bug on multiplayer when main camera isn't in the first available player
-
-### Web SDK for VXG Cloud & Server 3.3.2_230201
--   Added joined timeline for multiplayer view
-
-### Web SDK for VXG Cloud & Server 3.3.1_230117
+### Web SDK for VXG Cloud & Server 3.2.4_230117
 -   Restarting use of the changelog
 
 ### Web SDK for VXG Cloud & Server 3.1.10_211202

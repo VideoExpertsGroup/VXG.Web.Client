@@ -1,4 +1,4 @@
-// VXG cloud player ver. 1.1.1.31 02/10/2022
+// VXG cloud player ver. 1.1.1.38 03/29/2023
 // @language_out ES6
 VXG_API_V2 = {
       post_v2_cameras_notifications_push_devices(channel_id,param)     {return this.r('POST',  'api/v2/cameras/'+channel_id+'/notifications/push/devices/',{}, params?params:{});},
@@ -138,7 +138,7 @@ class CVxgCloud{
             return r.json().then(function(t){
                 if (self.hook_after) self.hook_after(t, type, path, get_param, post_param);
                 return t;
-            },function(t){ 
+            },function(t){
                 if (self.hook_after) self.hook_after(t, type, path, get_param, post_param);
             });
         },function(r){
@@ -336,7 +336,11 @@ class CVxgCamera extends CVxgCloud{
                     }
                     return new Promise(function(resolve, reject){setTimeout(function(){resolve()},1000);}).then(function(){
                         return check(rid, rc-1);
+                    },function(){
+                        console.error("Can not download timeline error: ");
+                        self.timeline_promise = undefined;
                     });
+
                 });
             }
             return check(trd.id, retry_count);
@@ -362,7 +366,8 @@ class CVxgCamera extends CVxgCloud{
                 if (cb) cb();
                 return new Promise(function(resolve, reject){setTimeout(function(){resolve()},1000);}).then(function(){
                     return self.get_v2_storage_memorycard_synchronize(self.id, rid).then(function(r){
-                        if (r.status!=='pending') return r;
+                        if (r.status!=='pending')
+			    return r;
                         return new Promise(function(resolve, reject){setTimeout(function(){resolve()},100);}).then(function(){
                             return check(rid,rc-1);
                         });
@@ -377,7 +382,7 @@ class CVxgCamera extends CVxgCloud{
 }
 class CTimeLinePicker extends HTMLElement {
     static get observedAttributes() {
-        return ['scale','centerutctime','selectutctime','utc']; 
+        return ['scale','centerutctime','selectutctime','utc'];
     }
     constructor() {
         super();
@@ -435,7 +440,7 @@ class CTimeLinePicker extends HTMLElement {
     }
     connectedCallback() {
         let self = this;
-        this.addEventListener("mousewheel", function(e) { 
+        this.addEventListener("mousewheel", function(e) {
             if (self.getAttribute('disabled')!==null) return;
             if (e.wheelDeltaX==0 && e.offsetX < self.getBoundingClientRect().width/2){
                 let scale = self.getAttribute('scale');
@@ -508,7 +513,8 @@ class CTimeLinePicker extends HTMLElement {
         this.shadow.innerHTML = CTimeLinePicker.css;
 //        $(this).css('position','relative').css('overflow','hidden');
         let databar = this.getAttribute('databar')!==null ? ' databar':'';
-        this.shadow.innerHTML += '<div class="body"'+databar+'><div class="centerpos" style="display:none"></div><div class="wrap"><div class="twrap"><div class="range"></div><div class="databar"></div><table><tr><td>123</td></tr><tr></tr></table></div></div></div>';
+        let multiplayer = this.getAttribute('multiplayer') !== null? 'joined-timeline' : '';
+        this.shadow.innerHTML += '<div class="body"'+databar+'><div class="centerpos" style="display:none"></div><div class="wrap"><div class="twrap"><div class="range"></div><div class="databar '+ multiplayer +'"></div><table><tr><td>123</td></tr><tr></tr></table></div></div></div>';
         this.centerpos= this.shadow.querySelector('.centerpos');
         this.wrap= this.shadow.querySelector('.wrap');
         this.twrap= this.shadow.querySelector('.twrap');
@@ -823,7 +829,7 @@ class CTimeLinePicker extends HTMLElement {
 
             this.one_shift_time = parseInt(60*60*1000/hour_divider);
         }
-    
+
         if (seconds_frame_mode){
             let req_frames = parseInt(this.getAttribute('frames') || 1);
             let max_frames = parseInt(PIXELS_PER_SECOND / this.min_frame_width);
@@ -867,6 +873,9 @@ class CTimeLinePicker extends HTMLElement {
         this.summary_shift = wrap_shift_left + twrap_shift_left;
 
         while (this.getAttribute('databar')!==null){
+ 	     // Konst TODO
+             // TimeRange depends on the screen size
+             // This should alo depend on the live position and oldest position
             let event_getrange = new CustomEvent('getrange',{cancelable: true, bubbles: true, detail:{
                 time_from: parseInt(centerutctime - scale*screen_width/2),
                 time_to: parseInt(centerutctime + scale*screen_width/2),
@@ -1004,6 +1013,7 @@ table td sup{vertical-align:baseline;}
 .wrap{position:absolute;left:-50%;height:100%;right:-50%;}
 .twrap{position:absolute;height:100%;}
 .databar > [e]{background-color:black;}
+.databar.joined-timeline > [e]{background-color:white;}
 .databar > :not([e]){box-shadow:-1px 0 1px #00000080;}
 .databar > div{height:5px;height:4px;background-color:white;margin-top:1px;display:inline-block;}
 .databar > div.e{background-color:white;}
@@ -1121,7 +1131,10 @@ class CKControlPlay extends CKControl {
         this.shadow.innerHTML += '<div class="playbtn "></div>';
         this.shadow.querySelector('.playbtn').onclick = function(){
             if (!self.shadow.querySelector('.playbtn').classList.contains('pause'))
+		{
+		//self.player.setTimePromise(1679054793000);
                 self.player.play().catch(function(){});
+		}
             else
                 self.player.pause().catch(function(){});
         }
@@ -1308,7 +1321,7 @@ class CKControlTimepicker extends CKControl {
         return 'full';
     }
     static get observedAttributes() {
-        return []; 
+        return [];
     }
     constructor() {
         super();
@@ -1337,11 +1350,12 @@ class CKControlTimepicker extends CKControl {
         setTimeout(function(){
             let tls = self.player.getAttribute('timelineselector');
             let el = tls? document.querySelector(tls) : null;
+            var multiplayer = tls.includes('single-timeline') ? 'multiplayer' : '';
             if (el){
-                el.innerHTML = '<k-timeline-picker databar frames="25" scale="600" maxscale="2660" minscale="12" maxtime="+600000"></k-timeline-picker>';
+                el.innerHTML = '<k-timeline-picker databar '+multiplayer+' frames="25" scale="600" maxscale="2660" minscale="12" maxtime="+600000"></k-timeline-picker>';
                 self.picker = el.querySelector('k-timeline-picker');
             } else {
-                self.shadow.innerHTML += '<k-timeline-picker databar frames="25" scale="600" maxscale="2660" minscale="12" maxtime="+600000"></k-timeline-picker>';
+                self.shadow.innerHTML += '<k-timeline-picker databar '+multiplayer+' frames="25" scale="600" maxscale="2660" minscale="12" maxtime="+600000"></k-timeline-picker>';
                 self.picker = self.shadow.querySelector('k-timeline-picker');
             }
 
@@ -1361,6 +1375,8 @@ class CKControlTimepicker extends CKControl {
                     return;
                 }
                 if (!e.detail.currentUtcTime) return;
+                // TODO Konst
+                // e.detail.currentUtcTime set to 1 second . Current position - Jan 1 1970 0:00:01
                 if (e.detail.currentUtcTime < new Date('Jan 1 2000 0:00:00').getTime()){
                     debugger;
                     return;
@@ -1497,7 +1513,7 @@ text-align:center;
 window.customElements.define('k-control-volume', CKControlVolume);
 class CKVideo extends HTMLElement{
     static get observedAttributes() {
-        return ['src']; 
+        return ['src'];
     }
     get POSTER_PLAY_DURATION(){return this.poster_play_duration!==undefined?this.poster_play_duration*1000:2000};
     constructor() {
@@ -1506,7 +1522,7 @@ class CKVideo extends HTMLElement{
     setStatus(status, delay=false){
         clearTimeout(this.status_timer);
         let self = this;
-        if (!delay){ 
+        if (!delay){
             this.setAttribute('status',status);
             let kv_event_statusupdate = new Event('statusupdate',{cancelable: false, bubbles: true});
             kv_event_statusupdate.status = status;
@@ -1567,7 +1583,10 @@ class CKVideo extends HTMLElement{
         this.setSourcePromise(src,time,msec).catch(function(){}).finally(function(){
             if (time || msec){
                 if (time) self.setAttribute('playtime',time);
-                self.dispatchEvent(new CustomEvent('timeupdate',{cancelable: false, bubbles: true, detail: {currentUtcTime:time}}));
+
+            // Konst DEbug
+            if (time == 0) debugger;
+            self.dispatchEvent(new CustomEvent('timeupdate',{cancelable: false, bubbles: true, detail: {currentUtcTime:time}}));
             }
 
         });
@@ -1624,18 +1643,18 @@ class CKVideo extends HTMLElement{
 
         let self = this;
         this.players_layer = this;
-        this.nativeEl.addEventListener("timeupdate", function(e) { 
+        this.nativeEl.addEventListener("timeupdate", function(e) {
             let time = self.currentUtcTime;
             if (isNaN(time) || self.isEmpty() || self.isError()) {
                 self.removeAttribute('playtime');
                 self.setStatus('pause');
-            } else 
+            } else
                 if (self.isPlaying())
                     self.setAttribute('playtime', time);
             if (!this.paused && !self.skip_next_timeupdate)
                 self.dispatchEvent(new CustomEvent('timeupdate',{cancelable: false, bubbles: true, detail: {currentUtcTime:self.currentUtcTime}}));
         },false);
-        this.nativeEl.addEventListener("error", function(e) { 
+        this.nativeEl.addEventListener("error", function(e) {
             self.setStatus('error');
             self.removeAttribute('readytoshow');
             self.removeAttribute('playtime');
@@ -1662,18 +1681,18 @@ class CKVideo extends HTMLElement{
 //            self.dispatchEvent(self.kv_event_error);
             self.dispatchEvent(new CustomEvent("error", {detail: { src: e.srcElement?e.srcElement:this} }))
         },false);
-        this.nativeEl.addEventListener("durationchange", function(r) { 
+        this.nativeEl.addEventListener("durationchange", function(r) {
             if (!isFinite(this.duration)) return;
             self.setAttribute('duration',this.duration || 0);
             self.dispatchEvent(new Event('durationchange',{cancelable: false, bubbles: true}));
         });
-        this.nativeEl.addEventListener("loadedmetadata", function(r) { 
+        this.nativeEl.addEventListener("loadedmetadata", function(r) {
             let kv_event_loadedmetadata = new Event('loadedmetadata',{cancelable: false, bubbles: true});
             kv_event_loadedmetadata.target2 = r.target;
             kv_event_loadedmetadata.detail = r.detail;
             self.dispatchEvent(kv_event_loadedmetadata);
         });
-        this.nativeEl.addEventListener("canplay", function(r) { 
+        this.nativeEl.addEventListener("canplay", function(r) {
             if (self.isPlaying()) self.setStatus('playing'); else self.setStatus('pause');
             if (self.src){
                 clearTimeout(self.imagetimer);
@@ -1685,7 +1704,7 @@ class CKVideo extends HTMLElement{
 //            self.setStatus(self.isPlayRequired() ? 'playing' : 'pause');
             self.dispatchEvent(new Event('canplay',{cancelable: false, bubbles: true}));
         });
-        this.nativeEl.addEventListener("canplaythrough", function(r) { 
+        this.nativeEl.addEventListener("canplaythrough", function(r) {
             if (self.isPlaying()) self.setStatus('playing'); else self.setStatus('pause');
             self.setAttribute('readytoshow','')
             self.setAttribute('loaded',100);
@@ -1693,44 +1712,44 @@ class CKVideo extends HTMLElement{
 //            self.setStatus(self.isPlayRequired() ? 'playing' : 'pause');
             self.dispatchEvent(new Event('canplaythrough',{cancelable: false, bubbles: true}));
         });
-        this.nativeEl.addEventListener("ended", function() { 
+        this.nativeEl.addEventListener("ended", function() {
 //            self.playRequired = false;
             self.setStatus('pause');
             if (self.play_promise) self.play_promise_reject(self.abort_controller);
             if (self.pause_promise) self.pause_promise_resolve();
             self.dispatchEvent(new Event('ended',{cancelable: false, bubbles: true}));
         },false);
-        this.nativeEl.addEventListener("waiting", function() { 
+        this.nativeEl.addEventListener("waiting", function() {
             self.setStatus('loading',true);
             self.dispatchEvent(new Event('waiting',{cancelable: false, bubbles: true}));
         },false);
-        this.nativeEl.addEventListener("playing", function() { 
+        this.nativeEl.addEventListener("playing", function() {
             self.setStatus('playing');
             if (self.play_promise) self.play_promise_resolve(self.abort_controller);
             if (self.pause_promise) self.pause_promise_reject();
             self.dispatchEvent(new Event('playing',{cancelable: false, bubbles: true}));
         },false);
-        this.nativeEl.addEventListener("pause", function() { 
+        this.nativeEl.addEventListener("pause", function() {
             self.setStatus('pause');
             if (self.play_promise) self.play_promise_reject(self.abort_controller);
             if (self.pause_promise) self.pause_promise_resolve();
             self.dispatchEvent(new Event('pause',{cancelable: false, bubbles: true}));
         },false);
-        this.nativeEl.addEventListener("loadstart", function() { 
+        this.nativeEl.addEventListener("loadstart", function() {
             self.setStatus('loading');
             self.removeAttribute('duration');self.setAttribute('loaded',0);
             self.dispatchEvent(new Event('loadstart',{cancelable: false, bubbles: true}));
         },false);
-        this.nativeEl.addEventListener("seeking", function() { 
+        this.nativeEl.addEventListener("seeking", function() {
             self.setStatus('seeking',true);
             self.dispatchEvent(new Event('seeking',{cancelable: false, bubbles: true}));
         },false);
-        this.nativeEl.addEventListener("seeked", function() { 
+        this.nativeEl.addEventListener("seeked", function() {
             if (self.isPlayRequired()) self.setStatus('playing'); else self.setStatus('pause');
             if (self.seek_promise) self.seek_promise_resolve(self.abort_controller);
             self.dispatchEvent(new Event('seekend',{cancelable: false, bubbles: true}));
         },false);
-        this.nativeEl.addEventListener("emptied", function() { 
+        this.nativeEl.addEventListener("emptied", function() {
             self.setStatus('pause');
             self.removeAttribute('readytoshow');
             self.removeAttribute('playtime');
@@ -1741,7 +1760,7 @@ class CKVideo extends HTMLElement{
             if (self.seek_promise) self.seek_promise_reject(self.abort_controller);
             self.dispatchEvent(new Event('emptied',{cancelable: false, bubbles: true}));
         },false);
-        this.nativeEl.addEventListener("progress", function(r) { 
+        this.nativeEl.addEventListener("progress", function(r) {
             let percent = null;
             if (r.srcElement.buffered.length > 0 && r.srcElement.buffered.end && r.srcElement.duration) {
                 percent = r.srcElement.buffered.end(0) / r.srcElement.duration;
@@ -1781,6 +1800,8 @@ class CKVideo extends HTMLElement{
         let self = this;
         if (src || (!isNaN(utc_from_in_msec)) && (!isNaN(duration_msec))) {
             if (this.original_src == src){
+                //if (utc_from_in_msec == 0) debugger;
+                //console.warn("setAttribute1('time')=",(new Date(utc_from_in_msec)));
                 if (!isNaN(utc_from_in_msec)) this.setAttribute('time',parseInt(utc_from_in_msec));else this.removeAttribute('time');
                 if (!isNaN(duration_msec)) this.setAttribute('msec',parseInt(duration_msec));else this.removeAttribute('msec');
                 if (!isNaN(off)) this.setAttribute('off',parseInt(off));else this.removeAttribute('off');
@@ -1809,7 +1830,7 @@ class CKVideo extends HTMLElement{
         this.abort();
 
         this.clearAllFlags();
-
+        console.warn("setAttribute2('time')=",(new Date(utc_from_in_msec)));
         if (!isNaN(utc_from_in_msec)) this.setAttribute('time',parseInt(utc_from_in_msec));else this.removeAttribute('time');
         if (!isNaN(duration_msec)) this.setAttribute('msec',parseInt(duration_msec));else this.removeAttribute('msec');
         if (!isNaN(off)) this.setAttribute('off',parseInt(off));else this.removeAttribute('off');
@@ -1835,7 +1856,7 @@ class CKVideo extends HTMLElement{
                 self.load_promise=undefined;
                 if (self.isPlayRequired()) self.setStatus('playing'); else self.setStatus('pause');
                 let off = parseInt(self.getAttribute('off'));
-                if (!isNaN(off)) 
+                if (!isNaN(off))
                     self.nativeEl.currentTime = off/1000;
 /*
                 let off = parseInt(this.getAttribute('off')||0);
@@ -1985,7 +2006,7 @@ class CKVideo extends HTMLElement{
             return new Promise(function(resolve, reject){reject();});
         if (this.isPlaying())
             return new Promise(function(resolve, reject){resolve();});
-        if (this.play_promise) 
+        if (this.play_promise)
             return this.play_promise;
     }
     playPromise(abort_controller){
@@ -2038,10 +2059,15 @@ class CKVideo extends HTMLElement{
             },0);
         }, delay);
         function send_timeupdate(){
-            let nt = self.currentUtcTime+1000;
-            if (nt>=self.getInitialLastTime()) return;
-            self.currentUtcTime = nt;
-            self.dispatchEvent(new CustomEvent('timeupdate',{cancelable: false, bubbles: true, detail: {currentUtcTime:self.currentUtcTime}}));
+            // Konst Workaround
+            //
+            if (self.currentUtcTime != 0)
+            {
+                let nt = self.currentUtcTime+1000;
+                if (nt>=self.getInitialLastTime()) return;
+                self.currentUtcTime = nt;
+                self.dispatchEvent(new CustomEvent('timeupdate',{cancelable: false, bubbles: true, detail: {currentUtcTime:self.currentUtcTime}}));
+            }
             setTimeout(send_timeupdate,1000);
         }
         this.poster_time_timer = setTimeout(send_timeupdate,1000);
@@ -2522,8 +2548,10 @@ class CKVideoSet extends HTMLElement{
         return parseInt(this.getAttribute('playtime')||0);
     }
     set currentUtcTime(time){
-        if (this.currentUtcTime == time) 
+        if (this.currentUtcTime == time)
             return;
+        if (time < new Date('Jan 1 2000 0:00:00').getTime())
+            debugger;
         this.setTimePromise(time).catch(function(){});
     }
     get playbackRate(){
@@ -2638,7 +2666,7 @@ class CKVideoSet extends HTMLElement{
 
         for (let i = -this.LEFT_BUFFER_SIZE; i<=this.RIGHT_BUFFER_SIZE; i++){
             let p = this.shadow.querySelector('[pos="'+i+'"]');
-            if (this.options.poster_play_duration!==undefined) 
+            if (this.options.poster_play_duration!==undefined)
                 p.poster_play_duration = this.options.poster_play_duration;
             p.addEventListener("error", function(e){
                 self.dispatchEvent(new CustomEvent("error", {detail: (e.detail ? e.detail : { src: e.srcElement?e.srcElement:this}) }));
@@ -2689,19 +2717,23 @@ class CKVideoSet extends HTMLElement{
         this.redux.send(this,'clear_state',{value:state});
     }
     setPlayTime(time){
-if (isNaN(time)) debugger;
+        console.debug("setPlayTime time: " + (new Date(time)));
+        if (isNaN(time)) debugger;
         this.setAttribute('playtime', time);
     }
     setListiners(player){
         let self = this;
         let pl =  player;
         this.onTimeUpdateEvent = function(e){
+            console.debug("onTimeUpdateEvent ");
             if (!self.shadow || !pl.isLoaded()) return;
             if (pl.isPlaying() && pl.playbackRate<0) self.setStatus('playing');
             const player = self.shadow.querySelector('[pos="0"]');
             if (!player || player.isEmpty()) return;
             let time = e&&e.detail&&!isNaN(e.detail.currentUtcTime) ? e.detail.currentUtcTime : player.currentUtcTime;
+            console.debug("onTimeUpdateEvent time: " + (new Date(time).toISOString()));
             if (time<=0) {
+                console.debug("onTimeUpdateEvent time: " + (new Date(time)));
                 return;
             }
             if (!isNaN(time)) {
@@ -2720,6 +2752,7 @@ if (isNaN(time)) debugger;
             self.dispatchEvent(new Event('loadstart',{cancelable: false, bubbles: true}));
         }
         this.onPlayNextBlock = function(){
+            console.debug("onPlayNextBlock");
             let player = self.shadow.querySelector('[pos="0"]');
             if (!player) return;
             if (self.speed>=0){
@@ -2774,15 +2807,18 @@ if (isNaN(time)) debugger;
         player.addEventListener("loadstart", this.onLoading,{once:false});
         player.addEventListener("timeupdate", this.onTimeUpdateEvent,{once:false});
     }
+
     getPoster(){
+        console.debug("getPoster");
         return this.shadow.querySelector('[pos="0"]').poster;
     }
 
     setStatus(status, delay=false){
+        console.debug("setStatus status:"+status);
         clearTimeout(this.status_timer);
         if (this.getAttribute('status')===status) return;
         let self = this;
-        if (!delay){ 
+        if (!delay){
             this.setAttribute('status',status);
             let event_statusupdate = new Event('statusupdate',{cancelable: false, bubbles: true});
             event_statusupdate.status = status;
@@ -2848,8 +2884,10 @@ if (isNaN(time)) debugger;
         this.source_list_observer.observe(v, {childList: true}); // attributes: true, characterData: true, subtree: true, attributeOldValue: true, characterDataOldValue: true,
     }
     onSourceListChange(mutations){
+        console.debug("onSourceListChange ");
         this.updateCache();
     }
+
     setPlaybackRatePromise(speed){
         if ((typeof CKVideoReverse==="undefined" || this.getAttribute('noreverse')!==null) && speed<0) speed=0;
         let self = this;
@@ -2868,22 +2906,31 @@ if (isNaN(time)) debugger;
                 return player.play().catch(function(){});
         }).catch(function(){});
     }
+
     updateCache(){
+        console.debug("updateCache ");
         let player = this.shadow.querySelector('[pos="0"]');
-        if (!player) return;
+        if (!player) {debuugger;return;}
         let l = player.getInitialLastTime();
+        console.debug("updateCache1 time:"  + l + " - " +  (new Date(l)) );
         if (l===undefined)
+        {
             l = this.currentUtcTime;
+            console.debug("updateCache2 this.currentUtcTime:" +  (new Date(this.currentUtcTime)));
+        }
 
 
         let last_msec = parseInt(player.getAttribute('msec'))||0;
         if (!last_msec){
             // notification of the need to download the video block and posters for the specified time
+            console.debug("updateCache3 last_msec:"  + last_msec + " - " +  (new Date(l)) );
             this.storage.getVideo(l);
             this.storage.getPoster(l);
         }
+
         let i=1;
         for (; last_msec>0 && i<=this.RIGHT_BUFFER_SIZE-1; i++) {
+            console.debug("updateCache4 RIGHT_BUFFER_SIZE:" + this.RIGHT_BUFFER_SIZE + " i:" + i);
             let p = this.shadow.querySelector('[pos="'+i+'"]');
             let np = this.getPlayerWithTimeRange(l,l+1);
             if (np && np!==player && np!=p){
@@ -2925,7 +2972,7 @@ if (isNaN(time)) debugger;
                     p.setAttribute('readytoshow','');
                 }
                 continue;
-            } 
+            }
             if (posterdata && posterdata.src){
                 p.setSourcePromise('', l, 0, false).then(function(){
                     if (posterdata && posterdata.src){
@@ -2936,11 +2983,16 @@ if (isNaN(time)) debugger;
             }
             break;
         }
+
         for (; i<=this.RIGHT_BUFFER_SIZE-1; i++)
             this.shadow.querySelector('[pos="'+i+'"]').setSourcePromise().catch(function(err){});
+
         l = player.getFirstTime();
         i=-2;
+        console.debug("updateCache5 time:" + (new Date(l)));
+
         for (; last_msec>0 && l>0 && i>=-this.LEFT_BUFFER_SIZE; i--) {
+            console.debug("updateCache6 LEFT_BUFFER_SIZE:" + this.LEFT_BUFFER_SIZE + " i:" + i);
             let p = this.shadow.querySelector('[pos="'+i+'"]');
             if (l == p.getInitialLastTime()){
                 l = p.getFirstTime();
@@ -2973,6 +3025,7 @@ if (isNaN(time)) debugger;
         }
         for (; i>=-this.LEFT_BUFFER_SIZE; i--)
             this.shadow.querySelector('[pos="'+i+'"]').setSourcePromise().catch(function(){});
+
     }
     onReadyToShow(player){
         let self = this;
@@ -3065,7 +3118,7 @@ if (isNaN(time)) debugger;
                 let r = this.storage.posters_cache.getNearCached(p[i].getFirstTime());
                 if (!r)
                     r = this.storage.posters_cache.getNearByStartTime(p[i].getFirstTime());
-                if (r && r.s) 
+                if (r && r.s)
                     u2 = r.s;
             }
             if (p[i]===player){
@@ -3100,6 +3153,7 @@ if (isNaN(time)) debugger;
         });
         return this.settime_promise;
     }
+
     setPlayerSourcePromise(p, src, utc_from_in_msec, duration_msec, full_load, off){
         clearTimeout(this.settime_timer);
         if (this.settime_reject) this.settime_reject(); delete this.settime_reject;
@@ -3118,9 +3172,12 @@ if (isNaN(time)) debugger;
         });
         return this.settime_promise;
     }
+
     setTimePromise(utctime){
+
         if (isNaN(utctime)) return;
         clearTimeout(this.settime_timer);
+
         if (this.settime_reject) this.settime_reject(); delete this.settime_reject;
         let self = this;
         this.setPlayTime(utctime);
@@ -3129,6 +3186,9 @@ if (isNaN(time)) debugger;
         if (!player) return new Promise(function(resolve, reject){resolve();});
         player.pause().catch(function(){});
         let p = this.getPlayerWithTime(utctime);
+        // Konst TODO
+        // one issue was reproduced. Set position on the timeline and click play button.
+        // Here is error and player is restarted.
         while (player===p){
             let posterdata = this.storage.getPoster(utctime);
             let r = player.setTimePromise(utctime).catch(function(){});
@@ -3144,6 +3204,7 @@ if (isNaN(time)) debugger;
                 player.setPoster(posterdata.src);
             return r;
         }
+
         if (p && parseInt(p.getAttribute('pos'))!==this.RIGHT_BUFFER_SIZE){
             if (!p.isReadyToShow()) return Promise.resolve();
             this.setStatus('seeking');
@@ -3199,7 +3260,7 @@ if (isNaN(time)) debugger;
                 if (fastposterdata.time - utctime > step*5) fastposterdata = undefined;
         }
         if (fastposterdata) fastposterdata = fastposterdata.src;
-        if (player.poster) 
+        if (player.poster)
             fastposterdata = player.poster;
         this.prev_time = utctime;
 
@@ -3215,7 +3276,7 @@ if (isNaN(time)) debugger;
             },function(){});
         }
 
-        if (videodata && videodata.time==0) 
+        if (videodata && videodata.time==0)
             posterdata = this.storage.getNeighborPoster(0,false,false);
         let ps = '';
         if (posterdata && posterdata.p) fastposterdata = undefined;
@@ -3239,10 +3300,12 @@ if (isNaN(time)) debugger;
         p.setPoster(ps,fastposterdata);
         return ret;
     }
+
     getTime(){
         const player = this.shadow.querySelector('[pos="0"]');
         return player.currentUtcTime();
     }
+
     swapPlayers(v1, v2){
         let pos1 = parseInt(v1.getAttribute('pos'));
         let pos2 = parseInt(v2.getAttribute('pos'));
@@ -3324,7 +3387,7 @@ if (isNaN(time)) debugger;
         for (let i=-this.LEFT_BUFFER_SIZE; i<=this.RIGHT_BUFFER_SIZE-1; i++){
             let p = this.shadow.querySelector('[pos="'+i+'"]');
             if (i==0 || p.src || p.getFirstTime()==p.getLastTime()) continue;
-            if (start_time<=p.getFirstTime() && p.getFirstTime()<end_time || 
+            if (start_time<=p.getFirstTime() && p.getFirstTime()<end_time ||
                 start_time<=p.getLastTime() && p.getLastTime()<end_time ||
                 p.getFirstTime()<=start_time && start_time<p.getLastTime() ||
                 p.getFirstTime()<=end_time && end_time<p.getLastTime()) {
@@ -3524,9 +3587,17 @@ class CTimeRange{
             return i;
         }
     }
+    outputTimeRange()
+    {
+        for (let i=0;i<this.range_times.length;i++)
+        {
+            if (this.range_durations[i] < 0) continue;
+            console.log(""+i+" time=" + new Date(this.range_times[i]).toISOString() + " dur:" + this.range_durations[i]);
+        }
+    }
     getSpaceWithTime(time){
         if (!this.range_times.length) return;
-        if (this.range_times[0]>time) 
+        if (this.range_times[0]>time)
             return {time:0,msec:this.range_times[0],src:'',off:0};
         for (let i=0;i<this.range_times.length;i++){
             let e = this.range_times[i]+Math.abs(this.range_durations[i]);
@@ -3581,12 +3652,12 @@ class CTimeRange{
     getNearCached(time){
         let i=0;
         for (;i<this.range_times.length;i++)
-            if ((i==this.range_times.length-1 || this.range_times[i+1]>=time) && this.range_data[i].s.substr(0,5)==='blob:') 
+            if ((i==this.range_times.length-1 || this.range_times[i+1]>=time) && this.range_data[i].s.substr(0,5)==='blob:')
                 break;
         if (i==this.range_times.length) return;
         let j=i+1;
         for (;j<this.range_times.length;j++)
-            if (this.range_data[j].s.substr(0,5)==='blob:') 
+            if (this.range_data[j].s.substr(0,5)==='blob:')
                 break;
         if (j!=this.range_times.length && this.range_times[j]-time < time-this.range_times[i])
             return {s:this.range_data[j].s,t:this.range_times[j],o:this.range_data[j].o};
@@ -3620,7 +3691,7 @@ class CTimeRange{
     // Return neighbor block with data or undefined
     getNeighborWithDataIndex(time, reverse){
         for (let i=0;i<this.range_times.length;i++){
-            if (parseInt(this.range_times[i])+Math.abs(this.range_durations[i]) <= time) 
+            if (parseInt(this.range_times[i])+Math.abs(this.range_durations[i]) <= time)
                 continue;
             if ((!i || (parseInt(this.range_times[i-1])+Math.abs(this.range_durations[i-1])<=time)) && parseInt(this.range_times[i])>time) return;
             if (this.range_durations[i]>=0) return i;
@@ -3639,22 +3710,22 @@ class CTimeRange{
         let i;
         for (i=0;i<this.range_times.length;i++){
             if (parseInt(this.range_times[i])>time) break;
-            if (time < parseInt(this.range_times[i])+Math.abs(this.range_durations[i])) 
+            if (time < parseInt(this.range_times[i])+Math.abs(this.range_durations[i]))
                 break;;
         }
 */
-        let ii = 0, j = this.range_times.length, k; 
+        let ii = 0, j = this.range_times.length, k;
         while (ii < j) {
             k = Math.floor((ii+j)/2);
             if (time <= this.range_times[k]) j = k;
             else ii = k+1;
         }
         if (!ii) return;
-        if (ii!=this.range_times.length && this.range_times[ii]==time) 
+        if (ii!=this.range_times.length && this.range_times[ii]==time)
             return ii;
         if (this.range_times[ii-1]<=time && this.range_times[ii-1]*1000+Math.abs(this.range_durations[ii-1])*1000>time*1000)
             return ii-1;
-   
+
     }
     getDataFromTime(time){
         if (this.default_data===undefined) return;
@@ -3680,7 +3751,7 @@ class CTimeRange{
                 if (this.range_times[i]<time) continue;
                 if (this.range_durations[i]>0) return this.range_times[i];
             }
-        else 
+        else
             for (let i=this.range_times.length-1;i>=0; i--){
                 if (this.range_times[i]>=time || this.range_durations[i]<0) continue;
                 if (this.range_times[i]+this.range_durations[i]>time) return time;
@@ -3972,7 +4043,7 @@ class CTimeRange{
                         break;
                 block_before++;
             }
-        } else 
+        } else
             block_before= this.addSpace(time,duration);
 
         this.range_times.splice(block_before, 0, time);
@@ -3988,15 +4059,23 @@ class CTimeRange{
             if (block_before>1 && t2>0 && t2<this.min_space_time)
                 this.range_durations[block_before-1] = Math.sign(this.range_durations[block_before-1])*parseInt(time*1000 - this.range_times[block_before-1]*1000)/1000;
         }
-        if (this.min_space_time) for (let i=0;i<this.range_times.length;i++) 
-            if (this.range_data && !this.range_data[i].s && (/*parseInt(this.range_durations[i]*1000)/1000!=this.range_durations[i] ||*/ Math.abs(this.range_durations[i])<2000)) debugger;
+
+	// Konst TODO
+	// We need to fix this in the place wwhere this wrong segment is added to the range data
+        // There are 3 different time range objects and this issue is reproducible for the storage timeline
+        if (this.min_space_time) for (let i=0;i<this.range_times.length;i++)
+            if (this.range_data && !this.range_data[i].s && (/*parseInt(this.range_durations[i]*1000)/1000!=this.range_durations[i] ||*/ Math.abs(this.range_durations[i])<2000))
+                console.log("i=" + i + " range_durations=" + this.range_durations[i] + " range_times=" + this.range_times[i]);
+            //debugger;
+
+        if ( data ==='' && duration< 0 ) debugger;
 
         return block_before;
     }
     mergeIdentical(){
         function RANGEEND(index){return !self.range_times || self.range_times.length<=index ? 0 : self.range_times[index]+Math.abs(self.range_durations[index]);}
         for (let i=this.range_times.length-2;i>=0; i--){
-            if ( (this.range_data && (this.range_data[i].s!==this.default_data || this.range_data[i+1].s!==this.default_data)) || (this.range_durations[i]>=0 && this.range_durations[i+1]<0) 
+            if ( (this.range_data && (this.range_data[i].s!==this.default_data || this.range_data[i+1].s!==this.default_data)) || (this.range_durations[i]>=0 && this.range_durations[i+1]<0)
                 || (this.range_durations[i]<0 && this.range_durations[i+1]>=0)
                 || RANGEEND(i)<this.range_times[i+1]) continue;
             this.range_durations[i] += this.range_durations[i+1];
@@ -4092,6 +4171,7 @@ class CVxgStorage extends CStorage{
         super.invalidate();
     }
     addEmptyRange(time,duration){
+        console.warn("addEmptyRange time="+ (new Date(time).toISOString) + " duration:" + (new Date(Math.abs(duration)).toISOString) );
         this.sendVideoLoaded(this.records_cache.addToRange(time, duration, ''));
     }
     getMicroDate(v){
@@ -4126,7 +4206,7 @@ class CVxgStorage extends CStorage{
                 self.video_promise1 = undefined;
                 self.video_promise2 = undefined;
                 if (!self.camera || prev_camera_id !== self.camera.id) return self.videoLoader();
-    
+
                 if (r[0].status!=="fulfilled" || r[1].status!=="fulfilled") {
                     console.error('Fail to get video list from storage');
                     return self.videoLoader();
@@ -4137,7 +4217,7 @@ class CVxgStorage extends CStorage{
                 if (r[0].value!==false){
                     if (!r[0].value.objects.length && self.records_cache.checkData(0)===undefined)
                         self.addEmptyRange(0, -req_time);
-        
+
                     if (r[0].value.objects.length) for (let i=r[0].value.objects.length-1; i>=0; i--){
                         let v = r[0].value.objects.shift();
                         if (r[1].value.objects.length && v['start']==r[1].value.objects[0]['start'])
@@ -4145,8 +4225,8 @@ class CVxgStorage extends CStorage{
                         r[1].value.objects.splice(0,0,v);
                     }
                 }
-    
-                let m=0; let c=0; let prev;
+
+                let m=0; let c=0; let prev = 0;
                 if (r[1].value.objects.length) for (let i=0;i<r[1].value.objects.length; i++){
                     let obj = r[1].value.objects[i];
                     let st = self.getMicroDate(obj['start']);
@@ -4164,9 +4244,11 @@ class CVxgStorage extends CStorage{
                     if (et-st>0) {m+=et-st;c++;}
                     prev = et;
                 }
-                if (no_data_to) 
+                // Konst TODO
+                // prev - underfnided here some time
+                if (no_data_to)
                     self.addEmptyRange(prev, (prev*1000 - no_data_to*1000)/1000);
-    
+
                 if (c) self.mean_duration = parseInt(m/c);
                 self.records_cache.mergeIdentical();
                 return self.videoLoader();
@@ -4178,8 +4260,14 @@ class CVxgStorage extends CStorage{
         if (onlyone) this.only_one = true;
         this.videoLoader();
     }
+    
     posterLoader(){
         if (!this.camera) return;
+        // Konst workaround
+        // disable Poster if memorycard_recording
+        // There are not posters for ONVIF cameras
+        // Posters for plug-in cameras does not work by default
+	    if (window.hasOwnProperty('vxg_debug') || !this.camera.v2_data || (this.camera.v2_data && this.camera.v2_data.memorycard_recording === true)) return;
         let self = this;
         if (this.poster_promise1 || this.poster_req_time===undefined) return;
         let req_time = this.poster_req_time;
@@ -4218,7 +4306,7 @@ class CVxgStorage extends CStorage{
                         self.sendPosterLoaded(self.posters_cache.addToRange(0, rt, r[1].value.objects[0]['url']));
                     }
                 }
-    
+
                 if (r[0].value.objects.length) for (let i=r[0].value.objects.length-1; i>=0; i--)
                     r[1].value.objects.splice(0,0,r[0].value.objects.shift());
             }
@@ -4321,7 +4409,7 @@ class CKVgxVideo extends CKVideoAsync{
             if (!this.update_range_timer || this.range_from != from || this.range_to != to){
                 let d = parseInt(to - from);
                 this.updateRange(from-d, to+d);
-            } 
+            }
         } else if (this.storage.storage_timeline.checkFilled(from, to))
             clearTimeout(this.update_range_timer);
 
@@ -4342,8 +4430,8 @@ class CKVgxVideo extends CKVideoAsync{
             self.delay_range_timer = undefined;
             if (self.archive_right_time !==undefined && self.range_to>self.archive_left_time) self.range_to=self.archive_right_time;
             if (self.archive_left_time !==undefined && self.range_from<self.archive_right_time) self.range_from=self.archive_left_time;
-            let from_time = self.range_from; 
-            let to_time = self.range_to; 
+            let from_time = self.range_from;
+            let to_time = self.range_to;
             if (!from_time || !to_time || self.storage.storage_timeline.checkFilled(self.range_from, self.range_to) || from_time>=to_time - 1000) {
                 self.range_from = undefined; self.range_to=undefined;
                 self.update_range_timer = undefined;
@@ -4383,6 +4471,8 @@ class CKVgxVideo extends CKVideoAsync{
 
             if (r && r.objects && r.objects[0] && r.objects[0][3] && r.objects[0][3].length) for (let i=0; i< r.objects[0][3].length; i++){
                 let st = (new Date(r.objects[0][3][i][0]+'Z')).getTime();
+                // Konst TODO
+                // This condition is weird because it throws an error in the AddRange with a negative duration
                 if (i==0 && st>start_time){
                     self.storage.storage_timeline.addToRange(start_time, start_time - st);
 //                    self.storage.records_cache.addToRange(lasttime, start_time - st);
@@ -4394,7 +4484,7 @@ class CKVgxVideo extends CKVideoAsync{
                 }
                 self.storage.storage_timeline.addToRange(st, dur);
                 lasttime = st + dur;
-            } else 
+            } else
                 lasttime = start_time;
             if (lasttime< (end_time<Date.now()?end_time:Date.now()))
                 self.storage.storage_timeline.addToRange(lasttime, lasttime - (end_time<Date.now()?end_time:Date.now()));
@@ -4495,8 +4585,10 @@ class CSdVxgStorage extends CVxgStorage{
                     return Promise.reject('synctimeout');
                 return new Promise(function(resolve, reject){setTimeout(function(){resolve()},1000);}).then(function(){
                     return self.camera.get_v2_storage_memorycard_synchronize(self.camera.id, rid).then(function(r){
-                        if (r.status!=='pending') return r;
-                        return new Promise(function(resolve, reject){setTimeout(function(){resolve()},100);}).then(function(){
+                        if (r.status!=='pending')
+                            return r;
+                        return new Promise(function(resolve, reject){setTimeout(function(){resolve()},100);}).then(function()
+                        {
                             return check(rid,rc-1);
                         });
                     });
@@ -4559,24 +4651,58 @@ class CSdVxgStorage extends CVxgStorage{
                 self.records_cache.mergeIdentical();
                 self.parent.updateCache();
                 self.startSynchronize();
+            }).catch(function(r){
+                self.sync_promise = undefined;
+                console.error('getOneStorageRecordfail: '+ r);
             });
         }).catch(function(r){
             self.sync_promise = undefined;
             self.redux.send(self,'clear_state',{value:'syncronizing'});
             if (r=='synctimeout'){
                 self.redux.send(self,'set_state',{value:'sync_timeout_error'});
-            } 
-            if (r!='cancel'){
+            }
+            // Konst
+            // errorDetail
+            // "The request can not be completed because of a conflict (There are existing data in server storage withing requested range)"
+            // errorType:"conflict"
+            // status:409
+            // Try to download the latest records from the cloud
+            // We need to fix it on the server
+            else if (String(r).indexOf("[409]") > 0)
+            {
+                return self.camera.getOneStorageRecord(start_time+1,end_time-1,20, function(){return !self.parent.isPlaying()}).then(function(r){
+                    self.sync_promise = undefined;
+                    if (prev_camera_id !== self.camera.id) return;
+                    if (!r || !r.objects || !r.objects.length) {
+                        self.startSynchronize();
+                        return;
+                    }
+                    let st = self.getMicroDate(r.objects[0]['start']+'Z');
+                    let et = self.getMicroDate(r.objects[0]['end']+'Z');
+                    self.sendVideoLoaded(self.records_cache.addToRange(st, et-st, r.objects[0]['url']));
+                    if (self.sync_start_time == start_time && self.sync_end_time == end_time){
+                        self.sync_start_time = undefined;
+                        self.sync_end_time = undefined;
+                    }
+                    self.records_cache.mergeIdentical();
+                    self.parent.updateCache();
+                    self.startSynchronize();
+                });
+
+
+            }
+            else if (r!='cancel'){
                 console.error('Syncronize fail: '+r);
                 self.redux.send(self,'set_state',{value:'sync_error'});
-                self.sendVideoLoaded(self.records_cache.addToRange(start_time, end_time-start_time, '#invalid'));
-                if (self.sync_start_time == start_time && self.sync_end_time == end_time){
-                    self.sync_start_time = undefined;
-                    self.sync_end_time = undefined;
-                }
-                self.records_cache.mergeIdentical();
-                self.parent.updateCache();
-                self.startSynchronize();
+                // Konst Fix
+                //self.sendVideoLoaded(self.records_cache.addToRange(start_time, end_time-start_time, '#invalid'));
+                //if (self.sync_start_time == start_time && self.sync_end_time == end_time){
+                //    self.sync_start_time = undefined;
+                //    self.sync_end_time = undefined;
+                //}
+                //self.records_cache.mergeIdentical();
+                //self.parent.updateCache();
+                //self.startSynchronize();
             }
         });
     }
@@ -4585,12 +4711,28 @@ class CSdVxgStorage extends CVxgStorage{
         this.sync_end_time = end_time;
         this.startSynchronize();
     }
+
     getVideo(utctime){
+
         if (!this.parent.isPlaying()) return super.getVideo(utctime);
         let i = this.records_cache.getRangeWithTimeIndex(utctime);
-        if (i===undefined || this.records_cache.range_durations[i]<0){
 
-            if (i && this.records_cache.range_durations[i]> -this.NOLOAD_DURATION) 
+        // Konst Debug
+        // We do not expect that time will be very close to live time
+        // This error means that WebPlayer set live position in the SD recording mode
+        if (Math.abs(new Date().getTime() - utctime) < 5000)
+        {
+            console.error("getVideo LIVE TIME ERROR . SetPosition does not work");
+            debugger;
+        }
+
+        // DEBUG
+        this.records_cache.outputTimeRange();
+
+        console.warn("getVideo time:"+ (new Date(utctime).toISOString()) + " dur:" + this.records_cache.range_durations[i]);
+
+        if (i===undefined || this.records_cache.range_durations[i]<0){
+            if (i && this.records_cache.range_durations[i]> -this.NOLOAD_DURATION)
                 return {time:parseInt(this.records_cache.range_times[i]),
                     msec:Math.sign(this.records_cache.range_durations[i])*parseInt(Math.abs(this.records_cache.range_durations[i])+this.records_cache.range_times[i]-parseInt(this.records_cache.range_times[i])),
                     src:this.records_cache.range_data[i].s,off:this.records_cache.range_data[i].o};
@@ -4622,8 +4764,9 @@ class CSdVxgStorage extends CVxgStorage{
                     if (right_time - left_time - this.SYNC_DURATION >= this.NOLOAD_DURATION)
                         left_time = right_time - this.SYNC_DURATION;
                 }
-        
+
                 if (right_time - left_time < this.NOLOAD_DURATION) return;
+                console.debug("getVideo synchronize: "+ (new Date(left_time).toISOString()) + " - " + (new Date(right_time).toISOString()));
                 this.synchronize(left_time, right_time);
                 return;
             }
@@ -4638,11 +4781,85 @@ class CSdVxgStorage extends CVxgStorage{
                 src:'',off:0};
             return;
         }
-        return {time:parseInt(this.records_cache.range_times[i]),
-            msec:Math.sign(this.records_cache.range_durations[i])*parseInt(Math.abs(this.records_cache.range_durations[i])+this.records_cache.range_times[i]-parseInt(this.records_cache.range_times[i])),
-            src:this.records_cache.range_data[i].s,off:this.records_cache.range_data[i].o};
+
+        console.warn("getVideo record from cashe:" + this.records_cache.range_data[i].s);
+        //self.parent.updateCache();
+        //return;
+
+        return  {time : parseInt(this.records_cache.range_times[i]),
+                 msec : Math.sign(this.records_cache.range_durations[i])*parseInt(Math.abs(this.records_cache.range_durations[i])+this.records_cache.range_times[i]-parseInt(this.records_cache.range_times[i])),
+                  src : this.records_cache.range_data[i].s,
+                  off : this.records_cache.range_data[i].o};
+
 
     }
+
+    overlapArray(s, e, records) {
+		var syncCalls = [];
+		for (var i = 0; i < records.length; i++) {
+			if (s < records[i].start) syncCalls.push({start: s, end: records[i].start});
+			if (e > records[i].end) {
+				var newStart = records[i].end;
+				if (records[i+1] != undefined && e >= records[i+1].start) {
+					var newEnd = records[i+1].start;
+					syncCalls.push({start: newStart, end: newEnd});
+					s = newEnd;
+					continue;
+				}
+				syncCalls.push({start: newStart, end: e})
+			}
+		}
+
+		return syncCalls;
+    }
+
+    chunkSyncCalls(syncCalls){
+        var chunkSize = 60 * 1000;
+        var chunkedSyncCalls = [];
+        for (var i = 0; i < syncCalls.length; i++) {
+            var callStart = Date.parse(syncCalls[i].start+'Z');
+            var callEnd = Date.parse(syncCalls[i].end+'Z');
+            var numChunks = Math.floor((callEnd - callStart) / chunkSize);
+            var remainder = (callEnd - callStart) % chunkSize;
+            for (var k = 0; k <= numChunks - 1; k++) {
+                var newStart = (chunkSize * k) + callStart;
+                var newEnd = newStart + chunkSize;
+                chunkedSyncCalls.push({start: new Date(newStart).toISOString().replace("Z", ""), end: new Date(newEnd).toISOString().replace("Z", "")});
+            }
+            if (remainder != 0) chunkedSyncCalls.push({start: new Date((callEnd - remainder)).toISOString().replace("Z", ""), end: new Date(callEnd).toISOString().replace("Z", "")})
+        }
+        return chunkedSyncCalls;
+    }
+    
+    syncAndCheck(s, e, progress_el_id, progress_incr) {
+        var cam = this.camera;
+		return new Promise (function(resolve, reject) {
+			// has to be here until cloud is fixed for the ending time
+            e = new Date(e+'Z').getTime() - 1;
+            e = new Date(e).toISOString().replace("Z", "");
+			if (e == s) resolve("No Range");
+            
+            cam.post_v2_storage_memorycard_synchronize(cam.id,{start:s,end:e}).then(function(obj) {
+				var taskId = obj.id;
+				var checkSync = setInterval(function() {
+					cam.get_v2_storage_memorycard_synchronize(cam.id, taskId).then(function(obj) {
+						if (obj.status == 'done') {
+                            var currVal = $(progress_el_id).val();
+							$(progress_el_id).val(currVal + progress_incr);
+							clearInterval(checkSync);
+							resolve("done");
+						}
+					}, function(err) {
+						console.log("error synchronizing: " + err.responseText);
+						clearInterval(checkSync);
+						reject();
+					});
+				}, 1000)			
+			}, function(err) {
+				console.log("error synchronizing: " + err.responseText);
+			});
+		})	
+	}
 }
 
 class CKVgxSdVideo extends CKVgxVideo{
@@ -4667,11 +4884,12 @@ if (val===undefined) debugger;
 */
 
 
-    }              	
+    }
     get SYNC_DURATION(){return this.options.sync_duration ? this.options.sync_duration*1000 : 15000;};
     get NOLOAD_DURATION(){return this.options.noload_duration ? this.options.noload_duration*1000 : 2000;};
-    get SD_TIMELINE_UPDATE_PERIOD(){return this.options.sd_timeline_update_period ? this.options.sd_timeline_update_period*1000 : 15000;};
-    get CAMINFO_UPDATE_PERIOD(){return this.options.caminfo_update_period ? this.options.caminfo_update_period*1000 : 3000;};
+    //Konst Increase the SD timeline update
+    get SD_TIMELINE_UPDATE_PERIOD(){return this.options.sd_timeline_update_period ? this.options.sd_timeline_update_period*1000 : 60000;};
+    get CAMINFO_UPDATE_PERIOD(){return this.options.caminfo_update_period ? this.options.caminfo_update_period*1000 : 30000;};
     invalidate(){
         let self = this;
         this.sdcardmode = false;
@@ -4738,6 +4956,8 @@ console.log('-->'+v);
             console.error('Invalid token');
             return;
         }
+        //Konst
+        var camera = this.camera;
         this.camera.get_v2_cameras({preview:true},this.camera.id).then(function(r){
             self.sdcardmode = !(!r || !r['memorycard_recording']);
             if (self.sdcardmode && !camera.isFullAccess()){
@@ -4751,7 +4971,13 @@ console.log('-->'+v);
 //                self.loadLiveImage();
 
                 self.setTimePromise(t);
-                self.updateRange(t - 1000*60*60*24, t + 1000*60*60*24, 1000);
+                var start = t - 1000*60*60*12;
+                var end = t + 1000*60*60*12;
+                var current = new Date().getTime();
+                if (current < end)
+                    end = current + 1000*60; // live + 60 seconds
+
+                self.updateRange(start, end, 1000);
                 self.redux.post(self,'poster_loaded',{data:{time:Date.now(),msec:1,src:r.preview.url},
                     debug:''+(new Date(parseInt(Date.now())).toISOString().replace('T',' '))});
                 self.sendRangeUpdate([],[]);
@@ -4771,11 +4997,15 @@ console.log('-->'+v);
         return {times:this.storage.sdcard_timeline.range_times,durations:this.storage.sdcard_timeline.range_durations};
     }
     updateRange(from, to, delay){
+        // Konst TODO
+        // We have a lot messages of this function
+        // Logic is wrong
+        //console.debug("updateRange from:" + new Date(from) + " to:" + new Date(to));
         if (!this.camera || isNaN(from) || isNaN(to)) return;
         if (!this.storage.storage_timeline || !this.storage.storage_timeline.checkNoEmptySpace(from,to))
             super.updateRange(from-60*60*1000, to+60*60*1000, delay, true);
         if (this.sdcardmode && (!this.storage.sdcard_timeline || !this.storage.sdcard_timeline.checkActually(from,to))){
-            if (to-from<4*60*60*1000) 
+            if (to-from<4*60*60*1000)
                 from = to - 4*60*60*1000;
             this.updateSdTimeline(from, to);
         } else {
@@ -4811,8 +5041,9 @@ console.log('-->'+v);
                 clearTimeout(self.sd_delay_timer);
                 self.sd_range_timer = undefined;
                 self.sd_delay_timer = setTimeout(upr,self.SD_TIMELINE_UPDATE_PERIOD);
-                self.redux.send(self,'set_state',{value:'sd_timeline_error'});
-                self.setStatus('error');
+                // We need to try to get a timeline
+                //self.redux.send(self,'set_state',{value:'sd_timeline_error'});
+                //self.setStatus('error');
             });
         }
         this.sd_range_timer = setTimeout(upr,0);
@@ -4822,7 +5053,7 @@ console.log('-->'+v);
         if (!this.timlineloaded) this.setState('firsttimelining');
 
         this.setState('sdtimelining');
-if (!self.camera) debugger;
+        if (!self.camera) debugger;
 
         let prev_camera_id = this.camera.id;
 
@@ -4833,6 +5064,7 @@ if (!self.camera) debugger;
 
             if (!r.data || !r.data.length) console.warn('Empty internal camera timeline!');
             else self.timlineloaded=true;
+
             if (r.error_code=='not_connected'){
                 if (!self.getState('notconnected'))
                     self.redux.send(self,'camera_connected',{value:false});
@@ -4861,13 +5093,16 @@ if (!self.camera) debugger;
                     if (!self.storage.sdcard_timeline.range_times.length)
                         self.storage.sdcard_timeline.addToRange(start_time, start_time - st);
                     else if (self.storage.sdcard_timeline.range_times[0] > start_time)
-                        self.storage.sdcard_timeline.addToRange(start_time, start_time - self.storage.sdcard_timeline.range_times[0]);
+                        // TimeRange
+                        // duration is negative
+                        self.storage.sdcard_timeline.addToRange(self.storage.sdcard_timeline.range_times[0],  self.storage.sdcard_timeline.range_times[0] - start_time);
+                        //self.storage.sdcard_timeline.addToRange(start_time, start_time - self.storage.sdcard_timeline.range_times[0]);
                 }
                 if (lasttime!==undefined && st-lasttime>0)
                     self.storage.sdcard_timeline.addToRange(lasttime, lasttime - st);
                 self.storage.sdcard_timeline.addToRange(st, et-st);
                 lasttime = et;
-            } else 
+            } else
                 self.storage.sdcard_timeline.addToRange(start_time, start_time - end_time);
 
             self.storage.sdcard_timeline.mergeIdentical();
@@ -4984,7 +5219,7 @@ if (!self.camera) debugger;
 window.customElements.define('k-video-sdvxg', CKVgxSdVideo);
 class CKPlayer extends HTMLElement {
     static get observedAttributes() {
-        return ['src','time','msec','playtime']; 
+        return ['src','time','msec','playtime'];
     }
     constructor() {
         super();
@@ -5040,7 +5275,7 @@ class CKPlayer extends HTMLElement {
             +(this.getAttribute('debuginfo')!==null?' debuginfo':'')
             +(this.getAttribute('autoplay')!==null?' autoplay':'')
             +(this.getAttribute('thumbnails')!==null?' thumbnails':'')
-            +playtime+options+' innerkplayer'+(this.getAttribute('statuses')!==null?' statuses':'')+'></'+tag+'>'+over;	
+            +playtime+options+' innerkplayer'+(this.getAttribute('statuses')!==null?' statuses':'')+'></'+tag+'>'+over;
         this.player = this.shadow.querySelector('[innerkplayer]');
         let ks = this.shadow.querySelectorAll('.k-control');
         for (let i=0;i<ks.length;i++)
@@ -5182,6 +5417,7 @@ class CKPlayer extends HTMLElement {
 
     setTimePromise(utctime){
         let self = this;
+        console.warn("setTimePromise utctime:"+ (new Date(utctime).toISOString()));
         return this.player.setTimePromise(utctime).then(function(){
             if (!self.player.currentUtcTime) return;
             self.dispatchEvent(new CustomEvent('timeupdate',{cancelable: false, bubbles: true, detail: {currentUtcTime:self.player.currentUtcTime}}));
@@ -5210,12 +5446,12 @@ class CKPlayer extends HTMLElement {
         if (!this.player)
             return;
         if (name==='src') {
-//            self.new_src = true; 
+//            self.new_src = true;
             self.player.clearState('invalidtoken');
             if (!newValue) {
                 self.player.invalidate();
                 return;
-            } 
+            }
             if (self.player.camera)
                 self.player.camera.setHook(self.hook_before, self.hook_after);
             else{
@@ -5239,7 +5475,7 @@ class CKPlayer extends HTMLElement {
                 });
         }
 
-        if (name==='time') setTimeout(function(){self.player.setAttribute('time',newValue);},0);
+        if (name==='time') setTimeout(function(){console.warn("setAttribute3('time')=",new Date((newValue)));self.player.setAttribute('time',newValue);},0);
         if (name==='msec') setTimeout(function(){self.player.setAttribute('msec',newValue);},0);
     }
     static get css() {
