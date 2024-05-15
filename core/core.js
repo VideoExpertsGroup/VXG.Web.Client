@@ -944,6 +944,7 @@ $( document ).ready(function() {
             $('.left-top').css('width', '100px');
             $('.left-top .username').css('visibility', 'hidden');
             $('.profile-img').css("width", "40px")
+            $('.profile-img').addClass("closed");
             $('.global-menu .menu-icon').css("margin-right", "200px")
             $('.left-bottom').css('visibility', 'hidden');
             $('.bottom-global-menu').css('visibility', 'hidden');
@@ -956,7 +957,8 @@ $( document ).ready(function() {
             $('.leftblock').css('width', '200px');
             $('.left-top').css('width', '200px');
             $('.left-top .username').css('visibility', 'visible');
-            $('.profile-img').css("width", "71px")
+            $('.profile-img').css("width", "71px");
+            $('.profile-img').removeClass("closed");
             $('.global-menu .menu-icon').css("margin-right", "25px")
             $('.left-bottom').css('visibility', 'visible');
             $('.bottom-global-menu').css('visibility', 'visible');
