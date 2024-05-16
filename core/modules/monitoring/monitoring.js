@@ -667,7 +667,7 @@ window.screens['monitoring'] = {
     },
     createLocationList: function(locationHierarchy) {
         if (locationHierarchy instanceof Object && !(locationHierarchy instanceof String)) {
-            var firstObj = Object.keys(locationHierarchy)[0].includes("province") && !Object.keys(locationHierarchy)[1] ? Object.keys(locationHierarchy)[0] : Object.keys(locationHierarchy)[1];
+            var firstObj = Object.keys(locationHierarchy)[0] && Object.keys(locationHierarchy)[0].includes("province") && !Object.keys(locationHierarchy)[1] ? Object.keys(locationHierarchy)[0] : Object.keys(locationHierarchy)[1];
             var locType = firstObj ? firstObj.split("_")[0] : "EMPTYLOC";
             var ul = $(`<ul class="location-hierarchy ${locType}-ul" ${(locType != "province" ? `style="display:none"` : `id="monitor-locations"`)}></ul>`);            
             for (var child in locationHierarchy) {
