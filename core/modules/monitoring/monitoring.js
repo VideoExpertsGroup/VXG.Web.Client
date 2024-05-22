@@ -600,7 +600,7 @@ window.screens['monitoring'] = {
         if (!noLocationCams) {
             window.vxg.cameras.getCameraListPromise(500, 0, undefined, "location,isstorage", undefined).then((noLocsCams) => {
                 var noLocsDiv;
-                var noLocsCams_noStorage = noLocsCams.filter(cam => { return cam.src.meta.isstorage == undefined});
+                var noLocsCams_noStorage = noLocsCams.filter(cam => { return cam.src.meta?.isstorage == undefined});
                 if (!locsSet && noLocsCams_noStorage.length == 0) {
                     noLocsDiv = $('<div class="noCams"> <p class="noCamsMessage"> No cameras have been added to this account. </p> </div>')
                 } else {
@@ -739,7 +739,7 @@ window.screens['monitoring'] = {
                                 self.getSubLocations(locationHierarchy, 1, cameras, [currentProvince]);
                                 if (i == locationsArr.length - 1) {
                                     window.vxg.cameras.getCameraListPromise(500, 0, undefined, "location,isstorage", undefined).then((noLocs) => {
-                                        var noLocs_noStorage = noLocs.filter(cam => { return cam.src.meta.isstorage == undefined});
+                                        var noLocs_noStorage = noLocs.filter(cam => { return cam.src.meta?.isstorage == undefined});
                                         if (noLocs_noStorage.length > 0) localStorage.noLocCams = JSON.stringify(noLocs_noStorage);
                                         localStorage.locationHierarchyCams = JSON.stringify(locationHierarchy);
                                         self.onLocationHierarchyLoaded(locationHierarchy);
@@ -762,7 +762,7 @@ window.screens['monitoring'] = {
                 prevLocs.forEach(prevLoc => {
                     if (cam.src.meta && cam.src.meta[prevLoc] == undefined) camInLoc = false;
                 })
-                if (camInLoc && cam.src.meta[locTypes[locLevel]] == undefined) {
+                if (camInLoc && cam.src.meta && cam.src.meta[locTypes[locLevel]] == undefined) {
                     return cam;
                 }
             })
@@ -774,7 +774,7 @@ window.screens['monitoring'] = {
             // get rid of any cameras that don't have the previous filter
             var newLocsCams = cameras.filter(cam => {
                 var inCurrentLoc = true;
-                if (cam.src.meta[locTypes[locLevel]] == undefined) inCurrentLoc = false;
+                if (cam.src.meta && cam.src.meta[locTypes[locLevel]] == undefined) inCurrentLoc = false;
                 prevLocs.forEach(prevLoc => {
                     if (cam.src.meta && cam.src.meta[prevLoc] == undefined) {inCurrentLoc = false}
                 })
@@ -786,7 +786,7 @@ window.screens['monitoring'] = {
                 prevLocs.forEach(prevLoc => {
                     if (cam.src.meta && cam.src.meta[prevLoc] == undefined) camInLoc = false;
                 })
-                if (camInLoc && cam.src.meta[locTypes[locLevel]] == undefined) {
+                if (camInLoc && cam.src.meta && cam.src.meta[locTypes[locLevel]] == undefined) {
                     return cam;
                 }
             })
@@ -797,7 +797,8 @@ window.screens['monitoring'] = {
 
             newLocsCams.forEach(cam => {
                 // checking if current location is in the hierarchy
-                var currLocName = locTypes[locLevel].toLowerCase() + "_" + cam.src.meta[locTypes[locLevel]].replaceAll(" ", "_");
+                var metaLoc = cam.src.meta ? cam.src.meta[locTypes[locLevel]].replaceAll(" ", "_") : "";
+                var currLocName = locTypes[locLevel].toLowerCase() + "_" + metaLoc;
                 var currentLocPath = prevLocs.concat(currLocName)
                 const currentLoc = currentLocPath.reduce((object, key) => {
                     return (object || {})[key];
