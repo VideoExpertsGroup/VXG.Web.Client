@@ -656,6 +656,37 @@ function cachedCamerasCallback(r) {
     return ret;
 }
 
+vxg.api.cloud.getCameraStatusChange = function() {
+    // when the api is implemented this will only get cameras whos status has changed
+    if (!localStorage.cameraList) return;
+    var data = {"meta_not": "isstorage", "limit": 1000};
+    let headers = vxg.api.cloud.getHeader();
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+
+    return $.ajax({
+        type: 'GET',
+        url: vxg.api.cloud.apiSrc + '/api/v5/channels/',
+        headers: headers,
+        contentType: "application/json",
+        data: data
+    }).then(function(updatedCams) {
+        // check the statuses against what's in the camera list
+        var currentList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
+        var changedStatus = [];
+        currentList.objects = currentList.objects.map(curr => {
+            var currId = curr.id;
+            var updatedCam = updatedCams.objects.filter(c => c.id == currId);
+            if (!updatedCam || updatedCam.length == 0) return curr;
+            if (curr.status != updatedCam[0].status) changedStatus.push(updatedCam[0]);
+            curr.status = updatedCam[0].status;
+            return curr;
+        });
+        localStorage.cameraList = JSON.stringify(currentList);
+        return changedStatus;
+    });
+}
+
 vxg.api.cloud.getCameraInfo = function(channel_id, access_token, obj){
     var data = obj || {};
     data.include_meta = obj && obj.include_meta ? obj.include_meta : true;

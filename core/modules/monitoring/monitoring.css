@@ -811,6 +811,11 @@ camfield > span {
     white-space: nowrap;
     font-size: 13px;
 }
+
+.parent-cam:not(:has(camfield > i)) {
+    display: none;
+}
+
 /* .card-view-title {
 	 display:none;
 }
@@ -952,7 +957,8 @@ input.token-input {
     width:100%;
     display: flex;
     flex-direction: column;
-    height: 86.5vh;
+    overflow-y: auto;
+    height: 82vh !important;
 }
 
 .row {

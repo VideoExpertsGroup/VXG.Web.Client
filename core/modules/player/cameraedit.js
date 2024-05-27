@@ -609,20 +609,22 @@ CameraEditControl = function(){
                             var locationHierarchyCams = localStorage.locationHierarchyCams ? JSON.parse(localStorage.locationHierarchyCams) : {};
                             var formattedCam = new vxg.cameras.objects.Camera(newCam.token ? newCam.token : newCam.id);
                             formattedCam.src = newCam;
-                            var locArr = locationStr.split(":");
+                            var locArr = locationStr ? locationStr.split(":") : [];
                             if (window.isTelconet) {
                                 var camGroup = newCam.meta.group;
                                 if (camGroup && locationStr.split(":").length == 3) {
                                     locArr.push(camGroup);
                                     locArr.push("cams");
                                     window.core.locationHierarchy.addCamToHierarchy(locationHierarchyCams, locArr, formattedCam);
-                                } else {
+                                } else if (locArr.length > 0) {
                                     locArr.push("cams");
                                     window.core.locationHierarchy.addCamToHierarchy(locationHierarchyCams, locArr, formattedCam);
                                 }
                             } else {
-                                locArr.push("cams");
-                                window.core.locationHierarchy.addCamToHierarchy(locationHierarchyCams, locArr, formattedCam);
+                                if (locArr.length > 0) {
+                                    locArr.push("cams");
+                                    window.core.locationHierarchy.addCamToHierarchy(locationHierarchyCams, locArr, formattedCam);
+                                }
                             }
 
                             localStorage.locationHierarchyCams = JSON.stringify(locationHierarchyCams);
@@ -632,7 +634,7 @@ CameraEditControl = function(){
                             var insertIndex = tableData.length;
                             var order = insertIndex + 1;
                             let captured = newCam && newCam.meta && newCam.meta.capture_id && vxg.user.src.capture_id == newCam.meta.capture_id ? ' captured' : '';
-                            let statusBlock = '<div class="caminfo tablecaminfo '+newCam.status+' '+(newCam.status=='active'?' online':'')+'">'+ (newCam.status=='active'?$.t('common.online'):$.t('common.offline'))+'</div>';
+                            let statusBlock = '<div class="font-md caminfo tablecaminfo '+newCam.status+' '+(newCam.status=='active'?' online':'')+'">'+ (newCam.status=='active'?$.t('common.online'):$.t('common.offline'))+'</div>';
                             var tableGroup = newCam.meta && newCam.meta.group ? newCam.meta.group : "";
                             if (tableGroup.toLocaleLowerCase() == "favorite" || tableGroup.toLocaleLowerCase() == "favourite") {
                                 tableGroup = $.t('common.favourite');
@@ -650,7 +652,7 @@ CameraEditControl = function(){
                                     <campreview onclick_toscreen="tagsview" style="cursor: pointer;"></campreview>`,
                                     status: statusBlock,
                                     recording: newCam.recording ? $.t('action.yes') : $.t('action.no'),
-                                    name: newCam.name,
+                                    name: newCam.name +  `${newCam.meta.subid == 'NOPLAN' ? ' (' + $.t('common.noSubscription') + ')' : ''}`,
                                     location: newCam.meta && newCam.meta.location ? newCam.meta.location : "",
                                     group: tableGroup,
                                     action: `<div class="settings" access_token="${newCam.token}" cam_order="${order}" cam_id="${newCam.id}" gateway_id="${null}" gateway_token="${null}">
@@ -859,8 +861,35 @@ CameraEditControl = function(){
                         formattedCam.src = updatedCam;
                         window.core.locationHierarchy.updateCamInHierarchy(locationHierarchyCams, oldLocArr, formattedCam);
                         localStorage.locationHierarchyCams = JSON.stringify(locationHierarchyCams);
-                        
 
+                        var tableData = $("#table").bootstrapTable('getData');
+                        var rowIndex = tableData.findIndex((cam) => cam.camId == updatedCam.id);
+                        var order = rowIndex + 1;
+                        let captured = updatedCam && updatedCam.meta && updatedCam.meta.capture_id && vxg.user.src.capture_id == updatedCam.meta.capture_id ? ' captured' : '';
+                        let statusBlock = '<div class="font-md caminfo tablecaminfo '+updatedCam.status+' '+(updatedCam.status=='active'?' online':'')+'">'+ (updatedCam.status=='active'?$.t('common.online'):$.t('common.offline'))+'</div>';
+                        var tableGroup = updatedCam.meta && updatedCam.meta.group ? updatedCam.meta.group : "";
+                        if (tableGroup.toLocaleLowerCase() == "favorite" || tableGroup.toLocaleLowerCase() == "favourite") {
+                            tableGroup = $.t('common.favourite');
+                        }
+                        $("#table").bootstrapTable('updateRow', {
+                            index: rowIndex,
+                            row: {
+                                camId: updatedCam.id,
+                                state: `<label class="filter-label custom-checkbox" style="margin-left: 25%;">
+                                <input type="checkbox" class="groupCamCheck" cam_name="${updatedCam.name}" cam_id="${updatedCam.id}" cam_order="${order}">
+                                <span class="checkmark"></span>	
+                            </label>`,
+                                id: `<div class="camerablock${captured}" access_token="${updatedCam.id}" id="scrollto${updatedCam.id}">
+                                <campreview onclick_toscreen="tagsview" style="cursor: pointer;"></campreview>`,
+                                status: statusBlock,
+                                recording: updatedCam.recording ? $.t('action.yes') : $.t('action.no'),
+                                name: updatedCam.name +  `${updatedCam.meta.subid == 'NOPLAN' ? ' (' + $.t('common.noSubscription') + ')' : ''}`,
+                                location: updatedCam.meta && updatedCam.meta.location ? updatedCam.meta.location : "",
+                                group: tableGroup,
+                                hide: 1
+                            }
+                        })
+                        
 						return screens['cameras'].on_show();
 					})
 				})

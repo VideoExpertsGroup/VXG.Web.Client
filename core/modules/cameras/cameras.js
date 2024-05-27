@@ -332,7 +332,7 @@ window.screens['cameras'] = {
             }
         }
         else if (this.getState().grid < 0) $('.cammap').show()
-        else return this.loadCameras(filterarray, true)
+        else return self.loadCameras(filterarray, true);
     },
     playChannels: function(resolve) {
         if (this.camera_list_promise) return this.camera_list_promise;
@@ -348,7 +348,20 @@ window.screens['cameras'] = {
             $('.camlist').show();
             $('.loc-cont').hide();
             $('.cammap').hide();
-            return;
+
+            return vxg.api.cloud.getCameraStatusChange().then(function(changedCams) {
+                // updateCell, index, fieldName
+                var tableData = $("#table").bootstrapTable('getData');
+                for (var i = 0; i < changedCams.length; i++) {
+                    var rowIndex = tableData.findIndex((cam) => cam.camId == changedCams[i].id);
+                    var statusBlock ='<div class="font-md caminfo tablecaminfo '+changedCams[i].status+' '+(changedCams[i].status=='active'?' online':'')+'">'+ (changedCams[i].status=='active'?$.t('common.online'):$.t('common.offline'))+'</div>';
+                    $("#table").bootstrapTable('updateCell', {
+                        index: rowIndex,
+                        field: "status",
+                        value: statusBlock
+                    });
+                }
+            })
         } else {
             $('.loc-cont').hide();
             $('.cammap').hide();

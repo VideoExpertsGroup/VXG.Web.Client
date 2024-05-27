@@ -253,6 +253,15 @@ window.screens['monitoring'] = {
             }
         })
 
+        $('.camlist-monitoring').on('dblclick', function(e) {
+            // reset the monitoring list by calling it again
+            localStorage.removeItem("locationHierarchyCams");
+            localStorage.removeItem("noLocCams");
+            $(".camlist-monitoring").empty();
+            $(".camlist-monitoring").append($('<div class="loader section-loader monitoring-loader"></div>'))
+            return self.createLocationHierarchy();
+        })
+
         let gridStateArray = [];
         gridStateArray[2] = '2 x 2';
         gridStateArray[3] = '3 x 3';
