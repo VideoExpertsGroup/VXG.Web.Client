@@ -10,8 +10,7 @@ if (!MCore::$core->current_user->isDealer())
     error(403,'No rights');
 
 list($cameraID) = MCore::checkAndGetInputParameters(['id']);
-list($gatewayUrl) = MCore::getInputParameters(['gatewayUrl']);
-
+list($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword) = MCore::getInputParameters(['gatewayUrl', 'gatewayId', 'gatewayUsername', 'gatewayPassword']);
 $camera = MCamera::getCameraByChannelIdAndUser($cameraID, MCore::$core->current_user);
 
 //MCamera::updateLocationByChannelID($cameraID, MCore::$core->current_user, '');
@@ -19,7 +18,7 @@ $planId = MCamera::getCameraPlanId($cameraID);
 
 if ($camera){
     if ($gatewayUrl) {
-        $gatewayAuthToken = $camera->getGatewayAuthToken($gatewayUrl);
+        $gatewayAuthToken = $camera->getGatewayAuthToken($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword);
         $camera->removeCameraFromGateway($gatewayUrl, $gatewayAuthToken);
     }
     $camera->remove();

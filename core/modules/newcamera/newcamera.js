@@ -20,16 +20,16 @@ window.screens['newcamera'] = {
         this.access_token = access_token;
 
         var gatewayCamId = $(this.src).getNearParentAtribute("channel_id");
-        var gatewayCamToken = $(this.src).getNearParentAtribute("gateway_token");
-
-        if (gatewayCamId && gatewayCamToken) {
+        //var gatewayCamToken = $(this.src).getNearParentAtribute("gateway_token");
+        //if (gatewayCamId && gatewayCamToken) {
+        if (gatewayCamId) {
             this.gatewayCamId = gatewayCamId;
-            this.gatewayCamToken = gatewayCamToken;
+            //this.gatewayCamToken = gatewayCamToken;
             $('.rtsp-only-label').attr('hidden', false);
         } else {
             this.wrapper.find('.newcameratabs').removeClass("gatewayCamera");
             this.gatewayCamId = null;
-            this.gatewayCamToken = null;
+            //this.gatewayCamToken = null;
         }
 
         if (!access_token) return defaultPromise();
@@ -45,7 +45,8 @@ window.screens['newcamera'] = {
             this.wrapper.find('cameraedit').attr('access_token','');
 
             if (this.gatewayCamId) {
-                return vxg.api.cloud.getCameraConfig(this.gatewayCamId, this.gatewayCamToken).then(function(cam) {
+                //return vxg.api.cloud.getCameraConfig(this.gatewayCamId, this.gatewayCamToken).then(function(cam) {
+                return vxg.api.cloud.getCameraConfig(this.gatewayCamId).then(function(cam) {
                     self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add3').removeClass('add4').addClass('add5');
                     self.wrapper.find('.newcameratabs').addClass("gatewayCamera");
                     $('.headerBlock .header-center').text(`${$.t('newCamera.addCameraTo')} ${cam.name}`);

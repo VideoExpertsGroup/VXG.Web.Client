@@ -239,8 +239,8 @@ CloudOneCamera.updateCameraPromise2 = function(camera_struct){
  *   cam_object.deleteCameraPromise();
  * });
  */
-CloudOneCamera.deleteCameraPromise = function(gatewayUrl = null){
-    return vxg.api.cloudone.camera.del(this.camera_id, gatewayUrl).then(function(r){
+CloudOneCamera.deleteCameraPromise = function(gatewayInfo = null){
+    return vxg.api.cloudone.camera.del(this.camera_id, gatewayInfo).then(function(r){
         if (r['allCamsToken']!==undefined) {
             vxg.user.src.allCamsToken = r['allCamsToken'];
             vxg.api.cloud.setAllCamsToken(r['allCamsToken']);
@@ -281,7 +281,9 @@ vxg.cameras.createCameraGatewayPromise = function(gatewayInfo){
         uuid: gatewayInfo.uuid,
         macAddress: gatewayInfo.guid,
         serialnumber: gatewayInfo.guid,
-        max_num_cameras: 64
+        max_num_cameras: 64,
+        gatewayUsername: gatewayInfo.username,
+        gatewayPassword: gatewayInfo.password
     }
 
     return vxg.api.cloudone.camera.add(data).then(function(r){
@@ -389,6 +391,7 @@ vxg.cameras.updateGatewayPromise = function(cameraInfo, formData){
     var currentMeta = cameraInfo.meta;
     currentMeta.location = formData.location;
     currentMeta.group = formData.group;
+    currentMeta.gateway_password = formData.password;
 
     var data = {
         meta: currentMeta
@@ -412,9 +415,9 @@ vxg.cameras.updateGatewayPromise = function(cameraInfo, formData){
 
 }
 
-vxg.cameras.removeCameraFromListPromise = function(cameraId, gatewayUrl = null){
+vxg.cameras.removeCameraFromListPromise = function(cameraId, gatewayInfo = null){
     return vxg.cameras.getCameraByIDPromise(cameraId).then(function(cam) {
-        return cam.deleteCameraPromise(gatewayUrl).then(function(){ 
+        return cam.deleteCameraPromise(gatewayInfo).then(function(){ 
             var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
             if (cameraList) {
                 cameraList.objects = cameraList.objects.filter(c => c.id != cam.camera_id);

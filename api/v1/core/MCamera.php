@@ -1016,17 +1016,27 @@ class MCamera{
         return $ret;
     }
 
-    public function getGatewayAuthToken($gatewayUrl) {
+    public function getGatewayAuthToken($gatewayUrl, $gatewayId, $username = "", $password = "") {
         if ($gatewayUrl == "") error(501, "Gateway url not available yet.");
-        
-        $username = MCore::$core->config['gateway_default_user'];
-        $pass = MCore::$core->config['gateway_default_pass'];
+        if (!$username && !$password) {
+            $server = MCore::$core->current_user->getServerData();
+            if (!StreamLandAPI::generateServicesURLs($server['serverHost'], $server['serverPort'], $server['serverLkey']))
+                error(555, 'Failed generateServicesURLs');
 
-        if (!$username || !$pass) error(500, "Missing default user and default pass to access auth token.");
+            $gatewayCameras = StreamLandAPI::getCamerasList($gatewayId);
+            foreach($gatewayCameras['objects'] as $cam) {
+                if (array_key_exists('gateway_username', $cam['meta']) && array_key_exists('gateway_password', $cam['meta']) && $cam['meta']['gateway_username'] != "" && $cam['meta']['gateway_password'] != "") {
+                    $username = $cam['meta']['gateway_username'];
+                    $password = $cam['meta']['gateway_password'];
+                }
+            }
+        }
+
+        if (!$username || !$password) error(500, "Missing default user and default pass to access auth token.");
 
         $json_params = json_encode([
             "username"=>$username,
-            "password"=>$pass
+            "password"=>$password
         ]);
 
         $authUrl = $gatewayUrl.'/api/auth-token/';
@@ -1042,7 +1052,7 @@ class MCamera{
         $sub = '{"token":"';
         $arr = explode($sub, $result);
         $important = $arr[1];
-        $r = $important ? str_replace('"}', "",$important) : error(500, "Incorrect return from gateway auth");
+        $r = $important ? str_replace('"}', "",$important) : error(500, "Incorrect return from gateway auth.");
 
         return $r;
     }

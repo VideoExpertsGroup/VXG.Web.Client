@@ -140,7 +140,7 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null, camOr
         
                 if (savedCam && savedCam.url && savedCam.url != "nourl") {
                     gatewayUrl = savedCam.url;
-                    return doCameraDelete(camera, oldsubid, camOrder, gatewayUrl);
+                    return doCameraDelete(camera, oldsubid, camOrder, gatewayUrl, gatewayId);
                 } else if (!savedCam) {
                     vxg.api.cloud.getCameraConfig(gatewayId, gatewayToken).then(function(config) {
                         return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
@@ -151,7 +151,7 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null, camOr
                                 cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
                                 sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));  
                                 gatewayUrl = urlinfo.url;
-                                return doCameraDelete(camera, oldsubid, camOrder, gatewayUrl);
+                                return doCameraDelete(camera, oldsubid, camOrder, gatewayUrl, gatewayId);
                             }
                             
                         });
@@ -164,8 +164,8 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null, camOr
     })
 }
 
-function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null) {
-    if (camera) camera.deleteCameraPromise(gatewayUrl).then(function(){
+function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null, gatewayId = null) {
+    if (camera) camera.deleteCameraPromise(gatewayUrl, gatewayId).then(function(){
         var planIndex = vxg.user.src.plans ? vxg.user.src.plans.findIndex(p => p.id == oldsubid) : -1;
         if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
         

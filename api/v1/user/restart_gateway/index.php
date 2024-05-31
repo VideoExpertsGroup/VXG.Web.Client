@@ -9,9 +9,9 @@ MCore::checkOnlyForAuthorized();
 if (!MCore::$core->current_user->isDealer())
     error(403,'No rights');
 
-list($gatewayUrl) = MCore::checkAndGetInputParameters(['gatewayUrl']);
+list($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword) = MCore::checkAndGetInputParameters(['gatewayUrl', 'gatewayId', 'gatewayUsername', 'gatewayPassword']);
 
-$gatewayAuthToken = MCamera::getGatewayAuthToken($gatewayUrl);
+$gatewayAuthToken = MCamera::getGatewayAuthToken($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword);
 if(!MCamera::restartGateway($gatewayUrl, $gatewayAuthToken)) {
     MCore::$core->response['status'] = "Error restarting gateway";
 }

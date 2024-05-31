@@ -299,14 +299,14 @@ vxg.api.cloud.getUplinkUrl = function(camid, camurl) {
     });
 }
 
-vxg.api.cloud.restartGateway = function(gatewayUrl) {
+vxg.api.cloud.restartGateway = function(gatewayInfo) {
     return vxg.user.getToken().then(function(r){
-        let data={gatewayUrl:gatewayUrl, token: r};
+        gatewayInfo.token = r;
         return $.ajax({
             type: 'POST',
             url: vxg.api.cloudone.apiSrc+'/api/v1/user/restart_gateway/',
             contentType: "application/json",
-            data: JSON.stringify(data)
+            data: JSON.stringify(gatewayInfo)
         });
     });
 }

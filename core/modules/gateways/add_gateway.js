@@ -78,6 +78,7 @@ window.screens['add_gateway'] = {
         $('[name="name"]').val(cam.name);
         $('[name="location"]').val(loc);
         $('[name="group"]').val(group);
+        $('[name="password"]').val(cam.meta.gateway_password);
     },
     reset: function() {
         $('.gateway-input').val('');

@@ -17,6 +17,10 @@
     font-size: 14px;
 }
 
+.gateway_cams.nogatewaycams > .toolbar {
+    display: none;
+}
+
 .screens > .recorders .gatewaylist > .card {
     margin: 0 1em 1em 0;
 }
@@ -273,6 +277,11 @@ a.listmenu-item.mwebui {
     cursor: unset;
 }
 
+.gateway-menu.disabled {
+    background-color: #e0e0e0;
+    pointer-events: none;
+}
+
 .gateway-info {
     display: flex;
 }
@@ -316,6 +325,18 @@ a.listmenu-item.mwebui {
 
 .card-view-title {
     display:none;
+}
+
+#gatewaycams-table tbody tr td:last-child, #gateway-table tbody tr td:last-child{
+    display: none;
+}
+#gatewaycams-table thead tr th:last-child > div:first-child, #gateway-table thead tr th:last-child > div:first-child {
+    display: none;
+}
+#gatewaycams-table thead tr th:last-child input, #gateway-table thead tr th:last-child input {
+    width: 0px !important;
+    border: none;
+    padding: 0;
 }
 
 .bootstrap-table .fixed-table-container .table tbody tr .card-view .card-view-title {

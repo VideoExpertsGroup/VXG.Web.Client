@@ -23,6 +23,8 @@ window.screens['gateway_cams'] = {
         if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
         $('.addgatewaycams').attr("channel_id", self.gatewayChannelId);
         $('.addgatewaycams').attr("gateway_token", self.gatewayToken);
+        $('.addgatewaycams').addClass("disabled")
+        $('#gatewaycams-table').bootstrapTable('destroy');
         this.loadGatewayCams()
 
         var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
@@ -126,6 +128,11 @@ window.screens['gateway_cams'] = {
                 field: "action",
                 title: $.t('common.actionTitle')
             },
+            {
+                field: "hide",
+                title: "hide",
+                filterControl: "input",
+            }
         ]
 
         var tableData = [];
@@ -146,7 +153,8 @@ window.screens['gateway_cams'] = {
                 group: camInfo.meta && camInfo.meta.group ? camInfo.meta.group : "",
                 action: `<div class="settings-gatewaycam" access_token="${camInfo.token}" cam_order="${count+1}" cam_id="${channelID}" gateway_id="${self.gatewayChannelId}" gateway_token="${self.gatewayToken}">
                 <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
-            </div>`
+            </div>`,
+                hide: 1
             })
             count++;
         });

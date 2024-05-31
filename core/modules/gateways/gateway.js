@@ -95,6 +95,11 @@ window.screens['gateway'] = {
                 field: "action",
                 title: $.t('common.actionTitle')
             },
+            {
+                field: "hide",
+                title: "hide",
+                filterControl: "input",
+            }
         ];
 
         var tableData = [];
@@ -112,7 +117,8 @@ window.screens['gateway'] = {
                 group: camInfo.meta.group,
                 action: `<div class="settings-gateway" channel_id="${camInfo.id}" access_token="${camInfo.token}" gateway_id="${camInfo.meta.gateway_id}">
                 <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
-            </div>`
+            </div>`,
+                hide: 1
             })
             count++;
         });
@@ -181,7 +187,7 @@ window.screens['gateway'] = {
 
         var menu =  $(`
         <div class="simplemenu">
-        <div class="listmenu-item gateway-menu mwebui_gateway"> <a id="ui-link" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.gatewayUI')} </span></a></div>
+        <div class="listmenu-item gateway-menu mwebui_gateway disabled" title="Gateway Offline"> <a id="ui-link" target="_blank"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.gatewayUI')} </span></a></div>
         <div class="listmenu-item gateway-menu mconfigure_gateway" ifscreen="add_gateway" onclick_toscreen="add_gateway" editGateway="${gatewayid}"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.config')} </span></div>
         <div class="listmenu-item gateway-menu mtrash_gateway" onclick="onGatewayDelete('${gatewayid}', '${camid}', '${access_token}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('action.remove')} </span></div>
         </div>`);
@@ -192,21 +198,20 @@ window.screens['gateway'] = {
 
         if (savedCam && savedCam.url && savedCam.url != "nourl") {
             $(menu).find("#ui-link").attr("href", savedCam.url);
-            $(menu).find(".mwebui").css("display", "block");
+            $(menu).find(".mwebui_gateway").removeClass("disabled");
+            $(menu).find(".mwebui_gateway").attr('title',''); 
         } 
         
         if (!savedCam) {
             core.elements['global-loader'].show();
             vxg.api.cloud.getCameraConfig(camid, access_token).then(function(config) {
                 return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
-                    if (!urlinfo.id && !urlinfo.url) {
-                        cameraUrls.push({id: config.id, url: "nourl"});
-                        sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
-                    } else {
+                    if (urlinfo.id && urlinfo.url) {
                         cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
                         sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));  
                         $(menu).find("#ui-link").attr("href", urlinfo.url);
-                        $(menu).find(".mwebui").css("display", "block");
+                        $(menu).find(".mwebui_gateway").removeClass("disabled");
+                        $(menu).find(".mwebui_gateway").attr('title',''); 
                     }
                     core.elements['global-loader'].hide();
                     addSimpleMenu(menu, self, e);
@@ -265,7 +270,7 @@ function onGatewayDelete(gateway_id, channel_id, access_token){
         var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
         var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : [];
         var gatewayUrl = cameraUrls.length != 0 ? cameraUrls.find(x => x.id == channel_id) : "";
-
+        gatewayUrl = gatewayUrl == "nourl" ? "" : gatewayUrl;
         if (!gatewayUrl) {
             vxg.api.cloud.getCameraConfig(channel_id, access_token).then(function(config) {
                 return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
@@ -290,27 +295,37 @@ function onGatewayDelete(gateway_id, channel_id, access_token){
 function doGatewayDelete(gateway_id, gatewayUrl) {
     return vxg.api.cloud.getCamerasList({"meta": gateway_id, "detail":'detail'}).then(function(r){
         //var cameraIds = cameras.objects.map((cam) => cam.id);
+        var gatewayUsername = "";
+        var gatewayPassword = "";
         var cameras = r.objects;
         let currentCam;
-        let promiseChain = Promise.resolve();
+        let promiseChain = Promise.resolve();        
         for (let i = 0; i < cameras.length; i++) { 
             currentCam = cameras[i];
 
             const makeNextPromise = (currentCam) => () => {
-                var useGatewayUrl = currentCam.meta && currentCam.meta.gateway_cam ? gatewayUrl : null;
-                return vxg.cameras.removeCameraFromListPromise(currentCam.id, useGatewayUrl)
+                var useGatewayUrl = currentCam.meta && (currentCam.meta.gateway_cam || currentCam.meta.gateway) ? gatewayUrl : null;
+                if (currentCam.meta && currentCam.meta.gateway) {
+                    gatewayUsername = currentCam.meta.gateway_username;
+                    gatewayPassword = currentCam.meta.gateway_password;
+                }
+                var gatewayInfo = {
+                    gatewayUsername: gatewayUsername,
+                    gatewayPassword: gatewayPassword,
+                    gatewayUrl: useGatewayUrl,
+                    gatewayId: gateway_id
+                }
+                return vxg.cameras.removeCameraFromListPromise(currentCam.id, gatewayInfo)
                     .then((r) => {
                         if (i == cameras.length - 1) {
-                            return vxg.api.cloud.restartGateway(gatewayUrl).then(function() {
+                            return vxg.api.cloud.restartGateway(gatewayInfo).then(function() {
                                 location.reload();
                             });
                         }
                         return true;
-                    }).catch(err => {
+                    }, function(err) {
                         console.log(err);
                         window.core.showToast('error');
-                    }).finally(() => {
-                        core.elements['global-loader'].hide();
                     });
             }
             promiseChain = promiseChain.then(makeNextPromise(currentCam))
