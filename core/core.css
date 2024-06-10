@@ -138,7 +138,7 @@ input, select{
     height: 34px;
 }
 
-input:disabled, select:disabled {
+input:disabled, select:disabled, textarea:disabled {
     background-color: #ededed;
 }
 

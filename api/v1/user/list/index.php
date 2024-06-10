@@ -76,11 +76,14 @@ while($row = $stmt->fetch()){
         $row2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
         $cameras = []; $locations = [];
         foreach($row2 as $v) {
-            $cameras[] =$v['cameraCHID']; 
+            if ($v['cameraCHID']) {
+                $cameras[] =$v['cameraCHID']; 
+            }
             if ($v['location'] != ""){
                 $locations[] = $v['location'];
             }
         }
+        
         $stmt3 = $conn->prepare('SELECT count(*) AS "totalUsers" FROM "user" WHERE "parentUserID"=' . $row['id']);
         if (!$stmt3->execute()) StaticLib::error(500, $stmt3->errorInfo());
         $row3 = $stmt3->fetch();

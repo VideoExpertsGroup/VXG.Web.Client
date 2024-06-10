@@ -223,7 +223,7 @@ VXGArchieveView.prototype.initDraw = function initDraw(controller) {
                         <tr><td colspan=2><span data-i18n="archive.deleteConfirm.title">${$.t('archive.deleteConfirm.title')}</span>&nbsp;<span class="VXGArchieveDeleteClipname">%clipname%</span></td></tr>
                         <tr><td colspan=2><span data-i18n="archive.deleteConfirm.content">${$.t('archive.deleteConfirm.content')}</span></td></tr>
                         <tr style="height: 50px; vertical-align: bottom;"><td style="text-align: right;"><div class="VXGArchieveDeleteConfirm vxgbutton-transparent" data-i18n="action.delete">${$.t('action.delete')}</div></td>
-                              <td style="text-align: left;"><div class="VXGArchieveDeleteCancel vxgbutton-transparent" data-i18n="action.cancel">${$.t('archive.cancel')}</div></td></tr>
+                              <td style="text-align: left;"><div class="VXGArchieveDeleteCancel vxgbutton-transparent" data-i18n="action.cancel">${$.t('action.cancel')}</div></td></tr>
                   </table>
             </div>
             <div class="VXGArchieveInfo">
@@ -238,8 +238,7 @@ VXGArchieveView.prototype.initDraw = function initDraw(controller) {
                               <tr style="height:100%;"><td colspan=2>   <textarea maxlength=300 class="VXGArchieveInfoDesc" placeholder="${$.t('archive.form.notePlaceholder')}"></textarea></td></tr>
                         </table>
                   </div>
-                  <div class="VXGArchieveInfoError"></div>
-                  <div class="VXGArchieveInfoControls"><div class="VXGArchieveInfoApply vxgbutton-transparent" data-i18n="action.apply">${$.t('action.apply')}</div></div>
+                  <div class="VXGArchieveInfoControls"><div class="VXGArchieveInfoApply vxgbutton" data-i18n="action.apply">${$.t('action.apply')}</div></div>
                   <div class="VXGArchieveInfoWaiter"></div>
             </div>
             <div class="VXGArchieveShare">
@@ -252,11 +251,11 @@ VXGArchieveView.prototype.initDraw = function initDraw(controller) {
                                     <div class="VXGArchieveShare30m vxgbutton-transparent">30 mins</div>
                                     <div class="VXGArchieveShare1h vxgbutton-transparent">1 hour</div>
                                     <div class="VXGArchieveShare12h vxgbutton-transparent">12 hours</div></div></td></tr>
-                              <tr style="height:100%;"><td colspan=3><textarea maxlength=300 class="VXGArchieveShareLink" placeholder="${$.t('archive.form.linkPlaceholder')}"></textarea></td></tr>
+                              <tr style="height:100%;"><td colspan=3><textarea maxlength=300 class="VXGArchieveShareLink" placeholder="${$.t('archive.form.linkPlaceholder')}" disabled></textarea></td></tr>
                         </table>
                   </div>
                   <div class="VXGArchieveShareError"></div>
-                  <div class="VXGArchieveInfoControls"><div class="VXGArchieveShareCopyLink vxgbutton-transparent" data-i18n="action.copyLink">${$.t('action.copyLink')}</div></div>
+                  <div class="VXGArchieveInfoControls"><div class="VXGArchieveShareCopyLink vxgbutton" data-i18n="action.copyLink">${$.t('action.copyLink')}</div></div>
                   <div class="VXGArchieveShareWaiter"></div>
             </div>
             <div class="VXGArchievePlayer">
@@ -313,7 +312,7 @@ VXGArchieveView.prototype.initDraw = function initDraw(controller) {
     	let link = self.share.getElementsByClassName('VXGArchieveShareLink')[0];
 	var text = link.value;
 	navigator.clipboard.writeText(text).then(function() {
-	    console.log('Async: Copying to clipboard was successful!');
+		dialogs['idialog'].activate($.t('tagsview.alert.linkCopied'));
 	}, function(err) {
 	    console.error('Async: Could not copy text: ', err);
 	});
@@ -515,7 +514,7 @@ VXGArchieveView.prototype.render = function render(controller, params, VXGArchie
 	    +	'			<div class="VXGArchieveSettings"></div>'
 	    +	'		</div>'
 	    +	'		<div class="VXGArchieveMenu" style="pointer-events: all !important;">'
-	    +	'			<div class="VXGArchieveClipMeta '+disable+'">' + $.t('common.notesTitle') + '</div>'
+	    +	'			<div class="VXGArchieveClipMeta '+disable+' ' + (!window.notesEnabled ? "disabled" : "") + '">' + $.t('common.notesTitle') + '</div>'
 	    +	'			<div class="VXGArchieveClipDownload '+disable+'">' + $.t('action.download') + '</div>'
 	    +	'			<div class="VXGArchieveClipShare '+disable+'">' + $.t('action.share') + '</div>'
 	    +	'			<div class="VXGArchieveClipDelete">' + $.t('action.delete') + '</div>'
@@ -643,8 +642,11 @@ VXGArchieveView.prototype.infoError = function infoError(description) {
 	console.log('TODO: infoError:' + description);
 	let self = this;
 	
-	let dateel = self.info.getElementsByClassName('VXGArchieveInfoError')[0];
-	dateel.innerHTML = dateel.inerHtml = dateel.innerhtml = '<span>Error: ' +  description + '</span>';
+	//let dateel = self.info.getElementsByClassName('VXGArchieveInfoError')[0];
+	dialogs['mdialog'].activate(`<h7>${$.t('common.error')}</h7><p>${description}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`).then(function(r){
+		$(".VXGArchieveInfoClose").click();
+		return;
+	})
 };
 
 VXGArchieveView.prototype.renderInfo = function renderInfo(data, method) {
@@ -729,9 +731,6 @@ VXGArchieveView.prototype.showInfo = function showInfo (clipid, cliptitle, camer
 		let caseel = self.info.getElementsByClassName('VXGArchieveInfoCaseValue')[0];
 		let newclipcase = caseel.value;
 
-		let errel = self.info.getElementsByClassName('VXGArchieveInfoError')[0];
-		errel.innerHTML = errel.inerHtml = errel.innerhtml = '';
-
 		let note = self.infonote.value;
 		if (isnew) {
 			self.controller.createMeta(clipid, cameratoken, note, time, newclipname, newclipcase, newincident);
@@ -761,9 +760,6 @@ VXGArchieveView.prototype.showInfo = function showInfo (clipid, cliptitle, camer
 
 	let caseel = self.info.getElementsByClassName('VXGArchieveInfoCaseValue')[0];
 	caseel.value = '';
-
-	let errel = self.info.getElementsByClassName('VXGArchieveInfoError')[0];
-	errel.innerHTML = errel.inerHtml = errel.innerhtml = '';
 	
 	$(self.info).attr("time", timeToUtcString(date) );
 	$(self.info).attr("clipincident", clipincident );
@@ -838,9 +834,6 @@ VXGArchieveView.prototype.showShare = function showShare (clipid, cliptitle, cam
 
 	let link = self.share.getElementsByClassName('VXGArchieveShareLink')[0];	
 	link.value = "";
-
-	let errel = self.share.getElementsByClassName('VXGArchieveShareError')[0];
-	errel.innerHTML = errel.inerHtml = errel.innerhtml = '';
 	
 	$(self.share).attr("clipid", clipid);
 	$(self.share).attr("cameratoken", cameratoken);

@@ -45,6 +45,10 @@ cameraedit.dvr .notindvr {
     display:none;
 }
 
+cameraedit.gateway .notingateway {
+    display:none;
+}
+
 .hidesett {
     display: none;
 }

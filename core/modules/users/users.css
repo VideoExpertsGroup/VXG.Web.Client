@@ -370,10 +370,6 @@ body.mobile.edituser .screens > .edituser {
     overflow: auto;
 }
 
-.screens > .edituser input[name="phone"]{
-padding-left: 30px;
-}
-
 .screens > .edituser .phoneprefix{
 position: absolute;
     font-size: 16px;

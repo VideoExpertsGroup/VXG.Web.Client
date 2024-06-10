@@ -41,7 +41,7 @@ var path = window.core.getPath('cameras.js');
             $(menu).find(".mwebui").css("display", "block");
         }
 
-        if (!savedCam) {
+        if (!savedCam || savedCam.url == "nourl") {
             vxg.api.cloud.getCameraConfig(channelID, access_token).then(function(config) {
                 var link;
                 if (config.url && config.url.includes("onvif")) {
@@ -57,6 +57,13 @@ var path = window.core.getPath('cameras.js');
                 } else if (config.url && config.url.includes('/uplink_camera/')) {
                     core.elements['global-loader'].show();
                     return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
+                        if (savedCam) {
+                            for(var i in cameraUrls) {
+                                if(cameraUrls[i].id == config.id) {
+                                    cameraUrls.splice(i, 1);
+                                }
+                            }
+                        }
                         if (!urlinfo.id && !urlinfo.url) {
                             cameraUrls.push({id: config.id, url: "nourl"});
                             sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
@@ -145,7 +152,8 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null, camOr
                     vxg.api.cloud.getCameraConfig(gatewayId, gatewayToken).then(function(config) {
                         return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
                             if (!urlinfo.id && !urlinfo.url) {
-                                alert($.t('toast.findRemovingCameraUrlFailed'));
+                                core.elements['global-loader'].hide();
+                                dialogs['mdialog'].activate(`<h7>${$.t('common.error')}</h7><p>${$.t('toast.findRemovingCameraUrlFailed')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
                                 return;
                             } else {
                                 cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
@@ -168,6 +176,12 @@ function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null, gatewayId
     if (camera) camera.deleteCameraPromise(gatewayUrl, gatewayId).then(function(){
         var planIndex = vxg.user.src.plans ? vxg.user.src.plans.findIndex(p => p.id == oldsubid) : -1;
         if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
+
+        if (vxg.user.src.users) {
+            vxg.user.src.users.forEach((user) => {
+                user.src.cameras = user.src.cameras.filter((camid) => camid != camera.camera_id);
+            })
+        }
         
         var aiCams_string = sessionStorage.getItem("aiCams");
         if (aiCams_string) {
@@ -185,13 +199,16 @@ function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null, gatewayId
             cameraList.objects = newCamList;
             total = parseInt(cameraList.meta.total_count);
             cameraList.meta.total_count = total - 1;
+            if (cameraList.meta.total_count == 0) 
+                $("#nocameras").empty().append(`<h5 class="font-md">${$.t('cameras.noCameras')}. <a href="javascript:void(0)" ifscreen="newcamera" onclick_toscreen="newcamera">${$.t('cameras.addCamera')}</a></h5>`);
+            
             localStorage.cameraList = JSON.stringify(cameraList);
         }
 
         var noLoc = localStorage.noLocCams ? JSON.parse(localStorage.noLocCams) : null;
         if (camera.src.meta.location == undefined && noLoc) {
             var removeCam = noLoc.filter(cam => { return cam.camera_id != camera.camera_id});
-            if (removeCam.length == 0) localStorage.removeItem(noLocCams)
+            if (removeCam.length == 0) localStorage.removeItem("noLocCams")
             else localStorage.noLocCams = JSON.stringify(removeCam);
         }
 
@@ -213,8 +230,10 @@ function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null, gatewayId
         var locationHierarchy = localStorage.locationHierarchyCams ? JSON.parse(localStorage.locationHierarchyCams) : null;
         if (locationHierarchy) {
             var locArr = window.core.locationHierarchy.createLocationArray(camera.src.meta);
-            var locHierarchy = window.core.locationHierarchy.removeCamFromHierarchy(locationHierarchy, locArr, camera); 
-            localStorage.locationHierarchyCams = JSON.stringify(locHierarchy);
+            if (locArr.length > 0) {
+                var locHierarchy =  window.core.locationHierarchy.removeCamFromHierarchy(locationHierarchy, locArr, camera); 
+                localStorage.locationHierarchyCams = JSON.stringify(locHierarchy);
+            }
         }       
 
         core.elements['global-loader'].hide();

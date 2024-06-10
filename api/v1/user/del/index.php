@@ -13,7 +13,7 @@ if (!$user)
     error(401,'User not found');
 
 if ($user->getUserCamerasCount()>0)
-    error(577,'It is allowed to delete only users without related cameras.');
+    error(577,'Cannot remove users with related cameras.');
 
 MUser::deleteFirebaseUser($user->email);
 $user->deleteUser();    

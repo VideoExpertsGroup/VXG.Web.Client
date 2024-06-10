@@ -11,6 +11,7 @@ if (!MCore::$core->current_user->isPartner())
 list($withUserID, $attach, $detach, $locCamCount) = MCore::checkAndGetInputParameters(['withUserID', 'attach', 'detach', 'locCamCount']);
 if (!is_array($attach)) $attach=[];
 if (!is_array($detach)) $detach=[];
+
 if (!$locCamCount) $locCamCount = 0;
 if (!($user = MUser::getUserById($withUserID)))
     error(403, "No user with id ".$withUserID);
@@ -54,10 +55,12 @@ foreach($detach as $detachItem) {
 }
 
 $cameraCount = $user->getNonLocationCamerasCount();
-$user->setTotalCamerasWithLocations($cameraCount + $locCamCount);
+$totalCams = $cameraCount + $locCamCount;
+$user->setTotalCamerasWithLocations($totalCams);
 
 $user->updateAllCamsToken();
 MCore::$core->response['locs'] = $userLocs;
+MCore::$core->response['totalCams'] = $totalCams;
 
 /*
 

@@ -126,7 +126,8 @@ a.listmenu-item.mwebui {
 }
 
 .block4 .content {
-    height: calc(100% - 30px);
+    height: 90%;
+    overflow-y: auto;
 }
 .cameralist, .VXGCameraListContainer, .VXGActivityContainer2 {
     height: 100%;

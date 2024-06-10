@@ -16,7 +16,7 @@ if (!$user)
     error(401,'User not found');
 
 if ($user->getNonStorageCameraCount()>0)
-    error(577,'It is allowed to delete only users without related cameras.');
+    error(577,'Cannot remove users with related cameras.');
 
 $storageCamIds = $user->getStorageCameraIds();
 foreach($storageCamIds as $camid) {

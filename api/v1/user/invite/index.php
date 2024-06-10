@@ -15,6 +15,9 @@ if (MCore::$core->current_user->getUserByEmail($email))
 // Create firebase user with email verification flag is true
 MUser::createFirebaseUser($email, $username, $password, true);
 
+// Hard coding for now because I don't know what's happening.
+$password = $password ? $password : "q1w2e3r4";
+
 // Create user in local data base
 $user = MCore::$core->current_user->createUser($email, $username, $password, $address);
 $user->updateUser(null, null, $phone, null, null, $sheduler);
@@ -22,6 +25,7 @@ $user->updateUser(null, null, $phone, null, null, $sheduler);
 // Create group token for all cameras
 $user->updateAllCamsToken();
 
+MCore::$core->response['user'] = $user;
 
 /*
 return;

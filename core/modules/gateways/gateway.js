@@ -72,6 +72,13 @@ window.screens['gateway'] = {
                 title: $.t('common.gateway'),
             },
             {
+                field: "status",
+                title: $.t('common.status'),
+                filterControl: "select",
+                sortable: true,
+                cardVisible: false,
+            },
+            {
                 field: "name",
                 title: $.t('common.name'),
                 filterControl: "input",
@@ -102,22 +109,32 @@ window.screens['gateway'] = {
             }
         ];
 
+        var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
+        var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : [];
+
         var tableData = [];
         gatewaysList.forEach(camInfo => {
             //var currentGateway = JSON.parse(camInfo.meta.gateway_first_channel);
             let captured = camInfo.meta.capture_id && vxg.user.src.capture_id == camInfo.meta.capture_id ? ' captured' : '';
-            var firstGatewayCam = cameraList.filter(gatewayCam => { return camInfo.meta.gateway_id == gatewayCam.meta.gateway_id && gatewayCam.meta.gateway_cam == "gateway_cam" });
+            var firstGatewayCam = cameraList.filter(gatewayCam => { return camInfo.meta && (camInfo.meta.gateway_id == gatewayCam.meta.gateway_id && gatewayCam.meta.gateway_cam == "gateway_cam") });
             var camblockAccessToken = firstGatewayCam.length > 0 ? firstGatewayCam[0].id : "";
+
+            var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id == camInfo.id) : "";
+            var camStatus = savedCam && savedCam.url && savedCam.url != "nourl" ? "active" : "";
+
+            let statusBlock = camStatus ? '<div class="font-md caminfo tablecaminfo '+camStatus+' '+(camStatus=='active'?' online':'')+'">'+ (camStatus=='active'?'Online':'Offline')+'</div>' : '<div class="caminfo tablecaminfo pending" > ... </div>';
+
             tableData.push({
                 order: count + 1,
                 id: `<div class="camerablock${captured}" access_token="${camblockAccessToken}" channel_id="${camInfo.id}" gid="${camInfo.meta.gateway_id}" gateway_token="${camInfo.token}" id="scrollto${camInfo.id}">
                 <campreview onclick_toscreen="gateway_cams" style="cursor: pointer;"></campreview>`,
+                status: statusBlock,
                 name: camInfo.name,
                 location: camInfo.meta.location,
                 group: camInfo.meta.group,
                 action: `<div class="settings-gateway" channel_id="${camInfo.id}" access_token="${camInfo.token}" gateway_id="${camInfo.meta.gateway_id}">
                 <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
-            </div>`,
+            </div><div class="menu-div"></div>`,
                 hide: 1
             })
             count++;
@@ -133,7 +150,7 @@ window.screens['gateway'] = {
         
         $('#gateway-table').bootstrapTable({
             pagination: true,
-            showToggle: true, 
+            //showToggle: true, 
             showSearchClearButton: true,
             reorderableRows: true,
             useRowAttrFunc: true,
@@ -179,6 +196,43 @@ window.screens['gateway'] = {
 
         self.wrapper.removeClass('nogateways');
         self.wrapper.removeClass('loader');
+        self.checkGatewayStatus(gatewaysList);
+    },
+    checkGatewayStatus: function(gatewaysList) {
+        var cameraUrls = [];
+        let currentGateway;
+        let promiseChain = Promise.resolve();        
+        for (let i = 0; i < gatewaysList.length; i++) { 
+            currentGateway = gatewaysList[i];
+
+            const makeNextPromise = (currentGateway) => () => {
+                return vxg.api.cloud.getCameraConfig(currentGateway.id, currentGateway.token)
+                    .then((config) => {
+                        return vxg.api.cloud.getUplinkUrl(config.id, config.url)
+                        .then((urlinfo) => {
+                            let statusBlock = '<div class="caminfo font-md tablecaminfo offline">'+ $.t('common.offline') +'</div>';
+                            if (urlinfo.id && urlinfo.url) {
+                                cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
+                                statusBlock = '<div class="caminfo font-md tablecaminfo active online">'+ $.t('common.online') +'</div>';
+                            }
+
+                            $('#gateway-table').bootstrapTable('updateCell', {
+                                index: i,
+                                field: 'status',
+                                value: statusBlock
+                            })
+
+                            if (i == gatewaysList.length - 1) {
+                                sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
+                            }
+                        })
+                    }, function(err) {
+                        console.log(err);
+                        window.core.showToast('error');
+                    });
+            }
+            promiseChain = promiseChain.then(makeNextPromise(currentGateway))
+        }
     },
     simpleMenuPlugin_Gateway: function(self, e) {
         let gatewayid = $(self).attr("gateway_id");
@@ -214,11 +268,11 @@ window.screens['gateway'] = {
                         $(menu).find(".mwebui_gateway").attr('title',''); 
                     }
                     core.elements['global-loader'].hide();
-                    addSimpleMenu(menu, self, e);
+                    addSimpleMenu(menu, $(".menu-div"), e);
                 });
             })
         } else {
-            addSimpleMenu(menu, self, e);
+            addSimpleMenu(menu, $(".menu-div"), e);
         }
     }
 };
@@ -270,25 +324,8 @@ function onGatewayDelete(gateway_id, channel_id, access_token){
         var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
         var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : [];
         var gatewayUrl = cameraUrls.length != 0 ? cameraUrls.find(x => x.id == channel_id) : "";
-        gatewayUrl = gatewayUrl == "nourl" ? "" : gatewayUrl;
-        if (!gatewayUrl) {
-            vxg.api.cloud.getCameraConfig(channel_id, access_token).then(function(config) {
-                return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
-                    if (!urlinfo.id && !urlinfo.url) {
-                        cameraUrls.push({id: config.id, url: "nourl"});
-                        sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));
-                        alert($.t('toast.findGatewayUrlFailed'));
-                        return;
-                    } else {
-                        cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
-                        sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));  
-                        return doGatewayDelete(gateway_id, urlinfo.url);
-                    }
-                });
-            })
-        } else {
-            return doGatewayDelete(gateway_id, gatewayUrl.url);
-        }  
+        gatewayUrl = gatewayUrl == undefined || gatewayUrl.url == "nourl" ? "" : gatewayUrl.url;
+        return doGatewayDelete(gateway_id, gatewayUrl);
     })
 }
 
@@ -299,12 +336,13 @@ function doGatewayDelete(gateway_id, gatewayUrl) {
         var gatewayPassword = "";
         var cameras = r.objects;
         let currentCam;
-        let promiseChain = Promise.resolve();        
+        let promiseChain = Promise.resolve();    
+        
         for (let i = 0; i < cameras.length; i++) { 
             currentCam = cameras[i];
 
             const makeNextPromise = (currentCam) => () => {
-                var useGatewayUrl = currentCam.meta && (currentCam.meta.gateway_cam || currentCam.meta.gateway) ? gatewayUrl : null;
+                var useGatewayUrl = currentCam.meta && (currentCam.meta.gateway_cam || currentCam.meta.gateway) ? gatewayUrl == "nourl" ? null : gatewayUrl : null;
                 if (currentCam.meta && currentCam.meta.gateway) {
                     gatewayUsername = currentCam.meta.gateway_username;
                     gatewayPassword = currentCam.meta.gateway_password;
@@ -315,12 +353,20 @@ function doGatewayDelete(gateway_id, gatewayUrl) {
                     gatewayUrl: useGatewayUrl,
                     gatewayId: gateway_id
                 }
+
+                // TODO: Add glinet identifier to gatewayInfo
+                // gatewayInfo.glinet = currentCam.meta.glinet ? true : false;
                 return vxg.cameras.removeCameraFromListPromise(currentCam.id, gatewayInfo)
                     .then((r) => {
-                        if (i == cameras.length - 1) {
-                            return vxg.api.cloud.restartGateway(gatewayInfo).then(function() {
+                        // TODO: Restart API not implemented for GLiNET (YET), so skip restartGateway if gateway is glinet
+                        if (i == cameras.length - 1 /* && !gatewayInfo.glinet */) {
+                            if (gatewayInfo.gatewayUrl) {
+                                return vxg.api.cloud.restartGateway(gatewayInfo).then(function() {
+                                    location.reload();
+                                });
+                            } else {
                                 location.reload();
-                            });
+                            }
                         }
                         return true;
                     }, function(err) {

@@ -42,64 +42,65 @@ VXGActivityView.prototype.capitalizeFirstLetter = function(string) {
 VXGActivityView.prototype.initDraw = function initDraw(controller) {
 
     this.element.innerHTML = 
-    	'<div class= "VXGActivityContainer">'
-    +	'	<div class= "VXGActivityContainer2">'    	
-    +	'		<div class="activity-content">'
-    +	'			<table class="feed-activity-list"></table>'
-    +	`			<div class="d-flex w-100"><div class="VXGActivityMore vxgbutton-transparent">${$.t('common.more')}...</div></div>`
-    +	'		</div>'
-    +	'		<div class="VXGActivityFilter">'
-    +	'			<div class="VXGActivityFilterTable">'
-    +	`			<h6>${$.t('common.filters')}</h6><br>`
-    +	'				<div class="table-row filter-setting">'
-    +	`					<div class="filter-label">${$.t('common.motion')}</div>`
-    +	'					<div><input id="filter-motion" type="checkbox" class="VXGActivityFilterCheckbox VXGActivityFilterMotion" checked> <label for="filter-motion"></label></div>'
-    +	'				</div>'
-    +	'				<div class="table-row filter-setting">'
-    +	`					<div class="filter-label">${$.t('common.meta')}</div>`
-    +	'					<div><input id="filter-meta" type="checkbox" class="VXGActivityFilterCheckbox VXGActivityFilterMeta" checked> <label for="filter-meta"></label></div>'
-    +	'				</div>'
-    +	`				<div class="filter-setting flex"><div class="filter-label">${$.t('activity.peopleThreshold')}</div>`
-    +	'					<div>'
-    +	'						<div class="VXGActivityDropMenu btn-group count-type" >'
-    +	'							<div tabindex="0" data-solution="-1" class="VXGActivityFilterPersonSolution menu" style="width:50px;"><span></span>' 
-    +	'<ul id="count-type" class="menu-dropdown" data-who="Person">'
-    +	'								<li><span data-solution="-1">&le;</span></li>'
-    +	'								<li><span data-solution="1">&gt;</span></li>'
-    +	'								<li><span data-solution="0">=</span></li>'
-    +	'							</ul>'
-    +	'</div>'
-    +	'						</div>'
-    +	'					</div>'
-    +	`					<div><input type="number" class="VXGActivityFilterPersonVal" placeholder="${$.t('activity.peopleThresholdPlaceholder')}"/></div>`
-    +	'				</div>'
-    +	`				<div class="filter-setting flex"><div class="filter-label">${$.t('activity.carsThreshold')}</div>`
-    +	'					<div>'
-    +	'						<div class="VXGActivityDropMenu btn-group count-type">'
-    +	'							<div tabindex="0" data-solution="-1" class="VXGActivityFilterCarSolution menu" style="width:50px;"><span></span>' +
-		'<ul id="count-type" class="menu-dropdown" data-who="Car">'
-		+	'								<li><span data-solution="-1">&le;</span></li>'
-		+	'								<li><span data-solution="1">&gt;</span></li>'
-		+	'								<li><span data-solution="0">=</span></li>'
-		+	'							</ul>' +
-		'</div>'
-    +	'						</div>'
-    +	'					</div>'
-    +	`					<div><input type="number" class="VXGActivityFilterCarVal" placeholder="${$.t('activity.carsThresholdPlaceholder')}"/></div>`
-    +	'				</div>'
-/*    +	'				<div class="filter-setting"><div class="filter-label">Label</div><div><input type="text" class="VXGActivityFilterLabelVal" placeholder="enter label"></div></div>'
-*/
-    +	'				<div><div><center style="padding-top: 20px;">'
-    +	`					<span class="VXGActivityFilterAccept vxgbutton-transparent">${$.t('action.apply')}</span>`
-    +	`					<span class="VXGActivityFilterCancel vxgbutton-transparent">${$.t('action.cancel')}</span>`
-    +	`					<span class="VXGActivityFilterClear vxgbutton-transparent">${$.t('common.default')}</span>`
-    +	'				</center></div></div>'
-    +	'			</div>'
-    +	'		</div>'
-    +	`		<div class="VXGActivityNoEvents"><span class="font-md">${$.t('activity.noEvents')}</span></div>`
-    +	'		<div class="VXGActivityWaiter"></div>'
-    +	'	</div>'
-    +	'</div>';
+    	`<div class= "VXGActivityContainer">
+    	<div class= "VXGActivityContainer2">    	
+    		<div class="activity-content">
+    			<table class="feed-activity-list">
+	            </table>
+    			<div class="d-flex w-100"><div class="VXGActivityMore vxgbutton-transparent">${$.t('common.more')}...</div></div>
+    		</div>
+    		<div class="VXGActivityFilter">
+    			<div class="VXGActivityFilterTable">
+    			<h6>${$.t('common.filters')}</h6><br>
+    				<div class="table-row filter-setting">
+    					<div class="filter-label">${$.t('common.motion')}</div>
+    					<div><input id="filter-motion" type="checkbox" class="VXGActivityFilterCheckbox VXGActivityFilterMotion" checked> <label for="filter-motion"></label></div>
+    				</div>
+    				<div class="table-row filter-setting">
+    					<div class="filter-label">${$.t('common.meta')}</div>
+    					<div><input id="filter-meta" type="checkbox" class="VXGActivityFilterCheckbox VXGActivityFilterMeta" checked> <label for="filter-meta"></label></div>
+    				</div>
+    				<div class="filter-setting flex"><div class="filter-label">${$.t('activity.peopleThreshold')}</div>
+    					<div>
+    						<div class="VXGActivityDropMenu btn-group count-type" >
+    							<div tabindex="0" data-solution="-1" class="VXGActivityFilterPersonSolution menu" style="width:50px;"><span></span> 
+    <ul id="count-type" class="menu-dropdown" data-who="Person">
+    								<li><span data-solution="-1">&le;</span></li>
+    								<li><span data-solution="1">&gt;</span></li>
+    								<li><span data-solution="0">=</span></li>
+    							</ul>
+    </div>
+    						</div>
+    					</div>
+    					<div><input type="number" class="VXGActivityFilterPersonVal" placeholder="${$.t('activity.peopleThresholdPlaceholder')}"/></div>
+    				</div>
+    				<div class="filter-setting flex"><div class="filter-label">${$.t('activity.carsThreshold')}</div>
+    					<div>
+    						<div class="VXGActivityDropMenu btn-group count-type">
+    							<div tabindex="0" data-solution="-1" class="VXGActivityFilterCarSolution menu" style="width:50px;"><span></span>
+		'<ul id="count-type" class="menu-dropdown" data-who="Car">
+										<li><span data-solution="-1">&le;</span></li>
+										<li><span data-solution="1">&gt;</span></li>
+										<li><span data-solution="0">=</span></li>
+									</ul> 
+		'</div>
+    						</div>
+    					</div>
+    					<div><input type="number" class="VXGActivityFilterCarVal" placeholder="${$.t('activity.carsThresholdPlaceholder')}"/></div>
+    				</div>
+<!--    				<div class="filter-setting"><div class="filter-label">Label</div><div><input type="text" class="VXGActivityFilterLabelVal" placeholder="enter label"></div></div>
+-->
+    				<div><div><center style="padding-top: 20px;">
+    					<span class="VXGActivityFilterAccept vxgbutton-transparent">${$.t('action.apply')}</span>
+    					<span class="VXGActivityFilterCancel vxgbutton-transparent">${$.t('action.cancel')}</span>
+    					<span class="VXGActivityFilterClear vxgbutton-transparent">${$.t('common.default')}</span>
+    				</center></div></div>
+    			</div>
+    		</div>
+    		<div class="VXGActivityNoEvents"><span class="font-md">${$.t('activity.noEvents')}</span></div>
+    		<div class="VXGActivityWaiter"></div>
+    	</div>
+    </div>`;
     let element = this.element;
     
     this.more		= this.element.getElementsByClassName('VXGActivityMore')[0]; 
@@ -224,8 +225,8 @@ VXGActivityView.prototype.initDraw = function initDraw(controller) {
 	self.clearFilterForm();
     });
     
-    let emptyModel = [];
-    this.render(controller, emptyModel);
+    //let emptyModel = [];
+    //this.render(controller, emptyModel);
 }
 
 VXGActivityView.prototype.ActivitiesList_resolve_name = function ActivitiesList_resolve_name(event_name){
@@ -419,7 +420,6 @@ VXGActivityView.prototype.objByCamid = function objByCamid ( camid ) {
 
 
 VXGActivityView.prototype.render = function render(controller, params, VXGActivitydata) {
-    this.more.classList.remove('spinner');
     let activitiesContainer = this.element.getElementsByClassName('feed-activity-list')[0]; 
 	let isActivitiesPage = $(this.element).hasClass("activity_activitylist") ? true : false;
 	let isReportPage = $(this.element).hasClass("report_activitylist") ? true : false;
@@ -435,24 +435,29 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	}
     }
 
-    if (offset == 0 && (VXGActivitydata === undefined || VXGActivitydata.length == 0)) {
-	let span = $(this.noevents).find("span")[0];
-	if (this.filter !== undefined && this.filter != null) {
-	    $(span).text($.t('activity.noEventsFoundForSuchFilter'));
-	} else if ($(controller.clView.element).hasClass("report_activitylist")) {
-		$(span).text("No events in Favourited cameras");
-	} else {
-	    $(span).text($.t('activity.noEvents'));
-	}
-	$(this.noevents).addClass("visible");
+    /*if (offset == 0 && (VXGActivitydata === undefined || VXGActivitydata.length == 0)) {
+
     } else {
-	$(this.noevents).removeClass("visible");
-    }
+		$(this.noevents).removeClass("visible");
+    }*/
     
     
-    if ( VXGActivitydata === undefined ) {
-	return;
+    if (VXGActivitydata === undefined || VXGActivitydata.length == 0 ) {
+		let span = $(this.noevents).find("span")[0];
+		$('.activity-content').hide();
+		$(activitiesContainer).empty();
+		if (this.filter !== undefined && this.filter != null) {
+			$(span).text($.t('activity.noEventsFoundForSuchFilter'));
+		} else if ($(controller.clView.element).hasClass("report_activitylist")) {
+			$(span).text("No events in Favourited cameras");
+		} else {
+			$(span).text($.t('activity.noEvents'));
+		}
+		$(this.noevents).addClass("visible");
+		return;
     }
+
+	$('.activity-content').show();
     
     let currentTime = new Date();
     let self = this;
@@ -471,6 +476,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	    var options_time = {   };
 	    let date = new Date(this.time+"Z");
 	    let timeString = date.toLocaleString('en-US',options_date) + " " + date.toLocaleTimeString('en-US',options_time);    
+		if (isReportPage) timeString = date.toLocaleTimeString('en-US',options_time);
 
 	    let tags={};
 	    var objects = ""; 
@@ -506,6 +512,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 		let dclass = "event-ele ";
 		let addon = "";
 		const event_status = self.ActivitiesList_resolve_status(eventStatus);
+		var statusBlock = eventStatus == "no_status" ? `<span id="status_${this.id}">${$.t('action.new')}</span>` : `<span id="status_${this.id}">${event_status}</span>`;
 
 		dclass+=" event-processing-activity ";
 		addon = `
@@ -588,9 +595,9 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 				// 					<div class="image-stub"></div><img crossorigin="anonymous" id="event_${this.id}_thumbnail" src="${thumb_src}" alt="event_screen" />
 				// 				</div>`,
 				time: `<span class="text-muted">${timeString}</span>`,
-				type: `<div class="event-name ${eventStatus}"><span class="font-md">${self.ActivitiesList_resolve_name(this.name)}</span></div>`,
 				cameraInfo: `<span>${cameraInfo}</span>`,
-				status: `${eventStatus == "no_status" ? $.t('action.new') : eventStatus}`,
+				type: `<div class="event-name ${eventStatus}"><span class="font-md">${self.ActivitiesList_resolve_name(this.name)}</span></div>`,
+				status: statusBlock,
 				meta: metaData,
 			});
 
@@ -620,12 +627,20 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 					sortable: true,
 					class: "sTime",
 					title: $.t('common.time'),
-					width: "180",
+					width: isReportPage ? "90" : "180",
 					sorter: function timeSorting(a, b) {
 						if (new Date(a.replace('<span class="text-muted">', '').replace('</span>', '')) < new Date(b.replace('<span class="text-muted">', '').replace('</span>', ''))) return -1;
 						if (new Date(a.replace('<span class="text-muted">', '').replace('</span>', '')) > new Date(b.replace('<span class="text-muted">', '').replace('</span>', ''))) return 1;
 						return 0;
 					}
+			},
+			{
+				field: "cameraInfo",
+				cardVisible: false,
+				sortable: true,
+				class: "sCameraInfo",
+				title: $.t('common.cameraName'),
+				//width: "100"
 			},
 			{
 					field: "type",
@@ -634,14 +649,6 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 					class: "sType",
 					title: $.t('common.type'),
 					width: "150"
-			},
-			{
-					field: "cameraInfo",
-					cardVisible: false,
-					sortable: true,
-					class: "sCameraInfo",
-					title: $.t('common.cameraName'),
-					width: "100"
 			},
 			{
 					field: "status",
@@ -752,6 +759,8 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 
 		window.event_processing.metascreen = window.screens['camerametaview'];
 
+		window.event_processing.updateEvent = controller.updateEvent;
+
 		var url = window.location.origin + "/activity_processing.html";
 		window.open(url, '_blank').focus();
 	});
@@ -825,6 +834,8 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	});
 
 	setTimeout(activityClick, 500);
+
+	this.more.classList.remove('spinner');
 
 	if (VXGActivitydata !== undefined && VXGActivitydata.length == limit) {
 		// $(this.more).addClass('visible');
@@ -990,7 +1001,6 @@ VXGActivityController.prototype.showActivityList = function showActivityList ( r
     || rotoken === undefined || allcamtoken === undefined
     ) {
 	this.clView.render(this);
-	this.clView.showWait(); //trick for fake request
     } else {
         let f = !use_filter ? (window.skin&&window.skin.events_filter?window.skin.events_filter:"") : window.skin.use_filter;
 		let tf = !use_time_filter ? '' : window.skin.use_time_filter;
@@ -1052,6 +1062,15 @@ VXGActivityController.prototype.moreData = function moreData (params) {
 	}
     }
 }
+
+VXGActivityController.prototype.updateEvent = function updateEvent(event_id, event_status, args) {
+	//var event = $('[eventid="'+event_id+'"]');
+	//$(event).attr("event_status", event_status);
+	$('#status_'+event_id).html(event_status);
+	//.removeClass("no_status").removeClass("processed").removeClass("in_progress").addClass(args.meta.process);
+	//$(event).attr("meta", btoa(JSON.stringify(args.meta, null, 2)))
+}
+
 
 ///acceptVXGFilter - third method to get data, used previos parameters defined by showActivityList, but with new object-filter
 ///	full filter-object is 

@@ -36,9 +36,17 @@ window.screens['clipview'] = {
 	    videotag.load();
 
 	    self.update_meta();
-        self.set_mode('showedittag');
-        $(self.wrapper).find('.cliplistwrapper .shareinfo').hide();
         $(self.wrapper).find('.cliplistwrapper .shareinfo .shareurl').html('');
+
+        if (window.notesEnabled) {
+            self.set_mode('showedittag');
+            $(self.wrapper).find('.cliplistwrapper .shareinfo').hide();
+            $(self.wrapper).find('.cliplistwrapper .shareinfo .shareurl').html('');
+        } else {
+            $(".cliplistwrapper .addnote").hide();
+            self.set_mode('showshare');
+            $(self.wrapper).find('.cliplistwrapper .shareinfo').hide();
+        }
 
         return defaultPromise();
     },
@@ -87,8 +95,8 @@ window.screens['clipview'] = {
         let self = this;
         if (vxg.user.src.role=='user'){
         }else{
-            core.elements['header-right'].prepend(`<div class="ncssclipbuttons"><button class="transparent-button deleteclip"><i class="fa fa-trash-o" aria-hidden="true"></i><span> Delete</span></button>
-                <button class="transparent-button downloadclip"><i class="fa fa-download" aria-hidden="true"></i><span>Download</span></button></div>`);
+            core.elements['header-right'].prepend(`<div class="ncssclipbuttons"><button class="transparent-button deleteclip font-md"><i class="fa fa-trash-o" aria-hidden="true"></i><span> Delete</span></button>
+                <button class="transparent-button downloadclip font-md"><i class="fa fa-download" aria-hidden="true"></i><span>Download</span></button></div>`);
 	}
         if ($('.screens > .clipview .addnote:visible').length>0)
             $(self.wrapper).addClass('showedittag');

@@ -632,8 +632,13 @@ window.screens['tagsview'] = {
         core.elements['header-right'].find('.ncssbuttons .makeclip').click(function(){
             let pos = self.player.getPosition();
             if (self.player.player.isLive() || typeof pos !== "number" || pos === 0){
-                alert($.t('tagsview.alert.selectPosition'));
+                dialogs['mdialog'].activate(`<h7>${$.t('common.attention')}</h7><p>${$.t('tagsview.alert.selectPosition')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
                 return;
+            }
+
+            if (self.metaEnabled) {
+                $('.clip textarea').attr("disabled", false);
+                $('.clip .clipcase').attr("disabled", false);
             }
 
             let mode = self.get_mode(); if (mode=='shownotes' || mode=='showevents') self.modebeforeedit = mode;
@@ -651,6 +656,9 @@ window.screens['tagsview'] = {
 
             $(self.wrapper).find('.clip').addClass('spinner').find('button').attr('disabled','');
             self.camera.createClip(time - before*1000,time + after*1000, title).then(function(clip){
+                $(self.wrapper).find('.clip .cliptitle').val("")
+                $(self.wrapper).find('.clip textarea').val("")
+                $(self.wrapper).find('.clip .clipcase').val("")
                 if (self.metaEnabled) {
                     return clip.setMeta(title, notes, clipcase, time).then(function(readyclip){
                         dialogs['idialog'].activate($.t('tagsview.alert.clipCreated'),3000);
@@ -697,18 +705,18 @@ window.screens['tagsview'] = {
             if ($(this).hasClass('share2')) time = 60*60;
             if ($(this).hasClass('share3')) time = 24*60*60;
             let shareinfo = $(self.wrapper).find('.tagslistwrapper .shareinfo');
-            shareinfo.addClass('spinner').show().find('.shareurl').html('');
+            $(".tagslistwrapper .share").append('<div class="loader section-loader"></div>');
+            shareinfo.show().find('.shareurl').html('');
             shareinfo.find('>*').hide();
             if ($('body').hasClass('mobile')) $(self.wrapper).find('.tagslistwrapper .sharebnts').hide();
             self.camera.shareCamera(time).then(function(r){
                 shareinfo.find('>*').show();
                 let pos = self.player.getPosition();
                 pos = !self.player.player.isLive() && pos ? 'time='+pos+'&' : '';
-                shareinfo.removeClass('spinner').find('.shareurl').html(window.location.origin+'/sharedcamera.html?'+pos+'token='+r['token']);
+                $(".tagslistwrapper .share > .loader").remove();
+                shareinfo.find('.shareurl').html(window.location.origin+'/sharedcamera.html?'+pos+'token='+r['token']);
                 shareinfo.find('.shareexpire').html(self.dateToUserTimeString(new Date(r['expire']*1000)));
                 shareinfo.find('.sharecreated').html(self.dateToUserTimeString(new Date(r['created']*1000)));
-            },function(){
-                shareinfo.removeClass('spinner');
             });
         });
         $(this.wrapper).find('.toclipboard').click(function(){

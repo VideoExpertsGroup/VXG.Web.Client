@@ -10,7 +10,7 @@ window.screens['profile'] = {
     'html': path+'profile.html',
     'stablecss':[path+'profile.css'],
     'on_show':function(){
-        if (vxg.user.src.plans.length != 0) {
+        if (vxg.user.src.plans && vxg.user.src.plans.length != 0) {
             planTable = `
                 <tr class="plan-header">
                     <th>${$.t('common.plan')}</th>
@@ -44,8 +44,8 @@ window.screens['profile'] = {
         $(this.wrapper).addClass('tab2').removeClass('tab1').removeClass('tab3').removeClass('tab4');
 
         let self = this;
-        core.elements['global-loader'].show();
-        vxg.api.cloudone.storage.getStorages().then(function(data){
+        //core.elements['global-loader'].show();
+        /*vxg.api.cloudone.storage.getStorages().then(function(data){
             core.elements['global-loader'].hide();
             if ( data.data.objects.length > 0) {
                 let current_bucket = data.data.objects[0];
@@ -64,7 +64,7 @@ window.screens['profile'] = {
             }
         },function(r){
             core.elements['global-loader'].hide();
-        });
+        });*/
         return defaultPromise();
     },
     'on_hide':function(){

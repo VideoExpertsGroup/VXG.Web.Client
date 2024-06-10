@@ -176,7 +176,7 @@ window.screens['gateway_cams'] = {
             useRowAttrFunc: true,
             filterControl: true,
             //reorderableRows: !isGridView,
-            toolbar: ".toolbar",
+            //toolbar: ".toolbar",
             uniqueId: "order",
             columns: columns,
             sortName: 'order',

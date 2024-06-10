@@ -91,8 +91,8 @@ window.screens['archive'] = {
         return defaultPromise();
     },
     'on_show':function(r){
-		core.elements['header-search'].show();
-        if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
+		core.elements['header-search'].hide();
+        //if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
         if (this.scroll_top!==undefined)
             $('.screens').scrollTop(this.scroll_top);
         return defaultPromise();

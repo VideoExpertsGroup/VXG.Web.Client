@@ -101,6 +101,7 @@ window.core.locationHierarchy = {
                                 if (i == locationsArr.length - 1) {
                                     localStorage.locationHierarchy = JSON.stringify(locationHierarchy);
                                     caller.onLocationHierarchyLoaded(locationHierarchy);
+                                    core.elements['global-loader'].hide();
                                 }
                                 return true;
                             });
@@ -208,10 +209,12 @@ window.core.locationHierarchy = {
         }
     },
     removeCamFromHierarchy: function(locationHierarchy, locArr, camera) {
+        var noCamHierarchy = localStorage.locationHierarchy ? JSON.parse(localStorage.locationHierarchy) : null;
+        var subLocations = this.findNestedObj(locationHierarchy, locArr);
         locArr.push("cams");
         var currentCams = this.findNestedObj(locationHierarchy, locArr);
         // if there are other cameras, just remove this cam from the cams list
-        if (currentCams && currentCams.length > 1) {
+        if ((currentCams && currentCams.length) > 1 || Object.keys(subLocations).length > 1) {
             currentCams = currentCams.filter(camCurr => {
                 return camCurr.camera_id !== camera.camera_id;
             });
@@ -220,6 +223,7 @@ window.core.locationHierarchy = {
             // if this is the only camera, have to remove location and all empty parent locations 
             locArr.pop();
             this.removeLoc(locationHierarchy, locArr);
+            if (noCamHierarchy) this.removeLoc(noCamHierarchy, locArr);
             locArr.pop();
             var searchingTree = true;
             while (locArr.length > 0 && searchingTree) { 
@@ -227,6 +231,7 @@ window.core.locationHierarchy = {
                 var currKeys = Object.keys(current);
                 if (current.cams.length == 0 && currKeys.length == 1) {
                     this.removeLoc(locationHierarchy, locArr);
+                    if (noCamHierarchy) this.removeLoc(noCamHierarchy, locArr);
                     locArr.pop();
                     if (locArr.length == 0) searchingTree = false;
                 } else {
@@ -234,6 +239,8 @@ window.core.locationHierarchy = {
                 }
             }
         }
+
+        if (noCamHierarchy) localStorage.locationHierarchy = JSON.stringify(noCamHierarchy);
 
         return locationHierarchy;
     },

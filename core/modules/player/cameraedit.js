@@ -82,6 +82,8 @@ CameraEditControl = function(){
 <div class="form-group camera_finder_link">
 `+camera_finder_link+`
 </div>
+<input type="hidden" name="gatewayId">
+<input type="hidden" name="gatewayUrl">
 <div class="form-group">
     <label>${$.t('common.name')}</label>
     <input autofocus="autofocus" class="name" name="name" >
@@ -109,39 +111,39 @@ CameraEditControl = function(){
     </select>
 </div>
 -->
-<div class="form-group type notindvr">
+<div class="form-group type notindvr notingateway">
     <label>${$.t('common.type')}</label> 
     <select class="url_protocol">
         <option value="onvif" selected>${$.t('common.onvifCamera')}</option>
         <option value="rtsp">${$.t('common.videoUrl')}</option>
     </select>
 </div>
-<div class="form-group rtspOnly notincloud notinuplink notindvr">
+<div class="form-group rtspOnly notincloud notinuplink notindvr notingateway">
     <label>${$.t('common.url')}</label>
     <input name="url" class="anccsUrl">
 </div>
 
-<div class="form-group rtspOnly notincloud setting-dropdown opt-dropdown notinuplink notindvr">
+<div class="form-group rtspOnly notincloud setting-dropdown opt-dropdown notinuplink notindvr notingateway">
     <div class="anccsUrlOptions">${$.t('common.options').toUpperCase()}</div>
 </div>
 
-<div class="form-group rtspOnly options notincloud notinuplink notindvr">
+<div class="form-group rtspOnly options notincloud notinuplink notindvr notingateway">
     <label for="url_prot">${$.t('common.protocol')}&nbsp;</label>
     <input type="text" class="url_prot form-control input500" value="">
 </div>
 <div class="form-group options notincloud notinuplink notindvr">
     <label for="url_ip">${$.t('common.ipAddressOrDomainName')}&nbsp;</label>
-    <input type="text" class="url_ip form-control input500" value="">
+    <input type="text" class="url_ip form-control input500 gatewaydisabled" value="" name="url_ip">
     <div class="iperror">${$.t('newCamera.invalidDomainOrIpAddress')}</div>
 </div>
 <div class="form-group options notincloud notinuplink notindvr">
     <label for="url_http_port" class="onvifOnly">${$.t('common.httpPort')}&nbsp;</label>
-    <label for="url_http_port" class="rtspOnly">${$.t('common.port')}&nbsp;</label>
-    <input type="number" class="url_http_port form-control input500" value="">
+    <label for="url_http_port" class="rtspOnly notingateway">${$.t('common.port')}&nbsp;</label>
+    <input type="number" class="url_http_port form-control gatewaydisabled input500" value="" name="url_http_port" >
 </div>
 <div class="form-group options notincloud notinuplink notindvr">
     <label class="onvifOnly" for="url_rtsp_port">${$.t('common.rtspPort')}&nbsp;</label>
-    <input type="number" class="onvifOnly url_rtsp_port form-control input500" name="onvif_rtsp_port_fwd">
+    <input type="number" class="onvifOnly url_rtsp_port gatewaydisabled form-control input500" name="onvif_rtsp_port_fwd">
     <i class="onvifOnly"></i>
 </div>
 <div class="form-group options notincloud notindvr">
@@ -152,9 +154,9 @@ CameraEditControl = function(){
   <label for="devicePassword">${$.t('common.password')}&nbsp;</label>
   <input type="password" class="password form-control input500 url_password" autocomplete="new-password" name="password"><i class="showhidepass show-password"></i>
 </div>
-<div class="form-group options notincloud notindvr">
+<div class="form-group options notincloud notindvr notingateway">
     <label class="" for="url_path">${$.t('common.path')}&nbsp;</label>
-    <input type="text" class="url_path " name="url_path" value="">
+    <input type="text" class="url_path gatewaydisabled" name="url_path" value="">
 </div>
 
 <div class="form-group notindvr">
@@ -258,9 +260,10 @@ CameraEditControl = function(){
 
         $(this).find("#locbtn").click(function(e) {
             e.preventDefault();
-            if (localStorage.locationHierarchy == undefined)
+            if (localStorage.locationHierarchy == undefined) {
+                core.elements['global-loader'].show();
                 window.core.locationHierarchy.createLocationHierarchy(self);
-            else {
+            } else {
                 var editingLoc = $(self).find('[name="location_str"]').val();
                 self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy), editingLoc, self);
             }
@@ -462,7 +465,8 @@ CameraEditControl = function(){
         //    p = this.ipToLocation(purl.host);
         //else
             p =  new Promise(function(resolve, reject){resolve({lat:data.lat,lon:data.lon});});
-
+        
+        data.gatewayCam = data.gatewayId ? true : false;
         var newLocation = data.new_location_str;
         delete data.new_location_str;
 
@@ -628,7 +632,7 @@ CameraEditControl = function(){
                             }
 
                             localStorage.locationHierarchyCams = JSON.stringify(locationHierarchyCams);
-
+                            $("#nocameras").empty();
                             
                             var tableData = $("#table").bootstrapTable('getData');
                             var insertIndex = tableData.length;
@@ -951,8 +955,10 @@ CameraEditControl = function(){
             if (!bsrc.url && !$(self).find('.url_protocol [value="cloud"]').length) {
                 $(self).find('.url_protocol').append(`<option value="cloud">${$.t('common.cloudCamera')}`);
             }
-                
-            if (bsrc.url.substr(0,5)=='onvif') {
+
+            if (self.camera.src.meta?.gateway_cam) {
+                $(self).addClass('gateway');
+            } else if (bsrc.url.substr(0,5)=='onvif') {
                 $(self).find('.url_protocol').val('onvif');
                 $(self).addClass('onvif');
             } else if (self.isUplinkCamera(bsrc.url)) {
@@ -972,7 +978,12 @@ CameraEditControl = function(){
             }
 
             var url = bsrc.url
-            if (self.isUplinkCamera(bsrc.url))
+            if (self.camera.src.meta?.gateway_cam) {
+                $(self).find('.url_ip').val(self.camera.src.meta.gateway_ip);
+                $(self).find('.url_http_port').val(self.camera.src.meta.gateway_http);
+                $(self).find('.onvif_rtsp_port_fwd').val(self.camera.src.meta.gateway_rtsp);
+                $(self).find('.gatewaydisabled').attr('disabled', true);
+            } else if (self.isUplinkCamera(bsrc.url))
             {
                 url = ''; self.url = bsrc.url;
 
@@ -1062,6 +1073,7 @@ CameraEditControl = function(){
     }
     this.onLocationHierarchyLoaded = function(locationHierarchy, editingLoc = '', self = null) {
         var dropdownTreeStr;
+        var classSelf = this;
         locationHierarchy = window.core.locationHierarchy.sortLocations(locationHierarchy);
         if ( Object.keys(locationHierarchy).length == 0) {
             dropdownTreeStr = "<p class='nolocs font-md'>No locations have been set for this account. Add a location below</p>"
@@ -1112,11 +1124,11 @@ CameraEditControl = function(){
                 locArr.push(newLoc)
                 newLocStr.push(newLoc);
             }
-            $('[name="new_location_str"]').val(newLocStr.length > 0 ? newLocStr.join(":") : "");
+            $(classSelf).find('[name="new_location_str"]').val(newLocStr.length > 0 ? newLocStr.join(":") : "");
             showLoc += showLoc ? ", " + r.form.new_loc : r.form.new_loc;
 
-            $('[name="shownlocation"]').val(showLoc);
-            $('[name="location_str"]').val(locArr.join(":"));
+            $(classSelf).find('[name="shownlocation"]').val(showLoc);
+            $(classSelf).find('[name="location_str"]').val(locArr.join(":"));
         });		
     }
     this.createLocationList = function(locationHierarchy) {
@@ -1269,7 +1281,7 @@ CameraEditControl = function(){
         $(this).find('.url_protocol').val('onvif');
         //$(this).find('.rete_sd input').attr('disabled','disabled').prop('checked','');
         $(this).find('.url_protocol').removeAttr('disabled');
-        $(this).removeClass('options').removeClass('location').removeClass('rtsp').removeClass('cloud').addClass('onvif').removeClass('uplink');
+        $(this).removeClass('options').removeClass('location').removeClass('rtsp').removeClass('cloud').addClass('onvif').removeClass('uplink').removeClass('gateway');
         $(this).find('.subscription-info').val('');
         $(this).find('.show-name').val($.t('newCamera.noSubscriptionAssigned'));
         $('.custom-plan').hide();
@@ -1287,6 +1299,7 @@ CameraEditControl = function(){
         $(this).find('.sdrecinfo').text('');
 
         $(this).find('.dvr-disabled').attr('disabled', false);
+        $(this).find('.gatewaydisabled').attr('disabled', false);
 
         vxg.cameras.getLocationsList().then(function(locs) {
             var datalist = "";
@@ -1313,6 +1326,8 @@ CameraEditControl = function(){
         vxg.api.cloudone.user.getPlans().then(function(r) {
             vxg.user.src.plans = r.plans ? JSON.parse(r.plans) : {};
         })
+
+        $('.add3').scrollTop(0);
     }
     this.createTimezonesList = function(selector, selected) {
         selector.empty();

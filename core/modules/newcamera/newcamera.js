@@ -20,16 +20,13 @@ window.screens['newcamera'] = {
         this.access_token = access_token;
 
         var gatewayCamId = $(this.src).getNearParentAtribute("channel_id");
-        //var gatewayCamToken = $(this.src).getNearParentAtribute("gateway_token");
-        //if (gatewayCamId && gatewayCamToken) {
         if (gatewayCamId) {
             this.gatewayCamId = gatewayCamId;
-            //this.gatewayCamToken = gatewayCamToken;
-            $('.rtsp-only-label').attr('hidden', false);
+            $('.rtsp-only-label').attr('hidden', true);
+            $('.prov-server-label').attr('hidden', true);
         } else {
             this.wrapper.find('.newcameratabs').removeClass("gatewayCamera");
             this.gatewayCamId = null;
-            //this.gatewayCamToken = null;
         }
 
         if (!access_token) return defaultPromise();
@@ -47,8 +44,9 @@ window.screens['newcamera'] = {
             if (this.gatewayCamId) {
                 //return vxg.api.cloud.getCameraConfig(this.gatewayCamId, this.gatewayCamToken).then(function(cam) {
                 return vxg.api.cloud.getCameraConfig(this.gatewayCamId).then(function(cam) {
-                    self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add3').removeClass('add4').addClass('add5');
+                    //self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add3').removeClass('add4').addClass('add5');
                     self.wrapper.find('.newcameratabs').addClass("gatewayCamera");
+                    self.wrapper.find('cameraedit').addClass("gateway");
                     $('.headerBlock .header-center').text(`${$.t('newCamera.addCameraTo')} ${cam.name}`);
                     $('[name="location"]').addClass("disabled");
                     $('[name="group"]').addClass("disabled");
@@ -62,7 +60,7 @@ window.screens['newcamera'] = {
                     $('#rtsp-only-input').attr('checked', false);
                     $('.uplink-wrapper').hide();
                     $('.loc-dropdown').hide();
-                    $('.gatewayinput').show();
+                    //$('.gatewayinput').show();
                     
                     var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
                     var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : [];
@@ -97,6 +95,7 @@ window.screens['newcamera'] = {
                 $('#rtsp-only-input').attr('checked', false);
                 $('.uplink-wrapper').show();
                 $('.gatewayinput').hide();
+                self.wrapper.find('cameraedit').removeClass("gateway");
             }
             return defaultPromise();
         }

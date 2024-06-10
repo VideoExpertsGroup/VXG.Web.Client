@@ -18,9 +18,10 @@ align-items: center;
 }
 .block2{
 min-width: 500px;
-width: 66%;
+width: 60%;
 flex-grow: 2;
 margin: 1em 0 0 1em;
+height: 100%;
 }
 .block3{
 flex-grow: 1;
@@ -29,12 +30,14 @@ min-width: 250px;
 background-color:white;
 padding:15px 24px;
 margin: 1em 0 0 1em;
+height: 98.5%;
+width: 35%;
 }
 .block4, .block4_1{
 /*border:1px solid #e7eaec;*/
 background-color:white;
 padding:15px 24px;
-min-height: 300px;
+height: 49%;
 }
 .block4_1 {
     margin-bottom: 10px;
@@ -45,6 +48,7 @@ background-color:white;
 padding:15px 24px;
 position: relative;
 margin-top: 15px;
+width: 100%;
 }
 .screens > .home:not(.showstat) .block5{
 display:none;
@@ -162,8 +166,8 @@ body.home .headerBlock .header-right .signout {
     margin-left: 5px;
     margin-bottom: 8px;
 }
-@media only screen and (min-width: 1522px) {
+/*@media only screen and (min-width: 1522px) {
     .block3 {
         max-width: 400px;
     }
-}
+}*/

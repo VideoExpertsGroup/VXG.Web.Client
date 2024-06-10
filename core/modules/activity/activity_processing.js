@@ -4,7 +4,7 @@ $( document ).ready(function() {
 
     var thumburl = activity_window.event_processing.thumb_url ? activity_window.event_processing.thumb_url : "core/modules/cameras/camera.svg";
     var cameraName = activity_window.event_processing.camera_name;
-    var location = activity_window.event_processing.location;
+    var location = activity_window.event_processing.location == "undefined" ? "N/A" : activity_window.event_processing.location;
     var token = activity_window.event_processing.token;    
     var filemeta_download = activity_window.event_processing.filemeta_download;
     var tags = activity_window.event_processing.tags ? JSON.parse(atob(activity_window.event_processing.tags)) : null;
@@ -33,14 +33,14 @@ $( document ).ready(function() {
     $(".event-thumbnail").attr("src", thumburl);
     $(".raw-data").text(atob(activity_window.event_processing.meta));
 
-    if (eventStatus == "In Progress" || eventStatus == "Completed") {
+    if (eventStatus.toLowerCase() == "in progress" || eventStatus.toLowerCase() == "completed") {
         if (meta.result == "true") $("#check-true").attr("checked", true);
         if (meta.result == "false") $("#check-false").attr("checked", true);
         if (meta.description) $(".event-description").val(meta.description);
         $('.processing-cont').show();
     }
 
-    if (eventStatus == "Completed") {
+    if (eventStatus.toLowerCase() == "completed") {
         $(".processing-input").attr("disabled", true);
     }
     

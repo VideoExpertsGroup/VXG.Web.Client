@@ -683,3 +683,8 @@ background: black;
     font-weight: 400;
     color: red;
 }
+
+.section-loader {
+    height: 150px;
+    margin: auto;
+}

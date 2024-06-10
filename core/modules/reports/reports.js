@@ -81,6 +81,10 @@ function listControlCB(action, camera) {
 	    let targetElement = this.wrapper.find('.linechart')[0];
 	    targetElement.setSource( camera['token'], camera['src']['name'] );
             this.wrapper.addClass('showstat');
+			$(".report_activitylist").addClass('showstat');
+	} else if (action === "hide-statistics") {
+		this.wrapper.removeClass('showstat');
+		$(".report_activitylist").removeClass('showstat');
 	} else if (action === "gotData") {
 	    let targetElement = this.wrapper.find('.report_activitylist')[0];
 	    let targetElementChart = this.wrapper.find('.linechart')[0];	    
@@ -90,6 +94,8 @@ function listControlCB(action, camera) {
 	    
 	    if (camera === null || camera === undefined) {
 		//nodata comes, so stop activity loader by calling function w/o params
+			$(".report_activitylist .VXGActivityNoEvents").addClass("visible");
+			$(".report_activitylist .loader").remove();
 	        targetElementChart.setSource();
 	    } else {
 			let allCamToken = (camera['allCamsToken'] !== undefined)? camera['allCamsToken'] : vxg.user.src.allCamsToken;

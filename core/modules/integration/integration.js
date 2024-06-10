@@ -168,7 +168,7 @@ function button_more(el)
 			});
 		}
 		if (r.meta.next) {
-			$("#camera_at").append( `"<button type='button' class='vxgbutton more_acc_tok' data-attr="+r.meta.next+" onclick='button_more(this)'>${$.t('common.more')}</button>"` );
+			$("#camera_at").append( `<button type='button' class='vxgbutton more_acc_tok' data-attr="${r.meta.next}" onclick='button_more(this)'>${$.t('common.more')}</button>` );
 		}
 	});
 }

@@ -23,16 +23,18 @@ window.screens['add_gateway'] = {
                 var gatewayCam = cameras.objects.filter(c => { return c.meta && c.meta.gateway != undefined });
                 self.gateway = gatewayCam[0];
                 self.editing = true;
-                $('.hide-edit-cont').hide();
+                //$('.hide-edit-cont').hide();
                 $('.hide-edit').attr("disabled", true);
+                $('.hide-glinet-check').css("display", "none");
                 self.loadGatewayInfo();
             })
         } else {
             self.editing = false;
             $('#add-gateway').html($.t('gateways.addGateway'));
             $('.header-center').html($.t('recorders.addRecorder'));
-            $('.hide-edit-cont').show();
+            //$('.hide-edit-cont').show();
             $('.hide-edit').attr("disabled", false);
+            $('.hide-glinet-check').css("display", "block");
         }
 
         return defaultPromise();
@@ -66,6 +68,18 @@ window.screens['add_gateway'] = {
             else self.addGateway(formData, self);
         });
 
+        this.wrapper.find('#glinet-checkbox-input').click(function(e) {
+            $('.glinet-wrapper').toggle();
+            $('.gateway-id-wrapper').toggle();
+            $('.gateway-id-input').toggleClass('required')
+            $('.glinet-serial').toggleClass('required')
+            $('.glinet-mac').toggleClass('required')
+            if ($(".glinet-serial").val() && $(".glinet-mac").val()) {
+                $(".glinet-serial").val("");
+                $(".glinet-mac").val("");
+            }
+        });
+
         return defaultPromise();
     },
     loadGatewayInfo: function() {
@@ -78,6 +92,8 @@ window.screens['add_gateway'] = {
         $('[name="name"]').val(cam.name);
         $('[name="location"]').val(loc);
         $('[name="group"]').val(group);
+        $('[name="guid"]').val(cam.meta.gateway_id);
+        $('[name="username"]').val(cam.meta.gateway_username);
         $('[name="password"]').val(cam.meta.gateway_password);
     },
     reset: function() {
@@ -140,8 +156,16 @@ window.screens['add_gateway'] = {
             $(".name-label").css('color', '#676a6c');
         }
 
-        if (creating && !formData.guid) {
-            $(".guid-label").css('color', 'red');
+        if (creating && (!formData.guid && (!formData.macAddress || !formData.serialnumber))) {
+            if (!formData.guid) {
+                $(".guid-label").css('color', 'red');
+            }
+            if (!formData.macAddress) {
+                $(".mac-label").css('color', 'red');
+            }
+            if (!formData.serialnumber) {
+                $(".serial-label").css('color', 'red');
+            }
             inputError = true;
         } else {
             $(".guid-label").css('color', '#676a6c');

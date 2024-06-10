@@ -22,7 +22,7 @@ list($location,
      $serialnumber, $macAddress, $uplink, 
      $dvrName, $channel_number, $uuid, $isFirst, 
      $gatewayId, $max_num_cameras,
-     $gatewayCam, $gatewayUrl,
+     $gatewayCam, $gatewayUrl, $glinet,
      $gatewayUsername, $gatewayPassword,
      $cameraIp, $path, $rtspOnly) = 
     MCore::getInputParameters(['location'=>'',
@@ -37,7 +37,7 @@ list($location,
                                'serialnumber'=>'','macAddress'=>'', 'uplink'=>'',
                                'dvrName'=>'','channel_number'=>'','uuid' =>'','isFirst'=>false,
                                'gatewayId'=>'','max_num_cameras'=>'',
-                               'gatewayCam' => false, 'gatewayUrl' => '',
+                               'gatewayCam' => false, 'gatewayUrl' => '', 'glinet' => '',
                                'gatewayUsername' => '','gatewayPassword' => '',
                                'url_ip' => '', 'path' => '', 'rtspOnly' => false]);
 
@@ -71,11 +71,29 @@ if ($dvrName && $channel_number) {
     $meta = ['dvr_name' => $dvrName, 'dvr_camera' => $channel_number, $uuid => 'dvr_id', 'dvr_id' => $uuid, 'subid' => 'NOPLAN', 'subname' => 'No Plan'];
     if ($isFirst) $meta['dvr_first_channel'] = $dvrInfo_str;
 } else if ($gatewayCam && $gatewayId) {
-    $meta = [$gatewayId => 'gateway_id', 'gateway_id' => $gatewayId, 'gateway_cam' => "gateway_cam"];
+    $meta = [$gatewayId => 'gateway_id', 
+            'gateway_id' => $gatewayId,
+            'gateway_cam' => "gateway_cam", 
+            'gateway_ip' => $cameraIp,
+            'gateway_http' => $http_port,
+            'gateway_rtsp' => $onvif_rtsp_port_fwd];
 } else if ($gatewayId && $max_num_cameras && $uuid) {
     $meta = ['gateway' => 'gateway', 
             $gatewayId => 'gateway_id', 
             'gateway_id' => $gatewayId, 
+            "gateway_username" => $gatewayUsername, 
+            "gateway_password" => $gatewayPassword,
+            $uuid => 'unique_id', 
+            'max_num_cameras' => $max_num_cameras,
+            'subid' => 'NOPLAN', 
+            'subname' => 'No Plan'];
+} else if ($glinet) {
+    $meta = ['glinet' => 'glinet',
+            'gateway' => 'gateway',
+            $serialnumber => 'gateway_id', 
+            'gateway_id' => $serialnumber, 
+            'gateway_mac' => $macAddress,
+            $macAddress => 'gateway_mac',
             "gateway_username" => $gatewayUsername, 
             "gateway_password" => $gatewayPassword,
             $uuid => 'unique_id', 

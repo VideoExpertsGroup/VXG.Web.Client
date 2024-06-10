@@ -96,6 +96,10 @@ vxg.users.getUserByID = function(userid){
     return this.list[userid];
 }
 
+vxg.users.addUserToList = function(user) {
+    this.list.push(user);
+}
+
 vxg.partners.getList = function (limit, offset) {
     let self = this;
     let args = {};
@@ -277,13 +281,22 @@ vxg.cameras.createCameraGatewayPromise = function(gatewayInfo){
         location: gatewayInfo.location,
         group: gatewayInfo.group,
         recording: 'off',
-        gatewayId: gatewayInfo.guid,
         uuid: gatewayInfo.uuid,
-        macAddress: gatewayInfo.guid,
-        serialnumber: gatewayInfo.guid,
-        max_num_cameras: 64,
         gatewayUsername: gatewayInfo.username,
         gatewayPassword: gatewayInfo.password
+    }
+    if (gatewayInfo.macAddress && gatewayInfo.serialnumber) {
+        data.gatewayId = gatewayInfo.serialnumber;
+        data.macAddress = gatewayInfo.macAddress;
+        data.serialnumber = gatewayInfo.serialnumber;
+        data.glinet = 'glinet';
+        data.max_num_cameras =  8;
+    }
+    else {
+        data.gatewayId = gatewayInfo.guid;
+        data.macAddress = gatewayInfo.guid;
+        data.serialnumber = gatewayInfo.guid;
+        data.max_num_cameras =  64;
     }
 
     return vxg.api.cloudone.camera.add(data).then(function(r){

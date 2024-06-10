@@ -1258,11 +1258,11 @@ class MUser{
             return;
         }
         $channels = MCore::$core->pdo->fetchAll('SELECT "cameraCHID", "location" from "userCamera" u where u."userID"=?', [$this->id]);
-        $channels_id = []; $locations = [];
+        $channel_ids = []; $locations = [];
         if (is_array($channels)) {
             foreach($channels as $ch) {
                 if ($ch['cameraCHID'])
-                    $channels_id[] = $ch['cameraCHID'];
+                    $channel_ids[] = $ch['cameraCHID'];
                 if ($ch['location'] != "")
                     $locations[] = $ch['location'];
             }
@@ -1277,8 +1277,8 @@ class MUser{
         if (isset($ret['status']) && $ret['status']==500)
             error(500, $ret['errorDetail']);
         foreach($ret['objects'] as $o)
-            if (!in_array($o['id'],$channels_id))
-                $channels_id[] = $o['id'];
+            if (!in_array($o['id'],$channel_ids))
+                $channel_ids[] = $o['id'];
 */
         foreach($locations as $location) {
             $locArr = explode(":", $location);
@@ -1288,14 +1288,16 @@ class MUser{
                 foreach($locArr as $loc) {
                     if (!isset($cam['meta'][$loc])) $inCurrentLoc = false;
                 }
-                if ($inCurrentLoc) $channels_id[] = $cam['id'];
+                if ($inCurrentLoc) $channel_ids[] = $cam['id'];
             }
         }
+
+        $channel_ids_unique = array_unique($channel_ids, SORT_REGULAR);
 
         $response_cloud = ['token'=>'', 'id'=>0];
         if (!$this->allCamsTokenID){
             $data = [
-                'channels' => $channels_id,
+                'channels' => $channel_ids_unique,
                 'expire' => "2099-12-31T00:00:00", // 10 years
                 'name' => "AllCamsUser#" . $this->id,
                 'channels_access' => "all"
@@ -1304,8 +1306,9 @@ class MUser{
         }
         if (isset($response_cloud['status']) && $response_cloud['status']==500)
             error(500, $response_cloud['errorDetail']);
+
         if ($this->allCamsTokenID)
-            $response_cloud = StreamLandAPI::updateAllCamsToken($this->allCamsTokenID, ['channels' => $channels_id, 'channels_access' => "all",'max_channels_amount'=>100]);
+            $response_cloud = StreamLandAPI::updateAllCamsToken($this->allCamsTokenID, ['channels' => $channel_ids_unique, 'channels_access' => "all",'max_channels_amount'=>100]);
         if (!$response_cloud['token']) $response_cloud['token'] = $this->allCamsToken ? $this->allCamsToken : '';
         if (!$response_cloud['id']) $response_cloud['id'] = $this->allCamsTokenID ? $this->allCamsTokenID : '';
  

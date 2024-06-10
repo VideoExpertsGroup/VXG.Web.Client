@@ -91,7 +91,7 @@ window.screens['activity'] = {
 
 		}else {
 				// localStorage.setItem("initialLoading", true);
-		    // targetElement.showActivityList();
+		    targetElement.showActivityList();
 		}
 	    }, function(r) {
 		// localStorage.setItem("initialLoading", true);

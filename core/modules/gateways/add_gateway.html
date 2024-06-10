@@ -24,9 +24,19 @@
                     <label class="gateway-label location-label" for="location" data-i18n="common.location">Location</label>
                     <input class="gateway-input" name="location" type="text" >
                 </div>
-                <div class="gateway-input-wrapper hide-edit-cont">
+                <div class="gateway-id-wrapper gateway-input-wrapper hide-edit-cont">
                     <label class="gateway-label guid-label" for="guid" data-i18n="common.gatewayID">Gateway ID</label>
-                    <input class="gateway-input required hide-edit" name="guid" type="text" >
+                    <input class="gateway-id-input gateway-input required hide-edit" name="guid" type="text" >
+                </div>
+                <!-- <div class="glinet-wrapper gateway-input-wrapper hide-edit-cont" style="display: none"> -->
+                <div class="glinet-wrapper gateway-input-wrapper" style="display: none">
+                    <label class="gateway-label serial-label" for="serial" data-i18n="common.serial">Serial Number</label>
+                    <input class="glinet-serial gateway-input hide-edit" name="serialnumber" type="text" >
+                </div>
+                <!-- <div class="glinet-wrapper gateway-input-wrapper hide-edit-cont" style="display: none"> -->
+                <div class="glinet-wrapper gateway-input-wrapper" style="display: none">
+                    <label class="gateway-label mac-label" for="mac" data-i18n="common.mac">MAC Address</label>
+                    <input class="glinet-mac gateway-input hide-edit" name="macAddress" type="text" >
                 </div>
                 <div class="gateway-input-wrapper hide-edit-cont">
                     <label class="gateway-label username-label" for="username" data-i18n="common.username">Username</label>
@@ -36,6 +46,11 @@
                     <label class="gateway-label password-label" for="password" data-i18n="common.password">Password</label>
                     <input class="gateway-input required" name="password" type="text" >
                 </div>
+                <label class="glinet-checkbox-label custom-checkbox hide-glinet-check">
+                    <span class="glinet-checkbox-text" data-i18n="common.glinet">GL.i.NET Gateway</span>
+                    <input id="glinet-checkbox-input" type="checkbox">
+                    <span class="checkmark"></span>
+                </label>
             </div>
         </div>
         <div class="error-wrapper">

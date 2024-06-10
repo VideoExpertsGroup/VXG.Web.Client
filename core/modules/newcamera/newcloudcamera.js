@@ -39,8 +39,6 @@ CameraCloudEditControl = function(){
 <div class="form-group camera_finder_link">
 `+camera_finder_link+`
 </div>
-<input type="hidden" name="gatewayId">
-<input type="hidden" name="gatewayUrl">
 <div class="form-group">
     <label>${$.t('common.name')}</label>
     <input autofocus="autofocus" class="name" name="name" >
@@ -88,7 +86,7 @@ CameraCloudEditControl = function(){
     <label for="url_prot">${$.t('common.protocol')}&nbsp;</label>
     <input type="text" class="url_prot form-control input500" value="">
 </div>
-<div class="form-group options notincloud gatewayinput" style="display:none">
+<!--<div class="form-group options notincloud gatewayinput" style="display:none">
     <label class="gateway_ip_label" for="url_ip">${$.t('newCamera.cameraIpLabel')}</label>
     <input type="text" name="url_ip" class="url_ip form-control input500" value="">
     <div class="iperror">${$.t('newCamera.invalidDomainOrIpAddress')}</div>
@@ -102,7 +100,7 @@ CameraCloudEditControl = function(){
     <label class="onvifOnly" for="url_rtsp_port">${$.t('common.rtspPort')}&nbsp;</label>
     <input type="number" class="onvifOnly url_rtsp_port form-control input500" name="onvif_rtsp_port_fwd">
     <i class="onvifOnly"></i>
-</div>
+</div>-->
 <div class="form-group options notincloud" style="display:none">
   <label for="deviceLogin">${$.t('common.username')}&nbsp;</label>
   <input type="text" class="form-control input500 url_user_name" name="username" >
@@ -222,9 +220,10 @@ CameraCloudEditControl = function(){
 
         $(this).find("#locbtn-cloud").click(function(e) {
             e.preventDefault();
-            if (localStorage.locationHierarchy == undefined)
+            if (localStorage.locationHierarchy == undefined) {
+                core.elements['global-loader'].show();
                 window.core.locationHierarchy.createLocationHierarchy(self)
-            else {
+            } else {
                 var editingLoc = $(self).find('[name="location_str"]').val();
                 self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy), editingLoc, self);
             }
@@ -419,7 +418,6 @@ CameraCloudEditControl = function(){
             $(".server-status").show();
         }
 
-        data.gatewayCam = data.gatewayId ? true : false;
         var newLocation = data.new_location_str;
         delete data.new_location_str;
 
@@ -516,8 +514,8 @@ CameraCloudEditControl = function(){
                                     }
                                 }
     
-                                if (!data.gatewayCam && macAddress && serverSerial) dialogs['mdialog'].activate(`<h7>${$.t('common.success')}!</h7><p>${$.t('toast.installCameraPluginSuccess')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
-                                else if (!data.gatewayCam) dialogs['mdialog'].activate(`<h7>${$.t('common.accessToken')}</h7><p>${$.t('toast.copyAndSaveAccessTokenBeforeClosingWindow')}</p><textarea rows="5" style="min-width:200px">${r.access_tokens.all}</textarea><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
+                                if (macAddress && serverSerial) dialogs['mdialog'].activate(`<h7>${$.t('common.success')}!</h7><p>${$.t('toast.installCameraPluginSuccess')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
+                                else dialogs['mdialog'].activate(`<h7>${$.t('common.accessToken')}</h7><p>${$.t('toast.copyAndSaveAccessTokenBeforeClosingWindow')}</p><textarea rows="5" style="min-width:200px">${r.access_tokens.all}</textarea><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
                                 
                                 $(".serial-number-input").val("");
                                 $(".mac-address-input").val("");
@@ -680,6 +678,7 @@ CameraCloudEditControl = function(){
     }
     this.onLocationHierarchyLoaded = function(locationHierarchy, editingLoc = '', self = null) {
         var dropdownTreeStr;
+        var classSelf = this;
         locationHierarchy = window.core.locationHierarchy.sortLocations(locationHierarchy);
         if ( Object.keys(locationHierarchy).length == 0) {
             dropdownTreeStr = "<p class='nolocs font-md'>No locations have been set for this account. Add a location below</p>"
@@ -727,11 +726,11 @@ CameraCloudEditControl = function(){
                 newLocStr.push(newLoc);
             }
 
-            $('[name="new_location_str"]').val(newLocStr.length > 0 ? newLocStr.join(":") : "");
+            $(classSelf).find('[name="new_location_str"]').val(newLocStr.length > 0 ? newLocStr.join(":") : "");
             showLoc += showLoc ? ", " + r.form.new_loc : r.form.new_loc;
 
-            $('[name="shownlocation"]').val(showLoc);
-            $('[name="location_str"]').val(locArr.join(":"));
+            $(classSelf).find('[name="shownlocation"]').val(showLoc);
+            $(classSelf).find('[name="location_str"]').val(locArr.join(":"));
         });		
     }
     this.createLocationList = function(locationHierarchy) {
@@ -841,6 +840,9 @@ CameraCloudEditControl = function(){
         this.createTimezonesList($(this).find('[name="tz"]'),moment.tz.guess());
         $(this).find('.custom-plan').hide();
         $(this).find('.hidesett').hide();
+        
+        $('.add4').scrollTop(0);
+        $('.add5').scrollTop(0);
     }
     this.createTimezonesList = function(selector, selected) {
         selector.empty();

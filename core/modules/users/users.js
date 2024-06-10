@@ -38,104 +38,147 @@ window.screens['users'] = {
         self.wrapper.addClass('loader');
         self.wrapper.removeClass('nouser');
         return vxg.user.getStorageChannelID().then(function(archive_channel_id){
-            return self.show_users(archive_channel_id);
+            if (!vxg.user.src.users) {
+                return vxg.users.getList(100).then(function(users){
+                    vxg.user.src.users = users;
+                    return self.show_users(archive_channel_id, users);
+                }, function(){
+                    self.wrapper.addClass('nouser');
+                    $(self.wrapper).find('.userlist').empty().append($.t('toast.loadUsersFailed'));
+                    self.wrapper.removeClass('loader');
+                })
+            } else {
+                return self.show_users(archive_channel_id, vxg.user.src.users);
+            }
         },function(error){
             return self.show_users();
         });
         return defaultPromise();
     },
-    'show_users':function(archive_channel_id){
+    'show_users':function(archive_channel_id, users){
         let self=this;
-        return vxg.users.getList(100).then(function(users){
-            let table=`<table><thead><tr class="header"><th scope="col">#</th><th scope="col">${$.t('common.name')}</th><th scope="col">${$.t('common.email')}</th><th scope="col">${$.t('users.role')}</th><th scope="col">${$.t('common.camerasTitle')}</th><th scope="col">${$.t('common.actionTitle')}</th></tr></thead><tbody>`;
-            let c=1;
-            for (let i in users) {
-                let archive_channel_id = vxg.user.src.allCamsTokenMeta && vxg.user.src.allCamsTokenMeta.storage_channel_id ? parseInt(vxg.user.src.allCamsTokenMeta.storage_channel_id) : 0;
-                let totalcameras = users[i].src.totalCameras - (archive_channel_id && users[i].src.cameras.indexOf(archive_channel_id)>=0 ? 1 : 0);
-                let user = vxg.users.getUserByID(users[i].src.id);
-                let archive_enable = user.src.cameras.indexOf(archive_channel_id)>=0;
+        let table=`<table><thead><tr class="header"><th scope="col">#</th><th scope="col">${$.t('common.name')}</th><th scope="col">${$.t('common.email')}</th><th scope="col">${$.t('users.role')}</th><th scope="col">${$.t('common.camerasTitle')}</th><th scope="col">${$.t('common.actionTitle')}</th></tr></thead><tbody>`;
+        let c=1;
+        for (let i in users) {
+            let archive_channel_id = vxg.user.src.allCamsTokenMeta && vxg.user.src.allCamsTokenMeta.storage_channel_id ? parseInt(vxg.user.src.allCamsTokenMeta.storage_channel_id) : 0;
+            let totalcameras = users[i].src.totalCameras - (archive_channel_id && users[i].src.cameras.indexOf(archive_channel_id)>=0 ? 1 : 0);
+            //let user = vxg.users.getUserByID(users[i].src.id);
+            let user = users[i];
+            let archive_enable = user.src.cameras.indexOf(archive_channel_id)>=0;
 
-                let storimg = '<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOS4zNSAxNlYxMC43OTE3QzE5LjM1IDEwLjE4NDIgMTguODU3NSA5LjY5MTY3IDE4LjI1IDkuNjkxNjdIMTMuNDg3N0MxMi41MDEgOS42OTE2NyAxMS41ODE5IDkuMTg5OTEgMTEuMDQ4MyA4LjM1OTg2TDkuNzkxNzMgNi40MDUxN0M5LjU4OTMzIDYuMDkwMzIgOS4yNDA3MiA1LjkgOC44NjY0MyA1LjlINkM1LjM5MjQ5IDUuOSA0LjkgNi4zOTI0OSA0LjkgN1YxNkM0LjkgMTYuNjA3NSA1LjM5MjQ5IDE3LjEgNiAxNy4xSDE4LjI1QzE4Ljg1NzUgMTcuMSAxOS4zNSAxNi42MDc1IDE5LjM1IDE2Wk02IDVDNC44OTU0MyA1IDQgNS44OTU0MyA0IDdWMTZDNCAxNy4xMDQ2IDQuODk1NDMgMTggNiAxOEgxOC4yNUMxOS4zNTQ2IDE4IDIwLjI1IDE3LjEwNDYgMjAuMjUgMTZWMTAuNzkxN0MyMC4yNSA5LjY4NzEgMTkuMzU0NiA4Ljc5MTY3IDE4LjI1IDguNzkxNjdIMTMuNDg3N0MxMi44MDcyIDguNzkxNjcgMTIuMTczNCA4LjQ0NTYzIDExLjgwNTQgNy44NzMxOEwxMC41NDg4IDUuOTE4NDhDMTAuMTgwOCA1LjM0NjA0IDkuNTQ2OTYgNSA4Ljg2NjQzIDVINloiIGZpbGw9IiNCMkIyQjIiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNi42MjUyIDYuNTMzM0MxNy40ODEyIDYuNTMzMyAxOC4xNzUyIDcuMjI3MjYgMTguMTc1MiA4LjA4MzNWOS4wNjI0N0gxOS4wNzUyVjguMDgzM0MxOS4wNzUyIDYuNzMwMiAxNy45NzgzIDUuNjMzMyAxNi42MjUyIDUuNjMzM0gxMC4yMjk0VjYuNTMzM0gxNi42MjUyWiIgZmlsbD0iI0IyQjJCMiIvPgo8L3N2Zz4=" style="margin-top: -17px;">';
-                if (archive_enable) storimg = '<img class="svgbtn" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgN0M0IDUuODk1NDMgNC44OTU0MyA1IDYgNUw4Ljg2NjQzIDVDOS41NDY5NiA1IDEwLjE4MDggNS4zNDYwNCAxMC41NDg4IDUuOTE4NDhMMTEuODA1NCA3Ljg3MzE4QzEyLjE3MzQgOC40NDU2MyAxMi44MDcyIDguNzkxNjcgMTMuNDg3NyA4Ljc5MTY3SDE4LjI1QzE5LjM1NDYgOC43OTE2NyAyMC4yNSA5LjY4NzEgMjAuMjUgMTAuNzkxN1YxNkMyMC4yNSAxNy4xMDQ2IDE5LjM1NDYgMTggMTguMjUgMThINkM0Ljg5NTQzIDE4IDQgMTcuMTA0NiA0IDE2VjdaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTguNjI1IDkuMDYyNDJWOC4wODMyNUMxOC42MjUgNi45Nzg2OCAxNy43Mjk2IDYuMDgzMjUgMTYuNjI1IDYuMDgzMjVMMTAuMjI5MiA2LjA4MzI1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuOSIvPgo8L3N2Zz4=" style="margin-top: -17px;">';
-                table += '<tr userid="' + users[i].src.id + '"><td>' + c + '</td><td class="name">' + users[i].src.name + '</td><td class="email">' + users[i].src.email + '</td>' +
-                    '<td> Operator </td>' +
-                    '<td>' + totalcameras + '</td>' +
-                    '<td class="action-icons">' +
-                    //'<button class="userbtn item-resend-confirm" title="Resend confirm email"></button>' +
-                    //'<button class="userbtn item-report"></button>' +
-                    //'<button class="userbtn item-arch userarchive '+(archive_enable?'active':'')+'" userid='+users[i].src.id+' username="'+users[i].src.name+'"><i class="fa fa-folder-o" aria-hidden="true"></i></button>'+
-                    '<button class="userbtn item-cams usercameras" onclick_toscreen="usercameras"><i class="fa fa-video-camera" aria-hidden="true"></i></button>' +
-                    '<button class="userbtn item-edit edituser" onclick_toscreen="edituser"><i class="fa fa-pencil" aria-hidden="true"></i></button>' +
-                    //'<button class="userbtn item-goto-user"></button>' +
-                    '<button class="userbtn item-delete deleteuser" userid='+users[i].src.id+' username="'+users[i].src.name+'"><i class="fa fa-trash-o" aria-hidden="true"></i></button></td></tr>';
-                c++;
-    
-            }
-            table += '</tbody></table>'
-            if (users.length>0)
-                $(self.wrapper).find('.userlist').empty().append(table);
-            else {
-                self.wrapper.addClass('nouser');
-                $(self.wrapper).find('.userlist').empty().append(`<h5 class="font-md">${$.t('users.noUsers')}. <a href="javascript:void(0)" ifscreen="edituser" onclick_toscreen="edituser">${$.t('users.addUser')}</a></h5>`);
-            }
+            let storimg = '<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOS4zNSAxNlYxMC43OTE3QzE5LjM1IDEwLjE4NDIgMTguODU3NSA5LjY5MTY3IDE4LjI1IDkuNjkxNjdIMTMuNDg3N0MxMi41MDEgOS42OTE2NyAxMS41ODE5IDkuMTg5OTEgMTEuMDQ4MyA4LjM1OTg2TDkuNzkxNzMgNi40MDUxN0M5LjU4OTMzIDYuMDkwMzIgOS4yNDA3MiA1LjkgOC44NjY0MyA1LjlINkM1LjM5MjQ5IDUuOSA0LjkgNi4zOTI0OSA0LjkgN1YxNkM0LjkgMTYuNjA3NSA1LjM5MjQ5IDE3LjEgNiAxNy4xSDE4LjI1QzE4Ljg1NzUgMTcuMSAxOS4zNSAxNi42MDc1IDE5LjM1IDE2Wk02IDVDNC44OTU0MyA1IDQgNS44OTU0MyA0IDdWMTZDNCAxNy4xMDQ2IDQuODk1NDMgMTggNiAxOEgxOC4yNUMxOS4zNTQ2IDE4IDIwLjI1IDE3LjEwNDYgMjAuMjUgMTZWMTAuNzkxN0MyMC4yNSA5LjY4NzEgMTkuMzU0NiA4Ljc5MTY3IDE4LjI1IDguNzkxNjdIMTMuNDg3N0MxMi44MDcyIDguNzkxNjcgMTIuMTczNCA4LjQ0NTYzIDExLjgwNTQgNy44NzMxOEwxMC41NDg4IDUuOTE4NDhDMTAuMTgwOCA1LjM0NjA0IDkuNTQ2OTYgNSA4Ljg2NjQzIDVINloiIGZpbGw9IiNCMkIyQjIiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNi42MjUyIDYuNTMzM0MxNy40ODEyIDYuNTMzMyAxOC4xNzUyIDcuMjI3MjYgMTguMTc1MiA4LjA4MzNWOS4wNjI0N0gxOS4wNzUyVjguMDgzM0MxOS4wNzUyIDYuNzMwMiAxNy45NzgzIDUuNjMzMyAxNi42MjUyIDUuNjMzM0gxMC4yMjk0VjYuNTMzM0gxNi42MjUyWiIgZmlsbD0iI0IyQjJCMiIvPgo8L3N2Zz4=" style="margin-top: -17px;">';
+            if (archive_enable) storimg = '<img class="svgbtn" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgN0M0IDUuODk1NDMgNC44OTU0MyA1IDYgNUw4Ljg2NjQzIDVDOS41NDY5NiA1IDEwLjE4MDggNS4zNDYwNCAxMC41NDg4IDUuOTE4NDhMMTEuODA1NCA3Ljg3MzE4QzEyLjE3MzQgOC40NDU2MyAxMi44MDcyIDguNzkxNjcgMTMuNDg3NyA4Ljc5MTY3SDE4LjI1QzE5LjM1NDYgOC43OTE2NyAyMC4yNSA5LjY4NzEgMjAuMjUgMTAuNzkxN1YxNkMyMC4yNSAxNy4xMDQ2IDE5LjM1NDYgMTggMTguMjUgMThINkM0Ljg5NTQzIDE4IDQgMTcuMTA0NiA0IDE2VjdaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTguNjI1IDkuMDYyNDJWOC4wODMyNUMxOC42MjUgNi45Nzg2OCAxNy43Mjk2IDYuMDgzMjUgMTYuNjI1IDYuMDgzMjVMMTAuMjI5MiA2LjA4MzI1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuOSIvPgo8L3N2Zz4=" style="margin-top: -17px;">';
+            table += '<tr userid="' + users[i].src.id + '"><td>' + c + '</td><td class="name">' + users[i].src.name + '</td><td class="email">' + users[i].src.email + '</td>' +
+                '<td> Operator </td>' +
+                '<td class="camCount spinner" id="camCount_'+ users[i].src.id + '"></td>' +
+                '<td class="action-icons">' +
+                //'<button class="userbtn item-resend-confirm" title="Resend confirm email"></button>' +
+                //'<button class="userbtn item-report"></button>' +
+                //'<button class="userbtn item-arch userarchive '+(archive_enable?'active':'')+'" userid='+users[i].src.id+' username="'+users[i].src.name+'"><i class="fa fa-folder-o" aria-hidden="true"></i></button>'+
+                '<button class="userbtn item-cams usercameras" onclick_toscreen="usercameras"><i class="fa fa-video-camera" aria-hidden="true"></i></button>' +
+                '<button class="userbtn item-edit edituser" onclick_toscreen="edituser"><i class="fa fa-pencil" aria-hidden="true"></i></button>' +
+                //'<button class="userbtn item-goto-user"></button>' +
+                '<button class="userbtn item-delete deleteuser" id="delUser_'+users[i].src.id+'" userid='+users[i].src.id+' username="'+users[i].src.name+'" camCount=""><i class="fa fa-trash-o" aria-hidden="true"></i></button></td></tr>';
+            c++;
+
+        }
+        table += '</tbody></table>'
+        if (users.length>0) {
+            $(self.wrapper).find('.userlist').empty().append(table);
             self.wrapper.removeClass('loader');
-            self.wrapper.find('.userarchive').click(function(){
-
-                if (!archive_channel_id){
-                    dialogs['mdialog'].activate(`<h7>${$.t('common.error')}</h7><p>${$.t('toast.createArchiveFailed')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
-                    return;
-                }
-
-                let userid = this.getAttribute('userid');
-                let username = this.getAttribute('username');
-                let archive_enable = this.classList.contains('active');
-                dialogs['mdialog'].activate(`<h7>${$.t('users.assignArchiveConfirm.title')}</h7><p><br/><label><input type="checkbox" class="userarchive" ${archive_enable ? 'checked="checked"' : ''} name="enable">${$.t('users.assignArchiveConfirm.content', { user: username })}</label></p><p><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="apply" class="vxgbutton">${$.t('action.apply')}</button></p>`).then(function(r){
-                    if (r.button!='apply') return;
-                    let checked = r.form.enable=="on";
-
-                    let archive_channel_id = parseInt(vxg.user.src.allCamsTokenMeta.storage_channel_id);
-                    if (!archive_channel_id) return;
-                    let attach = [], detach = [];
-                    if (checked) attach.push(archive_channel_id);
-                    else detach.push(archive_channel_id);
-      
-                    core.elements['global-loader'].show();
-      
-                    vxg.api.cloudone.user.relation({attach: attach, detach: detach, withUserID: userid}).then(function (ret) {
-                        core.elements['global-loader'].hide();
-                        return self.on_show();
-                    },function(r){
-                        if (r && r.responseJSON && r.responseJSON.errorDetail)
-                            alert(r.responseJSON.errorDetail);
-                        else
-                            alert($.t('toast.updateUserCameraFailed'));
-                        core.elements['global-loader'].hide();
-                    });
+            if (localStorage.cameraList) {
+                self.getUserCamCount(users, JSON.parse(localStorage.cameraList));
+            } else {
+                vxg.cameras.getFullCameraList(500, 0).then(function() {
+                    self.getUserCamCount(users, JSON.parse(localStorage.cameraList));
                 });
-            });
-            self.wrapper.find('.deleteuser').click(function(){
-                let userid = this.getAttribute('userid');
-                let username = this.getAttribute('username');
-                dialogs['mdialog'].activate(`<h7>${$.t('users.deleteConfirm.title', { user: username })}</h7><p>${$.t('users.deleteConfirm.content')} </p><p><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.delete')}</button></p>`).then(function(r){
-                    if (r.button!='delete') return;
-                    core.elements['global-loader'].show();
-                    vxg.api.cloudone.user.del(userid).then(function(){
-                        core.elements['global-loader'].hide();
-                        return self.on_show();
-                    },function(r){
-                        core.elements['global-loader'].hide();
-                        let err_text = $.t('toast.deleteUserFailed');
-                        if (r && r.responseJSON && r.responseJSON.errorDetail) err_text = r.responseJSON.errorDetail;
-                        dialogs['mdialog'].activate(`<h7>${$.t('common.error')}</h7><p>${err_text}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
-                    });
-                });
-            });
-            self.filter();
-        }, function(){
+            }
+        } else {
             self.wrapper.addClass('nouser');
-            $(self.wrapper).find('.userlist').empty().append($.t('toast.loadUsersFailed'));
-            self.wrapper.removeClass('loader');
+            $(self.wrapper).find('.userlist').empty().append(`<h5 class="font-md">${$.t('users.noUsers')}. <a href="javascript:void(0)" ifscreen="edituser" onclick_toscreen="edituser">${$.t('users.addUser')}</a></h5>`);
+        }
+        self.wrapper.removeClass('loader');
+        self.wrapper.find('.userarchive').click(function(){
+
+            if (!archive_channel_id){
+                dialogs['mdialog'].activate(`<h7>${$.t('common.error')}</h7><p>${$.t('toast.createArchiveFailed')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
+                return;
+            }
+
+            let userid = this.getAttribute('userid');
+            let username = this.getAttribute('username');
+            let archive_enable = this.classList.contains('active');
+            dialogs['mdialog'].activate(`<h7>${$.t('users.assignArchiveConfirm.title')}</h7><p><br/><label><input type="checkbox" class="userarchive" ${archive_enable ? 'checked="checked"' : ''} name="enable">${$.t('users.assignArchiveConfirm.content', { user: username })}</label></p><p><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="apply" class="vxgbutton">${$.t('action.apply')}</button></p>`).then(function(r){
+                if (r.button!='apply') return;
+                let checked = r.form.enable=="on";
+
+                let archive_channel_id = parseInt(vxg.user.src.allCamsTokenMeta.storage_channel_id);
+                if (!archive_channel_id) return;
+                let attach = [], detach = [];
+                if (checked) attach.push(archive_channel_id);
+                else detach.push(archive_channel_id);
+    
+                core.elements['global-loader'].show();
+    
+                vxg.api.cloudone.user.relation({attach: attach, detach: detach, withUserID: userid}).then(function (ret) {
+                    core.elements['global-loader'].hide();
+                    return self.on_show();
+                },function(r){
+                    if (r && r.responseJSON && r.responseJSON.errorDetail)
+                        alert(r.responseJSON.errorDetail);
+                    else
+                        alert($.t('toast.updateUserCameraFailed'));
+                    core.elements['global-loader'].hide();
+                });
+            });
         });
+        self.wrapper.find('.deleteuser').click(function(){
+            let userid = this.getAttribute('userid');
+            let username = this.getAttribute('username');
+            if (parseInt($(this).attr("camCount")) > 0) {
+                dialogs['mdialog'].activate(`<h7>${$.t('common.attention')}</h7><p>${$.t('users.relatedCamerasError')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
+                return;
+            }
+
+            dialogs['mdialog'].activate(`<h7>${$.t('users.deleteConfirm.title', { user: username })}</h7><p>${$.t('users.deleteConfirm.content')} </p><p><button name="cancel" class="vxgbutton">${$.t('action.cancel')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.delete')}</button></p>`).then(function(r){
+                if (r.button!='delete') return;
+                core.elements['global-loader'].show();
+                vxg.api.cloudone.user.del(userid).then(function(){
+                    core.elements['global-loader'].hide();
+                    var removeUser = vxg.user.src.users.filter(u => { return u.src.id != userid});
+                    vxg.user.src.users = removeUser;
+                    return self.on_show();
+                },function(r){
+                    core.elements['global-loader'].hide();
+                    let err_text = $.t('toast.deleteUserFailed');
+                    if (r && r.responseJSON && r.responseJSON.errorDetail) err_text = r.responseJSON.errorDetail;
+                    dialogs['mdialog'].activate(`<h7>${$.t('common.error')}</h7><p>${err_text}</p><p><button name="cancel" class="vxgbutton">${$.t('action.ok')}</button></p>`);
+                });
+            });
+        });
+        self.filter();
+    },
+    'getUserCamCount' : function(users, cameraList) {
+        users.forEach((user) => {
+            var totalCams = user.src.cameras.length;
+            user.src.locations.forEach((loc) => {
+                var locArr = loc.split(":");
+                var locCams = cameraList.objects.filter(cam => { 
+                    var inLoc = true;
+                    if (!user.src.cameras.includes(cam.id)) {
+                        for(var i = 0; i < locArr.length; i++) {
+                            if (!(locArr[i] in cam.meta)) {
+                                inLoc = false;
+                            }
+                        }
+                        if (inLoc) return cam;
+                    }
+                });
+                totalCams += locCams.length;
+            });
+            $("#camCount_" + user.src.id).removeClass("spinner").html(totalCams);
+            $("#delUser_" + user.src.id).attr("camCount", totalCams);
+        })
     },
     'on_hide':function(){
     },
@@ -143,7 +186,22 @@ window.screens['users'] = {
     },
     'on_init':function(){
         core.elements['header-right'].prepend(`<div class="transparent-button adduser" ifscreen="edituser" onclick_toscreen="edituser"><span class="add-icon">+</span>${$.t('users.addUser')}</div>`);
-
+        var self = this;
+        $(".userlist").on('dblclick', function() {
+            self.wrapper.addClass('loader');
+            return vxg.user.getStorageChannelID().then(function(archive_channel_id){
+                return vxg.users.getList(100).then(function(users){
+                    vxg.user.src.users = users;
+                    return self.show_users(archive_channel_id, users);
+                }, function(){
+                    self.wrapper.addClass('nouser');
+                    $(self.wrapper).find('.userlist').empty().append($.t('toast.loadUsersFailed'));
+                    self.wrapper.removeClass('loader');
+                })
+            }, function(error){
+                return self.show_users();
+            })
+        })
         return defaultPromise();
     }
 };
@@ -247,7 +305,12 @@ window.screens['edituser'] = {
             }
             core.elements['global-loader'].show();
             if (r.password) r.pass = (r.password=''+r.password);
-            vxg.api.cloudone.user.invite(r).then(function(){
+            vxg.api.cloudone.user.invite(r).then(function(ret){
+                var newUser = new vxg.users.objects.User(ret.user)
+                newUser.src.cameras = [];
+                newUser.src.locations = [];
+                vxg.user.src.users.unshift(newUser);
+                vxg.users.addUserToList(newUser);
                 core.elements['global-loader'].hide();
                 window.core.onclick_toscreen('back');
             },function(r){
@@ -386,7 +449,14 @@ window.screens['usercameras'] = {
                 
             vxg.api.cloudone.user.relation({attach: attach, detach: detach, withUserID: self.user.src.id, locCamCount: locCamCount}).then(function (ret) {
                     self.user.src.cameras = r;
-                    self.user.src.locations = ret.locs;
+                    var userLocs = [];
+                    if (Object.keys(ret.locs)) {
+                        for (var key in ret.locs) {
+                            userLocs.push(ret.locs[key]);
+                        }
+                    }
+                    self.user.src.locations = userLocs;
+                    self.user.src.totalCameras = ret.totalCams;
                     $('.reset_values').val("");
                     core.elements['global-loader'].hide();
                     window.core.onclick_toscreen('back');
@@ -407,12 +477,14 @@ window.screens['usercameras'] = {
         core.elements['global-loader'].show();
         return window.vxg.cameras.getCameraListPromise(this.limit,offset, null, "isstorage").then(function(list){
             if (!list.length && offset == 0){
+                core.elements['global-loader'].hide();
                 $(self.wrapper).find('.usercameralist').empty().removeClass('spinner').append($.t('cameras.noCamerasAvailable'));
                 return;
             }
 
             if (!list.length && offset != 0) {
                 $(".morecams").hide();
+                core.elements['global-loader'].hide();
                 return;
             }
 
@@ -467,6 +539,7 @@ window.screens['usercameras'] = {
                 self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy));
             }
             $(self.wrapper).find('.usercameralist').removeClass('spinner');
+            core.elements['global-loader'].hide();
         });
     },
     onLocationHierarchyLoaded: function(locationHierarchy) {

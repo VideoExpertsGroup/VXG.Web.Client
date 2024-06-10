@@ -221,7 +221,6 @@ font-size: 10px;
 }
 
 .tablecaminfo {
-    font-size: 10px;
     background: gray;
     padding: 5px 10px;
     border-radius: 8px;
@@ -1085,6 +1084,11 @@ text-align:right;
 }
 ul.location-hierarchy {
     padding-left: 1rem !important;
+}
+
+form > .location-hierarchy {
+    max-height: 45vh;
+    overflow-y: auto;
 }
 
 .grid-stack-item-content.player {

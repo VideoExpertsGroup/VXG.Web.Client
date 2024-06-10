@@ -483,10 +483,20 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
                 var aiCamString_local = "";
                 aiEnabledCameras.ai_cameras.forEach(camid => {
                     aiCamString_local += "," + camid;
-                    $("#ai_" + camid).html('<button class="vxgbutton-transparent" access_token="'+camid+'">' + $.t('action.showAI') + '</button>');
+                    $("#ai_" + camid).html('<button class="vxgbutton-transparent aibtn" access_token="'+camid+'">' + $.t('action.showAI') + '</button>');
                     //Clicks on any column of row except camera preview and actions -> update chart
                     $("#ai_" + camid).find('button').off('click').on('click',function(){
-                        let index = $("#ai_" + camid).parent().data('index');	    
+                        if ($(this).hasClass("hideai")) {
+                            $(this).removeClass("hideai");
+                            $(this).html($.t('action.showAI'));
+                            if (self.callbackFunc !== undefined) 
+                                self.callbackFunc("hide-statistics", null);
+                            return;
+                        }
+    
+                        $(this).addClass("hideai");
+                        $(this).html($.t('action.hideAI'));
+                        let index = $("#ai_" + camid).parent().data('index');
                         let obj = controller.objByIndex(index);
         
                         if (self.callbackFunc !== undefined) 
@@ -736,9 +746,23 @@ VXGCameraListView.prototype.render = function render(controller, vxgcameralistda
             var aiCameras_array = aiCameras_local.split(",").filter(e => e);
             if (aiCameras_array.includes(vxgcameralistdata[index].camera_id.toString())) {
                 var camid = vxgcameralistdata[index].camera_id;
-                $("#ai_" + camid).html('<button class="vxgbutton-transparent" access_token="'+camid+'">' + $.t('action.showAI') + '</button>');
+                $("#ai_" + camid).html('<button class="vxgbutton-transparent aibtn" access_token="'+camid+'">' + $.t('action.showAI') + '</button>');
                 //Clicks on any column of row except camera preview and actions -> update chart
                 $("#ai_" + camid).find('button').off('click').on('click',function(){
+                    $('.aibtn').not(this).removeClass("hideai");
+                    $('.aibtn').not(this).html($.t('action.showAI'));
+
+                    if ($(this).hasClass("hideai")) {
+                        $(this).removeClass("hideai");
+                        $(this).html($.t('action.showAI'));
+                        if (self.callbackFunc !== undefined) 
+                            self.callbackFunc("hide-statistics", null);
+                        return;
+                    }
+
+                    $(this).addClass("hideai");
+                    $(this).html($.t('action.hideAI'));
+
                     let index = $("#ai_" + camid).parent().data('index');	    
                     let obj = controller.objByIndex(index);
     
