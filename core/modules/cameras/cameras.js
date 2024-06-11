@@ -174,7 +174,7 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null, camOr
 
 function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null, gatewayId = null) {
     if (camera) camera.deleteCameraPromise(gatewayUrl, gatewayId).then(function(){
-        var planIndex = vxg.user.src.plans ? vxg.user.src.plans.findIndex(p => p.id == oldsubid) : -1;
+        var planIndex = vxg.user.src.plans && vxg.user.src.plans.length > 0 ? vxg.user.src.plans.findIndex(p => p.id == oldsubid) : -1;
         if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
 
         if (vxg.user.src.users) {

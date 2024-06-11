@@ -142,6 +142,11 @@ input:disabled, select:disabled, textarea:disabled {
     background-color: #ededed;
 }
 
+.choosen-location.disabled {
+    pointer-events: none;
+    background-color: #e4e4e4;
+}
+
 .screens > div > h1{
 margin-top:0px;
 }

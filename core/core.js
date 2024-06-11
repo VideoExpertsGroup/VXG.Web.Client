@@ -88,6 +88,7 @@ window.core.locationHierarchy = {
                 let currentProvince;
                 var locationsArr = Object.keys(locationHierarchy);
                 if (locationsArr.length == 0) {
+                    core.elements['global-loader'].hide();
                     caller.onLocationHierarchyLoaded({});
                 };
                 let promiseChain = Promise.resolve();
@@ -109,6 +110,8 @@ window.core.locationHierarchy = {
                     promiseChain = promiseChain.then(makeNextPromise(currentProvince))
                 }
             })
+        } else {
+            core.elements['global-loader'].hide();
         }
     },
     getSubLocations: function(locationHierarchy, locLevel, cameras, prevLocs) {
