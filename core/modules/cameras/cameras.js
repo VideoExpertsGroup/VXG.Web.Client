@@ -9,8 +9,10 @@ var path = window.core.getPath('cameras.js');
         let access_token = $(this).attr("access_token");
         let channelID = $(this).attr("cam_id");
 
+        let gatewayChannelId = $(this).attr("gateway_channel_id") == "null" ? "" : $(this).attr("gateway_channel_id");
         let gatewayId = $(this).attr("gateway_id") == "null" ? "" : $(this).attr("gateway_id");
         let gatewayToken = $(this).attr("gateway_token") == "null" ? "" : $(this).attr("gateway_token");
+        let openwrt = $(this).attr("openwrt") == "null" ? "" : $(this).attr("openwrt");
 
         let camOrder = $(this).attr("cam_order");
 
@@ -23,7 +25,7 @@ var path = window.core.getPath('cameras.js');
         <div class="listmenu-item cam-menu mchart dvrcam" ifscreen="camerameta" onclick_toscreen="camerameta"><i class="fa fa-bar-chart" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.metadata')} </span></div>
         <a class="listmenu-item cam-menu mwebui subuser-hide" id="ui-link" href="" target="_blank" style="display: none"><i class="fa fa-window-restore" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.cameraUI')} </span></a>
         <div class="listmenu-item cam-menu mconfigure dvrcam subuser-hide" ifscreen="addcamera" onclick_toscreen="addcamera"><i class="fa fa-wrench" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('common.config')} </span></div>
-        <div class="listmenu-item cam-menu mtrash subuser-hide" onclick="onCameraDelete('${channelID}', '${gatewayId}', '${gatewayToken}', '${camOrder}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('action.remove')} </span></div>
+        <div class="listmenu-item cam-menu mtrash subuser-hide" onclick="onCameraDelete('${channelID}', '${gatewayChannelId}', '${gatewayId}', '${gatewayToken}', '${openwrt}', '${camOrder}')"><i class="fa fa-trash-o" aria-hidden="true"></i> <span class="listitem-name font-md"> ${$.t('action.remove')} </span></div>
         </div>`);
         
         var userType = vxg.user.src.role;
@@ -129,7 +131,7 @@ function addSimpleMenu(_menu, settingsEle, e, isSubuser = false) {
         el.css('bottom',hh-e.clientY-10);
 }
 
-function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null, camOrder = null){
+function onCameraDelete(channel_id, gatewayChannelId = null, gatewayId = null, gatewayToken = null, openwrt = null, camOrder = null){
     setTimeout(function(){$('.simplemenu').remove();},10);
 
     vxg.cameras.getCameraByIDPromise(channel_id).then(function(camera){
@@ -140,16 +142,16 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null, camOr
             var oldsubid = camera.src.meta ? camera.src.meta.subid : -1;
 
             var gatewayUrl = "";
-            if (gatewayId && gatewayToken) {
+            if (gatewayChannelId && gatewayToken) {
                 var cameraUrlsStr = sessionStorage.getItem("cameraUrls");
                 var cameraUrls = cameraUrlsStr ? JSON.parse(cameraUrlsStr) : [];
-                var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id == gatewayId) : "";
+                var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id == gatewayChannelId) : "";
         
                 if (savedCam && savedCam.url && savedCam.url != "nourl") {
                     gatewayUrl = savedCam.url;
-                    return doCameraDelete(camera, oldsubid, camOrder, gatewayUrl, gatewayId);
+                    return doCameraDelete(camera, oldsubid, camOrder, gatewayUrl, gatewayId, openwrt);
                 } else if (!savedCam) {
-                    vxg.api.cloud.getCameraConfig(gatewayId, gatewayToken).then(function(config) {
+                    vxg.api.cloud.getCameraConfig(gatewayChannelId, gatewayToken).then(function(config) {
                         return vxg.api.cloud.getUplinkUrl(config.id, config.url).then(function(urlinfo) {
                             if (!urlinfo.id && !urlinfo.url) {
                                 core.elements['global-loader'].hide();
@@ -159,7 +161,7 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null, camOr
                                 cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
                                 sessionStorage.setItem("cameraUrls", JSON.stringify(cameraUrls));  
                                 gatewayUrl = urlinfo.url;
-                                return doCameraDelete(camera, oldsubid, camOrder, gatewayUrl, gatewayId);
+                                return doCameraDelete(camera, oldsubid, camOrder, gatewayUrl, gatewayId, openwrt);
                             }
                             
                         });
@@ -172,8 +174,13 @@ function onCameraDelete(channel_id, gatewayId = null, gatewayToken = null, camOr
     })
 }
 
-function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null, gatewayId = null) {
-    if (camera) camera.deleteCameraPromise(gatewayUrl, gatewayId).then(function(){
+function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null, gatewayId = null, openwrt = null) {
+    var gatewayInfo = {}
+    if (gatewayUrl) gatewayInfo.gatewayUrl = gatewayUrl;
+    if (gatewayId) gatewayInfo.gatewayId = gatewayId;
+    if (openwrt == "openwrt") gatewayInfo.openwrt = openwrt;
+
+    if (camera) camera.deleteCameraPromise(gatewayInfo).then(function(){
         var planIndex = vxg.user.src.plans && vxg.user.src.plans.length > 0 ? vxg.user.src.plans.findIndex(p => p.id == oldsubid) : -1;
         if (planIndex > -1) vxg.user.src.plans[planIndex].used--;
 

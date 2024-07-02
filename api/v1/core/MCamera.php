@@ -1016,7 +1016,22 @@ class MCamera{
         return $ret;
     }
 
-    public function getGatewayAuthToken($gatewayUrl, $gatewayId, $username = "", $password = "") {
+    public function restartOpenWRT($gatewayUrl, $gatewayAuthToken) {
+        //curl --cookie "sysauth_https=<AUTH_TOKEN>" -v "http://<ROUTER_IP>/cgi-bin/luci/admin/services/uplink-gateway/api/restart"
+        $restartUrl = $gatewayUrl.'/cgi-bin/luci/admin/services/uplink-gateway/api/restart';
+        $ch=curl_init($restartUrl);
+        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_VERBOSE => true,
+                                CURLOPT_COOKIE => "sysauth_https=".$gatewayAuthToken]);
+
+        $result = curl_exec($ch);
+        $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
+        if ($code != 100) {
+            error($code, $result);
+        }        
+        return true;
+    }
+
+    public function getGatewayAuthToken($gatewayUrl, $gatewayId, $username = "", $password = "", $openWRT = false) {
         if ($gatewayUrl == "") error(501, "Gateway url not available yet.");
         if (!$username && !$password) {
             $server = MCore::$core->current_user->getServerData();
@@ -1034,27 +1049,57 @@ class MCamera{
 
         if (!$username || !$password) error(500, "Missing default user and default pass to access auth token.");
 
-        $json_params = json_encode([
-            "username"=>$username,
-            "password"=>$password
-        ]);
+        if ($openWRT) {
+            // curl -H "Content-Type: application/json" -d '{"jsonrpc": "2.0", "method": "login", "params": ["root", "VXG56vxg!"], "id": 1}' http://104.251.103.214:13080/cgi-bin/luci/rpc/auth
+            $loginParams = [$username, $password];
+            $json_params = json_encode([
+                "jsonrpc"=> "2.0",
+                "method"=>"login",
+                "id"=>1,
+                "params"=> $loginParams,
+            ]);
+            $authUrl = $gatewayUrl.'/cgi-bin/luci/rpc/auth';
+            $ch=curl_init($authUrl);
+            curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $json_params, CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true,
+                                    CURLOPT_HTTPHEADER => ['Content-Type:application/json']]);
+            $result = curl_exec($ch);
+            $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
+            if ($code != 200) {
+                error($code, $result);
+            }
 
-        $authUrl = $gatewayUrl.'/api/auth-token/';
-        $ch=curl_init($authUrl);
-        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $json_params, CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true,
-                                CURLOPT_HTTPHEADER => ['Content-Type:application/json']]);
-        $result = curl_exec($ch);
-        $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
-        if ($code != 200) {
-            error($code, $result);
+            // not sure what this response looks like yet 
+            // being returned as an html string 
+            $sub = '"result":"';
+            $arr = explode($sub, $result);
+            $important = $arr[1];
+            $r = $important ? str_replace('"}', "",$important) : error(500, "Incorrect return from gateway auth.");
+
+            return $r;
+
+        } else {
+            $json_params = json_encode([
+                "username"=>$username,
+                "password"=>$password
+            ]);
+    
+            $authUrl = $gatewayUrl.'/api/auth-token/';
+            $ch=curl_init($authUrl);
+            curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $json_params, CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true,
+                                    CURLOPT_HTTPHEADER => ['Content-Type:application/json']]);
+            $result = curl_exec($ch);
+            $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
+            if ($code != 200) {
+                error($code, $result);
+            }
+            // being returned as an html string 
+            $sub = '{"token":"';
+            $arr = explode($sub, $result);
+            $important = $arr[1];
+            $r = $important ? str_replace('"}', "",$important) : error(500, "Incorrect return from gateway auth.");
+    
+            return $r;
         }
-        // being returned as an html string 
-        $sub = '{"token":"';
-        $arr = explode($sub, $result);
-        $important = $arr[1];
-        $r = $important ? str_replace('"}', "",$important) : error(500, "Incorrect return from gateway auth.");
-
-        return $r;
     }
 
     public function addCameraToGateway($params, $gatewayUrl, $gatewayAuthToken) {
@@ -1069,6 +1114,24 @@ class MCamera{
         return $r;
     }
 
+    public function addCameraToOpenWRT($params, $gatewayUrl, $gatewayAuthToken) {
+        //curl -X POST --cookie "<AUTH_TOKEN>" -v "http://<ROUTER_IP>/cgi-bin/luci/admin/services/uplink-gateway/api/add-camera" -d "ip=<CAMERA_IP>&token=<ACCESS_TOKEN>&http=<HTTP_PORT>&rtsp=<RTSP_PORT>"
+        $addUrl = $gatewayUrl.'/cgi-bin/luci/admin/services/uplink-gateway/api/add-camera'; 
+        $ch=curl_init($addUrl);
+        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true,  CURLOPT_POSTFIELDS => $params, CURLOPT_VERBOSE => true,
+                                CURLOPT_COOKIE => "sysauth_https=".$gatewayAuthToken]);
+
+        $result = curl_exec($ch);
+        $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
+        if ($code != 200) {
+            error($code, $result);
+        }
+        return MCamera::restartCameraOpenWRT($gatewayUrl, $gatewayAuthToken);
+        // $ret = $result === false ? true : false;
+        // need to restart camera after adding it.
+        //return $ret;
+    }
+
     public function removeCameraFromGateway($gatewayUrl, $gatewayAuthToken) {
         $removeCamUrl = $gatewayUrl.'/api/cameras/'.$this->camera['channelID']."/";
         $ch=curl_init($removeCamUrl);
@@ -1078,6 +1141,42 @@ class MCamera{
         $result = curl_exec($ch);
         $r = json_decode($result, JSON_OBJECT_AS_ARRAY);
         return $r;
+    }
+
+    public function removeCameraFromOpenWRT($gatewayUrl, $gatewayAuthToken, $fromGateway) {
+        //curl -X POST --cookie "<AUTH_TOKEN>" -v "http://<ROUTER_IP>/cgi-bin/luci/admin/services/uplink-gateway/api/delete-camera" -d "id=<CAMERA_ID_IN_ACCESS_TOKEN>"
+        $removeUrl = $gatewayUrl.'/cgi-bin/luci/admin/services/uplink-gateway/api/delete-camera';
+        $params = "id=".$this->camera['channelID'];
+        $ch=curl_init($removeUrl);
+        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true,  CURLOPT_POSTFIELDS => $params, CURLOPT_VERBOSE => true,
+                                CURLOPT_COOKIE => "sysauth_https=".$gatewayAuthToken]);
+
+        $result = curl_exec($ch);
+        $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
+        if ($code != 200) {
+            error($code, $result);
+        }
+        
+        // when deleting the gateway and not the individual camera, no need to do cameras restart
+        if ($fromGateway != 'fromgateway')
+            return MCamera::restartCameraOpenWRT($gatewayUrl, $gatewayAuthToken);
+        else 
+            return true;
+    }
+
+    public function restartCameraOpenWRT($gatewayUrl, $gatewayAuthToken) {
+        //curl --cookie "<AUTH_TOKEN>" -v "http://<ROUTER_IP>/cgi-bin/luci/admin/services/uplink-gateway/api/restart-cameras"
+        $restartUrl = $gatewayUrl.'/cgi-bin/luci/admin/services/uplink-gateway/api/restart-cameras';
+        $ch=curl_init($restartUrl);
+        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_VERBOSE => true,
+                                CURLOPT_COOKIE => "sysauth_https=".$gatewayAuthToken]);
+
+        $result = curl_exec($ch);
+        $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
+        if ($code != 200) {
+            error($code, $result);
+        }
+        return true;
     }
 
     /**

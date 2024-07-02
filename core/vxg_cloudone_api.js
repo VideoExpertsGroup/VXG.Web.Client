@@ -502,7 +502,10 @@ vxg.api.cloudone.camera.del = function(cameraID, gatewayInfo = null){
     if (gatewayInfo?.gatewayUrl) data.gatewayUrl = gatewayInfo.gatewayUrl;
     if (gatewayInfo?.gatewayId) data.gatewayId = gatewayInfo.gatewayId;
     if (gatewayInfo?.gatewayUsername) data.gatewayUsername = gatewayInfo.gatewayUsername;
-    if (gatewayInfo?.gatewayPassword) data.gatewayPassword = gatewayInfo.gatewayPassword;  
+    if (gatewayInfo?.gatewayPassword) data.gatewayPassword = gatewayInfo.gatewayPassword; 
+    if (gatewayInfo?.openwrt) data.openwrt = "openwrt";
+    if (gatewayInfo?.isgateway) data.isgateway = "isgateway";
+    if (gatewayInfo?.fromgateway) data.fromgateway = "fromgateway";
 //    data.uid = vs_api.uid;
 //    if (vs_api.manage_uid)
 //        data.manage_uid = vs_api.manage_uid;

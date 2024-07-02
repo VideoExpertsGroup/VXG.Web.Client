@@ -84,6 +84,7 @@ CameraEditControl = function(){
 </div>
 <input type="hidden" name="gatewayId">
 <input type="hidden" name="gatewayUrl">
+<input type="hidden" name="openwrt">
 <div class="form-group">
     <label>${$.t('common.name')}</label>
     <input autofocus="autofocus" class="name" name="name" >

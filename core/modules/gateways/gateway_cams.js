@@ -12,17 +12,19 @@ window.screens['gateway_cams'] = {
     'on_before_show':function(r){
         return defaultPromise();
     },
-    'on_show':function(r, gatewayChannelId, gatewayToken){
+    'on_show':function(r, gatewayChannelId, gatewayToken, isOpenWRT){
         var self = this;
-        self.guid = $(this.src).getNearParentAtribute('gid');
+        self.gatewayId = $(this.src).getNearParentAtribute('gid');
         self.gatewayChannelId = !gatewayChannelId ? $(this.src).getNearParentAtribute('channel_id') : gatewayChannelId;
         self.gatewayToken = !gatewayToken ? $(this.src).getNearParentAtribute('gateway_token') : gatewayToken;
+        self.isOpenWRT = !isOpenWRT ?  $(this.src).getNearParentAtribute('openwrt') : isOpenWRT;
 
         setTimeout(function(){onCameraScreenResize();},100);
         core.elements['header-search'].hide();
         if (core.elements['header-search']) core.elements['header-search'].find('input').val(this.search_text ? this.search_text : '');
         $('.addgatewaycams').attr("channel_id", self.gatewayChannelId);
         $('.addgatewaycams').attr("gateway_token", self.gatewayToken);
+        $('.addgatewaycams').attr("openwrt", self.isOpenWRT);
         $('.addgatewaycams').addClass("disabled")
         $('#gatewaycams-table').bootstrapTable('destroy');
         this.loadGatewayCams()
@@ -34,6 +36,7 @@ window.screens['gateway_cams'] = {
             $('.addgatewaycams').removeClass("disabled")
         } else {
             return vxg.api.cloud.getCameraConfig(self.gatewayChannelId, self.gatewayToken).then(function(cam) {
+                // check for openwrt?
                 return vxg.api.cloud.getUplinkUrl(cam.id, cam.url).then(function(urlinfo) {
                     if (urlinfo.id && urlinfo.url) {
                         cameraUrls.push({id: urlinfo.id, url: urlinfo.url});
@@ -51,7 +54,7 @@ window.screens['gateway_cams'] = {
     'on_init':function(){
         let self = this;
         core.elements['header-right'].prepend('' +
-        `<div class="transparent-button active addgatewaycams disabled" ifscreen="newcamera" onclick_toscreen="newcamera" channel_id="" gateway_token=""><span class="add-icon">+</span><span>${$.t('gateways.addCameraToGateway')}</span></div>`);
+        `<div class="transparent-button active addgatewaycams disabled" ifscreen="newcamera" onclick_toscreen="newcamera" channel_id="" gateway_token="" openwrt=""><span class="add-icon">+</span><span>${$.t('gateways.addCameraToGateway')}</span></div>`);
         return defaultPromise();
     },
     loadGatewayCams: function() {
@@ -76,7 +79,7 @@ window.screens['gateway_cams'] = {
     },
     createGatewayCamsTable: function(cameraList, self) {
         var count = 0;
-        var gatewayCamsList = cameraList.filter(cam => { return cam.meta && cam.meta.gateway_cam && cam.meta.gateway_id == self.guid});
+        var gatewayCamsList = cameraList.filter(cam => { return cam.meta && cam.meta.gateway_cam && cam.meta.gateway_id == self.gatewayId});
 
         var columns = [
             {
@@ -151,7 +154,7 @@ window.screens['gateway_cams'] = {
                 name: camInfo.name,
                 location: camInfo.meta && camInfo.meta.location ? camInfo.meta.location : "",
                 group: camInfo.meta && camInfo.meta.group ? camInfo.meta.group : "",
-                action: `<div class="settings-gatewaycam" access_token="${camInfo.token}" cam_order="${count+1}" cam_id="${channelID}" gateway_id="${self.gatewayChannelId}" gateway_token="${self.gatewayToken}">
+                action: `<div class="settings-gatewaycam" access_token="${camInfo.token}" cam_order="${count+1}" cam_id="${channelID}" gateway_id="${self.gatewayId}" gateway_channel_id="${self.gatewayChannelId}" gateway_token="${self.gatewayToken}" openwrt="${self.isOpenWRT}">
                 <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
             </div>`,
                 hide: 1
@@ -226,5 +229,20 @@ window.screens['gateway_cams'] = {
 
         self.wrapper.removeClass('nogatewaycams');
         self.wrapper.removeClass('loader');
+
+        
+        return vxg.api.cloud.getCameraStatusChange(self.gatewayId).then(function(changedCams) {
+            // updateCell, index, fieldName
+            var tableData = $("#gatewaycams-table").bootstrapTable('getData');
+            for (var i = 0; i < changedCams.length; i++) {
+                var rowIndex = tableData.findIndex((cam) => cam.camId == changedCams[i].id);
+                var statusBlock ='<div class="font-md caminfo tablecaminfo '+changedCams[i].status+' '+(changedCams[i].status=='active'?' online':'')+'">'+ (changedCams[i].status=='active'?$.t('common.online'):$.t('common.offline'))+'</div>';
+                $("#gatewaycams-table").bootstrapTable('updateCell', {
+                    index: rowIndex,
+                    field: "status",
+                    value: statusBlock
+                });
+            }
+        })
     }
 };

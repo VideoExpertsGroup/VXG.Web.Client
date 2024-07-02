@@ -656,10 +656,12 @@ function cachedCamerasCallback(r) {
     return ret;
 }
 
-vxg.api.cloud.getCameraStatusChange = function() {
+vxg.api.cloud.getCameraStatusChange = function(gatewayId = null) {
     // when the api is implemented this will only get cameras whos status has changed
     if (!localStorage.cameraList) return;
     var data = {"meta_not": "isstorage", "limit": 1000};
+    if (gatewayId) data.meta = gatewayId;
+    
     let headers = vxg.api.cloud.getHeader();
     if (!headers)
         return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});

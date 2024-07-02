@@ -9,11 +9,18 @@ MCore::checkOnlyForAuthorized();
 if (!MCore::$core->current_user->isDealer())
     error(403,'No rights');
 
-list($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword) = MCore::checkAndGetInputParameters(['gatewayUrl', 'gatewayId', 'gatewayUsername', 'gatewayPassword']);
+list($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword, $isOpenWRT) = MCore::checkAndGetInputParameters(['gatewayUrl', 'gatewayId', 'gatewayUsername', 'gatewayPassword', 'openwrt']);
 
-$gatewayAuthToken = MCamera::getGatewayAuthToken($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword);
-if(!MCamera::restartGateway($gatewayUrl, $gatewayAuthToken)) {
-    MCore::$core->response['status'] = "Error restarting gateway";
+$gatewayAuthToken = MCamera::getGatewayAuthToken($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword, $isOpenWRT);
+
+if ($isOpenWRT) {
+    MCamera::restartOpenWRT($gatewayUrl, $gatewayAuthToken);
+    MCore::$core->response['status'] = "Don't wait for response";
+} else {
+    if(!MCamera::restartGateway($gatewayUrl, $gatewayAuthToken)) {
+        MCore::$core->response['status'] = "Error restarting gateway";
+    }
+    MCore::$core->response['status'] = "Restart succesfull";
 }
 
-MCore::$core->response['status'] = "Restart succesfull";
+

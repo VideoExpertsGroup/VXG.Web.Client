@@ -115,7 +115,7 @@ window.screens['gateway'] = {
         var tableData = [];
         gatewaysList.forEach(camInfo => {
             //var currentGateway = JSON.parse(camInfo.meta.gateway_first_channel);
-            let captured = camInfo.meta.capture_id && vxg.user.src.capture_id == camInfo.meta.capture_id ? ' captured' : '';
+            let captured = camInfo.meta?.capture_id && vxg.user.src.capture_id == camInfo.meta.capture_id ? ' captured' : '';
             var firstGatewayCam = cameraList.filter(gatewayCam => { return camInfo.meta && (camInfo.meta.gateway_id == gatewayCam.meta.gateway_id && gatewayCam.meta.gateway_cam == "gateway_cam") });
             var camblockAccessToken = firstGatewayCam.length > 0 ? firstGatewayCam[0].id : "";
 
@@ -123,10 +123,10 @@ window.screens['gateway'] = {
             var camStatus = savedCam && savedCam.url && savedCam.url != "nourl" ? "active" : "";
 
             let statusBlock = camStatus ? '<div class="font-md caminfo tablecaminfo '+camStatus+' '+(camStatus=='active'?' online':'')+'">'+ (camStatus=='active'?'Online':'Offline')+'</div>' : '<div class="caminfo tablecaminfo pending" > ... </div>';
-
+            var isOpenWRT = camInfo.meta && camInfo.meta.openwrt ? "openwrt" : "";
             tableData.push({
                 order: count + 1,
-                id: `<div class="camerablock${captured}" access_token="${camblockAccessToken}" channel_id="${camInfo.id}" gid="${camInfo.meta.gateway_id}" gateway_token="${camInfo.token}" id="scrollto${camInfo.id}">
+                id: `<div class="camerablock${captured}" access_token="${camblockAccessToken}" channel_id="${camInfo.id}" gid="${camInfo.meta.gateway_id}" gateway_token="${camInfo.token}" openwrt="${isOpenWRT}" id="scrollto${camInfo.id}">
                 <campreview onclick_toscreen="gateway_cams" style="cursor: pointer;"></campreview>`,
                 status: statusBlock,
                 name: camInfo.name,
@@ -354,12 +354,15 @@ function doGatewayDelete(gateway_id, gatewayUrl) {
                     gatewayId: gateway_id
                 }
 
-                // TODO: Add glinet identifier to gatewayInfo
-                // gatewayInfo.glinet = currentCam.meta.glinet ? true : false;
+                if (currentCam.meta && currentCam.meta.openwrt) {
+                    gatewayInfo.openwrt = "openwrt";
+                    gatewayInfo.fromgateway = "fromgateway"
+                    if (currentCam.meta.gateway) gatewayInfo.isgateway = "isgateway";
+                }
+
                 return vxg.cameras.removeCameraFromListPromise(currentCam.id, gatewayInfo)
                     .then((r) => {
-                        // TODO: Restart API not implemented for GLiNET (YET), so skip restartGateway if gateway is glinet
-                        if (i == cameras.length - 1 /* && !gatewayInfo.glinet */) {
+                        if (i == cameras.length - 1) {
                             if (gatewayInfo.gatewayUrl) {
                                 return vxg.api.cloud.restartGateway(gatewayInfo).then(function() {
                                     location.reload();

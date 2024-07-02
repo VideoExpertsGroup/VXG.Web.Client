@@ -10,16 +10,17 @@ if (!MCore::$core->current_user->isDealer())
     error(403,'No rights');
 
 list($cameraID) = MCore::checkAndGetInputParameters(['id']);
-list($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword) = MCore::getInputParameters(['gatewayUrl', 'gatewayId', 'gatewayUsername', 'gatewayPassword']);
+list($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword, $isOpenWRT, $isGateway, $fromGateway) = MCore::getInputParameters(['gatewayUrl', 'gatewayId', 'gatewayUsername', 'gatewayPassword', 'openwrt', 'isgateway', 'fromgateway']);
 $camera = MCamera::getCameraByChannelIdAndUser($cameraID, MCore::$core->current_user);
 
 //MCamera::updateLocationByChannelID($cameraID, MCore::$core->current_user, '');
 $planId = MCamera::getCameraPlanId($cameraID);
 
 if ($camera){
-    if ($gatewayUrl) {
-        $gatewayAuthToken = $camera->getGatewayAuthToken($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword);
-        $camera->removeCameraFromGateway($gatewayUrl, $gatewayAuthToken);
+    if ($gatewayUrl && $isGateway != "isgateway") {
+        $gatewayAuthToken = $camera->getGatewayAuthToken($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword, $isOpenWRT);
+        if ($isOpenWRT == "openwrt") $camera->removeCameraFromOpenWRT($gatewayUrl, $gatewayAuthToken, $fromGateway);
+        else $camera->removeCameraFromGateway($gatewayUrl, $gatewayAuthToken);
     }
     $camera->remove();
 }

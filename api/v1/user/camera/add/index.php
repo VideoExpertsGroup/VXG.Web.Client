@@ -22,7 +22,7 @@ list($location,
      $serialnumber, $macAddress, $uplink, 
      $dvrName, $channel_number, $uuid, $isFirst, 
      $gatewayId, $max_num_cameras,
-     $gatewayCam, $gatewayUrl, $glinet,
+     $gatewayCam, $gatewayUrl, $openwrt,
      $gatewayUsername, $gatewayPassword,
      $cameraIp, $path, $rtspOnly) = 
     MCore::getInputParameters(['location'=>'',
@@ -37,7 +37,7 @@ list($location,
                                'serialnumber'=>'','macAddress'=>'', 'uplink'=>'',
                                'dvrName'=>'','channel_number'=>'','uuid' =>'','isFirst'=>false,
                                'gatewayId'=>'','max_num_cameras'=>'',
-                               'gatewayCam' => false, 'gatewayUrl' => '', 'glinet' => '',
+                               'gatewayCam' => false, 'gatewayUrl' => '', 'openwrt' => '',
                                'gatewayUsername' => '','gatewayPassword' => '',
                                'url_ip' => '', 'path' => '', 'rtspOnly' => false]);
 
@@ -77,18 +77,11 @@ if ($dvrName && $channel_number) {
             'gateway_ip' => $cameraIp,
             'gateway_http' => $http_port,
             'gateway_rtsp' => $onvif_rtsp_port_fwd];
-} else if ($gatewayId && $max_num_cameras && $uuid) {
-    $meta = ['gateway' => 'gateway', 
-            $gatewayId => 'gateway_id', 
-            'gateway_id' => $gatewayId, 
-            "gateway_username" => $gatewayUsername, 
-            "gateway_password" => $gatewayPassword,
-            $uuid => 'unique_id', 
-            'max_num_cameras' => $max_num_cameras,
-            'subid' => 'NOPLAN', 
-            'subname' => 'No Plan'];
-} else if ($glinet) {
-    $meta = ['glinet' => 'glinet',
+    if ($openwrt == "openwrt") {
+        $meta['openwrt'] = "openwrt";
+    }
+} else if ($openwrt == "openwrt") {
+    $meta = ['openwrt' => 'openwrt',
             'gateway' => 'gateway',
             $serialnumber => 'gateway_id', 
             'gateway_id' => $serialnumber, 
@@ -100,7 +93,17 @@ if ($dvrName && $channel_number) {
             'max_num_cameras' => $max_num_cameras,
             'subid' => 'NOPLAN', 
             'subname' => 'No Plan'];
-}
+} else if ($gatewayId && $max_num_cameras && $uuid) {
+    $meta = ['gateway' => 'gateway', 
+            $gatewayId => 'gateway_id', 
+            'gateway_id' => $gatewayId, 
+            "gateway_username" => $gatewayUsername, 
+            "gateway_password" => $gatewayPassword,
+            $uuid => 'unique_id', 
+            'max_num_cameras' => $max_num_cameras,
+            'subid' => 'NOPLAN', 
+            'subname' => 'No Plan'];
+} 
 
 if ($location_str) {
     $locTypes = ["Province", "City", "Zone", "Circuit", "Subcircuit"];
@@ -137,26 +140,32 @@ if ($camera && $serialnumber && $macAddress) {
 }
 
 if ($gatewayCam) {
-    $gatewayAuthToken = $camera->getGatewayAuthToken($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword);
+    $gatewayAuthToken = $camera->getGatewayAuthToken($gatewayUrl, $gatewayId, $gatewayUsername, $gatewayPassword, $openwrt);
     $http = $http_port ? $http_port : 80;
     $rtsp = $onvif_rtsp_port_fwd ? $onvif_rtsp_port_fwd : 554;
     $rtspOnly = $rtspOnly ? $rtspOnly : false;
 
-    $params = [ 'ip'=>$cameraIp,
-                'http_port'=>$http,
-                'rtsp_port'=>$rtsp,
-                'is_active'=>false,
-                'pid'=>null,
-                'access_token'=>$camera->camera['rwToken'],
-                'rtsp_only'=>$rtspOnly
-            ];
+    if ($openwrt == "openwrt") {
+        //-d "ip=<CAMERA_IP>&token=<ACCESS_TOKEN>&http=<HTTP_PORT>&rtsp=<RTSP_PORT>"
+        $params = 'ip='.$cameraIp.'&http='.$http.'&rtsp='.$rtsp.'&token='.$camera->camera['rwToken'];
+        $camera->addCameraToOpenWRT($params, $gatewayUrl, $gatewayAuthToken);
+    } else {
+        $params = [ 'ip'=>$cameraIp,
+                    'http_port'=>$http,
+                    'rtsp_port'=>$rtsp,
+                    'is_active'=>false,
+                    'pid'=>null,
+                    'access_token'=>$camera->camera['rwToken'],
+                    'rtsp_only'=>$rtspOnly
+        ];
 
-    if ($serialnumber && $macAddress) {
-        $params['serial'] = $serialnumber;
-        $params['mac'] = $macAddress;
+        if ($serialnumber && $macAddress) {
+            $params['serial'] = $serialnumber;
+            $params['mac'] = $macAddress;
+        }
+
+        $camera->addCameraToGateway($params, $gatewayUrl, $gatewayAuthToken);
     }
-
-    $camera->addCameraToGateway($params, $gatewayUrl, $gatewayAuthToken);
 }
 
 /*if ($camera && strpos(MCore::$core->current_user->js,'ai_access')!==false) {

@@ -20,6 +20,8 @@ window.screens['newcamera'] = {
         this.access_token = access_token;
 
         var gatewayCamId = $(this.src).getNearParentAtribute("channel_id");
+        var isOpenWRT = $(this.src).getNearParentAtribute("openwrt");
+
         if (gatewayCamId) {
             this.gatewayCamId = gatewayCamId;
             $('.rtsp-only-label').attr('hidden', true);
@@ -29,6 +31,9 @@ window.screens['newcamera'] = {
             this.gatewayCamId = null;
         }
 
+        if (isOpenWRT == "openwrt") 
+            this.openwrt = "openwrt";
+        
         if (!access_token) return defaultPromise();
         return vxg.cameras.getCameraFrom(access_token).then(function(camera){
             self.camera = camera;
@@ -43,6 +48,7 @@ window.screens['newcamera'] = {
 
             if (this.gatewayCamId) {
                 //return vxg.api.cloud.getCameraConfig(this.gatewayCamId, this.gatewayCamToken).then(function(cam) {
+                if (this.openwrt == "openwrt") $('[name="openwrt"]').val("openwrt");
                 return vxg.api.cloud.getCameraConfig(this.gatewayCamId).then(function(cam) {
                     //self.wrapper.find('.newcameratabs ').removeClass('add2').removeClass('add1').removeClass('add3').removeClass('add4').addClass('add5');
                     self.wrapper.find('.newcameratabs').addClass("gatewayCamera");

@@ -285,11 +285,12 @@ vxg.cameras.createCameraGatewayPromise = function(gatewayInfo){
         gatewayUsername: gatewayInfo.username,
         gatewayPassword: gatewayInfo.password
     }
+    
     if (gatewayInfo.macAddress && gatewayInfo.serialnumber) {
         data.gatewayId = gatewayInfo.serialnumber;
         data.macAddress = gatewayInfo.macAddress;
         data.serialnumber = gatewayInfo.serialnumber;
-        data.glinet = 'glinet';
+        data.openwrt = 'openwrt';
         data.max_num_cameras =  8;
     }
     else {
