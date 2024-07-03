@@ -24,6 +24,9 @@ window.skin.privacyPolicy = "#";
 window.skin.termsOfUse = "#";
 window.skin.contactUs = "https://www.videoexpertsgroup.com/contacts/";
 
+window.skin.grid = {};
+window.skin.grid.preferredPlayerFormat = "jpeg";
+
 window.no_check_local_addresses = true;
 
 window.isTelconet = false;
