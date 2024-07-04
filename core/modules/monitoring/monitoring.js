@@ -61,7 +61,7 @@ window.screens['monitoring'] = {
         $('.hidecameras').removeClass('closed');
         $('.hidecameras').addClass('open');
         $('.hidecameras').html(`<i class="fa fa-angle-left" aria-hidden="true"></i>`);
-        $('#cameras-list').show();
+        $('.camlist-cont').show();
         $('.headerBlock').show();
 
         setTimeout(() => {
@@ -241,19 +241,19 @@ window.screens['monitoring'] = {
                 $(this).removeClass('open');
                 $(this).addClass('closed');
                 $(this).html('<i class="fa fa-angle-right" aria-hidden="true"></i>');
-                $('#cameras-list').hide();
+                $('.camlist-cont').hide();
                 $('.headerBlock').hide();
 
             } else {
                 $(this).removeClass('closed');
                 $(this).addClass('open');
                 $(this).html(`<i class="fa fa-angle-left" aria-hidden="true"></i>`);
-                $('#cameras-list').show();
+                $('.camlist-cont').show();
                 $('.headerBlock').show();
             }
         })
 
-        $('.camlist-monitoring').on('dblclick', function(e) {
+        $('#camlist-title').on('dblclick', function(e) {
             // reset the monitoring list by calling it again
             localStorage.removeItem("locationHierarchyCams");
             localStorage.removeItem("noLocCams");

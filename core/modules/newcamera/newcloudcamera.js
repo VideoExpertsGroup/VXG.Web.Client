@@ -693,6 +693,10 @@ CameraCloudEditControl = function(){
         var locationDialog = `
             <h4 class="locations-title">Locations</h4>
             ${dropdownTreeStr}
+            <p class="location-info"> 
+                To add a new location under an existing location, choose the existing location from the list above. 
+                Then add the name or list of names seperated by commas you want to add under that chosen location.
+            </p>
             <div class="existing-loc-cont">
                 <label for="show_existing_loc">Existing Location:</label>
                 <div class="existing-input-cont">
@@ -715,6 +719,12 @@ CameraCloudEditControl = function(){
             if (locArr.length == locTypes.length) {
                 alert("Cannot add a new location to a "+ locTypes[locTypes.length - 1] +".");
             }
+
+            var bannedLocChars = ["'", '"', '`', ":"];
+            if (r.form.new_loc && bannedLocChars.some(c => r.form.new_loc.includes(c))) {
+                alert("Location cannot contain characters " + bannedLocChars.join(", "));
+                return;
+            } 
            
             var newLocArr = r.form.new_loc ? r.form.new_loc.split(",") : [];
             var newLocStr = [];

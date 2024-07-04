@@ -298,6 +298,8 @@ window.screens['home'] = {
 	'get_camera_stats': function() {
 		return vxg.cameras.getFullCameraList(500, 0).then(function(cameras) {
 			var total = cameras.length;
+			//var gatewayCams = cameras.filter(cam => { return cam.src.meta && cam.src.meta.gateway != undefined });
+			//var total = allCams - gatewayCams.length;
 			$('.total-cams').html(total);
 			var online = 0, recording = 0; 
 			cameras.forEach(cam => {

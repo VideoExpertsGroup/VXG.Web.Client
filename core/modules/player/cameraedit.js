@@ -1102,6 +1102,7 @@ CameraEditControl = function(){
                 </div>
             </div>
             <div class="new-loc-cont">
+                <p class="new_loc_err" style="display: none"></p>
                 <label for="new_loc" title="Location will be added to the existing location choosen. Separate any sublevel locations you want to add by commas">Add New Location:</label>
                 <input name="new_loc" title="Location will be added to the existing location choosen. Separate any sublevel locations you want to add by commas" class="new-location" type="text"></input>
             </div>
@@ -1115,6 +1116,12 @@ CameraEditControl = function(){
             if (locArr.length == locTypes.length) {
                 alert("Cannot add a new location to a "+ locTypes[locTypes.length - 1] +".");
             }
+            
+            var bannedLocChars = ["'", '"', '`', ":"];
+            if (r.form.new_loc && bannedLocChars.some(c => r.form.new_loc.includes(c))) {
+                alert("Location cannot contain characters " + bannedLocChars.join(", "));
+                return;
+            } 
             
             var newLocArr = r.form.new_loc ? r.form.new_loc.split(",") : [];
             var newLocStr = [];
@@ -1130,6 +1137,7 @@ CameraEditControl = function(){
 
             $(classSelf).find('[name="shownlocation"]').val(showLoc);
             $(classSelf).find('[name="location_str"]').val(locArr.join(":"));
+                      
         });		
     }
     this.createLocationList = function(locationHierarchy) {

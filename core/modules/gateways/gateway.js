@@ -39,6 +39,7 @@ window.screens['gateway'] = {
     loadGateways: function() {
         let self = this;
         self.wrapper.addClass('loader');
+        $('#gateway-table').bootstrapTable('destroy');
         var cameraList = localStorage.getItem('cameraList');
         if (cameraList) {
             var cams = JSON.parse(cameraList);
