@@ -802,6 +802,10 @@ text-align: center;
     margin: 5px 1rem;
 }
 
+#camlist-title:hover {
+    cursor: pointer;
+}
+
 camfield {
     font-size: 12px;
     height: 15px;

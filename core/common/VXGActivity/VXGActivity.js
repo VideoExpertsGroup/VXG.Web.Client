@@ -4,6 +4,7 @@ var paginationSize = 20;
 var totalCount = 0;
 var totalData = [];
 var refreshTimer;
+var hasFilter = false;
 
 var VXGActivityModel = function VXGActivityModel() {
 };
@@ -18,6 +19,8 @@ VXGActivityModel.prototype.getData = function getData( params, updateDataCBFunc,
 			waitFunc(true);
 
 	// Konst We need to change requestParams on parameters and change API a little bit 
+	if (requestParams.events != undefined || requestParams.camid != undefined || requestParams.end != undefined) hasFilter = true;
+	else hasFilter = false;
     apiFunc (requestParams['token'], requestParams['limit'], requestParams['offset'], requestParams ).done(function (eventlist) {
 	waitFunc(false);
 	params.requestParams.offset = prevOffset;
@@ -446,7 +449,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 		let span = $(this.noevents).find("span")[0];
 		$('.activity-content').hide();
 		$(activitiesContainer).empty();
-		if (this.filter !== undefined && this.filter != null) {
+		if (hasFilter) {
 			$(span).text($.t('activity.noEventsFoundForSuchFilter'));
 		} else if ($(controller.clView.element).hasClass("report_activitylist")) {
 			$(span).text("No events in Favourited cameras");
@@ -583,7 +586,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	    +	'	</div>' 
 	    +	'</div>';
 			
-			let metaData = this.meta ? Object.entries(this.meta).filter(([key, value]) => key !== 'total' && value !== '' && !isNaN(Number(value)) && Number(value) !== 0).map(([key, value]) => `${key}: ${value}`).join(', ') : '-';
+			let metaData = this.meta ? JSON.stringify(this.meta).replaceAll(/:"",/g, ": '',").replaceAll(/","/g, ', ').replaceAll(/[{}"]/g, ' ') : "-";
 			tableData.push({
 				camId: this.id,
 				// order: count,

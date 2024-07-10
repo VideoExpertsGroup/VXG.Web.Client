@@ -182,6 +182,9 @@ TODO: add auth without firebase
 
         function onLogin(r){
             vxg.user.src = r;
+
+            vxg.user.src.serversEnabled = r.scripts.some(s => s.includes("servers")) ? true : false;
+
             sessionStorage.removeItem("backToCam");
             localStorage.removeItem('locPath');
 

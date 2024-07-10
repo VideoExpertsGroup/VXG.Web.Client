@@ -82,7 +82,9 @@ window.screens['admin'] = {
                         + '<td class="action-icons">'
 						//+ '<button class="userbtn item-rec userrec setting_rec '+ ((partners[i].src.allow_rec == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-dot-circle-o" aria-hidden="true"></i></button>'
 						+ '<button class="userbtn item-arch userarchive setting_int '+ ((partners[i].src.allow_int == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-bookmark-o" aria-hidden="true"></i></button>'
-						+ '<button class="userbtn item-arch userarchive setting_nvr '+ ((partners[i].src.allow_nvr == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-server" aria-hidden="true"></i></button>'
+						+ '<button class="userbtn item-arch userarchive setting_server '+ ((partners[i].src.allow_server == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-server" aria-hidden="true"></i></button>'
+                        + '<button class="userbtn item-arch userarchive setting_dvr '+ ((partners[i].src.allow_dvr == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-building" aria-hidden="true"></i></button>'
+
                         //+ '<button class="userbtn item-ai userai setting_ai ' + hide_ai_class + " " + ((partners[i].src.allow_ai == true)?'active':'')+'" userid="'+ partners[i].src.id +'"><i class="fa fa-microchip" aria-hidden="true"></i></button>'
                         + '<button onclick_toscreen="admincams" class="userbtn item-delete usercameras" userid="'+ partners[i].src.id +'"><i class="fa fa-video-camera" aria-hidden="true"></i></button>'
 						+ '<button class="userbtn item-delete deleteuser" userid="'+ partners[i].src.id +'"><i class="fa fa-trash-o" aria-hidden="true"></i></button>'
@@ -212,14 +214,14 @@ window.screens['admin'] = {
                 });
             });
 
-			self.wrapper.find('.setting_nvr').click(function(){
+			self.wrapper.find('.setting_server').click(function(){
 				
                 let userid = this.getAttribute('userid');
                 let username = this.getAttribute('username');
                 let archive_enable = this.classList.contains('active');
-                dialogs['mdialog'].activate('<h7>Do you want to allow Cloud NVR?</h7><p><br/>\
+                dialogs['mdialog'].activate('<h7>Do you want to allow Servers?</h7><p><br/>\
 											<label><input type="checkbox" class="userarchive" '+(archive_enable?'checked="checked"':'')+
-											' name="enable">Enable Cloud NVR?</label></p><p style="padding-top: 15px;">\
+											' name="enable">Enable Servers? This also enables the legacy plugin</label></p><p style="padding-top: 15px;">\
 											<button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;\
 											<button name="apply" class="vxgbutton">Apply</button></p>').then(function(r){
                     if (r.button!='apply') return;
@@ -228,7 +230,40 @@ window.screens['admin'] = {
 					let checked = r.form.enable=="on";
 					
 					obj.id = userid;
-					obj.setting_nvr = (checked)? "on":"off";
+					obj.setting_server = (checked)? "on":"off";
+					
+					core.elements['global-loader'].show();
+					
+					vxg.api.cloudone.partner.update(obj).then(function (ret) {
+                        core.elements['global-loader'].hide();
+                        return self.on_show();
+                    },function(r){
+                        if (r && r.responseJSON && r.responseJSON.errorDetail)
+                            alert(r.responseJSON.errorDetail);
+                        else
+                            alert('Falied to update setting');
+                        core.elements['global-loader'].hide();
+                    });                    
+                });
+            });
+
+            self.wrapper.find('.setting_dvr').click(function(){
+				
+                let userid = this.getAttribute('userid');
+                let username = this.getAttribute('username');
+                let archive_enable = this.classList.contains('active');
+                dialogs['mdialog'].activate('<h7>Do you want to allow Recorders?</h7><p><br/>\
+											<label><input type="checkbox" class="userarchive" '+(archive_enable?'checked="checked"':'')+
+											' name="enable">Enable Recorders?</label></p><p style="padding-top: 15px;">\
+											<button name="cancel" class="vxgbutton">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;\
+											<button name="apply" class="vxgbutton">Apply</button></p>').then(function(r){
+                    if (r.button!='apply') return;
+					
+					var obj = {};
+					let checked = r.form.enable=="on";
+					
+					obj.id = userid;
+					obj.setting_dvr = (checked)? "on":"off";
 					
 					core.elements['global-loader'].show();
 					

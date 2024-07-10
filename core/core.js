@@ -599,7 +599,7 @@ window.core.loadScreens = function(){
     function activateScreen(){
 
         let p;
-        if ($('body').data('screenid') == this.id) return;
+        if (this.id != "activity" && $('body').data('screenid') == this.id) return;
         if (typeof window.screens[this.id]['on_before_show'] === "function") {
             window.screens[this.id].from_screen = $('body').data('screenid');
             p = window.screens[this.id]['on_before_show'].apply(window.screens[this.id],arguments);

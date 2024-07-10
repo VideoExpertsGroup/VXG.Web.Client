@@ -240,7 +240,7 @@ display: flex;
 .event-name.processed {
     background-color: var(--main-color) !important;
 }
-@media only screen and (min-width: 1530px) {
+@media only screen and (min-width: 1400px) {
     .home .block3 .feed-activity-list tr th:nth-child(1),
     .home .block3 .feed-activity-list tr th:nth-child(5),
     .home .block3 .feed-activity-list tr th:nth-child(6),
@@ -250,6 +250,7 @@ display: flex;
         display: none;
     }
 }
+
 .tagsview .feed-activity-list tr th:nth-child(3),
 .tagsview .feed-activity-list tr th:nth-child(5),
 .tagsview .feed-activity-list tr th:nth-child(6),

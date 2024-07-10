@@ -122,6 +122,8 @@ window.screens['newcamera'] = {
 
         core.elements['header-right'].prepend(`<a class="helpurl" target="_blank" href="${vxg.links.camera_help}">${$.t('cameras.howToAddCameras')}</a>`);
 
+        if (!vxg.user.src.serversEnabled) $('.add4').addClass("disabled");
+
         this.wrapper.find('cameraedit').off('loaded').on('loaded',function(e){
              core.elements['global-loader'].hide();
         });

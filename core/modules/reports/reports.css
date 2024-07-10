@@ -50,6 +50,18 @@ position: relative;
 margin-top: 15px;
 width: 100%;
 }
+@media only screen and (max-width: 1400px) {
+    .block1 {
+        width: 100%;
+        height: unset;
+        flex-direction: column;
+    }
+    
+    .block2, .block3, .block5 {
+        width: 100%;
+    }
+}
+
 .screens > .home:not(.showstat) .block5{
 display:none;
 }

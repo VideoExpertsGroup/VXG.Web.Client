@@ -22,7 +22,8 @@ if (1){
             'allow_rec' => (strpos($row['js'],"retention")) ? true: false,
             'allow_int' => (strpos($row['js'],"integration")) ? true: false,
             'allow_ai'	=> (strpos($row['js'],"ai_access")) ? true: false,
-			'allow_nvr'	=> (strpos($row['js'],"servers")) ? true: false
+			'allow_server'	=> (strpos($row['js'],"servers")) ? true: false,
+            'allow_dvr'	=> (strpos($row['js'],"dvr_nvr")) ? true: false
         );
     }
 

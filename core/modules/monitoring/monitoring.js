@@ -253,7 +253,7 @@ window.screens['monitoring'] = {
             }
         })
 
-        $('#camlist-title').on('dblclick', function(e) {
+        $('#camlist-title').on('click', function(e) {
             // reset the monitoring list by calling it again
             localStorage.removeItem("locationHierarchyCams");
             localStorage.removeItem("noLocCams");
@@ -631,11 +631,17 @@ window.screens['monitoring'] = {
 
         $('.loc-draggable, .camgrid2').on("dragstart", function(e) {
             e.stopPropagation();
-            e.originalEvent.dataTransfer.setData('text', e.currentTarget.id)         
+            let ele = $(document.elementFromPoint(e.clientX, e.clientY));
+            if (ele.length && (ele[0].classList.contains("loc-name") || ele[0].classList.contains("location-arrow")))
+                e.originalEvent.dataTransfer.setData('text', e.currentTarget.id);
+            else
+                e.originalEvent.dataTransfer.setData('text', "");
         });
 
         $('.loc-draggable, .camgrid2').on('drop dragdrop',function(event){
             var id = event.originalEvent.dataTransfer.getData('text');
+            if (!id) return;
+            event.stopPropagation();
             if (!id.includes('loc-')) return;
             let pl = $(document.elementFromPoint(event.clientX, event.clientY)).parents('player');
             if (!pl.length) return;

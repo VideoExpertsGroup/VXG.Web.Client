@@ -12,7 +12,7 @@ $response = StaticLib::startPage();
 
 if (1){
 //    list($partner_id, $setting_rec, $setting_int) = MCore::checkAndGetInputParameters(['id','setting_rec','setting_int']);
-    list($partner_id, $setting_rec, $setting_int, $setting_nvr, $setting_ai) = MCore::getInputParameters(['id','setting_rec','setting_int', 'setting_nvr', 'setting_ai']);
+    list($partner_id, $setting_rec, $setting_int, $setting_server, $setting_dvr, $setting_ai) = MCore::getInputParameters(['id','setting_rec','setting_int', 'setting_server', 'setting_dvr', 'setting_ai']);
 	
     $stmt = $conn->prepare('SELECT "js" FROM "user" WHERE "id"='.$partner_id);
 	if (!$stmt->execute())
@@ -51,8 +51,8 @@ if (1){
 		}			
 	}
 
-	if ($setting_nvr){		
-		if ($setting_nvr == "on"){
+	if ($setting_server){		
+		if ($setting_server == "on"){
 			$pos = strpos($js_var, "core/modules/servers/servers.js");
 			if ($pos === false) {
 				if ($js_var == "")
@@ -62,8 +62,24 @@ if (1){
 			}
 		}
 		
-		if ($setting_nvr == "off"){
+		if ($setting_server == "off"){
 			$js_var = str_replace('core/modules/servers/servers.js','',$js_var);	
+		}			
+	}
+
+	if ($setting_dvr){		
+		if ($setting_dvr == "on"){
+			$pos = strpos($js_var, "core/modules/dvr_nvr/dvr_nvr.js");
+			if ($pos === false) {
+				if ($js_var == "")
+					$js_var = "core/modules/dvr_nvr/dvr_nvr.js";
+				else
+					$js_var .= "\ncore/modules/dvr_nvr/dvr_nvr.js";
+			}
+		}
+		
+		if ($setting_dvr == "off"){
+			$js_var = str_replace('core/modules/dvr_nvr/dvr_nvr.js','',$js_var);	
 		}			
 	}
 

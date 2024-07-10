@@ -1168,13 +1168,20 @@ class MCamera{
         //curl --cookie "<AUTH_TOKEN>" -v "http://<ROUTER_IP>/cgi-bin/luci/admin/services/uplink-gateway/api/restart-cameras"
         $restartUrl = $gatewayUrl.'/cgi-bin/luci/admin/services/uplink-gateway/api/restart-cameras';
         $ch=curl_init($restartUrl);
-        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_VERBOSE => true,
+        curl_setopt_array($ch, [CURLOPT_POST => true, 
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_VERBOSE => true,
+                                CURLOPT_RETURNTRANSFER => false,
+                                CURLOPT_CONNECTTIMEOUT => 1,
+                                CURLOPT_DNS_CACHE_TIMEOUT => 100,
+                                CURLOPT_TIMEOUT_MS => 100,
                                 CURLOPT_COOKIE => "sysauth_https=".$gatewayAuthToken]);
 
-        $result = curl_exec($ch);
+        curl_exec($ch);
         $code = curl_getinfo($ch,CURLINFO_RESPONSE_CODE);
-        if ($code != 200) {
-            error($code, $result);
+        curl_close($curl);
+        if ($code != 100) {
+            error($code, "Cameras restart not initiated");
         }
         return true;
     }

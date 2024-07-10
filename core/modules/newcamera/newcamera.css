@@ -123,3 +123,7 @@ body.mobile.newcamera #mobile-menu-btn{display:none;}
     pointer-events: none;
     background-color: #e4e4e4;
 }
+
+.add4.disabled {
+    display: none;
+}
