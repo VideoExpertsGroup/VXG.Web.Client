@@ -4,33 +4,20 @@
 
 .ratio2-inner {
     position: relative;
-    height: 0;
     border: none;
 }
 
-.ratio2-content {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: #eee;
-}
-
-.ratio2-4-3 {
-    padding-top: 56%;
-}
-
-.screens > .monitoring{
-width: 100%;
+.screens > .monitoring {
+    width: 100%;
     height: 100%;
 }
-body.mobile .screens > .monitoring{
-padding-top:12px;
+
+body.mobile .screens > .monitoring {
+    padding-top: 12px;
 }
 
-body:not(.monitoring) .header-right .addnote {
-    display: none;
+body:not(.monitoring) .header-right .monitoring-toolbar {
+    display: none !important;
 }
 
 .addnote.disabled {
@@ -38,12 +25,12 @@ body:not(.monitoring) .header-right .addnote {
     pointer-events: none;
 }
 
-.screens > .monitoring .cambd{
-width: 100%;
-display:flex;
+.screens > .monitoring .cambd {
+    width: 100%;
+    display: flex;
 }
 
-.screens > .monitoring .camlist-monitoring{
+.screens > .monitoring .camlist-monitoring {
     display: flex;
     margin: 0 0 0 0;
     min-height: 30px;
@@ -53,20 +40,23 @@ display:flex;
 }
 
 
-.screens .monitoring .camlist-monitoring .camerablock campreview{
+.screens .monitoring .camlist-monitoring .camerablock campreview {
     background-image: url(camera.svg);
 }
 
 
-.screens > .monitoring .wrapper{
-display:none;
+.screens > .monitoring .wrapper {
+    display: none;
 }
-.screens > .monitoring.grid .wrapper{
-    display:block;
+
+.screens > .monitoring.grid .wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .screens > .monitoring.grid .camlist-monitoring {
-flex-direction: column;
+    flex-direction: column;
     flex-wrap: nowrap;
     width: 300px;
     height: 100%;
@@ -74,7 +64,14 @@ flex-direction: column;
     overflow-y: auto;
     margin-left: 0 !important;
     min-width: 250px;
-position: relative;
+    position: relative;
+}
+
+@media only screen and (min-width: 1530px) {
+    .screens > .monitoring.grid .camlist-monitoring {
+        width: 450px;
+        padding-right: 40px;
+    }
 }
 
 .screens > .monitoring.grid .camlist-monitoring:not(.nobloor):after {
@@ -84,33 +81,48 @@ position: relative;
     position: fixed;
     bottom: 0;
 }
+
 /*.screens > .monitoring.grid .camlist-monitoring .camerablock {
     margin: 0 0 1em 1em;
 }*/
 
-.screens > .monitoring.grid{
-height:100%;
-overflow-y: hidden;
+.screens > .monitoring.grid {
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 1rem;
 }
 
 .screens > .monitoring .gridmenu:focus:after {
     transform: rotateX(180deg);
 }
 
-.header-right .gridmenu:focus { pointer-events:none; }
-.header-right .gridmenu:focus .menu-dropdown { opacity:1; visibility:visible; }
-.gridmenu-dropdown a {width: unset;}
-.menu-dropdown a:hover {width: unset;}
-
-body.mobile .header-right .gridmenu span, body.mobile .header-right .camerafilter span, body.mobile .header-right .addcamera span{
-display:none;
+.header-right .gridmenu:focus {
+    pointer-events: none;
 }
+
+.header-right .gridmenu:focus .menu-dropdown {
+    opacity: 1;
+    visibility: visible;
+}
+
+.gridmenu-dropdown a {
+    width: unset;
+}
+
+.menu-dropdown a:hover {
+    width: unset;
+}
+
+body.mobile .header-right .gridmenu span, body.mobile .header-right .camerafilter span, body.mobile .header-right .addcamera span {
+    display: none;
+}
+
 /*body.mobile .header-right .gridmenu:after{
 content:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KPHBhdGggZD0iTTMwLDhIMTBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjEwQzMyLDguOSwzMS4xLDgsMzAsOHogTTI4LDI4SDEyVjEyaDE2VjI4eiBNOTAsOEg3MCAgYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMlYxMEM5Miw4LjksOTEuMSw4LDkwLDh6IE04OCwyOEg3MlYxMmgxNlYyOHogTTYwLDhINDBjLTEuMSwwLTIsMC45LTIsMnYyMCAgYzAsMS4xLDAuOSwyLDIsMmgyMGMxLjEsMCwyLTAuOSwyLTJWMTBDNjIsOC45LDYxLjEsOCw2MCw4eiBNNTgsMjhINDJWMTJoMTZWMjh6IE0zMCwzOEgxMGMtMS4xLDAtMiwwLjktMiwydjIwYzAsMS4xLDAuOSwyLDIsMmgyMCAgYzEuMSwwLDItMC45LDItMlY0MEMzMiwzOC45LDMxLjEsMzgsMzAsMzh6IE0yOCw1OEgxMlY0MmgxNlY1OHogTTkwLDM4SDcwYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMiAgVjQwQzkyLDM4LjksOTEuMSwzOCw5MCwzOHogTTg4LDU4SDcyVjQyaDE2VjU4eiBNNjAsMzhINDBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjQwICBDNjIsMzguOSw2MS4xLDM4LDYwLDM4eiBNNTgsNThINDJWNDJoMTZWNTh6IE0zMCw2OEgxMGMtMS4xLDAtMiwwLjktMiwydjIwYzAsMS4xLDAuOSwyLDIsMmgyMGMxLjEsMCwyLTAuOSwyLTJWNzAgIEMzMiw2OC45LDMxLjEsNjgsMzAsNjh6IE0yOCw4OEgxMlY3MmgxNlY4OHogTTkwLDY4SDcwYy0xLjEsMC0yLDAuOS0yLDJ2MjBjMCwxLjEsMC45LDIsMiwyaDIwYzEuMSwwLDItMC45LDItMlY3MCAgQzkyLDY4LjksOTEuMSw2OCw5MCw2OHogTTg4LDg4SDcyVjcyaDE2Vjg4eiBNNjAsNjhINDBjLTEuMSwwLTIsMC45LTIsMnYyMGMwLDEuMSwwLjksMiwyLDJoMjBjMS4xLDAsMi0wLjksMi0yVjcwICBDNjIsNjguOSw2MS4xLDY4LDYwLDY4eiBNNTgsODhINDJWNzJoMTZWODh6IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=)!important;
 }*/
 
-.header-right .camerafilter{
-width:100%;
+.header-right .camerafilter {
+    width: 100%;
 }
 
 .filterset {
@@ -119,94 +131,107 @@ width:100%;
 }
 
 
-camera-map{width:100%;height:100%;display: block;}
+camera-map {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
 
-.screens > .monitoring .cammap{
+.screens > .monitoring .cammap {
     height: 100%;
     width: 100%;
 }
 
-.screens > .monitoring .camgrid2{
-display:none;
-display:flex;
-flex-wrap:wrap;
-    height: 92%;
+.screens > .monitoring .camgrid2 {
     width: 100%;
-justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
 }
 
-.screens > .monitoring .camgrid2 > div{
-width:50%;
-height:50%;
-background:black;
+.screens > .monitoring .camgrid2 > div {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: black;
     border-right: 3px solid white;
     box-sizing: border-box;
     border-bottom: 3px solid white;
-}
-.screens > .monitoring .camgrid2.grid3 > div{
-width: 33.333333%;
-    height: 33.333333%;
-}
-.screens > .monitoring .camgrid2.grid4 > div{
-width:25%;
-height:25%;
+    overflow: hidden;
 }
 
-.screens > .monitoring .camgrid2 > div.grid3, .screens > .monitoring .camgrid2 > div.grid4{
-display:none;
+.screens > .monitoring .camgrid2.grid3 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
 }
-.screens > .monitoring .camgrid2.grid3 > div.grid3{
-display:block;
+
+.screens > .monitoring .camgrid2.grid4 {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
 }
-.screens > .monitoring .camgrid2.grid4 > div.grid3, .screens > .monitoring .camgrid2.grid4 > div.grid4{
-display:block;
+
+.screens > .monitoring .camgrid2 > div.grid3, .screens > .monitoring .camgrid2 > div.grid4 {
+    display: none;
+}
+
+.screens > .monitoring .camgrid2.grid3 > div.grid3 {
+    display: block;
+}
+
+.screens > .monitoring .camgrid2.grid4 > div.grid3, .screens > .monitoring .camgrid2.grid4 > div.grid4 {
+    display: block;
 }
 
 
-.c2ameras.gridtop .wrapper{
-max-height:calc(100vh - 300px);
+.c2ameras.gridtop .wrapper {
+    max-height: calc(100vh - 300px);
 }
-.c2ameras.gridtop .camgrid2{
+
+.c2ameras.gridtop .camgrid2 {
     max-height: calc(100vh - 300px);
 }
 
 .monitoring-cont {
     display: flex;
 }
+
 .screens > .monitoring .camlist-monitoring {
     max-height: 75vh;
     overflow-y: auto;
 }
 
-.screens > .monitoring.gridtop .cambd{
+.screens > .monitoring.gridtop .cambd {
     flex-direction: column;
 }
-.screens > .monitoring.gridtop player{
+
+.screens > .monitoring.gridtop player {
 }
 
-.screens > .monitoring.gridtop .camgrid{
-height: auto;
+.screens > .monitoring.gridtop .camgrid {
+    height: auto;
 }
-.screens > .monitoring.gridtop .camlist-monitoring{
+
+.screens > .monitoring.gridtop .camlist-monitoring {
     flex-direction: row;
     flex-wrap: wrap;
-    width: auto!important;
+    width: auto !important;
     min-height: 100%;
     margin-left: -10px;
 }
-body.mobile .screens > .monitoring.gridtop .camlist-monitoring{
-justify-content: center;
+
+body.mobile .screens > .monitoring.gridtop .camlist-monitoring {
+    justify-content: center;
 }
 
-.screens > .monitoring.grid .cambd{
-height:100%;
-}
-.screens > .monitoring.grid .camgrid{
-height:100%;
+.screens > .monitoring.grid .cambd {
+    height: 100%;
 }
 
-.screens > .monitoring .camlist-monitoring .camerablock .caminfo{
-font-size: 10px;
+.screens > .monitoring.grid .camgrid {
+    height: 100%;
+}
+
+.screens > .monitoring .camlist-monitoring .camerablock .caminfo {
+    font-size: 10px;
     background: gray;
     right: 10px;
     float: right;
@@ -230,14 +255,16 @@ font-size: 10px;
     margin: 0 auto;
 }
 
-.screens > .monitoring .camlist-monitoring .camerablock .caminfo.rec{
+.screens > .monitoring .camlist-monitoring .camerablock .caminfo.rec {
     padding-right: 13px;
 }
-.screens > .monitoring .camlist-monitoring .camerablock .caminfo.online, .tablecaminfo.online{
-background-color:var(--main-color);
+
+.screens > .monitoring .camlist-monitoring .camerablock .caminfo.online, .tablecaminfo.online {
+    background-color: var(--main-color);
 }
-.screens > .monitoring .camlist-monitoring .camerablock .caminfo.rec:after{
-content: "";
+
+.screens > .monitoring .camlist-monitoring .camerablock .caminfo.rec:after {
+    content: "";
     width: 4px;
     height: 4px;
     border-radius: 5px;
@@ -247,8 +274,8 @@ content: "";
     margin-left: 4px;
 }
 
-.screens > .monitoring .camlist-monitoring .camerablock{
-width: calc(100% - 4px);
+.screens > .monitoring .camlist-monitoring .camerablock {
+    width: calc(100% - 4px);
     height: 216px;
     min-height: 216px;
     display: flex;
@@ -258,24 +285,28 @@ width: calc(100% - 4px);
     max-width: 322px;
 }
 
-.screens > .monitoring .camlist-monitoring .camerafield-block{
+.screens > .monitoring .camlist-monitoring .camerafield-block {
     margin: 1.4em 1em 1.4em 3em;
     cursor: pointer;
 }
-.screens > .monitoring .camlist-monitoring .camerafield-block.parent-cam{
+
+.screens > .monitoring .camlist-monitoring .camerafield-block.parent-cam {
     margin-left: 6px;
 }
 
-body.mobile .screens > .monitoring .camlist-monitoring .camerablock{
+body.mobile .screens > .monitoring .camlist-monitoring .camerablock {
     margin: 0 0 10px 10px;
 }
-.screens > .monitoring .camlist-monitoring .camerablock:last-child{
+
+.screens > .monitoring .camlist-monitoring .camerablock:last-child {
     margin-bottom: 0;
 }
+
 .screens > .monitoring.gridtop .camlist-monitoring .camerablock {
 }
-.screens > .monitoring .camlist-monitoring .camerablock campreview{
-width: 100%;
+
+.screens > .monitoring .camlist-monitoring .camerablock campreview {
+    width: 100%;
     height: calc(100% - 30px);
     background-repeat: no-repeat;
     background-position: 50%;
@@ -283,53 +314,57 @@ width: 100%;
     background-color: white;
     cursor: pointer;
 }
-.screens > .monitoring .camlist-monitoring .camerablock campreview img{
-width:100%;
-height:100%;
-object-fit: cover;
+
+.screens > .monitoring .camlist-monitoring .camerablock campreview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
-.screens > .monitoring .camlist-monitoring .camerablock > div{
+
+.screens > .monitoring .camlist-monitoring .camerablock > div {
     height: 46px;
     width: 100%;
     font-size: 12px;
     font-weight: 600;
-background:white;
-border-top: 1px solid var(--main-color);
+    background: white;
+    border-top: 1px solid var(--main-color);
 }
 
-.screens > .monitoring .camlist-monitoring .camerablock .settings{
-    width:40px;
-    height:40px;
+.screens > .monitoring .camlist-monitoring .camerablock .settings {
+    width: 40px;
+    height: 40px;
     /*background-repeat: no-repeat;*/
     /*background-position: 0 center;*/
     /*background-image: url(action.svg);*/
-    cursor:pointer;
+    cursor: pointer;
     display: flex;
     align-items: center;
     margin: auto;
     justify-content: center;
 }
 
-.screens > .monitoring .camlist-monitoring .camerablock .name{
-padding: 8px 10px 5px 4px;
+.screens > .monitoring .camlist-monitoring .camerablock .name {
+    padding: 8px 10px 5px 4px;
     display: block;
     text-overflow: ellipsis;
     overflow: hidden;
     width: calc(100% - 66px);
     max-height: 36px;
 }
-.screens > .monitoring .camlist-monitoring .camerablock .loc{
-font-size:8px;
-font-weight:400;
-color: #676A6C;
-padding: 0px 0px 0px 16px;
+
+.screens > .monitoring .camlist-monitoring .camerablock .loc {
+    font-size: 8px;
+    font-weight: 400;
+    color: #676A6C;
+    padding: 0px 0px 0px 16px;
 }
+
 /* body.screens > .monitoring .header-right .addcamera,body.screens > .monitoring .header-right .nogrid, body.screens > .monitoring .header-right .grid22, body.screens > .monitoring .header-right .grid33, body.screens > .monitoring .header-right .grid44, body.screens > .monitoring .header-right .gridmap { */
 body.screens > .monitoring .header-right .addcamera, body.screens > .monitoring .header-right .cam-dropdown-item {
     background-size: 75%;
     background-repeat: no-repeat;
     background-position: center;
-    display:flex;
+    display: flex;
     justify-content: center;
 }
 
@@ -338,59 +373,68 @@ body.screens > .monitoring .header-right .nogrid, body.screens > .monitoring .he
     padding: 0 5px;
 }
 
-.screens > .monitoring .camgrid table{
-width:100%;
-}
-
-.screens > .monitoring .camgrid table td{
-}
-.screens > .monitoring .camgrid table td player{
-width:100%;
-height:100%;
-display:inline-block;
-}
-
-.screens > .monitoring .camgrid{
-display:none;
+.screens > .monitoring .camgrid table {
     width: 100%;
 }
-.screens > .monitoring .camgrid.grid22, .screens > .monitoring .camgrid.grid33, .screens > .monitoring .camgrid.grid44{
-display:block;
-}
-.screens > .monitoring .camgrid.grid22 td{
-width:50%;
-}
-.screens > .monitoring .camgrid.grid22 tr:nth-child(3) td, .screens > .monitoring .camgrid.grid22 tr:nth-child(4) td{
-display:none;
-}
-.screens > .monitoring .camgrid.grid33 td{
-width:33%;
-}
-.screens > .monitoring .camgrid.grid33 tr:nth-child(4) td{
-display:none;
-}
-.screens > .monitoring .camgrid.grid44 td{
-width:25%;
+
+.screens > .monitoring .camgrid table td {
 }
 
-.simplemenu{
+.screens > .monitoring .camgrid table td player {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+}
+
+.screens > .monitoring .camgrid {
+    display: none;
+    width: 100%;
+}
+
+.screens > .monitoring .camgrid.grid22, .screens > .monitoring .camgrid.grid33, .screens > .monitoring .camgrid.grid44 {
+    display: block;
+}
+
+.screens > .monitoring .camgrid.grid22 td {
+    width: 50%;
+}
+
+.screens > .monitoring .camgrid.grid22 tr:nth-child(3) td, .screens > .monitoring .camgrid.grid22 tr:nth-child(4) td {
+    display: none;
+}
+
+.screens > .monitoring .camgrid.grid33 td {
+    width: 33%;
+}
+
+.screens > .monitoring .camgrid.grid33 tr:nth-child(4) td {
+    display: none;
+}
+
+.screens > .monitoring .camgrid.grid44 td {
+    width: 25%;
+}
+
+.simplemenu {
     position: fixed;
     background: white;
-border-radius: 3px;
+    border-radius: 3px;
     box-shadow: 0 0 3px rgba(86, 96, 117, 0.7);
     font-size: 12px;
     font-weight: 400;
     z-index: 10;
 }
-.simplemenu > .listmenu-item{
-line-height: 25px;
+
+.simplemenu > .listmenu-item {
+    line-height: 25px;
     padding: 7px 10px;
     padding-left: 41px;
 }
-.simplemenu > .listmenu-item:hover{
-background-color: #f5f5f5;
-cursor:pointer;
-color:var(--main-color);
+
+.simplemenu > .listmenu-item:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+    color: var(--main-color);
 }
 
 a.listmenu-item.mwebui {
@@ -400,16 +444,16 @@ a.listmenu-item.mwebui {
 .header-right .gridmenu:after {
     padding: 0;
     display: inline-block;
-margin-left: 6px;
+    margin-left: 6px;
 
 }
 
-.screens > .monitoring.nocameras .cambd{
-width:100%;
-height:100%;
+.screens > .monitoring.nocameras .cambd {
+    width: 100%;
+    height: 100%;
 }
 
-.screens > .monitoring.nocameras .cambd .camlist-monitoring{
+.screens > .monitoring.nocameras .cambd .camlist-monitoring {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -420,6 +464,7 @@ height:100%;
     margin-left: 5px;
     color: var(--main-color);
 }
+
 .screens > .monitoring.nocameras .cambd .camlist-monitoring a:hover {
     color: var(--main-color);
 }
@@ -440,7 +485,7 @@ height:100%;
 }
 
 .locationContainer .locHeader {
-text-align: left;
+    text-align: left;
     font-size: 14px;
     color: var(--main-color);
     border-bottom: 1px solid #EFEFEF;
@@ -449,7 +494,7 @@ text-align: left;
 }
 
 .locationContainer .locList {
-min-height: 100px;
+    min-height: 100px;
     max-height: 300px;
     overflow: auto;
     padding: 5px 20px 15px;
@@ -460,8 +505,8 @@ ul.locationlist li {
     list-style: none;
     overflow: hidden;
     position: relative;
-cursor:pointer;
-margin-top: 16px;
+    cursor: pointer;
+    margin-top: 16px;
 }
 
 input.svgbtnbefore {
@@ -469,8 +514,9 @@ input.svgbtnbefore {
     height: 0;
     width: 0;
 }
+
 ul.locationlist label {
-padding-left: 26px;
+    padding-left: 26px;
     cursor: pointer;
     font-size: 14px;
     color: #676A6C;
@@ -482,11 +528,11 @@ padding-left: 26px;
     align-items: center;
     height: 20px;
     position: relative;
-cursor:pointer;
+    cursor: pointer;
 }
 
 .locationContainer .locList input + label span {
-padding-left: 33px;
+    padding-left: 33px;
     cursor: pointer;
     font-size: 14px;
     color: #676A6C;
@@ -558,24 +604,27 @@ background:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 }
 
 .header-right .addcamera {
-order: 10;
+    order: 10;
     flex: 3 3 110px;
     width: 100px;
 }
+
 body.mobile .header-right .addcamera {
     flex: 1 1 30px;
-min-width:30px;
+    min-width: 30px;
 }
+
 .monitoring .header-right .camerafilterContainer {
     display: block;
-order:1;
-flex: 3 1 50px;
-min-width: 40px;
-max-width: 100px;
-margin-right: 35px;
+    order: 1;
+    flex: 3 1 50px;
+    min-width: 40px;
+    max-width: 100px;
+    margin-right: 35px;
 }
-body:not(.monitoring) .camerafilter{
-display:none;
+
+body:not(.monitoring) .camerafilter {
+    display: none;
 }
 
 .header-right .signout {
@@ -583,23 +632,25 @@ display:none;
     white-space: nowrap;
 }
 
-body.monitoring .screens > .monitoring .ratio2.wrapper .cloudplayer{
-box-shadow: none;
+body.monitoring .screens > .monitoring .ratio2.wrapper .cloudplayer {
+    box-shadow: none;
 }
 
-body.monitoring.mobile .screens{
-    margin-top: 0!important;
-    margin-right: 0!important;
-    padding-left:0!important;
-}
-.monitoring .header-right .gridmenu{
-display: inline-flex;
-}
-body.mobile.monitoring .header-right .gridmenu{
-display: none!important;
+body.monitoring.mobile .screens {
+    margin-top: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
 }
 
-body.mobile.monitoring .mdialog{
+.monitoring .header-right .gridmenu {
+    display: inline-flex;
+}
+
+body.mobile.monitoring .header-right .gridmenu {
+    display: none !important;
+}
+
+body.mobile.monitoring .mdialog {
     width: 100%;
     bottom: 0;
     position: absolute;
@@ -607,21 +658,22 @@ body.mobile.monitoring .mdialog{
     border-top-right-radius: 15px;
 }
 
-body.mobile.monitoring .mdialog h7{
-color: var(--main-color);
-font-style: normal;
-font-weight: normal;
-font-size: 12px;
-border-bottom:1px solid #E6E6E6;
+body.mobile.monitoring .mdialog h7 {
+    color: var(--main-color);
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    border-bottom: 1px solid #E6E6E6;
     padding-bottom: 12px;
 }
 
-.screens > .monitoring button.more{
-width: 90px;
+.screens > .monitoring button.more {
+    width: 90px;
     margin: 15px auto;
 }
-.screens > .monitoring .wmore{
-text-align: center;
+
+.screens > .monitoring .wmore {
+    text-align: center;
     margin: 0 0 1em 1em;
     width: calc(100% - 4px);
 }
@@ -645,7 +697,7 @@ text-align: center;
     user-select: none;
 }
 
-.filter-label input:not(#newGroupName){
+.filter-label input:not(#newGroupName) {
     position: absolute;
     opacity: 0;
     cursor: pointer;
@@ -694,18 +746,18 @@ text-align: center;
 }
 
 .bootstrap-table.bootstrap5 {
-	width:100%;
+    width: 100%;
 }
 
-.screens > .monitoring .camlist-monitoring .bootstrap-table .camerablock{
-	width: calc(100% - 4px);
+.screens > .monitoring .camlist-monitoring .bootstrap-table .camerablock {
+    width: calc(100% - 4px);
     height: 76px;
     min-height: 76px;
     max-width: 112px;
 }
 
 .screens > .monitoring .camlist-monitoring .bootstrap-table .camerablock campreview {
-	height:100%;
+    height: 100%;
 
 }
 
@@ -714,24 +766,24 @@ text-align: center;
     background-repeat-x: no-repeat;
 }
 
-.screens > .monitoring .camlist-monitoring .bootstrap-table .has-card-view .camerablock{
-	width: calc(100% - 4px);
+.screens > .monitoring .camlist-monitoring .bootstrap-table .has-card-view .camerablock {
+    width: calc(100% - 4px);
     height: 108px;
     min-height: 216px;
     max-width: 322px;
 }
 
 .card-view-title {
-	 display:none;
+    display: none;
 }
 
 .bootstrap-table .fixed-table-container .table tbody tr .card-view .card-view-title {
-	 display:none;
+    display: none;
 
 }
 
 .bootstrap-table .fixed-table-container .table tbody tr .card-view > label {
-	 display:none;
+    display: none;
 }
 
 .bootstrap-table .fixed-table-container.has-card-view .table tbody {
@@ -741,8 +793,9 @@ text-align: center;
 }
 
 .bootstrap-table .fixed-table-container.has-card-view .table tbody tr td {
-	width: 322px;
+    width: 322px;
 }
+
 /* #groupingButton {
     background-color: var(--main-color);
     padding: 5px 20px;
@@ -757,11 +810,11 @@ text-align: center;
 }
 
 .bootstrap-table.bootstrap5 {
-	width:100%;
+    width: 100%;
 }
 
-.screens > .monitoring .camlist-monitoring .bootstrap-table .camerablock{
-	width: calc(100% - 4px);
+.screens > .monitoring .camlist-monitoring .bootstrap-table .camerablock {
+    width: calc(100% - 4px);
     height: 76px;
     min-height: 76px;
     max-width: 112px;
@@ -783,8 +836,8 @@ text-align: center;
     background-repeat-x: no-repeat;
 }*/
 
-.screens > .monitoring .camlist-monitoring .bootstrap-table .has-card-view .camerablock{
-	width: calc(100% - 4px);
+.screens > .monitoring .camlist-monitoring .bootstrap-table .has-card-view .camerablock {
+    width: calc(100% - 4px);
     height: 108px;
     min-height: 216px;
     max-width: 322px;
@@ -904,7 +957,7 @@ camfield > span {
 }
 
 .card-buttons i:hover {
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .nocamsloc {
@@ -915,12 +968,12 @@ camfield > span {
 }
 
 .nocamsloc span {
-    color:#6e6d6d;
+    color: #6e6d6d;
 }
 
 .nocamsloc span:hover {
     cursor: pointer;
-    color:#7d7d7d;
+    color: #7d7d7d;
 }
 
 .user-input {
@@ -965,11 +1018,10 @@ input.token-input {
 }
 
 .players-container {
-    width:100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    height: 82vh !important;
 }
 
 .row {
@@ -1011,7 +1063,7 @@ button.vxgbutton.hidecameras.closed {
     color: var(--main-color);
 }
 
-.hidecameras:hover{
+.hidecameras:hover {
     cursor: pointer;
 }
 
@@ -1048,36 +1100,41 @@ button.vxgbutton.hidecameras.closed {
     text-align: center;
 }
 
-.screens > .monitoring .monitoring-noteslist .onetag{
+.screens > .monitoring .monitoring-noteslist .onetag {
     border-bottom: 1px solid #E7E7E7;
     padding: 10px 10px;
 }
-.screens > .monitoring .monitoring-noteslist .onetag:hover{
-background-color: rgba(0,0,0,.075) !important;
-cursor:pointer;
+
+.screens > .monitoring .monitoring-noteslist .onetag:hover {
+    background-color: rgba(0, 0, 0, .075) !important;
+    cursor: pointer;
 }
-.screens > .monitoring .monitoring-noteslist .datetime{
+
+.screens > .monitoring .monitoring-noteslist .datetime {
     font-weight: normal;
     color: var(--main-color);
     margin-top: 10px;
     margin-bottom: 15px;
 }
-.screens > .monitoring .monitoring-noteslist .case{
+
+.screens > .monitoring .monitoring-noteslist .case {
     font-style: normal;
     font-weight: bold;
     font-size: 16px;
 }
-.screens > .monitoring .monitoring-noteslist .desc{
-margin: 10px 0;
+
+.screens > .monitoring .monitoring-noteslist .desc {
+    margin: 10px 0;
     font-size: 14px;
     word-break: break-word;
 }
-.screens > .monitoring .monitoring-noteslist .tags{
+
+.screens > .monitoring .monitoring-noteslist .tags {
     color: gray;
     border-top: 1px dashed lightgray;
     padding: 5px 0 0 0;
-width:100%;
-text-align:right;
+    width: 100%;
+    text-align: right;
 }
 
 .monitoring-nonotes {
@@ -1094,6 +1151,7 @@ text-align:right;
 .monitoring-nonotes > h5 {
     color: #626262;
 }
+
 ul.location-hierarchy {
     padding-left: 1rem !important;
 }
@@ -1109,6 +1167,93 @@ form > .location-hierarchy {
     margin-right: 1%;
 }
 
-.grid-stack>.grid-stack-item>.grid-stack-item-content {
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
     overflow-y: hidden !important;
+}
+
+.monitoring .player[access_token=""] .cloudplayer-error {
+    display: none !important;
+}
+
+.screens > .monitoring .player {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    position: relative;
+}
+.screens > .monitoring .player::before {
+    display: block;
+    content: attr(name);
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 2;
+    color: white;
+    background: #000A;
+    padding: 2px 4px 2px 18px;
+    border-radius: 3px;
+}
+
+.monitoring player:not([access_token=""]) .cloudplayer,
+.monitoring vxg-cloud-player:not([src=""]) {
+    border: 2px solid var(--main-color) !important;
+}
+.monitoring player:not([access_token=""])::after,
+.monitoring vxg-cloud-player:not([src=""])::after {
+    display: block;
+    content: "\f03d";
+    font: normal normal normal 14px / 1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 3;
+    color: gray;
+}
+.monitoring player[recording="true"]::after,
+.monitoring vxg-cloud-player[recording="true"]::after {
+    color: var(--main-color);
+}
+
+.screens > .monitoring.grid .players-container.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh !important;
+    z-index: 10000;
+    overflow: hidden;
+    background: #fffc;
+    gap: 0;
+}
+.players-container.fullscreen .ratio2-inner {
+    height: 0;
+    flex-grow: 1;
+}
+.players-container.fullscreen .camgrid2 {
+    height: 100%;
+}
+.players-container.fullscreen .camgrid2 > div {
+    height: 100%;
+    aspect-ratio: unset;
+}
+
+.monitoring .grid-stack-container {
+    flex: 1 1 0;
+    overflow: scroll;
+}
+
+.monitoring .grid-stack > .grid-stack-item > .grid-stack-item-content {
+    inset: 2px;
+}
+
+.monitoring .grid-stack-container .btn-add-grid-cell {
+    margin-top: 3px;
+}
+
+.monitoring #multiplayer-control {
+    position: relative;
+    z-index: 1;
 }

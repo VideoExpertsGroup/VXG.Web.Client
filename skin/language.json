@@ -1,5 +1,6 @@
 {
   "common": {
+    "add": "Add",
     "name": "Name",
     "username": "User name",
     "email": "Email",
@@ -358,6 +359,7 @@
     "case": "Case",
     "savebtn": "Save",
     "confirmDelete": "Remove this camera from the grid?",
+    "deleteCustomGridConfirm": "Are you sure you want to remove this window?",
     "errorText": {
       "nogridcams": "Please set at least one camera in the grid to create a note for.",
       "saveerror": "Error saving note.",
@@ -365,7 +367,10 @@
     },
     "hideCameras": "Hide Cameras",
     "hideNotes": "Hide Notes",
-    "noNotes": "No notes. Go to the timeline view of a camera to create a note."
+    "noNotes": "No notes. Go to the timeline view of a camera to create a note.",
+    "live": "Live",
+    "recorded": "Recorded",
+    "liveMode": "Live Mode"
   },
   "notes": {
     "title": "Notes"

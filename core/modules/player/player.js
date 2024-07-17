@@ -258,9 +258,13 @@ window.controls['camfield'] = {
         this.drop = function(e) {
             if (!el.dragged) return;
             e.preventDefault();
-            let pl = $(document.elementFromPoint(e.clientX, e.clientY)).parents('player');
+            let pl = $(document.elementFromPoint(e.clientX, e.clientY));
+            if (!pl.hasClass('player')) {
+                pl = pl.parents('player, .player');
+            }
             if (!pl.length) return;
-            pl.attr('access_token',el.channeltoken);
+            pl.attr('access_token', el.channeltoken);
+            pl.attr('src', el.channeltoken);
             if (typeof pl[0].on_access_token_change === "function") pl[0].on_access_token_change(el.channeltoken);
             setTimeout(function() {
                 pl[0].play();

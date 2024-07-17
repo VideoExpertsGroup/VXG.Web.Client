@@ -28,8 +28,8 @@ function showNextTier(event, clicked, currentLocType) {
     var nextLocLevel = locTypes.indexOf(locType) + 1;
     if (nextLocLevel < 5) 
         $(clicked).parent().parent().find("." + locTypes[nextLocLevel].toLocaleLowerCase() + "-ul").toggle();
-    
-    $(clicked).parent().parent().find(".EMPTYLOC-ul.camslist").toggle();
+
+    $(clicked).parent().parent().find("> ul").toggle();
 
     if ($(clicked).hasClass("fa-caret-up")) {
         $(clicked).removeClass('fa-caret-up');
@@ -387,7 +387,7 @@ CameraEditControl = function(){
         }
         if (data.password && !(/^[a-zA-Z0-9_.\-~%!$&\'()*+,;=]{0,64}$/.test(data.password))){
             core.flashInputBackgroundColor($(this).find('.password'));
-            
+
             dialogs['mdialog'].activate(`        
             <h6 class="locations-title" class="font-bg">Error</h6>
             <p class="password-error-info"> 
@@ -397,7 +397,7 @@ CameraEditControl = function(){
             <button name="select" class="vxgbutton assign-btn">Close</button>`).then(function(r){
                 return;
             })
-            
+
             this.defferedDispatchEvent(this.error_event);
             return false;
         }
@@ -466,7 +466,7 @@ CameraEditControl = function(){
         //    p = this.ipToLocation(purl.host);
         //else
             p =  new Promise(function(resolve, reject){resolve({lat:data.lat,lon:data.lon});});
-        
+
         data.gatewayCam = data.gatewayId ? true : false;
         var newLocation = data.new_location_str;
         delete data.new_location_str;
@@ -488,7 +488,7 @@ CameraEditControl = function(){
                                 window.core.locationHierarchy.updateObjProp(locationHierarchyCams, {}, locationStr.replaceAll(":", "."))
                                 window.core.locationHierarchy.updateObjProp(locationHierarchyCams, [], locationStr.replaceAll(":", ".") + ".cams")
                             }
-                        } 
+                        }
                         else {
                             var province = newLocArr[0];
                             newLocArr.shift();
@@ -524,7 +524,7 @@ CameraEditControl = function(){
                                     var camsField = {cams: []};
                                     var fullObj = {...camsField, ...camsObj}
                                     window.core.locationHierarchy.updateObjProp(locationHierarchyCams, fullObj, fullLocArr.join("."))
-                                } 
+                                }
 
                             }
                         }
@@ -634,7 +634,7 @@ CameraEditControl = function(){
 
                             localStorage.locationHierarchyCams = JSON.stringify(locationHierarchyCams);
                             $("#nocameras").empty();
-                            
+
                             var tableData = $("#table").bootstrapTable('getData');
                             var insertIndex = tableData.length;
                             var order = insertIndex + 1;
@@ -721,7 +721,7 @@ CameraEditControl = function(){
                             window.core.locationHierarchy.updateObjProp(locationHierarchyCams, {}, locationStr.replaceAll(":", "."))
                             window.core.locationHierarchy.updateObjProp(locationHierarchyCams, [], locationStr.replaceAll(":", ".") + ".cams")
                         }
-                    } 
+                    }
                     else {
                         var province = newLocArr[0];
                         newLocArr.shift();
@@ -751,13 +751,13 @@ CameraEditControl = function(){
                             var fullLocArr = locationStr.split(":").filter(loc => {
                                 if (!newLocArr.includes(loc)) return loc;
                             });
-                            
+
                             window.core.locationHierarchy.updateObjProp(locationHierarchy, locObj, fullLocArr.join("."))
                             if (locationHierarchyCams) {
                                 var camsField = {cams: []};
                                 var fullObj = {...camsField, ...camsObj}
                                 window.core.locationHierarchy.updateObjProp(locationHierarchyCams, fullObj, fullLocArr.join("."))
-                            } 
+                            }
 
                         }
                     }
@@ -840,7 +840,7 @@ CameraEditControl = function(){
 							self.reset();
 							self.dispatchEvent(self.submited_event);
 						}
-                        
+
                         var noLocsCams = localStorage.noLocCams ? JSON.parse(localStorage.noLocCams) : [];
                         var camExistsInArr = noLocsCams.length != 0 && noLocsCams.some(cam => cam.camera_id == updatedCam.id)
                         if (!camExistsInArr && data.location_str == "") {
@@ -894,7 +894,7 @@ CameraEditControl = function(){
                                 hide: 1
                             }
                         })
-                        
+
 						return screens['cameras'].on_show();
 					})
 				})

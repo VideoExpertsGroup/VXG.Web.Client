@@ -9,8 +9,8 @@
         </div>
       </div>
     </div>
-    <div class="ratio2 wrapper">
-      <div class="ratio2-inner ratio2-4-3">
+    <div class="players-container ratio2 wrapper">
+      <div class="ratio2-inner">
         <div class="camgrid2 ratio2-content">
           <div class="grid-player grid2"></div><div class="grid-player grid2"></div><div class="grid-player grid3"></div><div class="grid-player grid4"></div>
           <div class="grid-player grid2"></div><div class="grid-player grid2"></div><div class="grid-player grid3"></div><div class="grid-player grid4"></div>
@@ -18,15 +18,22 @@
           <div class="grid-player grid4"></div><div class="grid-player grid4"></div><div class="grid-player grid4"></div><div class="grid-player grid4"></div>
         </div>
       </div>
-      <div class="grid-stack players-container"></div>
-      <div id="single-timeline">
+      <div class="grid-stack-container">
+        <div class="grid-stack"></div>
+        <button class="btn-add-grid-cell vxgbutton">
+          +&nbsp;<span data-i18n="common.add">Add</span>
+        </button>
+      </div>
+      <div id="single-timeline" style="display: none">
         <div class="cloudplayer-controls-container single-timeline">
           <div class="cloudplayer-timeline-container single-timeline">
             <div class="cloudplayer-calendar-container single-timeline"></div>
             <div class="cloudcameracalendar-content" id="single-timeline-calendar"></div>
+            <i class="fa fa-video-camera"></i>
           </div>
         </div>
       </div>
+      <div id="multiplayer-control"></div>
     </div>
     <div class="notes-cont monitoring-notes">
       <button class="vxgbutton hidenotes open"><i class="fa fa-angle-right" aria-hidden="true"></i><span class="hide-section" data-i18n="monitoring.hideNotes">Hide Notes</span></button>
@@ -41,4 +48,9 @@
         </div>
       </div>
     </div>
+  </div>
 </div>
+
+<script>
+  localize();
+</script>

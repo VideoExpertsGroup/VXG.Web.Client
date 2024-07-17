@@ -257,20 +257,20 @@ TODO: add auth without firebase
         return defaultPromise();
     },
     logout: function(){
-        firebase.auth().signOut().then(function(){
-        // sessionStorage.removeItem("backToCam");
-        // sessionStorage.removeItem("aiCams");
-        // sessionStorage.removeItem("cameraUrls");
-        // localStorage.removeItem("cameraList");
-        // localStorage.removeItem("cameraList_expiry");
-        // localStorage.removeItem("locPath");
-        // localStorage.removeItem("locationHierarchy");
-        // localStorage.removeItem("menuState");
+      firebase.auth().signOut().then(function(){
+        sessionStorage.removeItem("backToCam");
+        sessionStorage.removeItem("aiCams");
+        sessionStorage.removeItem("cameraUrls");
+        localStorage.removeItem("cameraList");
+        localStorage.removeItem("cameraList_expiry");
+        localStorage.removeItem("locPath");
+        localStorage.removeItem("locationHierarchy");
+        localStorage.removeItem("menuState");
         sessionStorage.clear();
-        localStorage.clear();
+        // localStorage.clear();
 
-	    window.location.href = '/#';  
-        });
+        window.location.href = '/#';
+      });
     }
 };
 
