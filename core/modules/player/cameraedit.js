@@ -29,7 +29,7 @@ function showNextTier(event, clicked, currentLocType) {
     if (nextLocLevel < 5) 
         $(clicked).parent().parent().find("." + locTypes[nextLocLevel].toLocaleLowerCase() + "-ul").toggle();
 
-    $(clicked).parent().parent().find("> ul").toggle();
+    $(clicked).parent().parent().find(".EMPTYLOC-ul.camslist").toggle();
 
     if ($(clicked).hasClass("fa-caret-up")) {
         $(clicked).removeClass('fa-caret-up');

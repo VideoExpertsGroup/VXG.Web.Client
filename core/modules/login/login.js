@@ -265,6 +265,8 @@ TODO: add auth without firebase
         localStorage.removeItem("cameraList_expiry");
         localStorage.removeItem("locPath");
         localStorage.removeItem("locationHierarchy");
+        localStorage.removeItem("locationHierarchyCams");
+        localStorage.removeItem("noLocCams");
         localStorage.removeItem("menuState");
         sessionStorage.clear();
         // localStorage.clear();
