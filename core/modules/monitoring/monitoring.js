@@ -149,8 +149,8 @@ window.screens['monitoring'] = {
   },
   'on_hide': function () {
     core.elements['global-loader'].show();
-    let p = this.wrapper.find('player');
-    for (i = 0; i < p.length; i++) p[i].remove();
+    let p = this.wrapper.find('.player');
+    for (let i = 0; i < p.length; i++) p[i].remove();
     this.destroyPlayerController();
     core.elements['global-loader'].hide();
   },
@@ -535,7 +535,6 @@ window.screens['monitoring'] = {
     }
 
     self.initPlayerController();
-
     self.setPlayerEventListeners();
 
     onCameraScreenResize();
