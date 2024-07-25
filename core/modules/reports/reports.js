@@ -193,6 +193,7 @@ window.screens['home'] = {
     ],
 // Когда экран "активируется" - например вследствие нажатия меню
     'on_show':function(r){
+		core.elements['header-search'].hide();
 	    let targetElement = this.wrapper.find('.cameralist')[0];
             this.wrapper.removeClass('showstat');
 	    let apiGetCameraListFunc	//= vs_api.user.camera.list; 

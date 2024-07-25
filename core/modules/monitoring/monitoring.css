@@ -847,16 +847,26 @@ body.mobile.monitoring .mdialog h7 {
     display: flex;
 }
 
-#camlist-title {
-    text-align: center;
+.camlist-title-cont {
+    display: flex;
     font-weight: bold;
     border-bottom: 2px solid var(--main-color);
     line-height: 2;
     margin: 5px 1rem;
+    justify-content: center;
+    align-items: center;
 }
 
-#camlist-title:hover {
+#camlist-title-cont:hover {
     cursor: pointer;
+}
+
+#camlist-title {
+    font-weight: bold;
+}
+
+.camlist-refresh {
+    margin: 0 0 10px 5px;
 }
 
 camfield {

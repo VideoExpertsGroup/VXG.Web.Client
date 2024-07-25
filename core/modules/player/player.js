@@ -284,8 +284,11 @@ window.controls['camfield'] = {
         document.addEventListener('drop', this.drop);
         return getCameraFromElement(this).then(function(camera){
             if (camera && camera.src && camera.src[camfield])
+                var onlineClass = camera.src.status == 'active' ? 'online' : 'offline';
+                var isRecording = camera.src.recording ? true : false;
+                var recordingEle = isRecording ? "<div class='isRecording'></div>" : "";
                 el.channeltoken = camera.src&&camera.src.roToken ? camera.src.roToken : camera.token;
-                $(el).html('<i class="fa fa-video-camera mon-camera" aria-hidden="true"></i> <span>' + camera.src[camfield] + '</span>');
+                $(el).html('<i class="fa fa-video-camera mon-camera ' + onlineClass + '" aria-hidden="true"></i> <span>' + camera.src[camfield] + '</span>' + recordingEle);
         });
     },
     'attributeChangedCallback':function(name, value){

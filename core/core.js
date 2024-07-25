@@ -599,7 +599,8 @@ window.core.loadScreens = function(){
     function activateScreen(){
 
         let p;
-        if (this.id != "activity" && $('body').data('screenid') == this.id) return;
+        $('.mainsearch').find('input').attr("placeholder", "Search");
+        if (this.id != "activity" && this.id != "tagsview" && $('body').data('screenid') == this.id) return;
         if (typeof window.screens[this.id]['on_before_show'] === "function") {
             window.screens[this.id].from_screen = $('body').data('screenid');
             p = window.screens[this.id]['on_before_show'].apply(window.screens[this.id],arguments);
