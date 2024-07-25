@@ -937,6 +937,11 @@ window.vxgplayer = function(id, options_){
 					var mediaElement = el_video;
 					var authopts = {};
 
+					if (self.m.protocol == "ws:" || self.m.protocol == "wss:")					
+						Pipeline = vxg_msl_pipelines.Html5VideoPipeline;
+					else
+						Pipeline = vxg_msl_pipelines.Html5VideoPipeline_HTTP;					
+
 					if (self.m.user && self.m.password) {
 						authopts = {
 							username: self.m.user,
@@ -1096,11 +1101,22 @@ window.vxgplayer = function(id, options_){
 						el_loader.style.display = "inline-block";
 
 						var parsed_url = CloudHelpers.parseUri(obj.url);
+						
+						if (parsed_url.protocol == "ws" || parsed_url.protocol == "wss")
+						{
+							self.m.wsurl = parsed_url.protocol + '://'
+							+ parsed_url.host
+							+ (parsed_url.port?(':' + parsed_url.port):(''))
+							+ "/websocket/rtsp_tunnel"
+							
+						} else
+						{														
 						self.m.wsurl = parsed_url.protocol + '://'
 						+ parsed_url.host
 						+ (parsed_url.port?(':' + parsed_url.port):(''))
 						+ parsed_url.path
 						+ parsed_url.query;
+						}
 
 						self.m.user = obj.user || parsed_url.user || "";
 						self.m.password = obj.password || parsed_url.password || "";

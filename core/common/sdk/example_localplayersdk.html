@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>VXGCloudSDK-Web 3.3.18</title>
+		<title>VXGCloudSDK-Web 3.3.21</title>
 		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -35,6 +35,9 @@
 
 		<script>
 			window.sessNameCh = 'example_lacalplayer_ch';
+			const t_2000 = new Date("2000-01-01T00:00:00")
+			const now = new Date()  
+			const sec_since_2000 = Math.round(now.getTime()/1000 - t_2000.getTime()/1000) + (t_2000.getTimezoneOffset() - now.getTimezoneOffset())*60;
 
 
 			$(document).ready(function () {
@@ -101,7 +104,30 @@
 					player.setSource(object);
 					// player.play();
 					try { window.sessionStorage.setItem(window.sessNameCh, channel) } catch(e) { }
+					
+					let starttime = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000); //1 days back
+
+					$('#time_slider').attr('max', sec_since_2000);
+					$('#time_slider').attr('min', sec_since_2000 - (1*24*60*60));
+					$('#time_slider').attr('value', $('#time_slider').attr('max'));
+
+					$('#start_time').html(starttime.toLocaleString());
+					$('#stop_time').html(now.toLocaleString());
+					$('#select_time').html(now.toLocaleString());
+
 				});
+
+				$('#time_slider').on( "change", function() {
+					
+					let selecttime = new Date(t_2000.getTime() - (t_2000.getTimezoneOffset() - now.getTimezoneOffset())*60*1000 + this.value*1000);
+					$('#select_time').html(selecttime.toLocaleString());
+					
+					let rtsp_url_rec = $('#camurl').val() + '&rec=1&seek=' + this.value;	
+					player.stop();
+					var object = player.getSource()
+					object.url = rtsp_url_rec;		
+					player.setSource(object);
+				} );						
 			});
 		</script>
 	</head>
@@ -116,7 +142,7 @@
 		  </button>
 		  <div class="navbar-collapse collapse" id="navigation-menu">
 			<ul class="navbar-nav ml-auto">
-				<li class="nav-item"><a class="nav-link" href="index.html#sdk">VXGCloud SDK (3.3.18)</a></li>
+				<li class="nav-item"><a class="nav-link" href="index.html#sdk">VXGCloud SDK (3.3.21)</a></li>
 				<li class="nav-item"><a class="nav-link" href="index.html#examples">Examples</a></li>
 			</ul>
 		  </div>
@@ -141,13 +167,16 @@
 			<div class="form-group">
 				<label for="cameraID">Camera address</label>
 				<div class="input-group">
-					<input id="camurl" type="text" class="form-control" placeholder="Enter camera url" value="http://82.200.1.86:11280/rtsp_tunnel?line=1&inst=1&enableaudio=1&aud=1">
+					<input id="camurl" type="text" class="form-control" placeholder="Enter camera url" value="ws://vxg3.ddns.net:80/rtsp_tunnel?h26x=4">
 					<!--input id="user" type="text" class="form-control" placeholder="Enter username" value="admin">
 					<input id="password" type="password" class="form-control" placeholder="Enter password" value=""-->
 				</div>
 				
 				<button id="setsource_channel" class="btn btn-default btn-vxg" disabled=true>setSource</button>
 				<button id="stop_channel" class="btn btn-default btn-vxg" disabled=true>Stop</button>
+				<span id="select_time" style="float:right">0</span>
+    			<input id="time_slider" type="range" min="0" max="0" value="0" style="width: 100%;">
+				<span id="start_time">0</span><span id="stop_time" style="float:right">0</span>				
 			</div>
 		</div>
 	</div>

@@ -1,4 +1,23 @@
 # Web SDK for VXG Cloud & Server
+
+### Web SDK for VXG Cloud & Server 3.3.21
+- Added the support H.265
+- Added the dash.js for playback low latency 
+- Changed the version of video.js on the latest on 8.17.2
+- Fixed the issue  the calendar and live buttons are not clickable.
+
+
+### Web SDK for VXG Cloud & Server 3.3.20
+- Added support of local player using WebSocket
+
+
+### Web SDK for VXG Cloud & Server 3.3.19
+-  Fixed : Zooming for Bosch camera does not work with direct connection
+-  Fixed : Onvif Camera shows PTZ button (but is not PTZ camera)
+-  Fixed : PTZ button disappears after pausing
+-  Fixed : watchdog is started if the local player is pausing
+
+
 ### Web SDK for VXG Cloud & Server 3.3.18
 - Changed profile switching from Quality setting to Stream setting, only allowing user to choose between main (rec) and live
 - Changed default stream for live viewing to rec
