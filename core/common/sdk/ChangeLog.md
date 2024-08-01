@@ -1,5 +1,9 @@
 # Web SDK for VXG Cloud & Server
 
+### Web SDK for VXG Cloud & Server 3.3.22
+- Changed the version of cloud-player to 1.1.2.1.
+
+
 ### Web SDK for VXG Cloud & Server 3.3.21
 - Added the support H.265
 - Added the dash.js for playback low latency 

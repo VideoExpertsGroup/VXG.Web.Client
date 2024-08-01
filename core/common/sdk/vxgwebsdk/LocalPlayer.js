@@ -1107,7 +1107,7 @@ window.vxgplayer = function(id, options_){
 							self.m.wsurl = parsed_url.protocol + '://'
 							+ parsed_url.host
 							+ (parsed_url.port?(':' + parsed_url.port):(''))
-							+ "/websocket/rtsp_tunnel"
+							+ parsed_url.path.replace("rtsp_tunnel","websocket/rtsp_tunnel")
 							
 						} else
 						{														
