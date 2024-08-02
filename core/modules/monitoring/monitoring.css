@@ -195,7 +195,7 @@ camera-map {
 }
 
 .screens > .monitoring .camlist-monitoring {
-    max-height: 75vh;
+    max-height: 73vh;
     overflow-y: auto;
 }
 

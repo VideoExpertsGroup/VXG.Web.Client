@@ -94,15 +94,16 @@ window.screens['recorders'] = {
 
         var tableData = [];
         dvrsList.forEach(camInfo => {
+            var dvrFirst = camInfo.meta?.dvr_first_channel ? camInfo.meta.dvr_first_channel : "";
             var currentDvr = JSON.parse(camInfo.meta.dvr_first_channel);
-            let captured = camInfo.meta.capture_id && vxg.user.src.capture_id == camInfo.meta.capture_id ? ' captured' : '';
+            let captured = camInfo.meta && camInfo.meta.capture_id && vxg.user.src.capture_id == camInfo.meta.capture_id ? ' captured' : '';
             tableData.push({
                 order: count + 1,
                 id: `<div class="camerablock${captured}" dvr_id="${currentDvr.id}">
                 <campreview onclick_toscreen="dvr_cams" style="cursor: pointer;"></campreview>`,
                 name: currentDvr.name,
-                location: camInfo.meta.location,
-                group: camInfo.meta.group,
+                location: camInfo.meta?.location,
+                group: camInfo.meta?.group,
                 action: `<div class="settings-dvr" dvr_id="${currentDvr.id}" dvr_url="${currentDvr.url}">
                 <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
             </div>`
@@ -248,8 +249,6 @@ function onDVRDelete(dvrId){
                         }).catch(err => {
                             console.log(err);
                             window.core.showToast('error');
-                        }).finally(() => {
-                            core.elements['global-loader'].hide();
                         });
                 }
                 promiseChain = promiseChain.then(makeNextPromise(currentCamId))

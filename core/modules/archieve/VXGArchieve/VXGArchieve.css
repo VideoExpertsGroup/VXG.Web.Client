@@ -319,7 +319,7 @@ display: flex;
     position: absolute;
     top: 50%;
     left: 50%;
-    z-index: 5;
+    z-index: 10;
     background-color: #ffffff;
     box-shadow: 0 0 10px rgb(0 0 0 / 20%);
     transform: translate(-50%,-50%);

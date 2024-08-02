@@ -143,7 +143,7 @@ window.screens['tagsview'] = {
 	    }
 
             $(self.wrapper).find('events-list').attr('access_token',camera.token);
-            if (sessionStorage.notesMode == undefined) {
+            if (sessionStorage.notesMode == undefined && window.notesEnabled == undefined || window.notesEnabled == true) {
                 try {
                     var inc = new Date().getTime() / 1000;
                     self.camera.createClip(inc - 10000, inc + 10000, "testingClip").then(function(clip){
@@ -168,6 +168,13 @@ window.screens['tagsview'] = {
                     console.log(err);
                     self.metaEnabled = false;
                 }
+            } else {
+                self.metaEnabled = false;
+                sessionStorage.setItem("notesMode", "disabled");
+                $(".clipcase").addClass("disabled clipdis");
+                $(".edittag").addClass("disabled")
+                $(".clip textarea").addClass("disabled clipdis")
+                $(".shownotes").addClass("disabled");
             }
 
             function tryStart( position) {
@@ -325,7 +332,7 @@ window.screens['tagsview'] = {
         // var localStorage_sdCard = localStorage.getItem(self.camera.camera_id);
         // var sdCardEnabled = (typeof localStorage_sdCard === "string" && localStorage_sdCard.toLowerCase() === "true");
 
-        var playerOptions = {timeline: true, timelineampm: true, mute: true, alt_protocol_names:true, calendar: true/*, cloud_domain: vs_api.options['cloud_domain'], useOnlyPlayerFormat: 'html5'*/};
+        var playerOptions = {timeline: true, timelineampm: true, mute: true, alt_protocol_names:true, calendar: true, autohide: 30000, loaderTimeout: 5000/*, cloud_domain: vs_api.options['cloud_domain'], useOnlyPlayerFormat: 'html5'*/};
         if (window.core.isMobile()){
             playerOptions.disableAudioControl = true;
             playerOptions.disableZoomControl = true;

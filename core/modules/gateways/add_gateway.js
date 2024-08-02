@@ -86,15 +86,15 @@ window.screens['add_gateway'] = {
         var self = this;
         var cam = self.gateway;
 
-        var loc = cam.meta.location ? cam.meta.location : "";
-        var group = cam.meta.group ? cam.meta.group : "";
+        var loc = cam.meta?.location ? cam.meta.location : "";
+        var group = cam.meta?.group ? cam.meta.group : "";
 
         $('[name="name"]').val(cam.name);
         $('[name="location"]').val(loc);
         $('[name="group"]').val(group);
-        $('[name="guid"]').val(cam.meta.gateway_id);
-        $('[name="username"]').val(cam.meta.gateway_username);
-        $('[name="password"]').val(cam.meta.gateway_password);
+        $('[name="guid"]').val(cam.meta?.gateway_id);
+        $('[name="username"]').val(cam.meta?.gateway_username);
+        $('[name="password"]').val(cam.meta?.gateway_password);
     },
     reset: function() {
         $('.gateway-input').val('');

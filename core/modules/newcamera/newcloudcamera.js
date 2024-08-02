@@ -426,6 +426,8 @@ CameraCloudEditControl = function(){
             res = vxg.cameras.createCameraPromise(data);
         else
             res = this.camera.updateCameraPromise(data);
+        
+        var oldLocArr = this.camera && this.camera.src.meta ? window.core.locationHierarchy.createLocationArray(this.camera.src.meta) : [];
         res.then(function(r){
             if (newLocation) {
                 var locationStr = data.location_str;
@@ -544,6 +546,26 @@ CameraCloudEditControl = function(){
                                 localStorage.cameraList = JSON.stringify(cameraList);
                             }
 
+                            var noLocsCams = localStorage.noLocCams ? JSON.parse(localStorage.noLocCams) : [];
+                            var camExistsInArr = noLocsCams.length != 0 && noLocsCams.some(cam => cam.camera_id == newCam.id)
+                            if (!camExistsInArr && data.location_str == "") {
+                                var formattedCam = new vxg.cameras.objects.Camera(newCam.token ? newCam.token : newCam.id);
+                                formattedCam.src = newCam;
+                                noLocsCams.push(formattedCam);
+                                localStorage.noLocCams = JSON.stringify(noLocsCams);
+                            } else if (camExistsInArr && data.location_str != "") {
+                                var removeCam = noLocsCams.filter(cam => { return cam.camera_id != newCam.id});
+                                if (removeCam.length == 0) localStorage.removeItem("noLocCams")
+                                else localStorage.noLocCams = JSON.stringify(removeCam);
+                            }
+    
+                            var locationHierarchyCams = localStorage.locationHierarchyCams ? JSON.parse(localStorage.locationHierarchyCams) : {};
+                            var formattedCam = new vxg.cameras.objects.Camera(newCam.token ? newCam.token : newCam.id);
+                            formattedCam.src = newCam;
+                            if (formattedCam.src.meta) 
+                                window.core.locationHierarchy.updateCamInHierarchy(locationHierarchyCams, oldLocArr, formattedCam);
+                            localStorage.locationHierarchyCams = JSON.stringify(locationHierarchyCams);
+
                             var tableData = $("#table").bootstrapTable('getData');
                             var insertIndex = tableData.length;
                             var order = insertIndex + 1;
@@ -566,7 +588,7 @@ CameraCloudEditControl = function(){
                                     <campreview onclick_toscreen="tagsview" style="cursor: pointer;"></campreview>`,
                                     status: statusBlock,
                                     recording: newCam.recording ? $.t('action.yes') : $.t('action.no'),
-                                    name: newCam.name,
+                                    name: newCam.name + `${newCam.meta?.subid == 'NOPLAN' ? ' (' + $.t('common.noSubscription') + ')' : ''}`,
                                     location: newCam.meta && newCam.meta.location ? newCam.meta.location : "",
                                     group: tableGroup,
                                     action: `<div class="settings" access_token="${newCam.token}" cam_order="${order}" cam_id="${newCam.id}" gateway_id="${null}" gateway_token="${null}">

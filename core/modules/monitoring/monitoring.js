@@ -318,25 +318,30 @@ window.screens['monitoring'] = {
     if (notesMode) {
       if (notesMode == "disabled") $(".addnote").addClass("disabled");
     } else {
-      try {
-        var inc = new Date().getTime() / 1000;
-        self.camera.createClip(inc - 10000, inc + 10000, "testingClip").then(function (clip) {
-          clip.setMeta("testingMeta", "", "", inc).then(function (readyclip) {
-            console.log("meta is working, delete clip and camera just made");
-            sessionStorage.setItem("notesMode", "enabled");
+      if (window.notesEnabled == undefined || window.notesEnabled == true) {
+        try {
+          var inc = new Date().getTime() / 1000;
+          self.camera.createClip(inc - 10000, inc + 10000, "testingClip").then(function (clip) {
+            clip.setMeta("testingMeta", "", "", inc).then(function (readyclip) {
+              console.log("meta is working, delete clip and camera just made");
+              sessionStorage.setItem("notesMode", "enabled");
+            }, function () {
+              sessionStorage.setItem("notesMode", "disabled");
+              $(".addnote").addClass("disabled");
+            });
+            vxg.api.cloud.deleteClipV2(clip.token, clip.src.id).then(function (r) { /* testing clip deleted */
+            }, function (err) {
+              console.log(err)
+            })
           }, function () {
-            sessionStorage.setItem("notesMode", "disabled");
-            $(".addnote").addClass("disabled");
+            console.log("Test clip isn't working, something bad has happened");
           });
-          vxg.api.cloud.deleteClipV2(clip.token, clip.src.id).then(function (r) { /* testing clip deleted */
-          }, function (err) {
-            console.log(err)
-          })
-        }, function () {
-          console.log("Test clip isn't working, something bad has happened");
-        });
-      } catch (err) {
-        console.log(err);
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        sessionStorage.setItem("notesMode", "disabled");
+        $(".addnote").addClass("disabled");
       }
     }
 

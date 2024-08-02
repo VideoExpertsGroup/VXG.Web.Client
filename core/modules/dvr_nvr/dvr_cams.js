@@ -105,7 +105,7 @@ window.screens['dvr_cams'] = {
         var tableData = [];
         dvrCams.forEach(camInfo => {
             var channelID = camInfo.id;
-            let captured = camInfo.meta.capture_id && vxg.user.src.capture_id == camInfo.meta.capture_id ? ' captured' : '';
+            let captured = camInfo.meta && camInfo.meta.capture_id && vxg.user.src.capture_id == camInfo.meta.capture_id ? ' captured' : '';
             let statusBlock = '<div class="caminfo tablecaminfo '+camInfo.status+' '+(camInfo.status=='active'?' online':'')+'">'+ (camInfo.status=='active'?'Online':'Offline')+'</div>';
             tableData.push({
                 camId: channelID,

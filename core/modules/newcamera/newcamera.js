@@ -57,7 +57,7 @@ window.screens['newcamera'] = {
                     $('[name="location"]').addClass("disabled");
                     $('[name="group"]').addClass("disabled");
                     // gateway unique_id ?
-                    $('[name="gatewayId"]').val(cam.meta.gateway_id);
+                    if(cam.meta && cam.meta.gateway_id) $('[name="gatewayId"]').val(cam.meta.gateway_id);
                     if(cam.meta && cam.meta.location) self.wrapper.find('[name="location"]').val(cam.meta.location);
                     if(cam.meta && cam.meta.group) self.wrapper.find('[name="group"]').val(cam.meta.group);
                     $('[name="url_http_port"]').val(80);

@@ -78,12 +78,12 @@ window.screens['add_dvr'] = {
         var path = urlparser.pathname.split('/');
         var type = path[2];
         var rtsp = firstCam.onvif_rtsp_port_fwd ? firstCam.onvif_rtsp_port_fwd : "";
-        var loc = firstCam.meta.location ? firstCam.meta.location : "";
-        var group = firstCam.meta.group ? firstCam.meta.group : "";
+        var loc = firstCam.meta?.location ? firstCam.meta.location : "";
+        var group = firstCam.meta?.group ? firstCam.meta.group : "";
 
         $('[name="cameraCount"]').val(self.cameras.length);
         $('[name="cameraCount"]').attr("disabled", true);
-        $('[name="dvrName"]').val(firstCam.meta.dvr_name);
+        $('[name="dvrName"]').val(firstCam.meta?.dvr_name);
         $('[name="type"]').val(type);
         $('[name="address"]').val(ipdomain);
         $('[name="httpPort"]').val(httpPort);
@@ -146,8 +146,6 @@ window.screens['add_dvr'] = {
                     }).catch(err => {
                         console.log(err);
                         window.core.showToast('error');
-                    }).finally(() => {
-                        core.elements['global-loader'].hide();
                     });
             }
             promiseChain = promiseChain.then(makeNextPromise(currentCamInfo))

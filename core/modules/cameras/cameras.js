@@ -213,7 +213,7 @@ function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null, gatewayId
         }
 
         var noLoc = localStorage.noLocCams ? JSON.parse(localStorage.noLocCams) : null;
-        if (camera.src.meta.location == undefined && noLoc) {
+        if (camera.src.meta?.location == undefined && noLoc) {
             var removeCam = noLoc.filter(cam => { return cam.camera_id != camera.camera_id});
             if (removeCam.length == 0) localStorage.removeItem("noLocCams")
             else localStorage.noLocCams = JSON.stringify(removeCam);
@@ -235,7 +235,7 @@ function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null, gatewayId
 
         // remove from locationHierarchyCams
         var locationHierarchy = localStorage.locationHierarchyCams ? JSON.parse(localStorage.locationHierarchyCams) : null;
-        if (locationHierarchy) {
+        if (locationHierarchy && camera.src.meta?.location != undefined) {
             var locArr = window.core.locationHierarchy.createLocationArray(camera.src.meta);
             if (locArr.length > 0) {
                 var locHierarchy =  window.core.locationHierarchy.removeCamFromHierarchy(locationHierarchy, locArr, camera); 

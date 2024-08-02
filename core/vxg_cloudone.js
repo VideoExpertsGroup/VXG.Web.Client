@@ -349,13 +349,23 @@ vxg.cameras.createCameraDVRPromise = function(cameraInfo, dvrInfo){
         }
         vxg.cameras.invalidate();
 
-        var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
-        cameraList.objects.push(r);
-        var total = parseInt(cameraList.meta.total_count);
-        cameraList.meta.total_count = total + 1;
-        localStorage.cameraList = JSON.stringify(cameraList);
+        return vxg.api.cloud.getCameraInfo(r.id).then(function(newCam) {
+            var cameraList = localStorage.cameraList ? JSON.parse(localStorage.cameraList) : null;
+            if (cameraList) {
+                cameraList.objects.push(newCam);
+                var total = parseInt(cameraList.meta.total_count);
+                cameraList.meta.total_count = total + 1;
+                localStorage.cameraList = JSON.stringify(cameraList);
+            }
 
-        return r;
+            // Need to add proper locations to Recorders
+            //var formattedCam = new vxg.cameras.objects.Camera(newCam.token ? newCam.token : newCam.id);
+            //formattedCam.src = newCam;
+            //noLocsCams.push(formattedCam);
+        })
+
+
+        //return r;
     });
 }
 

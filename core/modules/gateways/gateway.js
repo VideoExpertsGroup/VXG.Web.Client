@@ -117,7 +117,7 @@ window.screens['gateway'] = {
         gatewaysList.forEach(camInfo => {
             //var currentGateway = JSON.parse(camInfo.meta.gateway_first_channel);
             let captured = camInfo.meta?.capture_id && vxg.user.src.capture_id == camInfo.meta.capture_id ? ' captured' : '';
-            var firstGatewayCam = cameraList.filter(gatewayCam => { return camInfo.meta && (camInfo.meta.gateway_id == gatewayCam.meta.gateway_id && gatewayCam.meta.gateway_cam == "gateway_cam") });
+            var firstGatewayCam = cameraList.filter(gatewayCam => { return camInfo.meta && gatewayCam.meta && (camInfo.meta.gateway_id == gatewayCam.meta.gateway_id && gatewayCam.meta.gateway_cam == "gateway_cam") });
             var camblockAccessToken = firstGatewayCam.length > 0 ? firstGatewayCam[0].id : "";
 
             var savedCam = cameraUrls.length != 0 ? cameraUrls.find(x => x.id == camInfo.id) : "";
@@ -127,13 +127,13 @@ window.screens['gateway'] = {
             var isOpenWRT = camInfo.meta && camInfo.meta.openwrt ? "openwrt" : "";
             tableData.push({
                 order: count + 1,
-                id: `<div class="camerablock${captured}" access_token="${camblockAccessToken}" channel_id="${camInfo.id}" gid="${camInfo.meta.gateway_id}" gateway_token="${camInfo.token}" openwrt="${isOpenWRT}" id="scrollto${camInfo.id}">
+                id: `<div class="camerablock${captured}" access_token="${camblockAccessToken}" channel_id="${camInfo.id}" gid="${camInfo.meta?.gateway_id}" gateway_token="${camInfo.token}" openwrt="${isOpenWRT}" id="scrollto${camInfo.id}">
                 <campreview onclick_toscreen="gateway_cams" style="cursor: pointer;"></campreview>`,
                 status: statusBlock,
                 name: camInfo.name,
-                location: camInfo.meta.location,
-                group: camInfo.meta.group,
-                action: `<div class="settings-gateway" channel_id="${camInfo.id}" access_token="${camInfo.token}" gateway_id="${camInfo.meta.gateway_id}">
+                location: camInfo.meta?.location,
+                group: camInfo.meta?.group,
+                action: `<div class="settings-gateway" channel_id="${camInfo.id}" access_token="${camInfo.token}" gateway_id="${camInfo.meta?.gateway_id}">
                 <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
             </div><div class="menu-div"></div>`,
                 hide: 1
