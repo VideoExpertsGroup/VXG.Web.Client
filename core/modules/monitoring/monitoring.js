@@ -883,11 +883,7 @@ window.screens['monitoring'] = {
        
         $('.loc-draggable, .parent-cam, .camgrid2').on("dragstart", function(e) {
             e.stopPropagation();
-            let ele = $(document.elementFromPoint(e.clientX, e.clientY));
-            if (ele.length && (ele[0].classList.contains("loc-name") || ele[0].classList.contains("location-arrow")))
-                e.originalEvent.dataTransfer.setData('text', e.currentTarget.id);
-            else
-                e.originalEvent.dataTransfer.setData('text', "");
+            e.originalEvent.dataTransfer.setData('text', e.currentTarget.id);
         });
 
     $('.loc-draggable, .parent-cam, .camgrid2').on('drop dragdrop', function (event) {

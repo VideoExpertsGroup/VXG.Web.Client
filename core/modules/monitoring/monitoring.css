@@ -1250,11 +1250,6 @@ form > .location-hierarchy {
     aspect-ratio: unset;
 }
 
-.monitoring .grid-stack-container {
-    flex: 1 1 0;
-    overflow: scroll;
-}
-
 .monitoring .grid-stack > .grid-stack-item > .grid-stack-item-content {
     inset: 2px;
 }
