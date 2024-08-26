@@ -15,7 +15,7 @@ function listActivityCB2( operation,  obj ) {
 	    if (camera !== undefined && camera != null) {
 		let token = camera.token;
 		window.screens['tagsview'].camera = camera;
-	        window.screens['tagsview'].activate(token, (new Date(time)).getTime());
+	        window.screens['tagsview'].activate(token, (new Date(time)).getTime(), 'noback');
 	    }	
 	} else if (operation === "meta") {
 	    if (camera !== undefined && camera != null) {
@@ -194,6 +194,13 @@ window.screens['activity'] = {
 						<ul class="activitylist">
 							<li>
 								<label class="filter-label custom-checkbox">
+									<span>${$.t('common.eventTypes.network')}</span>
+									<input type="checkbox" `+(savedFilters.indexOf('network')!==-1?'checked':'')+` name="network">
+									<span class="checkmark"></span>		
+								</label>
+							</li>
+							<li>
+								<label class="filter-label custom-checkbox">
 									<span>${$.t('common.eventTypes.motion')}</span>
 									<input type="checkbox" `+(savedFilters.indexOf('motion')!==-1?'checked':'')+` name="motion">
 									<span class="checkmark"></span>	
@@ -208,15 +215,15 @@ window.screens['activity'] = {
 							</li>
 							<li>
 								<label class="filter-label custom-checkbox">
-									<span>${$.t('common.eventTypes.peopleDetection')}</span>
-									<input type="checkbox" `+(savedFilters.indexOf('post_object_and_scene_detection')!==-1?'checked':'')+` name="post_object_and_scene_detection">
+									<span class="event-disabled">${$.t('common.eventTypes.facialRecognition')}</span>
+									<input type="checkbox" disabled name="facial_recognition">
 									<span class="checkmark"></span>		
 								</label>
 							</li>
-							<li>
+							<!--<li>
 								<label class="filter-label custom-checkbox">
-									<span>${$.t('common.eventTypes.network')}</span>
-									<input type="checkbox" `+(savedFilters.indexOf('network')!==-1?'checked':'')+` name="network">
+									<span>${$.t('common.eventTypes.peopleDetection')}</span>
+									<input type="checkbox" `+(savedFilters.indexOf('post_object_and_scene_detection')!==-1?'checked':'')+` name="post_object_and_scene_detection">
 									<span class="checkmark"></span>		
 								</label>
 							</li>
@@ -240,7 +247,7 @@ window.screens['activity'] = {
 									<input type="checkbox" `+(savedFilters.indexOf('crowd_detection')!==-1?'checked':'')+` name="crowd_detection">
 									<span class="checkmark"></span>		
 								</label>
-							</li>
+							</li>-->
 							<li>
 								<p class="custom-input-label">${$.t('activity.customEventList')}</p>
 								<input type="text" class="custom-filter-input" name="custom_filter_list" value="${customFilterString}">

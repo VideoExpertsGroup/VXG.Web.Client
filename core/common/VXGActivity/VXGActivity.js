@@ -599,7 +599,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 				// 				</div>`,
 				time: `<span class="text-muted">${timeString}</span>`,
 				cameraInfo: `<span>${cameraInfo}</span>`,
-				type: `<div class="event-name ${eventStatus}"><span class="font-md">${self.ActivitiesList_resolve_name(this.name)}</span></div>`,
+				type: `<div class="event-name ${eventStatus}" id="event_name_${this.id}"><span class="font-md">${self.ActivitiesList_resolve_name(this.name)}</span></div>`,
 				status: statusBlock,
 				meta: metaData,
 			});
@@ -674,7 +674,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 		localStorage.setItem('eventsList', true);
 		$(activitiesContainer).bootstrapTable({
 			pagination: true,
-			paginationLoop: true,
+			paginationLoop: false,
 			useRowAttrFunc: true,
 			filterControl: true,
 			reorderableRows: false,
@@ -715,8 +715,10 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 	localStorage.setItem("sTime", "desc");
 	// } 
 	$(activitiesContainer).bootstrapTable('load', tableData);
-	
-	const activityClick = () => $('table.feed-activity-list tbody tr').on("click", function() {
+
+	const activityClick = () => $('table.feed-activity-list tbody tr').on("click", function(e) {
+
+
 		if (localStorage.getItem("page") === "tagsview")
 			{
 			     let camid = $(this).find('.event-processing-activity').attr("camid");;
@@ -724,7 +726,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 			     let time 	= $(this).find('.event-processing-activity').attr("time");
 			     let name	= $(this).find('.event-processing-activity').attr("camera_name");;
 			     let camera = self.objByCamid(camid);
-	    
+
 			     let obj = {
 				camid: camid,
 				access_token: self.roToken,
@@ -743,6 +745,16 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 				window.screens['tagsview'].activate(camera['token'], (new Date(time)).getTime());
 				return;
 			}
+
+		// This is a hacky solution to stop the processing page from appearing a million times. 
+		// For an actual fix we may have to rewrite how this entire function works 
+		/*var eventid = $(this).find('.event-processing-activity').attr("event_id");
+		var alreadyClicked = sessionStorage.eventClicked ? JSON.parse(sessionStorage.eventClicked) : [];
+		if (alreadyClicked.includes(eventid)) return;
+		else {
+			alreadyClicked.push(eventid);
+			sessionStorage.eventClicked = JSON.stringify(alreadyClicked);
+		}*/
 			
 		window.event_processing = window.event_processing || {};
 		window.event_processing.thumb_url = $(this).find('.event-processing-activity').attr("img_url");
@@ -1067,11 +1079,20 @@ VXGActivityController.prototype.moreData = function moreData (params) {
 }
 
 VXGActivityController.prototype.updateEvent = function updateEvent(event_id, event_status, args) {
-	//var event = $('[eventid="'+event_id+'"]');
-	//$(event).attr("event_status", event_status);
+	var event = $('[eventid="'+event_id+'"]');
+	$(event).attr("event_status", event_status);
 	$('#status_'+event_id).html(event_status);
-	//.removeClass("no_status").removeClass("processed").removeClass("in_progress").addClass(args.meta.process);
-	//$(event).attr("meta", btoa(JSON.stringify(args.meta, null, 2)))
+	$("#event_name_"+event_id).removeClass("no_status").removeClass("processed").removeClass("in_progress").addClass(args.meta.process);
+	$(event).attr("meta", btoa(JSON.stringify(args.meta, null, 2)))
+
+	var alreadyClicked = sessionStorage.eventClicked ? JSON.parse(sessionStorage.eventClicked) : [];
+	var clickedIndex = alreadyClicked.indexOf(event_id);
+	alreadyClicked.splice(clickedIndex, 1);
+	sessionStorage.eventClicked = JSON.stringify(alreadyClicked);
+	
+	var changedEvents = localStorage.changedEvents ? JSON.parse(localStorage.changedEvents) : [];
+	changedEvents.push(event_id);
+	localStorage.changedEvents = JSON.stringify(changedEvents);
 }
 
 
@@ -1242,6 +1263,20 @@ VXGActivityController.prototype.updateDataCB = function updateCameraList( params
 				}
 			}
 			totalData = data.slice(0, differenceIndex).concat(totalData.slice(0, totalCount - differenceIndex));
+
+			if (localStorage.changedEvents != undefined ) {
+				var changedEvents = JSON.parse(localStorage.changedEvents);
+				changedEvents.forEach(eventId => {
+					var totalIndex = totalData.findIndex(event => event.id == eventId);
+					var dataIndex = data.findIndex(event => event.id == eventId)
+					totalData[totalIndex] = data[dataIndex];
+				})
+				localStorage.removeItem("changedEvents");
+			}
+
+			if (sessionStorage.eventClicked != undefined) {
+				sessionStorage.removeItem('eventClicked');		
+			}
 		}
     this.clView.render( this, params, totalData);
 };

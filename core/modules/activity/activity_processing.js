@@ -44,7 +44,7 @@ $( document ).ready(function() {
         $(".processing-input").attr("disabled", true);
     }
     
-    getEventVideo(token, eventTime).then(function(ret) {
+    /*getEventVideo(token, eventTime).then(function(ret) {
         // var videoSource = "";
         // ret.objects.forEach(video => {
         //     if (eventTime > video.start && eventTime < video.end)
@@ -54,7 +54,7 @@ $( document ).ready(function() {
         $('#event-video').html(videoSource);
     }, function(err) {
         console.log(err.responseText);
-    });
+    });*/
 
     if (eventName == "vehicle_stopped_detection") {
         // show meta bounding boxes
@@ -93,13 +93,27 @@ $( document ).ready(function() {
 
     window.playback_player = new CloudPlayerSDK('live-player', {
         autohide: 3000,
-        timeline: true,
+        timeline: false,
         disableZoomControl: false,
         disableAudioControl: false,
         disableGetShot: false,
         disableGetClip: false
     });
 	playback_player.setSource(token);
+
+    window.event_player = new CloudPlayerSDK('event-player', {
+        autohide: 3000,
+        timeline: true,
+        disableZoomControl: false,
+        disableAudioControl: false,
+        disableGetShot: false,
+        disableGetClip: false
+    });
+	event_player.setSource(token);
+    var playerTime = new Date(eventTime);
+    playerTime = playerTime.getTime();
+    event_player.setPosition(playerTime);
+    event_player.pause();
 
     $('.start-btn').click(function() {
         // change processing status to in_progress

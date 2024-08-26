@@ -53,6 +53,7 @@ body:not(.monitoring) .header-right .monitoring-toolbar {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    height: 100%;
 }
 
 .screens > .monitoring.grid .camlist-monitoring {
@@ -192,6 +193,7 @@ camera-map {
 
 .monitoring-cont {
     display: flex;
+    height: 100%;
 }
 
 .screens > .monitoring .camlist-monitoring {
@@ -1250,12 +1252,19 @@ form > .location-hierarchy {
     aspect-ratio: unset;
 }
 
+.monitoring .grid-stack-container {
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+}
+
 .monitoring .grid-stack > .grid-stack-item > .grid-stack-item-content {
     inset: 2px;
 }
 
-.monitoring .grid-stack-container .btn-add-grid-cell {
-    margin-top: 3px;
+.monitoring .btn-add-grid-cell {
+    padding: 7px 25px;
+    margin-left: auto;
 }
 
 .monitoring #multiplayer-control {

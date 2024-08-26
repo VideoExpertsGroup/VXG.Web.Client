@@ -272,6 +272,15 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
         self.markerCluster = new MarkerClusterer(self.map, this.markers, self.mcOptions);
 
     },
+    clearMarkers: function() {
+      let self = this;
+      this.markerCluster.setMap(null);
+
+      for (let i = 0; i < self.markers.length; i++) {
+          self.markers[i].setMap(null);
+          self.markers[i] = null;
+      }
+    },
     showFloorPlan: function (planImg, cameras) {
         let self = this;
         self.$planContainer.find('.plan').remove();
@@ -2336,6 +2345,8 @@ class CCameraMap extends HTMLElement {
     }
 
     connectedCallback() {
+        window.cameraMap = this;
+
         let self = this;
         this.shadow = this.attachShadow({mode: 'open'});
         this.shadow.innerHTML = CCameraMap.css+'<div class="body"></div>';
@@ -2394,9 +2405,10 @@ class CCameraMap extends HTMLElement {
             data: args
         });
     }
-    update(){
+    update(clearAll = false){
         let self = this;
         let access_token = $(this).attr('access_token');
+        if (clearAll) MapMarkers.clearMarkers();
 //        this.getEvents();
 
 

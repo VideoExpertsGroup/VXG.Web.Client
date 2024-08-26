@@ -1,6 +1,6 @@
 // CloudSDK.debug.js
-// version: 3.3.22
-// date-of-build: 240726
+// version: 3.3.26
+// date-of-build: 240823
 // copyright (c) VXG Inc
 // Includes gl-matrix  <https://github.com/toji/gl-matrix>
 // ver: 3.3.0 // Available under MIT License 
@@ -1336,6 +1336,58 @@ window.CloudAPI = function(cloud_token, svcp_url){
 		});
 	}
 
+	self.getCameraPtzPresets = function(camid) {
+		var data = {};
+		if(self.isShareToken()){
+			data.token = self._getCloudToken();
+		}
+		var query = CloudHelpers.mapToUrlQuery(data);
+		return self.requestWrap.request({
+			url: self.endpoints.cameras + camid + '/ptz/presets/?' + query,
+			type: 'GET',
+		});
+	}
+
+	self.createCameraPtzPreset = function(camid, name) {
+		var data = {};
+		if(self.isShareToken()){
+			data.token = self._getCloudToken();
+		}
+		var query = CloudHelpers.mapToUrlQuery(data);
+		return self.requestWrap.request({
+			url: self.endpoints.cameras + camid + '/ptz/presets/?' + query,
+			type: 'POST',
+			data: JSON.stringify({ name }),
+			contentType: 'application/json',
+		});
+	}
+
+	self.gotoCameraPtzPreset = function(camid, presetId) {
+		var data = {};
+		if(self.isShareToken()){
+			data.token = self._getCloudToken();
+		}
+		var query = CloudHelpers.mapToUrlQuery(data);
+		return self.requestWrap.request({
+			url: self.endpoints.cameras + camid + '/ptz/presets/goto/?' + query,
+			type: 'POST',
+			data: JSON.stringify({ id: presetId }),
+			contentType: 'application/json',
+		});
+	}
+
+	self.deleteCameraPtzPreset = function(camid, presetId) {
+		var data = {};
+		if(self.isShareToken()){
+			data.token = self._getCloudToken();
+		}
+		var query = CloudHelpers.mapToUrlQuery(data);
+		return self.requestWrap.request({
+			url: self.endpoints.cameras + camid + '/ptz/presets/' + presetId + '/?' + query,
+			type: 'DELETE',
+		});
+	}
+
 	self.getServerTime = function(){
 		var p = CloudHelpers.promise();
 
@@ -1393,7 +1445,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken(),
 			data: JSON.stringify(data),
 			contentType: 'application/json'
-		});	
+		});
 	};
 
 	self.getCameraVideoStreams = function(camid) {
@@ -1404,7 +1456,7 @@ window.CloudAPI = function(cloud_token, svcp_url){
 			token: self._getCloudToken(),
 		});
 	}
-	
+
 	self.getCameraVideoStream = function(camid,videoid){
 		var data = {};
 		if(self.isShareToken()){
@@ -6234,6 +6286,10 @@ window.CloudPlayer = function(elid, options){
 	var self = this;
 	self.options = options = options || {};
 	self.elid = elid;
+	if (self.options.autoIdleStop === undefined) {
+		self.options.autoIdleStop = 60;			// set auto idle stop time as 60 minutes
+	}
+
 	var mConn = null;
 	var mEvent = null;
 	var mShowedBigPlayButton = false;
@@ -6251,6 +6307,10 @@ window.CloudPlayer = function(elid, options){
 	var mWebRTC2_Player = null;
 	var mNativeHLS_el = null;
 	var mNativeHLS_Player = null;
+	var mPtzPresets = [];
+	var mSelectedPtzPreset = null;
+	var mIdleTime = null;
+	var mIdleStopped = false;
 /*
 	var mNativeVideo1_el = null;
 	var mNativeVideo2_el = null;
@@ -6452,17 +6512,36 @@ window.CloudPlayer = function(elid, options){
 		+ '	<div class="ptz-zoom-minus"></div>'
 		+ '</div>'
 		+ '</div>'
-		+ '<div class="ptz-presets">'
-		+ '<h4>Presets</h4>'
-		+ '<ul class="presets-list">'
-		+ '<li data-presetNo="1">1</li>'
-		+ '<li data-presetNo="2">2</li>'
-		+ '<li data-presetNo="3">3</li>'
-		+ '<li data-presetNo="4">4</li>'
-		+ '<li data-presetNo="5">5</li>'
-		+ '</ul>'
 		+ '</div>'
-		+ '</div>'
+		+ `<div class="ptz-presets presets-popup">
+				<div class="cloudplayer-info-title">Select preset</div>
+				<div class="cloudplayer-info-container">
+					<div class="dark-select">
+						<select></select>
+					</div>
+					<div class="actions">
+						<button class="btn-go btn btn-dark">Go</button>
+						<button class="btn-delete btn btn-dark">Delete</button>
+						<button class="btn-set btn btn-dark ml-auto">Set</button>				
+					</div>
+				</div>
+			</div>`
+		+ `<div class="ptz-presets preset-create-popup">
+				<div class="cloudplayer-info-title">Set preset</div>
+				<div class="cloudplayer-info-container">
+					<div class="d-flex align-items-center">
+						<span>Name: </span>
+						<input class="dark-input flex-grow ml-2" />
+					</div>
+					<div class="actions justify-content-end">
+						<button class="btn-apply btn btn-dark">Apply</button>
+						<button class="btn-cancel btn btn-dark">Cancel</button>				
+					</div>
+				</div>
+			</div>`
+		+ `<div class="idle-stop-screen">
+				<button class="btn-resume btn btn-outline-light">Yes, I am still here</button>
+			</div>`
 		+ '<div class="cloudplayer-controls-zoom-container">'
 		+ '	<div class="cloudplayer-controls-zoom-position">'
 		+ '		<div class="cloudplayer-zoom-position-cursor"></div>'
@@ -6723,6 +6802,16 @@ window.CloudPlayer = function(elid, options){
 	var el_selectbackuptime = self.player.getElementsByClassName('cloudplayer-selectbackuptime')[0];
 	var el_toggle_sd_sync = self.player.getElementsByClassName('enable-disable-sdcard')[0];
 	var el_controls_ptz_container = self.player.getElementsByClassName('cloudplayer-ptz')[0];
+	var el_ptz_presets_popup = self.player.querySelector('.presets-popup');
+	var el_ptz_presets_select = el_ptz_presets_popup.querySelector('select');
+	var el_ptz_presets_go_btn = el_ptz_presets_popup.querySelector('.btn-go');
+	var el_ptz_presets_delete_btn = el_ptz_presets_popup.querySelector('.btn-delete');
+	var el_ptz_presets_set_btn = el_ptz_presets_popup.querySelector('.btn-set');
+	var el_ptz_preset_create_popup = self.player.querySelector('.preset-create-popup');
+	var el_ptz_preset_create_name_input = el_ptz_preset_create_popup.querySelector('input');
+	var el_ptz_preset_create_apply_btn = el_ptz_preset_create_popup.querySelector('.btn-apply');
+	var el_ptz_preset_create_cancel_btn = el_ptz_preset_create_popup.querySelector('.btn-cancel');
+	var el_idle_resume_btn = self.player.querySelector('.idle-stop-screen .btn-resume');
 	var mElementPlay = self.player.getElementsByClassName('cloudplayer-play')[0];
 	var el_info = self.player.getElementsByClassName('cloudplayer-info')[0];
 	var el_clipcreatebtn = self.player.getElementsByClassName('clipcreatebtn')[0];
@@ -6811,6 +6900,63 @@ window.CloudPlayer = function(elid, options){
 		mElSettings_dewarping_mode[dewarping].onclick = selectDewarping;
 	}
 
+	// PTZ presets
+	el_ptz_presets_set_btn.onclick = () => {
+		el_ptz_presets_popup.classList.remove('show');
+		el_ptz_preset_create_popup.classList.add('show');
+		resetPtzPresetCreatePopup();
+	};
+	el_ptz_preset_create_cancel_btn.onclick = () => {
+		el_ptz_presets_popup.classList.add('show');
+		el_ptz_preset_create_popup.classList.remove('show');
+	};
+	el_ptz_preset_create_apply_btn.onclick = () => {
+		const name = el_ptz_preset_create_name_input.value;
+		if (!name.trim()) {
+			return;
+		}
+		mConn._getAPI().createCameraPtzPreset(self.currentCamID, name).done(function (res) {
+			mPtzPresets.push(res);
+			mSelectedPtzPreset = res;
+			updatePtzPresetSelect();
+			el_ptz_presets_popup.classList.add('show');
+			el_ptz_preset_create_popup.classList.remove('show');
+		});
+	};
+	el_ptz_presets_go_btn.onclick = () => {
+		mSelectedPtzPreset = mPtzPresets.find((preset) => preset.id == el_ptz_presets_select.value);
+		if (!mSelectedPtzPreset) {
+			return;
+		}
+		mConn._getAPI().gotoCameraPtzPreset(self.currentCamID, mSelectedPtzPreset.id);
+	};
+	el_ptz_presets_delete_btn.onclick = () => {
+		const presetId = el_ptz_presets_select.value;
+		if (!presetId) {
+			return;
+		}
+		if (window.confirm('Are you sure you want to delete this preset?')) {
+			mConn._getAPI().deleteCameraPtzPreset(self.currentCamID, presetId).done(function () {
+				mPtzPresets = mPtzPresets.filter(preset => preset.id != presetId);
+				if (mSelectedPtzPreset && mSelectedPtzPreset.id == presetId) {
+					mSelectedPtzPreset = null;
+				}
+				updatePtzPresetSelect();
+			});
+		}
+	};
+
+	// watch idle
+	setInterval(() => {
+		if (!mIdleStopped && mIdleTime && mIdleTime < Date.now()) {
+			mIdleTime = null;
+			self.toggleIdleStop(true);
+		}
+	}, 1000);
+
+	el_idle_resume_btn.onclick = () => {
+		self.toggleIdleStop(false);
+	};
 
 	if(typeof rangeSlider !== "undefined") {
 	    rangeSlider.create(el_volume);
@@ -6818,6 +6964,36 @@ window.CloudPlayer = function(elid, options){
 
 	var selector = '[data-rangeSlider]',
 		elements = document.querySelectorAll(selector);
+
+	function initPtzPreset() {
+		mPtzPresets = [];
+		mSelectedPtzPreset = null;
+		updatePtzPresetSelect();
+
+		mConn._getAPI().getCameraPtzPresets(self.currentCamID).done(function (res) {
+			mPtzPresets = res.objects;
+			mSelectedPtzPreset = mPtzPresets[0];
+			updatePtzPresetSelect();
+		});
+	}
+
+	function updatePtzPresetSelect() {
+		let options = '';
+		mPtzPresets.forEach((preset) => {
+			options += `<option value="${preset.id}" ${mSelectedPtzPreset && preset.id === mSelectedPtzPreset.id ? 'selected' : ''}>${preset.name}</option>`;
+		});
+		el_ptz_presets_select.innerHTML = options;
+	}
+
+	function resetPtzPresets() {
+		el_ptz_presets_popup.classList.remove('show');
+		el_ptz_preset_create_popup.classList.remove('show');
+		resetPtzPresetCreatePopup();
+	}
+
+	function resetPtzPresetCreatePopup() {
+		el_ptz_preset_create_name_input.value = '';
+	}
 
 	function valueOutput(element) {
 		var value = element.value,
@@ -7169,6 +7345,12 @@ window.CloudPlayer = function(elid, options){
 	el_controls_ptz_switcher.onclick = function(){
 		if (mPosition == -1) {
 			el_player.classList.toggle('showing-ptz');
+			if (el_player.classList.contains('showing-ptz')) {
+				el_ptz_presets_popup.classList.add('show');
+				el_ptz_preset_create_popup.classList.remove('show');
+			} else {
+				resetPtzPresets();
+			}
 		}
 	};
 
@@ -7597,18 +7779,18 @@ window.CloudPlayer = function(elid, options){
 							if (self.vjs.player_.dash)
 								{
 									let dash = self.vjs.player_.dash.mediaPlayer;
-									if (dash && dash.isReady()) 
+									if (dash && dash.isReady())
 									{
 										var settings =  dash.getSettings();
 										var dashMetrics = dash.getDashMetrics();
 										//var settings = dash.getSettings();
-								
+
 										var Latency 		= parseFloat(dash.getCurrentLiveLatency(), 10);
 										var PlaybackRate 	= dash.getPlaybackRate();
 										var Buffer 		= dashMetrics.getCurrentBufferLevel('video');
-								
+
 										console.log("Latency: " + Latency + "  PlaybackRate:" + PlaybackRate + "  Buffer:" + Buffer);
-										
+
 									}
 								}
 						} catch (e) {
@@ -8162,7 +8344,6 @@ window.CloudPlayer = function(elid, options){
 
 	self.setAccessToken = function( accessToken) {
 	    mAccessToken = accessToken;
-
 	}
 
 	self.checkTokenExpire = function() {
@@ -8188,6 +8369,27 @@ window.CloudPlayer = function(elid, options){
 		}
 	}
 
+	self.toggleIdleStop = (stopped, reset = true) => {
+		mIdleStopped = stopped;
+		el_player.classList.toggle('idle-stopped', stopped);
+		if (!reset) {
+			return;
+		}
+
+		if (stopped) {
+			self.stop();
+			if (mVxgcloudplayer){
+				mVxgcloudplayer.setAttribute('src', '');
+			}
+		} else {
+			if (mVxgcloudplayer){
+				mVxgcloudplayer.setAttribute('src', mAccessToken);
+			}
+			self.setPosition(CloudPlayer.POSITION_LIVE);
+			self.play();
+		}
+	};
+
 	self.mPoster = null;
 	self.setSource = function(src){
 		_hideerror();
@@ -8195,7 +8397,6 @@ window.CloudPlayer = function(elid, options){
 		el_player_time.innerHTML = "";
 
 		return new Promise (function(resolve, reject) {
-
 			self.mSrc = src;
 			if (self.mSrc == null) {
 				mElementPlay.style.display = "none";
@@ -8204,6 +8405,9 @@ window.CloudPlayer = function(elid, options){
 				mElementPlay.style.display = "inline-block";
 				mConn = src._getConn();
 			}
+
+			self.toggleIdleStop(false, false);
+
 			var origjs = self.mSrc._origJson();
 			self.mSrc._origJson()['status'] = 'setsource';
 
@@ -8258,8 +8462,8 @@ window.CloudPlayer = function(elid, options){
 			}
 
 			if (mConn) {
-				var camid = self.mSrc.getID();
-				mConn._getAPI().getCamera2(camid).done(function(camInfo) {
+				self.currentCamID = self.mSrc.getID();
+				mConn._getAPI().getCamera2(self.currentCamID).done(function(camInfo) {
 					var toggleSync = self.player.getElementsByClassName('mem_rec_hide');
 					if (!camInfo.memorycard_recording) {
 						for (var i = 0; i < toggleSync.length; i ++) { toggleSync[i].style.display = "block" }
@@ -8273,6 +8477,8 @@ window.CloudPlayer = function(elid, options){
 				});
 
 				mTimelapsePlayer.setApi(mConn._getAPI());
+
+				initPtzPreset();
 
 				var el_controls_ptz_top = self.player.getElementsByClassName('ptz-top')[0];
 				var el_controls_ptz_bottom = self.player.getElementsByClassName('ptz-bottom')[0];
@@ -8351,7 +8557,7 @@ window.CloudPlayer = function(elid, options){
 						if  (media_streams.hasOwnProperty('mstreams_supported') )
 							 {
 								for (const obj of media_streams.mstreams_supported) {
-									if  ( obj.vs_id.indexOf("JPEG") === -1 )
+									if  ( obj.vs_id && obj.vs_id.indexOf("JPEG") === -1 )
 									{
 										if (obj.id == mainResId )
 											mainVsId = obj.vs_id;
@@ -8687,8 +8893,8 @@ window.CloudPlayer = function(elid, options){
 	    var allvideotags = self.player.getElementsByClassName('allvideotags')[0];
 
 	    if (element !== undefined) {
-		element.setAttribute('width', allvideotags.clientWidth);
-		element.setAttribute('height', allvideotags.clientHeight);
+				element.setAttribute('width', allvideotags.clientWidth);
+				element.setAttribute('height', allvideotags.clientHeight);
 	    }
 	}
 	self._onResize();
@@ -8983,6 +9189,10 @@ window.CloudPlayer = function(elid, options){
 	}
 
 	self.play = function(event){
+		if (!self.mSrc) {
+			return;
+		}
+
 		if ( mPlaying ){
 			self.stop("by_play");
 		} else {
@@ -9008,6 +9218,8 @@ window.CloudPlayer = function(elid, options){
 		//_startPolingTime();
 		//self._reset_players();
 		_hideerror();
+
+		self.resetIdleTime();
 
 		// reset position to start of range
 		if (self.isRange() && mPosition == -1 && CloudHelpers.getCurrentTimeUTC() > mRangeMax) {
@@ -9039,67 +9251,69 @@ window.CloudPlayer = function(elid, options){
 		}
 	}
 
-	self.pause = function(event) {
-	    mStopped = false;
+	self.pause = function (event) {
+		mStopped = false;
 
-	    if (mPausing == false) {
-		pause_time = self.getPosition();
-		mPausing = true;
-		mPlaying = false;
-		el_pause.classList.add('play');
-		if (mPosition == -1) {
-		    if ( self.mPlayerFormat == 'webrtc'){
-			if (mWebRTC0_Player != null) {
-			    mWebRTC0_Player.pause();
-			} else if (mWebRTC2_Player != null) {
-			    mWebRTC2_Player.pause();
-			}
-		    } else if (self.mPlayerFormat == 'jpeg') {
-			if (mJpegPlayer) {
-			    mJpegPlayer.pause();
-			}
-		    } else {
-			self.vjs.pause();
-		    }
-		} else {
+		if (mPausing == false) {
+			pause_time = self.getPosition();
+			mPausing = true;
+			mPlaying = false;
+			el_pause.classList.add('play');
+			if (mPosition == -1) {
+				if (self.mPlayerFormat == 'webrtc') {
+					if (mWebRTC0_Player != null) {
+						mWebRTC0_Player.pause();
+					} else if (mWebRTC2_Player != null) {
+						mWebRTC2_Player.pause();
+					}
+				} else if (self.mPlayerFormat == 'jpeg') {
+					if (mJpegPlayer) {
+						mJpegPlayer.pause();
+					}
+				} else {
+					self.vjs.pause();
+				}
+			} else {
 //		    mPlaybackPlayer1.pause();
 //		    mPlaybackPlayer2.pause();
-		    mVxgcloudplayer.pause().then(function(result){
-			console.log('pause: vxgcloudplayer pause ok');
-		    }).catch(function(exception){
-			console.log('pause: vxgcloudplayer pause cathc');
-		    });
-		}
-	    } else {
-		mPausing = false;
-		mPlaying = true;
-		el_pause.classList.remove('play');
-		if (mPosition == -1) {
-		    if ( self.mPlayerFormat == 'webrtc'){
-			if (mWebRTC0_Player != null) {
-			    mWebRTC0_Player.play();
-			} else if (mWebRTC2_Player != null) {
-			    mWebRTC2_Player.play();
+				mVxgcloudplayer.pause().then(function (result) {
+					console.log('pause: vxgcloudplayer pause ok');
+				}).catch(function (exception) {
+					console.log('pause: vxgcloudplayer pause cathc');
+				});
 			}
-		    } else if (self.mPlayerFormat == 'jpeg') {
-			if (mJpegPlayer) {
-			    var redrawPeriod = self.options.jpegRedrawPeriod || 1000;
-			    mJpegPlayer.play( mConn._getAPI(), self.mSrc, redrawPeriod );
-			}
-		    } else {
-			self.vjs.play();
-		    }
 		} else {
+			mPausing = false;
+			mPlaying = true;
+			el_pause.classList.remove('play');
+			if (mPosition == -1) {
+				if (self.mPlayerFormat == 'webrtc') {
+					if (mWebRTC0_Player != null) {
+						mWebRTC0_Player.play();
+					} else if (mWebRTC2_Player != null) {
+						mWebRTC2_Player.play();
+					}
+				} else if (self.mPlayerFormat == 'jpeg') {
+					if (mJpegPlayer) {
+						var redrawPeriod = self.options.jpegRedrawPeriod || 1000;
+						mJpegPlayer.play(mConn._getAPI(), self.mSrc, redrawPeriod);
+					}
+				} else {
+					self.vjs.play();
+				}
+			} else {
 //		    mPlaybackPlayer1.play();
 //		    mPlaybackPlayer2.play();
-		    mVxgcloudplayer.play().then(function(result){
-			mPlaying = true;
-			console.log('pause: vxgcloudplayer play ok');
-		    }).catch(function(exception){
-			console.log('pause: vxgcloudplayer play cathc');
-		    });
+				mVxgcloudplayer.play().then(function (result) {
+					mPlaying = true;
+					console.log('pause: vxgcloudplayer play ok');
+				}).catch(function (exception) {
+					console.log('pause: vxgcloudplayer play cathc');
+				});
+			}
 		}
-	    }
+
+		self._onResize();
 	}
 
 	self.getImages = function() {
@@ -9727,7 +9941,7 @@ window.CloudPlayer = function(elid, options){
 		if (self.vsFormat == null || self.vsFormat == "H264")
 			{
 				live_url = live_urls.hls;
-				live_url_type = 'application/x-mpegURL';			
+				live_url_type = 'application/x-mpegURL';
 			}
 			else if ('dash' in live_urls)
 			{
@@ -9751,7 +9965,7 @@ window.CloudPlayer = function(elid, options){
 				// For debug
 				// live_urls.hls = live_urls.hls.replace("/hls/", "/hls1/");
 
-				// 
+				//
 				self.vjs.src([{
 						src: live_url,
 						type: live_url_type
@@ -10281,7 +10495,7 @@ window.CloudPlayer = function(elid, options){
 		var streamid = "";
 		//if (hasMultipleStreams)
 		{
-			
+
 			if (mainResId && liveResId) {
 				streamid = streamQuality == "main" ? mainResId : liveResId;
 				videoid = streamQuality == "main" ? mainVsId : liveVsId;
@@ -10385,7 +10599,7 @@ window.CloudPlayer = function(elid, options){
 					if  (media_streams.hasOwnProperty('mstreams_supported') )
 						 {
 							for (const obj of media_streams.mstreams_supported) {
-								if  ( obj.vs_id.indexOf("JPEG") === -1 )
+								if  ( obj.vs_id && obj.vs_id.indexOf("JPEG") === -1 )
 								{
 									if (obj.id == mainResId )
 										mainVsId = obj.vs_id;
@@ -10394,7 +10608,7 @@ window.CloudPlayer = function(elid, options){
 								}
 							}
 						 }
-					var el_settings_quality = self.player.getElementsByClassName('cloudplayer-info-player-quality')[0];	 
+					var el_settings_quality = self.player.getElementsByClassName('cloudplayer-info-player-quality')[0];
 					if (el_settings_quality)
 						if (mainResId == liveResId) el_settings_quality.style.display = "none";
 						else {
@@ -10410,7 +10624,7 @@ window.CloudPlayer = function(elid, options){
 					console.log(r);
 					self._polingLoadCameraLiveUrl(_uniqPlay);
 				});
-			}	
+			}
 			//});
 		}
 
@@ -10477,6 +10691,8 @@ window.CloudPlayer = function(elid, options){
 		mElementCalendar.style.opacity = val;
 		el_controls_ptz_container.style.opacity = val;
 		el_controls_zoom_container.style.opacity = val;
+		el_ptz_presets_popup.style.opacity = val;
+		el_ptz_preset_create_popup.style.opacity = val;
 		el_calendar_container.style.opacity = val;
 		el_live_container.style.opacity = val;
 		var el_selectcliptime = self.player.getElementsByClassName('cloudplayer-selectcliptime')[0];
@@ -10491,7 +10707,16 @@ window.CloudPlayer = function(elid, options){
 	el_controls_container.addEventListener('mouseout', function(evt){
 		mShouldHide = true;
 	});
+
+	self.resetIdleTime = function () {
+		if (!mIdleStopped && self.mSrc && self.options.autoIdleStop) {
+			mIdleTime = Date.now() + self.options.autoIdleStop * 60 * 1000;
+		}
+	};
+
 	self.restartTimeout = function(){
+		self.resetIdleTime();
+
 		if(self.m.autohide < 0){
 			self.set_controls_opacity("0");
 			return;
@@ -10711,6 +10936,7 @@ window.CloudPlayer = function(elid, options){
 }
 
 CloudPlayer.POSITION_LIVE = -1;
+
 /*-------MODEL-------*/
 
 var CloudShareClipModel = function CloudShareClipModel( controller) {
@@ -12709,7 +12935,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 	}
 
 
-	
+
 	self.elem = document.getElementById(viewid);
 
 	if (self.elem == null){
@@ -12761,7 +12987,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 	var mShiftPlus = self.elem.getElementsByClassName('shift-plus')[0];
 	el_calendar_container.appendChild(mElementCalendar);
 	el_live_container.appendChild(mElementGotoLive);
-	
+
 
 	var mCalendar = null;
 
@@ -12772,7 +12998,7 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 		}
 
 		if (mOptionCalendar) {
-			mCalendar = new CloudCameraCalendarView(mPlayer.getCalendarContent(), options);
+			mCalendar = new CloudCameraCalendarView(mPlayer.getCalendarContent(), options, mElementCalendar);
 			mCalendar.onChangeDate = function(t, e) {
 				if (mPlayer == null) {
 					console.error("[TIMELINE] player is null") ;
@@ -13952,8 +14178,9 @@ window.CloudCameraTimelineView = function(viewid, options, parent){
 	console.log("options: ", options);
 };
 
-window.CloudCameraCalendarView = function(elem, options){
+window.CloudCameraCalendarView = function(elem, options, calendarButton){
 	var mElementContent = elem;
+	var mElementCalendar = calendarButton;
 	options = options || {};
 	var self = this;
 	var mConn = null;
@@ -13963,6 +14190,7 @@ window.CloudCameraCalendarView = function(elem, options){
 	var mLastUpdated = null;
 	var mSelectedMonth = new Date().getMonth();
 	var mSelectedYear = new Date().getFullYear();
+	var mSelectedTime = new Date();
 	var mMinMonth = mSelectedYear * 100 + mSelectedMonth;
 	var mMaxMonth = mSelectedYear * 100 + mSelectedMonth;
 	var mTimezoneOffset = 0;
@@ -14045,13 +14273,60 @@ window.CloudCameraCalendarView = function(elem, options){
 		+ "	</div>"
 		+ "	<div class='cloudcameracalendar-table'>"
 		+ _generateMonthDays(mSelectedYear, mSelectedMonth)
-		+ "	</div>";
+		+ "	</div>"
+		+ `
+			<div class="cloudcameracalendar-table-time">
+				<input class="dark-input" type="number" min="0" max="23" value="0" />
+				<span>:</span>
+				<input class="dark-input" type="number" min="0" max="59" value="0" />
+				<span>:</span>
+				<input class="dark-input" type="number" min="0" max="59" value="0" />		
+				<button class="btn btn-light ml-auto">Set</button>	
+			</div>
+		`;
 
 	var mElementClose = mElementContent.getElementsByClassName('cloudcameracalendar-close')[0];
 	var mElementPrev = mElementContent.getElementsByClassName('cloudcameracalendar-prev-month')[0];
 	var mElementNext = mElementContent.getElementsByClassName('cloudcameracalendar-next-month')[0];
 	var mElementTable = mElementContent.getElementsByClassName('cloudcameracalendar-table')[0];
 	var mElementTitle = mElementContent.getElementsByClassName('cloudcameracalendar-title')[0];
+	var mElementTimeInputs = mElementContent.querySelectorAll('.cloudcameracalendar-table-time input');
+	var mElementSetButton = mElementContent.querySelector('.cloudcameracalendar-table-time .btn');
+
+	mElementTimeInputs.forEach((input) => {
+		input.addEventListener('wheel', function(e) {
+			e.preventDefault();
+
+			const direction = e.deltaY > 0 ? -1 : 1;
+			let value = (Number(input.value) || 0) + direction;
+			value = Math.max(value, Number(input.getAttribute('min')));
+			value = Math.min(value, Number(input.getAttribute('max')));
+			input.value = value;
+		});
+	});
+
+	mElementSetButton.onclick = function () {
+		mElementTimeInputs.forEach((input) => {
+			const minValue = Number(input.getAttribute('min'));
+			const maxValue = Number(input.getAttribute('max'));
+			let value = Number(input.value) || 0;
+			if (value < minValue) {
+				value = minValue;
+				input.value = value;
+			}
+			if (value > maxValue) {
+				value = maxValue;
+				input.value = value;
+			}
+		});
+
+		if (self.onChangeDate) {
+			mSelectedTime.setHours(mElementTimeInputs[0].value || 0, mElementTimeInputs[1].value || 0, mElementTimeInputs[2].value || 0);
+			self.onChangeDate(Date.parse(mSelectedTime));
+		}
+		self.hideCalendar();
+	};
+
 
 	// mElementClose.onclick = function(e){
 	// 	// console.log("[CALENDAR] close ");
@@ -14061,6 +14336,14 @@ window.CloudCameraCalendarView = function(elem, options){
 	// 	return true;
 	// }
 
+	self.renderSelectedTime = () => {
+		$(mElementContent).find('.cal-day.selected').removeClass('selected');
+		$(mElementContent).find(`.cal-day[dt="${_formatId(mSelectedTime.getFullYear(), mSelectedTime.getMonth(), mSelectedTime.getDate())}"]`).addClass('selected');
+		mElementTimeInputs[0].value = mSelectedTime.getHours();
+		mElementTimeInputs[1].value = mSelectedTime.getMinutes();
+		mElementTimeInputs[2].value = mSelectedTime.getSeconds();
+	};
+
 	self.renderContent = function() {
 		// console.log("[CALENDAR] ", mActivity);
 		var t = mActivity;
@@ -14069,12 +14352,10 @@ window.CloudCameraCalendarView = function(elem, options){
 
 		var active_days = mElementContent.getElementsByClassName('active-day');
 		for (var i = 0; i < active_days.length; i++) {
-			active_days[i].onclick = function(ev){
-				var _dt = new Date(this.getAttribute('dt').replace(/-/g, '\/'));
-				_dt.setHours(8);
-				if (self.onChangeDate) {
-					self.onChangeDate(Date.parse(_dt), ev);
-				}
+			active_days[i].onclick = function(){
+				const _dt = new Date(this.getAttribute('dt').replace(/-/g, '\/'));
+				mSelectedTime.setFullYear(_dt.getFullYear(), _dt.getMonth(), _dt.getDate());
+				self.renderSelectedTime();
 			}
 		}
 		var _currMonth = mSelectedYear*100 + mSelectedMonth;
@@ -14089,6 +14370,8 @@ window.CloudCameraCalendarView = function(elem, options){
 		} else {
 			mElementNext.style.display = '';
 		}
+
+		self.renderSelectedTime();
 	}
 	self.renderContent();
 
@@ -14149,7 +14432,7 @@ window.CloudCameraCalendarView = function(elem, options){
 				}
 				self.renderContent();
 			})
-		}		
+		}
 	}
 
 	self.setSource = function(mSource) {
@@ -14209,7 +14492,17 @@ window.CloudCameraCalendarView = function(elem, options){
 	self.showCalendar = function() {
 		console.log("[CALENDAR] show");
 		mElementContent.style.display = "block";
-		if (mConn == null) {
+		mElementCalendar.classList.add("shadowed");
+
+		var dt = new Date();
+		dt.setUTCHours(24);
+		dt.setUTCMinutes(0);
+		dt.setUTCSeconds(0);
+		if (self.getCurrentTime) {
+			mSelectedTime = new Date(self.getCurrentTime());
+			dt = mSelectedTime;
+		}
+		if (mConn == null || mSelectedTime.getFullYear() !== mSelectedYear || mSelectedTime.getMonth() !== mSelectedMonth) {
 			self.renderContent();
 			return;
 		}
@@ -14217,32 +14510,30 @@ window.CloudCameraCalendarView = function(elem, options){
 			self.updateActivity();
 			return;
 		}
-		var dt = new Date();
-		dt.setUTCHours(24);
-		dt.setUTCMinutes(0);
-		dt.setUTCSeconds(0);
 
 		if (new Date().getTime() > dt.getTime() && mLastUpdated.getTime() < dt.getTime()) {
 			self.updateActivity();
 		}
+
+		self.renderSelectedTime();
 	}
 
 	self.hideCalendar = function() {
 		console.log("[CALENDAR] hide");
 		mElementContent.style.display = '';
+		mElementCalendar.classList.remove("shadowed");
 	}
 
-	self.toggleCalendar = function(mElementCalendar) {
+	self.toggleCalendar = function() {
 		console.log("[CALENDAR] toggle");
 		if (self.isVisible()) {
 			self.hideCalendar();
-			mElementCalendar.classList.remove("shadowed");
 		} else {
 			self.showCalendar();
-			mElementCalendar.classList.add("shadowed");
 		}
 	}
 };
+
 window.CloudSessionTimeline = function(viewid){
 	var self = this;
 	var mSource = null;
@@ -14747,7 +15038,7 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 		}
 
 		if (mOptionCalendar) {
-			mCalendar = new CloudCameraCalendarView(mPlayer.getCalendarContent(), options);
+			mCalendar = new CloudCameraCalendarView(mPlayer.getCalendarContent(), options, mElementCalendar);
 			mCalendar.onChangeDate = function(t, e) {
 				if (mPlayer == null) {
 					console.error("[TIMELINE] player is null") ;
@@ -14756,6 +15047,9 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 				mPlayer.setPosition(t);
 				//self.moveToPosition(t - mTimezoneOffset);
 				mPlayer.play(e);
+			};
+			mCalendar.getCurrentTime = () => {
+				return mPlayer.time || Date.now();
 			};
 			self.calendar = mCalendar;
 		}
@@ -15293,8 +15587,8 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 					mTimezoneOffset = CloudHelpers.getOffsetTimezone(mUseTimezone);
 				} else {
 					mTimezoneOffset = CloudHelpers.getOffsetTimezone(mSource.getTimezone());
-				}				
-				
+				}
+
 				if (mCalendar != null) {
 					mCalendar.setSource(mSource);
 				}
@@ -15986,8 +16280,8 @@ window.VXGCloudPlayerTimelineView = function( viewid, options, parent){
 window.CloudSDK = window.CloudSDK || {};
 
 // Automaticlly generated
-CloudSDK.version = '3.3.22';
-CloudSDK.datebuild = '240726';
+CloudSDK.version = '3.3.26';
+CloudSDK.datebuild = '240823';
 console.log('CloudSDK.version='+CloudSDK.version + '_' + CloudSDK.datebuild);
 
 window.CloudPlayerList = function(timelineId, o) {
@@ -16254,7 +16548,7 @@ window.JoinedTimelineView = function (viewid, playersdk, options) {
 					var  centertime = Number(el_timelinepicker.getAttribute('centerutctime'));
 
 					var player_position = primaryPlayer.getPosition();
-					// TODO_el: setPosition for all the sources 
+					// TODO_el: setPosition for all the sources
 					if (centertime > Date.now()) {
 						var isLive = primaryPlayer.isLive();
 						if (!isLive) {
@@ -16355,7 +16649,7 @@ window.JoinedTimelineView = function (viewid, playersdk, options) {
 
 		if (mOptionCalendar) {
 			var timelineCalendar = document.getElementById("single-timeline-calendar");
-			mCalendar = new CloudCameraCalendarView(timelineCalendar, options);
+			mCalendar = new CloudCameraCalendarView(timelineCalendar, options, mElementCalendar);
 			mCalendar.onChangeDate = function(t, e) {
 				if (primaryPlayer == null) {
 					console.error("[TIMELINE] player is null") ;
@@ -16523,8 +16817,8 @@ window.JoinedTimelineView = function (viewid, playersdk, options) {
 					mTimezoneOffset = CloudHelpers.getOffsetTimezone(mUseTimezone);
 				} else {
 					mTimezoneOffset = CloudHelpers.getOffsetTimezone(mSource.getTimezone());
-				}				
-				
+				}
+
 				if (mCalendar != null) {
 					if (playerSources) {
 						mCalendar.setSource(playerList);
@@ -16608,6 +16902,7 @@ window.JoinedTimelineView = function (viewid, playersdk, options) {
 		self.hideCalendarButton();
 	}
 }
+
 // Wrapper for VXGCloudPlayer & CloudSDK
 
 window.CloudPlayerSDK = function(playerElementID, o) {
@@ -16711,8 +17006,8 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 		var lplayer = self.element.getElementsByClassName('lplayer')[0];
 		lplayer.style.display = "";
 		self.local_player.setSource(key);
-	} 
-        else 
+	}
+        else
         {
 		isLocalPlayer = false;
         	self.local_player.stop();

@@ -374,7 +374,7 @@ window.screens['usercameras'] = {
     'header_name': $.t('users.assignCameraToUser'),
     'html': path+'usercameras.html',
     currentOffset: 0,
-    limit: 10,
+    limit: 50,
     'on_before_show':function(r){
         delete this.user;
         if (this.src){
@@ -491,7 +491,7 @@ window.screens['usercameras'] = {
             let html='';
             for (let i in list){
                 let checked = self.user.src.cameras.indexOf(list[i].camera_id)>=0;
-                html += `<div class="camerablock" id="block_${list[i].camera_id}">
+                html += `<div class="user-cam" id="block_${list[i].camera_id}">
                             <campreview access_token="${list[i].camera_id}"></campreview>
                             <div class="usercamera-cont">
                                 <div class="nameloc"> 
@@ -504,6 +504,8 @@ window.screens['usercameras'] = {
                                 </label>
                             </div>
                         </div>`;
+                
+               //html += `<div></div>`
             }
             $(self.wrapper).find('.usercameralist').append(html);
 
@@ -522,7 +524,7 @@ window.screens['usercameras'] = {
                 core.elements['global-loader'].hide();
             }
 
-            $(self.wrapper).find('.usercameralist .camerablock').click(function(){
+            $(self.wrapper).find('.usercameralist .user-cam').click(function(){
                 $(this).find('.checkbox').toggleClass('active');
                 var checkInput = $(this).find(".camera-check");
                 checkInput.prop("checked", !checkInput.prop("checked"));
@@ -568,7 +570,7 @@ window.screens['usercameras'] = {
                 var li_ele = $(`
                         <li class="loc-dropdown ${child}-dropdown" locName=${child}>
                             <div class="location-btn-cont">
-                                <span class="loc-name" onclick="chooseLocation_users(this, '${locations}', self)">${childName}</span>
+                                <span class="loc-name" onclick="chooseLocation_users(this, '${locations}', self)"><i class="fa fa-home" aria-hidden="true"></i>${childName}</span>
                                 <i class="location-arrow fa fa-caret-down" onclick="showNextTier(event, this, '${locType}')" aria-hidden="true"></i>
                             </div>    
                         </li>`);

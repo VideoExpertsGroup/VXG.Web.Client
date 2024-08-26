@@ -1,4 +1,4 @@
-// VXG cloud player ver. 1.1.2.1 28/07/2024
+// VXG cloud player ver. 1.1.2.2 02/08/2024
 // @language_out ES6
 VXG_API_V2 = {
   post_v2_cameras_notifications_push_devices(channel_id,param)     {return this.r('POST',  'api/v2/cameras/'+channel_id+'/notifications/push/devices/',{}, params?params:{});},
@@ -1935,7 +1935,13 @@ class CKControlFullscreen extends CKControl {
       const container = document.querySelector('.players-container');
       if (container) {
         container.classList.toggle('fullscreen');
-        document.body.style.overflow = container.classList.contains('fullscreen') ? 'hidden' : 'auto';
+        if (container.classList.contains('fullscreen')) {
+          document.body.style.overflow = 'hidden';
+          this.openFullscreen();
+        } else {
+          document.body.style.overflow = 'auto';
+          this.closeFullscreen();
+        }
       }
       return;
     }
@@ -1971,6 +1977,31 @@ class CKControlFullscreen extends CKControl {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
+  }
+
+  openFullscreen() {
+    const element = document.documentElement;
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) { // Firefox
+      element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) { // Chrome, Safari and Opera
+      element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) { // IE/Edge
+      element.msRequestFullscreen();
+    }
+  }
+
+  closeFullscreen() {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) { // Firefox
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) { // Chrome, Safari and Opera
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { // IE/Edge
+      document.msExitFullscreen();
+    }
   }
 
   css() {

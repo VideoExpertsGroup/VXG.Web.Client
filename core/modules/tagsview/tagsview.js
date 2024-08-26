@@ -259,6 +259,9 @@ window.screens['tagsview'] = {
 	let controlCbFunc	= self.listActivityCB;
     let allCamToken = vxg.user.src.allCamsToken;
 
+    $(".VXGActivityNoEvents").removeClass("visible");
+    $(".activity-content").hide();
+
     window.vxg.cameras.getCameraListPromise(100, 0).then(function (answer) {
         targetElement.setCameraArray(answer);
         localStorage.setItem("initialLoading", true);

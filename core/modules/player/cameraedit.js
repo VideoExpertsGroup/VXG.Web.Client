@@ -477,6 +477,7 @@ CameraEditControl = function(){
                 data.lat = r.lat ? r.lat : null;
                 data.lon = r.lon ? r.lon : null;
                 vxg.cameras.createCameraPromise(data).then(function(r){
+                    updateMapMarkers();
                     var locationStr = data.location_str;
                     if (newLocation) {
                         var locationHierarchy = localStorage.locationHierarchy ? JSON.parse(localStorage.locationHierarchy) : {};
@@ -710,6 +711,7 @@ CameraEditControl = function(){
                 data.rete_time = 0;
             }
             self.camera.updateCameraPromise(data).then(function(r){
+                updateMapMarkers();
                 var locationStr = data.location_str;
                 if (newLocation) {
                     var locationHierarchy = localStorage.locationHierarchy ? JSON.parse(localStorage.locationHierarchy) : {};
@@ -909,6 +911,7 @@ CameraEditControl = function(){
                 self.defferedDispatchEvent(self.error_event);
             });
         });
+
         return true;
     },
     this.onCameraLoadedFail = function(r){
@@ -1520,5 +1523,13 @@ CameraEditControl = function(){
             return {lat:'',lon:''};
         });
 
+    }
+}
+
+function updateMapMarkers() {
+    if (window.cameraMap) {
+        window.cameraMap.update(true);
+    } else {
+        console.error("CCameraMap instance not found.");
     }
 }

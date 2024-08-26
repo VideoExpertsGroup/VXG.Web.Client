@@ -20,8 +20,8 @@ window.screens['monitoring'] = {
     'js':["core/webcontrols/camera_map.js"],
     'stablecss':[path+'monitoring.css'],
     'playerList': null,
-    pageMode: 'live',
-    playMode: 'live',
+    pageMode: 'rec',
+    playMode: 'rec',
     playerController: null,
     'on_search':function(searchTerm){
         var fullLocHierarchy = JSON.parse(localStorage.locationHierarchyCams);
@@ -149,13 +149,15 @@ window.screens['monitoring'] = {
     this.destroyPlayerController();
     core.elements['global-loader'].hide();
   },
-  'on_before_show': function () {
+  'on_before_show': function (timestamp) {
     var hash = window.location.hash;
     var telconetIdStr = hash.includes("?camera_id=") ? hash.replaceAll("%22", "").substring(hash.indexOf("=") + 1) : "";
     var isTelconet = telconetIdStr.length > 0;
 
     let self = this;
     self.camGrid(this.getState().grid, isTelconet);
+    self.timestamp = timestamp;
+
     return defaultPromise();
   },
   'on_ready': function () {
@@ -286,7 +288,7 @@ window.screens['monitoring'] = {
     let curState = self.getState();
     core.elements['header-right'].prepend(`
         <div class="monitoring-toolbar d-flex align-items-center">
-            <button class="transparent-button active btn-monitoring-mode">${$.t('monitoring.live')} / ${$.t('monitoring.recorded')}</button>
+            <button class="transparent-button active btn-monitoring-mode">${$.t('monitoring.live')}</button>
             <div class="transparent-button active addnote">
                 <span class="add-icon">+</span><span data-i18n="monitoring.createNote">${$.t('monitoring.createNote')}</span>
             </div>
@@ -440,7 +442,6 @@ window.screens['monitoring'] = {
       self.wrapper.find('.ratio2-inner').hide();
       self.wrapper.find('.cammap').hide();
       core.elements['header-right'].find('.gridmenu span').text($(this).text());
-
       self.camGrid(5);
     });
 
@@ -518,17 +519,21 @@ window.screens['monitoring'] = {
       $('#multiplayer-control').html('');
       isLiveMode = true;
     } else {
-      $('#multiplayer-control').html(`<k-multiplayer-controller id="multiplayer-controller" playtime="${Date.now()}" multi-databars mode="${isLiveMode ? 'live' : 'recorded'}"></k-multiplayer-controller>`);
+      var playTime = self.timestamp ? self.timestamp : Date.now();
+      $('#multiplayer-control').html(`<k-multiplayer-controller id="multiplayer-controller" playtime="${playTime}" multi-databars mode="${isLiveMode ? 'live' : 'recorded'}"></k-multiplayer-controller>`);
+      self.timestamp = "";
     }
 
     if (size === 5) {
       $('.ratio2-inner').hide();
       $('.grid-stack-container').show();
+      $('.btn-add-grid-cell').show();
       if (!self.grid) {
         self.createCustomGrid();
       }
       self.setCamerasOnCustomGrid(isLiveMode);
     } else {
+      $('.btn-add-grid-cell').hide();
       $('.grid-stack-container').hide();
       $('.ratio2-inner').show();
       self.setGridCameras(size, telconet, isLiveMode);
@@ -578,6 +583,18 @@ window.screens['monitoring'] = {
         delete state.cams[id];
         self.setState(state);
       });
+    });
+
+    $('.screens .monitoring .player').off('click').on('click', function (e) {
+      if (!$(this).attr('access_token') && !$(this).attr('src')) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      // go to player page, remember the position of the timeline
+      var token = self.playMode == 'live' ? $(this).attr('access_token') : $(this).attr('src');
+      var currentTime = self.playMode == 'live' ? "" : $("#multiplayer-controller").attr("playtime");
+      window.screens['tagsview'].activate(token, currentTime);
     });
 
     $('.screens .monitoring .player').each(function () {

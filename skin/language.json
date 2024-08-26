@@ -145,6 +145,7 @@
       "sceneDetection": "Scene detection",
       "objectDetection": "Object detection",
       "peopleDetection": "People detection",
+      "facialRecognition": "Facial Recognition",
       "network": "Network",
       "vehicleStopped": "Vehicle Stopped",
       "LPR": "LPR",

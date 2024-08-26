@@ -376,8 +376,9 @@ window.core.onclick_toscreen = function(e){
         });
     }
     if (screen=='back') {
-        window.core.screen_order.pop();
-        var t = window.core.screen_order;
+        var currentScreen = window.core.screen_order.pop();
+        var nextScreen = window.core.screen_order[window.core.screen_order.length - 1];
+        
         if (window.core.screen_order.filter(Boolean).length == 0) {
             if (!core.isMobile()) window.screens['home'].activate()
             else window.screens['cameras'].activate()
@@ -385,8 +386,9 @@ window.core.onclick_toscreen = function(e){
 
         let s = window.screens[window.core.screen_order.pop()]
         if (s){
+            var playerTime = (currentScreen == "tagsview" && nextScreen == "monitoring") ? $("#tagsplayer_timeline > k-timeline-picker").attr("centerutctime") : "";
             s.from_back = true;
-            s.activate();
+            s.activate(playerTime);
             delete s.from_back;
         }
     }
@@ -632,9 +634,14 @@ window.core.loadScreens = function(){
             }
             core.elements['screens'].find('> div').hide();
             core.elements['screencss'].html('');
+
+            var fromEvent = false;
+            for(var i in args) {
+                if (args[i] == "noback") fromEvent = true;
+            }
     
             if (!self.src || $(self.src).attr('noback')!=='')
-                window.core.screen_order.push(self.id);
+                if (!fromEvent) window.core.screen_order.push(self.id);
             if (typeof window.screens[self.id]['get_args'] === "function"){
                 let args = window.screens[self.id]['get_args']();
                 let args_string='';

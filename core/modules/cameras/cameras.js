@@ -241,7 +241,9 @@ function doCameraDelete(camera, oldsubid, camOrder, gatewayUrl = null, gatewayId
                 var locHierarchy =  window.core.locationHierarchy.removeCamFromHierarchy(locationHierarchy, locArr, camera); 
                 localStorage.locationHierarchyCams = JSON.stringify(locHierarchy);
             }
-        }       
+        }
+
+        updateMapMarkers();
 
         core.elements['global-loader'].hide();
         return screens['cameras'].on_show();

@@ -138,6 +138,11 @@ input#filter-time-input::before {
     align-items: center;
     gap: 20px;
 }
+
+.event-disabled {
+    color: #afafaf;
+}
+
 /* #filter-set-button {
     border: 1px solid var(--main-color);
     box-sizing: border-box;

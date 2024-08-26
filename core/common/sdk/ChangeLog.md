@@ -1,5 +1,18 @@
 # Web SDK for VXG Cloud & Server
 
+### Web SDK for VXG Cloud & Server 3.3.26
+- Added the set button in the calendar
+
+### Web SDK for VXG Cloud & Server 3.3.25
+- Add stream timeout after 1 hour
+- New  Media player functionalities - datetime control in the player
+
+### Web SDK for VXG Cloud & Server 3.3.24
+- Add presets functionality in the cloud web sdk player
+
+### Web SDK for VXG Cloud & Server 3.3.23
+- Changed the version of cloud-player to 1.1.2.2.
+
 ### Web SDK for VXG Cloud & Server 3.3.22
 - Changed the version of cloud-player to 1.1.2.1.
 

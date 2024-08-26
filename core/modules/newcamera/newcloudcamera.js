@@ -429,6 +429,7 @@ CameraCloudEditControl = function(){
         
         var oldLocArr = this.camera && this.camera.src.meta ? window.core.locationHierarchy.createLocationArray(this.camera.src.meta) : [];
         res.then(function(r){
+            updateMapMarkers();
             if (newLocation) {
                 var locationStr = data.location_str;
                 var locationHierarchy = localStorage.locationHierarchy ? JSON.parse(localStorage.locationHierarchy) : {};
