@@ -1038,8 +1038,15 @@ VXGActivityController.prototype.showActivityList = function showActivityList ( r
 	if (localStorage.getItem("page") === "activity") {
 		if (f) params.requestParams.events = f;
 		if (tf) params.requestParams.end = tf;
-		if (txf) params.requestParams.meta = txf;
 		if (c1f) params.requestParams.camid = c1f;
+
+		if (txf) {
+			var txfLow = txf.toLowerCase();
+			var txfCap = txfLow.charAt(0).toUpperCase() + txfLow.slice(1);
+			var txfPlur = txf + 's';
+			var txfFull = txfCap + "," + txfLow + "," + txfPlur + "," + txf + "," + txfCap + "s," + txfLow + "s";
+			params.requestParams.meta = txfFull;
+		}
 	}
 	if (localStorage.getItem("page") === "tagsview") {
 		if (cf) params.requestParams.camid = cf;

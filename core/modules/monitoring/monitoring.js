@@ -21,7 +21,7 @@ window.screens['monitoring'] = {
     'stablecss':[path+'monitoring.css'],
     'playerList': null,
     pageMode: 'rec',
-    playMode: 'rec',
+    playMode: 'live',
     playerController: null,
     'on_search':function(searchTerm){
         var fullLocHierarchy = JSON.parse(localStorage.locationHierarchyCams);
