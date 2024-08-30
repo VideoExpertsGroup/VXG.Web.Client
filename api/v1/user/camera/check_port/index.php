@@ -25,12 +25,14 @@ if (!isset($ip) || !isset($port)) {
     exit;
 }
 
+/*
 if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
     $response['httpcode'] = 400; // Bad Request
     $response['error'] = "Invalid IP address.";
     StaticLib::endPage($response);
     exit;
 }
+*/
 
 if (!is_numeric($port)) {
     $response['httpcode'] = 400; // Bad Request
