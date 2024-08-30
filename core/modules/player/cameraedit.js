@@ -255,23 +255,31 @@ CameraEditControl = function(){
          * all subsequant will be new 
          */
 
-        $(this).find('.test_port').click(function(e){	
+		$(this).find('.test_port').click(function(e) {   
 			e.preventDefault();
-			let ip = $(document).find('input[name="url_ip"]:visible').val()
-			let port = $(this).prevAll().first().val()
-			
+			let ip = $(document).find('input[name="url_ip"]:visible').val();
+			let port = $(this).prevAll().first().val();
+
 			if (ip && port) {
-								
-				$.ajax({
-					url: vxg.api.cloudone.apiSrc + '/api/v1/user/camera/check_port',
-					type: 'POST',
-					data: {ip: ip, port: port},
-					success: function(response) {alert(response);},
-					error: function() {alert('An error occurred while checking the port.');}
-				}); 
-			} else
+				fetch(vxg.api.cloudone.apiSrc + '/api/v1/user/camera/check_port/', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					 },
+					 body: new URLSearchParams({ ip: ip, port: port })
+				})
+				.then(response => response.json())  // Parse the response as JSON
+				.then(data => {
+					 if (data.message) {
+						alert(data.message);  // Display the message from the JSON response
+					 } else {
+						alert('No message found in the response.');
+					 }
+				})
+						.catch(error => alert('An error occurred while checking the port: ' + error));
+			 } else {
 				alert('Please enter both an IP address and a port number.');
-        });
+		 }});
 
 
         $(this).find('.apply').click(function(e){
