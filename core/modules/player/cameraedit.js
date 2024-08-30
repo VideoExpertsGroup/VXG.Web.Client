@@ -140,11 +140,17 @@ CameraEditControl = function(){
 <div class="form-group options notincloud notinuplink notindvr">
     <label for="url_http_port" class="onvifOnly">${$.t('common.httpPort')}&nbsp;</label>
     <label for="url_http_port" class="rtspOnly notingateway">${$.t('common.port')}&nbsp;</label>
+	<div style="display:flex">
     <input type="number" class="url_http_port form-control gatewaydisabled input500" value="" name="url_http_port" >
+	<button class="test_port">Test</button>
+	</div>	
 </div>
 <div class="form-group options notincloud notinuplink notindvr">
     <label class="onvifOnly" for="url_rtsp_port">${$.t('common.rtspPort')}&nbsp;</label>
+	<div style="display:flex">
     <input type="number" class="onvifOnly url_rtsp_port gatewaydisabled form-control input500" name="onvif_rtsp_port_fwd">
+	<button class="test_port">Test</button>
+	</div>	
     <i class="onvifOnly"></i>
 </div>
 <div class="form-group options notincloud notindvr">
@@ -248,6 +254,26 @@ CameraEditControl = function(){
          * on new, text input appears
          * all subsequant will be new 
          */
+
+        $(this).find('.test_port').click(function(e){	
+			e.preventDefault();
+			let ip = $(document).find('input[name="url_ip"]:visible').val()
+			let port = $(this).prevAll().first().val()
+			
+			if (ip && port) {
+								
+				$.ajax({
+					url: vxg.api.cloudone.apiSrc + '/api/v1/user/camera/check_port',
+					type: 'POST',
+					data: {ip: ip, port: port},
+					success: function(response) {alert(response);},
+					error: function() {alert('An error occurred while checking the port.');}
+				}); 
+			} else
+				alert('Please enter both an IP address and a port number.');
+        });
+
+
         $(this).find('.apply').click(function(e){
             e.preventDefault();
             self.submit_event = new Event('submit',{cancelable: true, bubbles: false, defaultPrevented: true});

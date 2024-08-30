@@ -288,3 +288,7 @@ option.dvr-disabled:disabled {
 .clear-location.vxgbutton:hover {
     color: #d9534f !important;
 }
+
+.test_port {
+    color:black !important;
+}
