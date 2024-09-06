@@ -30,5 +30,8 @@ window.skin.grid.preferredPlayerFormat = "jpeg";
 window.no_check_local_addresses = true;
 
 window.isTelconet = false;
+
 window.showNotes = false;
 window.notesEnabled = false;
+
+showCameraLocationProvinceOnly = true;
