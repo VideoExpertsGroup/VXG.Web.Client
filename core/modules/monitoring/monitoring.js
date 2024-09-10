@@ -566,7 +566,7 @@ window.screens['monitoring'] = {
   },
   setPlayerEventListeners() {
     const self = this;
-    $('.screens .monitoring .player').off('dblclick').on('dblclick', function (e) {
+    $('.screens .monitoring .player').off('contextmenu').on('contextmenu', function (e) {
       if (!$(this).attr('access_token') && !$(this).attr('src')) return;
 
       e.preventDefault();
@@ -574,7 +574,7 @@ window.screens['monitoring'] = {
 
       let the = this;
       dialogs['mdialog'].activate(`<p>${$.t('monitoring.confirmDelete')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.no')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.yes')}</button></p>`).then(function (r) {
-        if (r.button != 'delete') return;
+        if (r.button != 'delete') return false;
         $(the).attr('access_token', '').attr('src', '').attr('name', '').attr('recording', '');
         $(the)[0].on_access_token_change(null);
         let id = $(the).attr('id');
@@ -582,7 +582,9 @@ window.screens['monitoring'] = {
         state.cams = state.cams || {};
         delete state.cams[id];
         self.setState(state);
+        return false;
       });
+      return false;
     });
 
     $('.screens .monitoring .player').off('click').on('click', function (e) {
@@ -727,11 +729,13 @@ window.screens['monitoring'] = {
   },
   setCustomGridEventListeners: function () {
     const self = this;
-    $('.grid-stack-container .grid-stack-item').off('dblclick').on('dblclick', function () {
+    $('.grid-stack-container .grid-stack-item').off('contextmenu').on('contextmenu', function (e) {
       const the = this;
+      e.preventDefault();
       dialogs['mdialog'].activate(`<p>${$.t('monitoring.deleteCustomGridConfirm')}</p><p><button name="cancel" class="vxgbutton">${$.t('action.no')}</button>&nbsp;&nbsp;&nbsp;&nbsp;<button name="delete" class="vxgbutton">${$.t('action.yes')}</button></p>`).then(function (r) {
-        if (r.button != 'delete') return;
+        if (r.button != 'delete') return false;
         self.grid.removeWidget(the);
+        return false;
       });
     });
 
@@ -896,6 +900,11 @@ window.screens['monitoring'] = {
                 var foundCamsDiv = this.noLocationList(foundCams);
                 $(".camlist-monitoring").append(foundCamsDiv);
             }
+
+            if (foundCams.length == 0 && locationHierarchy.length == 0) {
+              var emptySearchDiv = $('<div class="noCams"> <p class="noCamsMessage"> No cameras or locations can be found with that search criteria. </p> </div>')
+              $(".camlist-monitoring").append(emptySearchDiv);
+            }
         }
        
         $('.loc-draggable, .parent-cam, .camgrid2').on("dragstart", function(e) {
@@ -1040,11 +1049,11 @@ window.screens['monitoring'] = {
                     currentProvince = locationsArr[i];
 
           const makeNextPromise = (currentProvince) => () => {
-            return window.vxg.cameras.getCameraListPromise(500, 0, currentProvince, undefined, undefined)
+            return window.vxg.cameras.getCameraListPromise(500, 0, currentProvince, undefined, undefined, true)
               .then((cameras) => {
                 self.getSubLocations(locationHierarchy, 1, cameras, [currentProvince]);
                 if (i == locationsArr.length - 1) {
-                  window.vxg.cameras.getCameraListPromise(500, 0, undefined, "location,isstorage", undefined).then((noLocs) => {
+                  window.vxg.cameras.getCameraListPromise(500, 0, undefined, "location,isstorage", undefined, true).then((noLocs) => {
                     var noLocs_noStorage = noLocs.filter(cam => {
                       return cam.src.meta?.isstorage == undefined
                     });
@@ -1130,50 +1139,74 @@ window.screens['monitoring'] = {
             : this.updateObjProp(obj[head], value, rest.join('.'));
     },
     searchHierarchy: function(locationHierarchy, searchTerm) {
-        let foundLocs = [];
-        let foundCams = [];
-        JSON.stringify(locationHierarchy, (_, nestedValue) => {
-          if (nestedValue) {
-            var fullKey = Object.keys(nestedValue).filter(function(k) {
-                if (typeof nestedValue[k] === 'object' && 'cams' in nestedValue[k]) {
-                    var locTypePattern = new RegExp(locTypes.join("|"), 'i');
-                    k = k.replace(locTypePattern, "");
-                    return (k.toLowerCase().includes(searchTerm.toLowerCase().replaceAll(' ', '_')));
-                }
-                if (k === "camera_id") {
-                    return nestedValue.src.name.toLowerCase().includes(searchTerm.toLowerCase());
-                }
-            });
-            if (fullKey && fullKey.length != 0) {
-                fullKey.forEach(key => {
-                    var foundObj = {};
-                    if (key === "camera_id") {
-                        foundCams.push(nestedValue);
-                    } else if (nestedValue[key] != "") {
-                        foundObj[key] = nestedValue[key];
-                        foundLocs.push(foundObj);
-                    }
-                });
-                if (!fullKey[0].includes(locTypes[0].toLowerCase())) return;
-            }
+      let foundLocs = [];
+      let foundCams = [];
+      JSON.stringify(locationHierarchy, (_, nestedValue) => {
+        if (nestedValue) {
+          var fullKey = Object.keys(nestedValue).filter(function(k) {
+              if (nestedValue[k] && typeof nestedValue[k] === 'object' && 'cams' in nestedValue[k]) {
+                  var locTypePattern = new RegExp(locTypes.join("|"), 'i');
+                  k = k.replace(locTypePattern, "");
+                  return (k.toLowerCase().includes(searchTerm.toLowerCase().replaceAll(' ', '_')));
+              }
+              if (k === "camera_id") {
+                  var latLongArr = searchTerm.split(",");
+                  var latLongFound = false;
+                  if (latLongArr.length == 2) {
+                    var lat = parseFloat(latLongArr[0]);
+                    var lon = parseFloat(latLongArr[1]);
+                    var latClose = (nestedValue.src.latitude - lat <= 2) && (-2 <= nestedValue.src.latitude - lat);
+                    var lonClose = (nestedValue.src.longitude - lon <= 2) && (-2 <= nestedValue.src.longitude - lon);
+                    latLongFound = latClose && lonClose;
+                  }
+
+                  var nameFound = nestedValue.src.name.toLowerCase().includes(searchTerm.toLowerCase());
+                  var ipFound = nestedValue.src.ip?.includes(searchTerm);
+                  var groupFound = nestedValue.src.meta?.group?.toLowerCase().includes(searchTerm.toLowerCase())
+
+                  return nameFound || ipFound || latLongFound || groupFound;
+              }
+          });
+          if (fullKey && fullKey.length != 0) {
+              fullKey.forEach(key => {
+                  var foundObj = {};
+                  if (key === "camera_id") {
+                      foundCams.push(nestedValue);
+                  } else if (nestedValue[key] != "") {
+                      foundObj[key] = nestedValue[key];
+                      foundLocs.push(foundObj);
+                  }
+              });
+              if (!fullKey[0].includes(locTypes[0].toLowerCase())) return;
           }
-          return nestedValue;
-        });
-        var results = {};
-        results.foundLocs = foundLocs.filter(f => Object.keys(f).length !== 0);
-        var noLocCams = localStorage.noLocCams ? JSON.parse(localStorage.noLocCams) : [];
-        results.foundCams = this.searchNoLocCams(noLocCams, foundCams, searchTerm);
-        return results;
+        }
+        return nestedValue;
+      });
+      var results = {};
+      results.foundLocs = foundLocs.filter(f => Object.keys(f).length !== 0);
+      var noLocCams = localStorage.noLocCams ? JSON.parse(localStorage.noLocCams) : [];
+      results.foundCams = this.searchNoLocCams(noLocCams, foundCams, searchTerm);
+      return results;
     },
     searchNoLocCams: function(cameraList, foundCams, searchTerm) {
         if (!cameraList.length) return;
         cameraList.forEach(cam => {
-            if (cam.src.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+            if (cam.src.name.toLowerCase().includes(searchTerm.toLowerCase()) || cam.src.ip?.includes(searchTerm) || cam.src.meta?.group?.toLowerCase().includes(searchTerm.toLowerCase())) {
                 foundCams.push(cam);
+            }
+
+            var latLongArr = searchTerm.split(",");
+            if (latLongArr.length == 2) {
+              var lat = parseFloat(latLongArr[0]);
+              var lon = parseFloat(latLongArr[1]);
+              var latClose = (cam.src.latitude - lat <= 2) && (-2 <= cam.src.latitude - lat);
+              var lonClose = (cam.src.longitude - lon <= 2) && (-2 <= cam.src.longitude - lon);
+              if (latClose && lonClose) foundCams.push(cam);
             }
         })
         return foundCams;
     }
+
 };
 
 function toggleAllLoc() {

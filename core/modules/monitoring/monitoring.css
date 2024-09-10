@@ -859,7 +859,7 @@ body.mobile.monitoring .mdialog h7 {
     align-items: center;
 }
 
-#camlist-title-cont:hover {
+.camlist-title-cont:hover {
     cursor: pointer;
 }
 

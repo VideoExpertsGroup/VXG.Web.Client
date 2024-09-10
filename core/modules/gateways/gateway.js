@@ -198,6 +198,15 @@ window.screens['gateway'] = {
         self.wrapper.removeClass('nogateways');
         self.wrapper.removeClass('loader');
         self.checkGatewayStatus(gatewaysList);
+
+        setTimeout(function() {
+            var inputs = $("#gateway-table").find('.bootstrap-table-filter-control-name');
+            for (var i = 0; i < inputs.length; i++) {
+                $(inputs[i]).attr("autocomplete", "off");
+            }
+            $('.bootstrap-table-filter-control-hide').val('1');
+        }, 500)
+
     },
     checkGatewayStatus: function(gatewaysList) {
         var cameraUrls = [];

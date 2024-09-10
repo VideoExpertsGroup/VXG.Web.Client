@@ -227,6 +227,14 @@ window.screens['gateway_cams'] = {
         $('#gatewaycams-table').bootstrapTable('load', tableData);
         $('#gatewaycams-table').removeClass("table-bordered");
 
+        setTimeout(function() {
+            var inputs = $("#gatewaycams-table").find('.bootstrap-table-filter-control-name');
+            for (var i = 0; i < inputs.length; i++) {
+                $(inputs[i]).attr("autocomplete", "off");
+            }
+            $('.bootstrap-table-filter-control-hide').val('1');
+        }, 500);
+
         self.wrapper.removeClass('nogatewaycams');
         self.wrapper.removeClass('loader');
 

@@ -62,6 +62,7 @@ window.screens['tagsview'] = {
     },
     'on_show':function(access_token, timestamp){
         let self =this;
+        core.elements['header-search'].hide();
 	$("#sd_wrapper").hide();
 	$("#backup-ctrl").hide();
         if (self.player.element) {

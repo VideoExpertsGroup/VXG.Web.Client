@@ -151,3 +151,15 @@ display:block;
 #serverlist_table > :not(caption) > * > * {
     border-width: 0 0 1px 0 !important;
 }
+
+#serverlist_table tbody tr td:last-child {
+    display: none;
+}
+#serverlist_table thead tr th:last-child > div:first-child {
+    display: none;
+}
+#serverlist_table thead tr th:last-child input {
+    width: 0px !important;
+    border: none;
+    padding: 0;
+}

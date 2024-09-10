@@ -182,6 +182,11 @@ window.screens['servers'] = {
                     title: $.t("common.actionTitle"),
                     class: 'action',
                 },
+                {
+                    field: "hide",
+                    title: "hide",
+                    filterControl: "input",
+                }
             ];
             let tableData = [];
             var serverIds = [];
@@ -198,6 +203,7 @@ window.screens['servers'] = {
                     action: `<div serverid="${serverlist.data[i]["id"]}" class="settings ${serverlist.data[i]["endpoint"] ? "active" : ""}" href="${serverlist.data[i]["endpoint"]}" servername="${serverlist.data[i]["name"]}"><svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg></div>`,
                     endpoint: serverlist.data[i]["endpoint"],
                     serverid: serverId,
+                    hide: 1
                 });
             }
 
@@ -240,6 +246,11 @@ window.screens['servers'] = {
                         let servername = $(this).attr('servername');
                         window.screens['servercameras'].activate(serverid, servername);
                     });*/
+                    var inputs = $("#serverlist_table").find('.bootstrap-table-filter-control-name');
+                    for (var i = 0; i < inputs.length; i++) {
+                        $(inputs[i]).attr("autocomplete", "off");
+                    }
+                    $('.bootstrap-table-filter-control-hide').val('1');
                     el.find('.settings.active').simpleMenuPlugin_servers(servermenu);
                     el.find('.settings:not(.active)').simpleMenuPlugin_servers(servermenu2);
                 }, 500

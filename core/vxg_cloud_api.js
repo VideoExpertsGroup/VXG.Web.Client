@@ -315,6 +315,40 @@ vxg.api.cloud.restartGateway = function(gatewayInfo) {
  *
  * @return Promise
  */
+
+vxg.api.cloud.mapGetCamPreview = function(camid, cameraList) {
+    var camera = cameraList.find(c => c.id == camid);
+    if (camera.preview && (new Date(camera.preview.expire+'Z') > new Date())){
+        let url = camera.preview['url'];
+        return new Promise(function(resolve, reject){setTimeout(function(){resolve(url);}, 0);});
+    }
+
+    if (camera.token) {
+        return vxg.api.cloud.getPreview(camera.token).then(function(r){
+            if (r.url) {
+                camera.preview = r;
+                var i = cameraList.findIndex(c => c.id == camid);
+                cameraList[i] = camera;
+                return r.url;
+            }
+            return '';
+        });
+    } else {
+        return vxg.api.cloud.getCameraInfo(camid).then(function(r) {
+            camera.token = r.token;
+            return vxg.api.cloud.getPreview(r.token).then(function(r){
+                if (r.url) {
+                    camera.preview = r;
+                    var i = cameraList.findIndex(c => c.id == camid);
+                    cameraList[i] = camera;
+                    return r.url;
+                }
+                return '';
+            });
+        });
+    }
+}
+
 vxg.api.cloud.getPreview = function(channel_access_token){
     let headers = vxg.api.cloud.getHeader(channel_access_token);
     if (!headers)

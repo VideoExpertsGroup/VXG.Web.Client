@@ -219,6 +219,18 @@ body.add_dvr .headerBlock .header-left .mainbackbtn{
     height: 18px;
 }
 
+#dvr-table tbody tr td:last-child, #dvrcams-table tbody tr td:last-child {
+    display: none;
+}
+#dvr-table thead tr th:last-child > div:first-child, #dvrcams-table thead tr th:last-child > div:first-child {
+    display: none;
+}
+#dvr-table thead tr th:last-child input, #dvrcams-table thead tr th:last-child input {
+    width: 0px !important;
+    border: none;
+    padding: 0;
+}
+
 .card-view-value .settings-dvr {
     float: right;
 }

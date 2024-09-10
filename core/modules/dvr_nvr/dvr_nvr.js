@@ -90,6 +90,11 @@ window.screens['recorders'] = {
                 field: "action",
                 title: $.t('common.actionTitle')
             },
+            {
+                field: "hide",
+                title: "hide",
+                filterControl: "input",
+            }
         ];
 
         var tableData = [];
@@ -106,7 +111,8 @@ window.screens['recorders'] = {
                 group: camInfo.meta?.group,
                 action: `<div class="settings-dvr" dvr_id="${currentDvr.id}" dvr_url="${currentDvr.url}">
                 <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
-            </div>`
+            </div>`,
+                hide: 1
             })
             count++;
         });
@@ -165,27 +171,15 @@ window.screens['recorders'] = {
 
         self.wrapper.removeClass('nodvrs');
         self.wrapper.removeClass('loader');
-    },
-    loadBootstrapTable: function(columns, tableData) {
-        $('#dvr-table').bootstrapTable({
-            pagination: true,
-            showToggle: true, 
-            showSearchClearButton: true,
-            useRowAttrFunc: true,
-            filterControl: true,
-            toolbar: ".toolbar",
-            uniqueId: "order",
-            columns: columns,
-            sortName: 'order',
-            onColumnSearch: function (arg1, arg2) {
-            if (arg1 == 'location')
-                localStorage.camera_location = arg2;
-            if (arg1 == 'group')
-                localStorage.camera_group = arg2;
-            }
-        });
 
-        $('#dvr-table').bootstrapTable('load', tableData);
+        setTimeout(function() {
+            var inputs = $("#dvr-table").find('.bootstrap-table-filter-control-name');
+            for (var i = 0; i < inputs.length; i++) {
+                $(inputs[i]).attr("autocomplete", "off");
+            }
+            $('.bootstrap-table-filter-control-hide').val('1');
+        }, 500);
+
     }
 };
 

@@ -318,12 +318,12 @@ window.screens['cameras'] = {
     'playerList': null,
     'provincesLoaded': false,
     'allCamerasLoaded': false,
-    'on_search':function(text){
-        if (!text)
-            delete this.search_text;
-        else
-            this.search_text = text;
-        window.screens['cameras'].activate();
+    'on_search':function(searchTerm){
+        if (window.cameraMap) {
+            window.cameraMap.searchMarkers(searchTerm);
+        } else {
+            console.error("CCameraMap instance not found.");
+        }    
     },
     'on_show':function(filterarray){
         setTimeout(function(){onCameraScreenResize();},100);
@@ -359,7 +359,10 @@ window.screens['cameras'] = {
                 return self.onLocationHierarchyLoaded(JSON.parse(localStorage.locationHierarchy), self);
             }
         }
-        else if (this.getState().grid < 0) $('.cammap').show()
+        else if (this.getState().grid < 0) {
+            $('.cammap').show();
+            core.elements['header-search'].show();
+        }
         else return self.loadCameras(filterarray, true);
     },
     playChannels: function(resolve) {
@@ -376,6 +379,7 @@ window.screens['cameras'] = {
             $('.camlist').show();
             $('.loc-cont').hide();
             $('.cammap').hide();
+            core.elements['header-search'].hide();
 
             return vxg.api.cloud.getCameraStatusChange().then(function(changedCams) {
                 // updateCell, index, fieldName
@@ -393,6 +397,7 @@ window.screens['cameras'] = {
         } else {
             $('.loc-cont').hide();
             $('.cammap').hide();
+            core.elements['header-search'].hide();
             if (forLocation) self.allCamerasLoaded = false;
             else self.allCamerasLoaded = true;
         }
@@ -633,10 +638,10 @@ window.screens['cameras'] = {
 		    // onPreBody	pre-body.bs.table	data	Fires before the table body is rendered
 	            // https://bootstrap-table-docs3.wenzhixin.net.cn/documentation/
 		    //  		 
-		    var inputs = document.querySelectorAll('.bootstrap-table-filter-control-name');
-		    inputs.forEach(function (c_input) {
-		      c_input.setAttribute('autocomplete', 'off');
-		    });
+            var inputs = $("#table").find('.bootstrap-table-filter-control-name');
+            for (var i = 0; i < inputs.length; i++) {
+                $(inputs[i]).attr("autocomplete", "off");
+            }
 
                     $('.bootstrap-table-filter-control-status').val(localStorage.getItem("camera_status" + userId));
                     $('.bootstrap-table-filter-control-recording').val(localStorage.getItem("camera_recording" + userId));
@@ -835,6 +840,7 @@ window.screens['cameras'] = {
         var self = this;
         $('.camlist').hide();
         $('.cammap').hide();
+        core.elements['header-search'].hide();
         $('.loc-cont').show();
 
         var dropdownTreeStr;
@@ -1071,11 +1077,11 @@ window.screens['cameras'] = {
         });
        
         if (this.getState().grid<0){
-            self.wrapper.find('.camlist').hide();self.wrapper.find('.cammap').show();
+            self.wrapper.find('.camlist').hide();self.wrapper.find('.cammap').show();core.elements['header-search'].show();
         } else if (this.getState().grid==0){
-            self.wrapper.find('.camlist').show();self.wrapper.find('.cammap').hide();
+            self.wrapper.find('.camlist').show();self.wrapper.find('.cammap').hide();core.elements['header-search'].hide();
         } else if (this.getState().grid>0) {
-            self.wrapper.find('.camlist').hide();self.wrapper.find('.cammap').hide();
+            self.wrapper.find('.camlist').hide();self.wrapper.find('.cammap').hide();core.elements['header-search'].hide();
         }
 
         //core.elements['header-right'].prepend('<div class="camerafilterContainer"><div class="transparent-button camerafilter"><span id="filterbtn">Filter</span></div></div>');
@@ -1241,6 +1247,7 @@ window.screens['cameras'] = {
                 $('.loc-cont').hide();
                 $('.camlist').show();
                 $('.cammap').hide();
+                core.elements['header-search'].hide();
             } else {
                 self.loadCameras([], true);
             }
@@ -1261,6 +1268,7 @@ window.screens['cameras'] = {
             $('.loc-cont').show();
             $('.camlist').hide();
             $('.cammap').hide();
+            core.elements['header-search'].hide();
         });
 
         core.elements['header-right'].find('.gridmap').click(function(){
@@ -1268,6 +1276,7 @@ window.screens['cameras'] = {
             $('.camlist').hide();
             $('.loc-cont').hide();
             $('.cammap').show();
+            core.elements['header-search'].show();
             self.wrapper.addClass('grid');
             let state = self.getState(); state.grid=-1; self.setState(state);
             core.elements['header-right'].find('.listmenu span').text($(this).text());

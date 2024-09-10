@@ -543,8 +543,8 @@ vxg.cameras.getFullCameraList = function(limit, offset, list = []){
 }
 
 vxg.cameras.getCameraListWithLatLonPromise = function(limit, offset){
-    return vxg.cameras.getCameraListPromise(limit, offset).then(function(r){
-        return vxg.api.cloud.getCamerasListV2(vxg.user.src.allCamsToken,limit, offset, {'longitude__isnull':false,'latitude__isnull':false}).then(function(rc){
+/*     return vxg.cameras.getCameraListPromise(limit, offset).then(function(r){
+        return vxg.api.cloud.getCamerasListV2(vxg.user.src.allCamsToken,limit, offset, {'longitude__isnull':false,'latitude__isnull':false, 'detail':'detail'}).then(function(rc){
             let ret = [];
             for (let i=0;i<rc.objects.length;i++){
                 for (let j=0;i<r.length;j++){
@@ -557,10 +557,17 @@ vxg.cameras.getCameraListWithLatLonPromise = function(limit, offset){
             }
             return ret;
         });
+    }); */
+
+     return vxg.api.cloud.getCamerasListV2(vxg.user.src.allCamsToken,limit, offset, {'longitude__isnull':false,'latitude__isnull':false, 'include_meta': true, 'detail':'detail'}).then(function(rc){
+        for (let i=0;i<rc.objects.length;i++){
+            rc.objects[i].camera_id = rc.objects[i].id;
+        }
+        return rc.objects;
     });
 }
 
-vxg.cameras.getCameraListPromise = function(limit, offset, metafilter, metanotfilter, namefilter){
+vxg.cameras.getCameraListPromise = function(limit, offset, metafilter, metanotfilter, namefilter, detail = false){
     if (isNaN(parseInt(limit)) || isNaN(parseInt(offset))){
         console.error('Offset can be only number');
         return;
@@ -579,6 +586,8 @@ vxg.cameras.getCameraListPromise = function(limit, offset, metafilter, metanotfi
         vxg.cameras.getCameraListPromise._last_namefilter=namefilter;
     else
         delete vxg.cameras.getCameraListPromise._last_namefilter;
+    if (detail)
+        vxg.cameras.getCameraListPromise._last_detail="detail";
 
     vxg.cameras.getCameraListPromise._last_update_utc = vxg.cameras.getCameraListPromise._last_update_utc || 0;
 
@@ -618,7 +627,7 @@ vxg.cameras.getCameraListPromise = function(limit, offset, metafilter, metanotfi
         });
     }
 
-    function _getCameraList(main_limit, main_offset, current_limit, current_offset, metafilter, metanotfilter, namefilter){
+    function _getCameraList(main_limit, main_offset, current_limit, current_offset, metafilter, metanotfilter, namefilter, detail = false){
         let new_limit = main_limit > vxg.cameras.one_time_load_limit ? vxg.cameras.one_time_load_limit : main_limit;
         let new_offset = getNextInterval(new_limit, main_offset > current_offset ? main_offset : current_offset);
         new_limit = new_limit + window.vxg.cameras.preload_size > vxg.cameras.one_time_load_limit ? vxg.cameras.one_time_load_limit : window.vxg.cameras.preload_size + new_limit;
@@ -630,6 +639,7 @@ vxg.cameras.getCameraListPromise = function(limit, offset, metafilter, metanotfi
 //        if (metanotfilter) req.meta_not += ','+metanotfilter;
         if (metanotfilter) req.meta_not = metanotfilter;
         if (namefilter) req.name__icontains = namefilter;
+        if (detail) req.detail = "detail";
         return vxg.api.cloud.getCamerasList(req).then(function(r){
             if (!r.meta){
                 r.meta = {offset:r.offset, limit:r.limit, total_count:r.total};
@@ -666,7 +676,7 @@ vxg.cameras.getCameraListPromise = function(limit, offset, metafilter, metanotfi
         });
     }
 
-    vxg.cameras.getCameraListPromise.promise = _getCameraList(limit, offset, 0, 0, metafilter, metanotfilter, namefilter);
+    vxg.cameras.getCameraListPromise.promise = _getCameraList(limit, offset, 0, 0, metafilter, metanotfilter, namefilter, detail);
     return vxg.cameras.getCameraListPromise.promise;
 }
 

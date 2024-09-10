@@ -100,6 +100,11 @@ window.screens['dvr_cams'] = {
                 field: "action",
                 title: $.t('common.actionTitle')
             },
+            {
+                field: "hide",
+                title: "hide",
+                filterControl: "input",
+            }
         ]
 
         var tableData = [];
@@ -119,7 +124,8 @@ window.screens['dvr_cams'] = {
                 group: camInfo.meta && camInfo.meta.group ? camInfo.meta.group : "",
                 action: `<div class="settings-dvrcam" access_token="${camInfo.token}" cam_id="${channelID}">
                 <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>
-            </div>`
+            </div>`,
+                hide: 1
             })
             count++;
         });
@@ -184,8 +190,16 @@ window.screens['dvr_cams'] = {
 
         $('#dvrcams-table').bootstrapTable('load', tableData);
         $('#dvrcams-table').removeClass("table-bordered");
-
+        
         self.wrapper.removeClass('nodvrcams');
         self.wrapper.removeClass('loader');
+
+        setTimeout(function() {
+            var inputs = $("#dvrcams-table").find('.bootstrap-table-filter-control-name');
+            for (var i = 0; i < inputs.length; i++) {
+                $(inputs[i]).attr("autocomplete", "off");
+            }
+            $('.bootstrap-table-filter-control-hide').val('1');
+        }, 500);
     }
 };

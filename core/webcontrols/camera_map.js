@@ -15,6 +15,8 @@ const MapMarkers = {
         this.map = '';
         this.addresses = {};
         this.markers = [];
+        this.masterMarkers = [];
+        this.infowindow = '';
         this.planScale = '';
 //        this.cameraClickCallback = '';
         this.getFloorImg = ''; // your callback for floor plan
@@ -103,10 +105,10 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
 
 
         $.each(data, function (i, camera) {
-            if (camera.src2 && camera.src2.longitude!==undefined && camera.src2.latitude!==undefined) {
+            if (camera.longitude!==undefined && camera.latitude!==undefined) {
                 locations.push({
-                    lng: parseFloat(camera.src2.longitude),
-                    lat: parseFloat(camera.src2.latitude),
+                    lng: parseFloat(camera.longitude),
+                    lat: parseFloat(camera.latitude),
 //                    icon: "img/camera.svg",
                     icon: "data:image/svg+xml;base64,"+ic,
                     markerType: 'camera',
@@ -117,31 +119,6 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
             }
         });
 
-        let filtered = data.filter(function (el) {
-            return el != null;
-        });
-        return locations;
-
-        this.addresses = groupBy(filtered, 'address');
-
-        $.each(this.addresses, function (address, list) {
-            let camera = list[0];
-
-            let sortedByFloors = groupBy(list, 'floor');
-
-            locations.push({
-                lng: parseFloat(camera.src2.longitude),
-                lat: parseFloat(camera.src2.latitude),
-                icon: "img/floor.svg",
-                markerType: 'floor',
-                data: {
-                    address: address,
-                    cameras: list,
-                    floors: Object.keys(sortedByFloors).length
-                }
-            });
-        });
-
         return locations;
     },
     setMarkers: function (locations) {
@@ -149,7 +126,7 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
         let bounds = new google.maps.LatLngBounds();
         let marker;
 
-        let infowindow = new google.maps.InfoWindow({maxWidth: 360});
+        self.infowindow = new google.maps.InfoWindow({maxWidth: 360});
         let markers = locations.map(function (location, i) {
             bounds.extend(location);
             marker = new google.maps.Marker({
@@ -157,12 +134,17 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
                 map: self.map,
                 icon: location.icon,
                 camera_id: location.data.camera_id,
-                camera_src_name: location.data.src.name,
+                camera_src_name: location.data.name,
+                camera_src_ip: location.data.ip,
                 markerType: location.markerType
             });
             marker.id = location.data.id;
+            if (location.data.meta && location.data.meta.position) {
+              marker.camera_src_pos = location.data.meta.position;
+            }
+            marker.camera_src_group = location.data.meta && location.data.meta.group ? location.data.meta.group : "";
             google.maps.event.addListener(marker, 'click', (function (marker, i) {
-                infowindow.close(self.map);
+                self.infowindow.close(self.map);
 
                 if (location.markerType === 'camera') {
                     return function () {
@@ -170,7 +152,7 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
                     }
                 } else {
                     return function () {
-                        infowindow.close(self.map, marker);
+                        self.infowindow.close(self.map, marker);
                         let addressCameras = groupBy(self.addresses[location.data.address], 'floor');
 
                         let floor = self.getFloorNumber(location.data.address);
@@ -190,17 +172,36 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
                 if (location.markerType === 'camera') {
                     return function () {
                         let info = '';//'<div class="preview-container"></div>';
-                        info += '<div class="info-header">' + location.data.src.name + '</div>';
+                        var camPos = location.data.meta?.position ? location.data.meta.position : "";
+                        switch (camPos) {
+                          case "left":
+                              var position = " - " + $.t("left"); break;
+                          case "right":
+                              var position = " - " + $.t("right"); break;
+                          case "frontal": 
+                              var position = " - " + $.t("frontal"); break;
+                          case "ptz": 
+                              var position = " - " + $.t("ptz"); break;
+                          case "left2": 
+                              var position = " - " + $.t("left2"); break;
+                          case "right2":
+                              var position = " - " + $.t("right2"); break;
+                          case "frontal2": 
+                              var position = " - " + $.t("frontal2"); break;
+                          default:
+                              var position = ""; break;
+                        }
+                        info += '<div class="info-header">'+ location.data.name + position + '</div>';
                         if (location.data.address) {
                             info += '<span>' + location.data.address + '</span>';
                         }
-                        infowindow.setContent('<div class="preview-container img empty"></div>'+info);
-                        infowindow.open(self.map, marker);
+                        self.infowindow.setContent('<div class="preview-container img empty"></div>'+info);
+                        self.infowindow.open(self.map, marker);
                         let cameraPreview = self.getPreviewImg(location.data.camera_id);
                         cameraPreview.then(function(result){
                             let background = 'background: url(' + result + ') center center / cover no-repeat;';
                             info = '<div access_token="' + location.data.camera_id + '" class="preview-container img"><campreview onclick="javascript:window.core.activateFirstScreen(`tagsview`, ' + location.data.camera_id + ');" onclick_toscreen="tagsview" style="' + background + '"></campreview></div>' + info;
-                            infowindow.setContent(info);
+                            self.infowindow.setContent(info);
                         });
                     }
                 } else if (location.markerType === 'floor') {
@@ -208,24 +209,25 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
                         let info = '<div class="preview-container"></div>';
                         info += '<span class="info-header">' + location.data.address + '</span>';
                         info += '<span>' + location.data.floors + ' floors,</span> <span>' + location.data.cameras.length + ' cams</span>';
-                        infowindow.setContent(info);
-                        infowindow.open(self.map, marker);
+                        self.infowindow.setContent(info);
+                        self.infowindow.open(self.map, marker);
                         let floor = self.getFloorNumber(location.data.address);
                         let planData = self.getFloorImg(floor, location.data.address);
                         planData.then(function(result){
                             info = '<div class="preview-container"><img src="' + result.data.image_small + '"></div>' + info;
-                            infowindow.setContent(info);
+                            self.infowindow.setContent(info);
                         })
                     }
                 }
             })(marker, i));
             google.maps.event.addListener(marker, 'mouseout', function () {
-                // infowindow.close(self.map);
+                //self.infowindow.close(self.map);
             });
             return marker;
         });
 
         self.markers = markers;
+        self.masterMarkers = markers.slice();
 
         console.log(markers);
         self.markerCluster = new MarkerClusterer(self.map, markers, self.mcOptions);
@@ -237,40 +239,76 @@ let ic = btoa('<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns
                 clusterInfo += '<div><div access_token="' + mCluster.markers_[i].camera_id + '" class="preview-container img"><campreview onclick="javascript:window.core.activateFirstScreen(`tagsview`, ' + mCluster.markers_[i].camera_id + ');" onclick_toscreen="tagsview" style="' + background + '"></campreview></div><div class="info-header">' + mCluster.markers_[i].camera_src_name + '</div></div>';
             }
             clusterInfo += '</div>';
-            infowindow.setContent(clusterInfo);
-            infowindow.open(self.map, self.markerCluster);
-            infowindow.setPosition(mCluster.getCenter());
+        self.infowindow.setContent(clusterInfo);
+        self.infowindow.open(self.map, self.markerCluster);
+        self.infowindow.setPosition(mCluster.getCenter());
         });
+        
         google.maps.event.addListener(self.markerCluster, "mouseout", function (mCluster) {
-            // infowindow.close(self.map);
+            //self.infowindow.close(self.map);
         });
         google.maps.event.addListener(self.markerCluster, "click", function (mCluster) {
-            infowindow.close(self.map);
-        });
-        google.maps.event.addListener(self.map, "click", function () {
-            infowindow.close(self.map);
-        });
+            self.infowindow.close(self.map);
+        }); 
 
         self.map.fitBounds(bounds);
+    },    
+    hideMarkersOnSearch: function(cameraIds) {
+      let self = this;
+      this.markerCluster.setMap(null);
+      self.infowindow.close(self.map);
 
-    },
-    delete: function (ids) {
-        let self = this;
-        this.markerCluster.setMap(null);
+      self.markers = self.masterMarkers.slice();
 
-        for (let i = 0; i < self.markers.length; i++) {
-            if (ids.includes(self.markers[i].id)) {
-                self.markers[i].setMap(null);
-                self.markers[i] = null;
+      for (let i = 0; i < self.markers.length; i++) {
+          if (cameraIds.includes(self.markers[i].camera_id)) {
+              self.markers[i].setMap(null);
+              self.markers[i] = null;
+          }
+      }
+
+      this.markers = this.markers.filter(function (el) {
+          return el != null;
+      });
+
+      self.markerCluster = new MarkerClusterer(self.map, this.markers, self.mcOptions);
+      google.maps.event.addListener(self.markerCluster, "mouseover", async function(mCluster) {
+        let clusterInfo = '<div class="multiple-preview-container">';
+        for(let i = 0; i < mCluster.markers_.length && i < 4; i++) {
+            let result = await self.getPreviewImg(mCluster.markers_[i].camera_id);
+            let background = 'background: url(' + result + ') center center / cover no-repeat;';
+            var camPos = mCluster.markers_[i].camera_src_pos ? mCluster.markers_[i].camera_src_pos : "";
+            switch (camPos) {
+              case "left":
+                  var position = " - " + $.t("left"); break;
+              case "right":
+                  var position = " - " + $.t("right"); break;
+              case "frontal": 
+                  var position = " - " + $.t("frontal"); break;
+              case "ptz": 
+                  var position = " - " + $.t("ptz"); break;
+              case "left2": 
+                  var position = " - " + $.t("left2"); break;
+              case "right2":
+                  var position = " - " + $.t("right2"); break;
+              case "frontal2": 
+                  var position = " - " + $.t("frontal2"); break;
+              default:
+                  var position = ""; break;
             }
+            clusterInfo += '<div><div access_token="' + mCluster.markers_[i].camera_id + '" class="preview-container img"><campreview onclick="javascript:window.core.activateFirstScreen(`tagsview`, ' + mCluster.markers_[i].camera_id + ');" onclick_toscreen="tagsview" style="' + background + '"></campreview></div><div class="info-header">' + mCluster.markers_[i].camera_src_name + position +'</div></div>';
         }
-
-        this.markers = this.markers.filter(function (el) {
-            return el != null;
-        });
-
-        self.markerCluster = new MarkerClusterer(self.map, this.markers, self.mcOptions);
-
+        clusterInfo += '</div>';
+        self.infowindow.setContent(clusterInfo);
+        self.infowindow.open(self.map, self.markerCluster);
+        self.infowindow.setPosition(mCluster.getCenter());
+      });
+      google.maps.event.addListener(self.markerCluster, "mouseout", function (mCluster) {
+          //self.infowindow.close(self.map);
+      });
+      google.maps.event.addListener(self.markerCluster, "click", function (mCluster) {
+          self.infowindow.close(self.map);
+      });
     },
     clearMarkers: function() {
       let self = this;
@@ -2362,12 +2400,7 @@ class CCameraMap extends HTMLElement {
                 return vxg.api.cloudone.addresses.find({floor: floor, address: address})
             };
             MapMarkers.getPreviewImg = function (camid) {
-                let cam;
-                for (let i in self.cameralist)
-                    if (self.cameralist[i].camera_id==camid)
-                        cam = self.cameralist[i];
-    
-                return cam.getPreview();
+                return vxg.api.cloud.mapGetCamPreview(camid, self.cameralist)
             };
             MapMarkers.initMap(MapMarkers.mapOptions, $(self.shadow).find('.body')[0]);
     
@@ -2417,6 +2450,38 @@ class CCameraMap extends HTMLElement {
             MapMarkers.add(list);
         });
     }
+
+    searchMarkers(searchTerm) {
+      if (!searchTerm) {
+        MapMarkers.hideMarkersOnSearch([]);
+      } else {
+        var notMarkers = MapMarkers.masterMarkers.map(marker => {
+          var lat = marker.position.lat();
+          var long = marker.position.lng();
+
+          var nameFound = marker.camera_src_name.toLowerCase().includes(searchTerm.toLowerCase());
+          var groupFound = marker.camera_src_group.toLowerCase().includes(searchTerm.toLowerCase());
+          var ipFound = marker.camera_src_ip.includes(searchTerm);
+
+          var searchLatLong = searchTerm.split(",");
+          var latLongFound = false;
+          if (searchLatLong.length == 2) {
+            var searchLat = parseFloat(searchLatLong[0]);
+            var searchLon = parseFloat(searchLatLong[1]);
+            var latClose = (lat - searchLat <= 2) && (-2 <= lat - searchLat);
+            var lonClose = (long - searchLon <= 2) && (-2 <= long - searchLon);
+            latLongFound = latClose && lonClose;
+          }
+
+          if (!nameFound && !groupFound && !ipFound && !latLongFound) {
+            return marker.camera_id;
+          }
+      });
+
+      MapMarkers.hideMarkersOnSearch(notMarkers);
+      }
+    }
+
     static get css() {
         return `<style>
 
