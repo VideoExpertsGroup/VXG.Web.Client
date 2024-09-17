@@ -64,6 +64,7 @@ body:not(.monitoring) .header-right .monitoring-toolbar {
     padding-right: 10px;
     overflow-y: auto;
     margin-left: 0 !important;
+    margin-right: 5px;
     min-width: 250px;
     position: relative;
 }
@@ -71,7 +72,7 @@ body:not(.monitoring) .header-right .monitoring-toolbar {
 @media only screen and (min-width: 1530px) {
     .screens > .monitoring.grid .camlist-monitoring {
         width: 450px;
-        padding-right: 40px;
+        /* padding-right: 40px; */
     }
 }
 

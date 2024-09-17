@@ -158,6 +158,10 @@ window.screens['monitoring'] = {
     self.camGrid(this.getState().grid, isTelconet);
     self.timestamp = timestamp;
 
+    if (!localStorage.cameraList) {
+      return vxg.cameras.getFullCameraList(500, 0);
+    }
+
     return defaultPromise();
   },
   'on_ready': function () {
@@ -740,6 +744,7 @@ window.screens['monitoring'] = {
     });
 
     $('.grid-stack-item').off('drop dragdrop').on('drop dragdrop', function (event) {
+      event.stopPropagation();
       var id = event.originalEvent.dataTransfer.getData('text');
       if (!id) return;
       let pl = $(document.elementFromPoint(event.clientX, event.clientY));
@@ -760,6 +765,12 @@ window.screens['monitoring'] = {
         if (!pl.length) return;
         var cam = $(cam_el);
         var channelToken = cam.attr("channel_token");
+        if (!channelToken) {
+          var cameraList = localStorage.cameraList ?  JSON.parse(localStorage.cameraList).objects : {};
+          var camera = cameraList.find(c => c.id == cam.attr("access_token"));
+          channelToken = camera.token;
+          cam.attr("channel_token", channelToken);
+        }
         var cameraName = cam.attr("camera_name");
         var recording = cam.attr("recording");
         pl.attr('access_token', channelToken);
@@ -913,6 +924,7 @@ window.screens['monitoring'] = {
         });
 
     $('.loc-draggable, .parent-cam, .camgrid2').on('drop dragdrop', function (event) {
+      event.stopPropagation();
       var id = event.originalEvent.dataTransfer.getData('text');
       if (!id) return;
       let pl = $(document.elementFromPoint(event.clientX, event.clientY));
@@ -933,6 +945,12 @@ window.screens['monitoring'] = {
         if (!pl.length) return;
         var cam = $(cam_el);
         var channelToken = cam.attr("channel_token");
+        if (!channelToken) {
+          var cameraList = localStorage.cameraList ?  JSON.parse(localStorage.cameraList).objects : {};
+          var camera = cameraList.find(c => c.id == cam.attr("access_token"));
+          channelToken = camera.token;
+          cam.attr("channel_token", channelToken);
+        }
         var cameraName = cam.attr("camera_name");
         var recording = cam.attr("recording");
         pl.attr('access_token', channelToken);
@@ -991,7 +1009,7 @@ window.screens['monitoring'] = {
                     locationHierarchy.cams.forEach(cam => {
                         let captured = cam.src && cam.src.meta && cam.src.meta.capture_id && vxg.user.src.capture_id == cam.src.meta.capture_id ? ' captured' : '';
                         li_str += `
-                            <div class="camerafield-block${captured} parent-cam" id="${child}-${cam.camera_id}" access_token="${cam.camera_id}" channel_token="${cam.token}" camera_name="${cam.src?.name}" recording="${cam.src?.recording || false}" draggable="true">
+                            <div class="camerafield-block${captured} parent-cam" id="${child}-${cam.camera_id}" access_token="${cam.camera_id}" camera_name="${cam.src?.name}" recording="${cam.src?.recording || false}" draggable="true">
                                 <camfield field="name" onclick_toscreen="tagsview" access_token="${cam.camera_id}"></camfield>
                             </div>`
                     })
@@ -1019,7 +1037,7 @@ window.screens['monitoring'] = {
         var noLocsDiv = $(`<div class="noLocs"></div>`);
         for (var i = 0; i < noLocCams.length; i++) {
             var camDiv = $(`
-                <div class="camerafield-block captured parent-cam" id="noloc-${noLocCams[i].camera_id}" access_token="${noLocCams[i].camera_id}" channel_token="${noLocCams[i].token}" camera_name="${noLocCams[i].src?.name}" recording="${noLocCams[i].src?.recording || false}" draggable="true">
+                <div class="camerafield-block captured parent-cam" id="noloc-${noLocCams[i].camera_id}" access_token="${noLocCams[i].camera_id}" camera_name="${noLocCams[i].src?.name}" recording="${noLocCams[i].src?.recording || false}" draggable="true">
                     <camfield field="name" onclick_toscreen="tagsview" access_token="${noLocCams[i].camera_id}">
                       <i class="fa fa-video-camera mon-camera" aria-hidden="true"></i>
                       <span>${noLocCams[i].src?.name}</span>
