@@ -291,7 +291,7 @@ window.controls['camfield'] = {
                 field = camera.src[camfield];
             } else if (camera && camera.bsrc) {
                 if (localStorage.cameraList) {
-                    var cams = JSON.parse(localStorage.camearaList).objects;
+                    var cams = JSON.parse(localStorage.cameraList).objects;
                     var cam = cams.find(c => c.id == camera.camera_id);
                     onlineClass = cam.status == 'active' ? 'online' : 'offline';
                 } else {
