@@ -283,12 +283,26 @@ window.controls['camfield'] = {
         // el.addEventListener('dragend', this.dragend);
         document.addEventListener('drop', this.drop);
         return getCameraFromElement(this).then(function(camera){
-            if (camera && camera.src && camera.src[camfield])
-                var onlineClass = camera.src.status == 'active' ? 'online' : 'offline';
-                var isRecording = camera.src.recording ? true : false;
-                var recordingEle = isRecording ? "<div class='isRecording'></div>" : "";
+            var onlineClass; var recordingEle; var field;
+            if (camera && camera.src && camera.src[camfield]) {
+                onlineClass = camera.src.status == 'active' ? 'online' : 'offline';
+                recordingEle = camera.src.recording ? "<div class='isRecording'></div>" : "";
                 el.channeltoken = camera.src&&camera.src.roToken ? camera.src.roToken : camera.token;
-                $(el).html('<i class="fa fa-video-camera mon-camera ' + onlineClass + '" aria-hidden="true"></i> <span>' + camera.src[camfield] + '</span>' + recordingEle);
+                field = camera.src[camfield];
+            } else if (camera && camera.bsrc) {
+                if (localStorage.cameraList) {
+                    var cams = JSON.parse(localStorage.camearaList).objects;
+                    var cam = cams.find(c => c.id == camera.camera_id);
+                    onlineClass = cam.status == 'active' ? 'online' : 'offline';
+                } else {
+                    var onlineClass = 'online';
+                }
+
+                recordingEle = camera.bsrc.isRecording ? "<div class='isRecording'></div>" : "";
+                el.channeltoken = camera.token;
+                field = camera.bsrc[camfield];
+            }
+            $(el).html('<i class="fa fa-video-camera mon-camera ' + onlineClass + '" aria-hidden="true"></i> <span>' + field + '</span>' + recordingEle);
         });
     },
     'attributeChangedCallback':function(name, value){

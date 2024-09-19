@@ -99,12 +99,24 @@ function listControlCB(action, camera) {
 	        targetElementChart.setSource();
 	    } else {
 			let allCamToken = (camera['allCamsToken'] !== undefined)? camera['allCamsToken'] : vxg.user.src.allCamsToken;
-			window.vxg.cameras.getCameraListPromise(100, 0).then(function (answer) {
-				targetElement.setCameraArray(answer);
+			if (localStorage.cameraList) {
+				var cameraList = JSON.parse(localStorage.cameraList).objects;
+				var cameras = cameraList.map(cam => {
+					var newCam = new vxg.cameras.objects.Camera(cam.token ? cam.token : cam.id);
+					newCam.src = cam;
+					return newCam;
+				});
+				targetElement.setCameraArray(cameras);
 				localStorage.setItem("initialLoading", true);
 				targetElement.showActivityList( camera['token'], allCamToken, apiGetActivityFunc.bind(this) , somethingWrong.bind(this), controlCbFunc.bind(this) );
-			}, function(r) {
-			});
+			} else {
+				vxg.cameras.getFullCameraList(500, 0).then(function (answer) {
+					targetElement.setCameraArray(answer);
+					localStorage.setItem("initialLoading", true);
+					targetElement.showActivityList( camera['token'], allCamToken, apiGetActivityFunc.bind(this) , somethingWrong.bind(this), controlCbFunc.bind(this) );
+				}, function(r) {
+				});
+			}
 	    }
 	    
 	    sparkline_data_flag = 0;
