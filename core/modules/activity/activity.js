@@ -76,27 +76,47 @@ window.screens['activity'] = {
 			// targetElement.showActivityList();
 	    
 	    let allCamToken	= vxg.user.src.allCamsToken;
-	    window.vxg.cameras.getCameraListPromise(100, 0).then(function (answer) {
-		if (answer.length > 0) {
-		    let camera0	= answer[0];
-		    
-		    let apiGetActivityFunc	= vxg.api.cloud.getEventslist;// vs_api.user.camera.event.list;
-		    somethingWrongFunc	= somethingWrong2;
-		    let controlCbFunc 	= listActivityCB2;
-		    targetElement.setCameraArray(answer);
-                    camera0.getToken().then(function(token){
-												localStorage.setItem("initialLoading", true);
-												targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,200,true, true);
-                    });
-
-		}else {
-				// localStorage.setItem("initialLoading", true);
-		    targetElement.showActivityList();
+		if (localStorage.cameraList) {
+			var cameraList = JSON.parse(localStorage.cameraList).objects;
+			var cameras = cameraList.map(cam => {
+				var newCam = new vxg.cameras.objects.Camera(cam.token ? cam.token : cam.id);
+				newCam.src = cam;
+				return newCam;
+			})
+			if (cameras.length > 0) {
+				let camera0	= cameras[0];
+				
+				let apiGetActivityFunc	= vxg.api.cloud.getEventslist;// vs_api.user.camera.event.list;
+				somethingWrongFunc	= somethingWrong2;
+				let controlCbFunc 	= listActivityCB2;
+				targetElement.setCameraArray(cameras);
+						camera0.getToken().then(function(token){
+													localStorage.setItem("initialLoading", true);
+													targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,200,true, true);
+						});
+	
+			} else {
+				targetElement.showActivityList();
+			}
+		} else {
+			vxg.cameras.getFullCameraList(500, 0).then(function (answer) {
+				if (answer.length > 0) {
+					let camera0	= answer[0];
+					
+					let apiGetActivityFunc	= vxg.api.cloud.getEventslist;// vs_api.user.camera.event.list;
+					somethingWrongFunc	= somethingWrong2;
+					let controlCbFunc 	= listActivityCB2;
+					targetElement.setCameraArray(answer);
+							camera0.getToken().then(function(token){
+														localStorage.setItem("initialLoading", true);
+														targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,200,true, true);
+							});
+		
+				}else {
+					targetElement.showActivityList();
+				}
+			});
 		}
-	    }, function(r) {
-		// localStorage.setItem("initialLoading", true);
-		// targetElement.showActivityList();
-	    });
         return defaultPromise();
     },
     'on_show':function(r){
@@ -144,8 +164,18 @@ window.screens['activity'] = {
 	    name="Sound";break;
 	case "linecross":
 	    name="Line cross";break;
-*/			
-			let cameras = await vxg.cameras.getFullCameraList(500, 0);
+*/			var cameras;
+			if (localStorage.cameraList) {
+				var cameraList = JSON.parse(localStorage.cameraList).objects;
+				cameras = cameraList.map(cam => {
+					var newCam = new vxg.cameras.objects.Camera(cam.token ? cam.token : cam.id);
+					newCam.src = cam;
+					return newCam;
+				})
+			} else {
+				cameras = await vxg.cameras.getFullCameraList(500, 0);
+			}
+
 			let activityCamera1Filter = localStorage.getItem("activityCamera1Filter") ?? window.skin.use_camera1_filter;
 			let htmlCamera = '<option></option>';
 			for (let i = 0; i < cameras.length; i++) {
