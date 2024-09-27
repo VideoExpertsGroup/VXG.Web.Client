@@ -1,5 +1,8 @@
 # Web SDK for VXG Cloud & Server
 
+### Web SDK for VXG Cloud & Server 3.3.27
+- Changed the version of cloud-player to 1.1.2.3
+
 ### Web SDK for VXG Cloud & Server 3.3.26
 - Added the set button in the calendar
 

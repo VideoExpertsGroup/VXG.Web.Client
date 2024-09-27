@@ -435,6 +435,13 @@ window.screens['cameras'] = {
             var camGroups = sessionStorage.getItem("camGroups") ? JSON.parse(sessionStorage.getItem("camGroups")) : [];
 
             var tableData = [];
+
+            const getCameraLocationFromSrc = (src) => {
+                if (!src?.meta?.location) return '';
+                if (window.showCameraLocationProvinceOnly) return src.meta['Province'];
+                return src.meta.location;
+            };
+
             for (let i in list){
                 if (list[i].src.name.substr(0,11)=="#StorageFor" && !isNaN(parseInt(list[i].src.name.substr(11)))) continue;
                 if (list[i].src && list[i].src.meta && list[i].src.meta.isstorage) continue;
@@ -478,7 +485,7 @@ window.screens['cameras'] = {
                     status: statusBlock,
                     recording: list[i].src.recording ? $.t('action.yes') : $.t('action.no'),
                     name: list[i].src.name + `${list[i]?.src?.meta?.subid == 'NOPLAN' ? ' (' + $.t('common.noSubscription') + ')' : ''}`,
-                    location: list[i].src.meta && list[i].src.meta.location ? list[i].src.meta.location : "",
+                    location: getCameraLocationFromSrc(list[i].src),
                     group: tableGroup,
                     action: `<div class="settings" access_token="${list[i].token}" cam_order="${count}" cam_id="${channelID}" gateway_id="${gatewayId}" gateway_token="${gatewayToken}">
                     <svg class="inline-svg-icon icon-action"><use xlink:href="#action"></use></svg>

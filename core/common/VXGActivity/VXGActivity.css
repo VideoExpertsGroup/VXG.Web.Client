@@ -185,6 +185,7 @@ body .VXGActivityMore {
 }
 
 .activity-content > .bootstrap-table > .fixed-table-container {
+    max-height: 65vh;
     overflow-y: auto;
 }
 
