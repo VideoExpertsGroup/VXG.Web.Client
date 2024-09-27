@@ -2,6 +2,256 @@ window.screens = window.screens || {};
 var path = window.core.getPath('monitoring.js');
 //const locTypes = ["Province", "City", "Zone", "Circuit", "Subcircuit"];
 
+var customGridPresets = [
+  {
+    id: 'average',
+    title: 'Average',
+    presets: [
+      {
+        id: '1',
+        count: 1,
+        icon: '/img/presets/average-1.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 12, h: 12, content: '' },
+        ],
+      },
+      {
+        id: '4',
+        count: 4,
+        icon: '/img/presets/average-4.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 6, h: 6, content: '' },
+          { id: 2, x: 6, y: 0, w: 6, h: 6, content: '' },
+          { id: 3, x: 0, y: 6, w: 6, h: 6, content: '' },
+          { id: 4, x: 6, y: 6, w: 6, h: 6, content: '' },
+        ],
+      },
+      {
+        id: '9',
+        count: 9,
+        icon: '/img/presets/average-9.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 4, h: 4, content: '' },
+          { id: 2, x: 4, y: 0, w: 4, h: 4, content: '' },
+          { id: 3, x: 8, y: 0, w: 4, h: 4, content: '' },
+          { id: 4, x: 0, y: 4, w: 4, h: 4, content: '' },
+          { id: 5, x: 4, y: 4, w: 4, h: 4, content: '' },
+          { id: 6, x: 8, y: 4, w: 4, h: 4, content: '' },
+          { id: 7, x: 0, y: 8, w: 4, h: 4, content: '' },
+          { id: 8, x: 4, y: 8, w: 4, h: 4, content: '' },
+          { id: 9, x: 8, y: 8, w: 4, h: 4, content: '' },
+        ],
+      },
+      {
+        id: '16',
+        count: 16,
+        icon: '/img/presets/average-16.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 3, h: 3, content: '' },
+          { id: 2, x: 3, y: 0, w: 3, h: 3, content: '' },
+          { id: 3, x: 6, y: 0, w: 3, h: 3, content: '' },
+          { id: 4, x: 9, y: 0, w: 3, h: 3, content: '' },
+          { id: 5, x: 0, y: 3, w: 3, h: 3, content: '' },
+          { id: 6, x: 3, y: 3, w: 3, h: 3, content: '' },
+          { id: 7, x: 6, y: 3, w: 3, h: 3, content: '' },
+          { id: 8, x: 9, y: 3, w: 3, h: 3, content: '' },
+          { id: 9, x: 0, y: 6, w: 3, h: 3, content: '' },
+          { id: 10, x: 3, y: 6, w: 3, h: 3, content: '' },
+          { id: 11, x: 6, y: 6, w: 3, h: 3, content: '' },
+          { id: 12, x: 9, y: 6, w: 3, h: 3, content: '' },
+          { id: 13, x: 0, y: 9, w: 3, h: 3, content: '' },
+          { id: 14, x: 3, y: 9, w: 3, h: 3, content: '' },
+          { id: 15, x: 6, y: 9, w: 3, h: 3, content: '' },
+          { id: 16, x: 9, y: 9, w: 3, h: 3, content: '' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'highlight',
+    title: 'Highlighted',
+    presets: [
+      {
+        id: '6',
+        count: 6,
+        icon: '/img/presets/highlight-6.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 8, h: 8, content: '' },
+          { id: 2, x: 8, y: 0, w: 4, h: 4, content: '' },
+          { id: 3, x: 8, y: 4, w: 4, h: 4, content: '' },
+          { id: 4, x: 0, y: 8, w: 4, h: 4, content: '' },
+          { id: 5, x: 4, y: 8, w: 4, h: 4, content: '' },
+          { id: 6, x: 8, y: 8, w: 4, h: 4, content: '' },
+        ],
+      },
+      {
+        id: '8',
+        count: 8,
+        icon: '/img/presets/highlight-8.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 9, h: 9, content: '' },
+          { id: 2, x: 9, y: 0, w: 3, h: 3, content: '' },
+          { id: 3, x: 9, y: 3, w: 3, h: 3, content: '' },
+          { id: 4, x: 9, y: 6, w: 3, h: 3, content: '' },
+          { id: 5, x: 0, y: 9, w: 3, h: 3, content: '' },
+          { id: 6, x: 3, y: 9, w: 3, h: 3, content: '' },
+          { id: 7, x: 6, y: 9, w: 3, h: 3, content: '' },
+          { id: 8, x: 9, y: 9, w: 3, h: 3, content: '' },
+        ],
+      },
+      {
+        id: '9',
+        count: 9,
+        icon: '/img/presets/highlight-9.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 6, h: 8, content: '' },
+          { id: 2, x: 6, y: 0, w: 3, h: 4, content: '' },
+          { id: 3, x: 9, y: 0, w: 3, h: 4, content: '' },
+          { id: 4, x: 6, y: 4, w: 3, h: 4, content: '' },
+          { id: 5, x: 9, y: 4, w: 3, h: 4, content: '' },
+          { id: 6, x: 0, y: 8, w: 3, h: 4, content: '' },
+          { id: 7, x: 3, y: 8, w: 3, h: 4, content: '' },
+          { id: 8, x: 6, y: 8, w: 3, h: 4, content: '' },
+          { id: 9, x: 9, y: 8, w: 3, h: 4, content: '' },
+        ],
+      },
+      {
+        id: '10',
+        count: 10,
+        icon: '/img/presets/highlight-10.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 8, h: 8, content: '' },
+          { id: 2, x: 8, y: 0, w: 2, h: 2, content: '' },
+          { id: 3, x: 8, y: 2, w: 2, h: 2, content: '' },
+          { id: 4, x: 8, y: 4, w: 2, h: 2, content: '' },
+          { id: 5, x: 8, y: 6, w: 2, h: 2, content: '' },
+          { id: 6, x: 0, y: 8, w: 2, h: 2, content: '' },
+          { id: 7, x: 2, y: 8, w: 2, h: 2, content: '' },
+          { id: 8, x: 4, y: 8, w: 2, h: 2, content: '' },
+          { id: 9, x: 6, y: 8, w: 2, h: 2, content: '' },
+          { id: 10, x: 8, y: 8, w: 2, h: 2, content: '' },
+        ],
+      },
+      {
+        id: '12',
+        count: 12,
+        icon: '/img/presets/highlight-12.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 10, h: 10, content: '' },
+          { id: 2, x: 10, y: 0, w: 2, h: 2, content: '' },
+          { id: 3, x: 10, y: 2, w: 2, h: 2, content: '' },
+          { id: 4, x: 10, y: 4, w: 2, h: 2, content: '' },
+          { id: 5, x: 10, y: 6, w: 2, h: 2, content: '' },
+          { id: 6, x: 10, y: 8, w: 2, h: 2, content: '' },
+          { id: 7, x: 0, y: 10, w: 2, h: 2, content: '' },
+          { id: 8, x: 2, y: 10, w: 2, h: 2, content: '' },
+          { id: 9, x: 4, y: 10, w: 2, h: 2, content: '' },
+          { id: 10, x: 6, y: 10, w: 2, h: 2, content: '' },
+          { id: 11, x: 8, y: 10, w: 2, h: 2, content: '' },
+          { id: 12, x: 10, y: 10, w: 2, h: 2, content: '' },
+        ],
+      },
+      {
+        id: '16',
+        count: 16,
+        icon: '/img/presets/highlight-16.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 7, h: 7, content: '' },
+          { id: 2, x: 7, y: 0, w: 1, h: 1, content: '' },
+          { id: 3, x: 7, y: 1, w: 1, h: 1, content: '' },
+          { id: 4, x: 7, y: 2, w: 1, h: 1, content: '' },
+          { id: 5, x: 7, y: 3, w: 1, h: 1, content: '' },
+          { id: 6, x: 7, y: 4, w: 1, h: 1, content: '' },
+          { id: 7, x: 7, y: 5, w: 1, h: 1, content: '' },
+          { id: 8, x: 7, y: 6, w: 1, h: 1, content: '' },
+          { id: 9, x: 0, y: 7, w: 1, h: 1, content: '' },
+          { id: 10, x: 1, y: 7, w: 1, h: 1, content: '' },
+          { id: 11, x: 2, y: 7, w: 1, h: 1, content: '' },
+          { id: 12, x: 3, y: 7, w: 1, h: 1, content: '' },
+          { id: 13, x: 4, y: 7, w: 1, h: 1, content: '' },
+          { id: 14, x: 5, y: 7, w: 1, h: 1, content: '' },
+          { id: 15, x: 6, y: 7, w: 1, h: 1, content: '' },
+          { id: 16, x: 7, y: 7, w: 1, h: 1, content: '' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'vertical',
+    title: 'Vertical',
+    presets: [
+      {
+        id: '2',
+        count: 2,
+        icon: '/img/presets/vertical-2.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 12, h: 6, content: '' },
+          { id: 2, x: 0, y: 6, w: 12, h: 6, content: '' },
+        ],
+      },
+      {
+        id: '3',
+        count: 3,
+        icon: '/img/presets/vertical-3.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 12, h: 6, content: '' },
+          { id: 2, x: 0, y: 6, w: 6, h: 6, content: '' },
+          { id: 3, x: 6, y: 6, w: 6, h: 6, content: '' },
+        ],
+      },
+      {
+        id: '5',
+        count: 5,
+        icon: '/img/presets/vertical-5.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 12, h: 6, content: '' },
+          { id: 2, x: 0, y: 6, w: 6, h: 3, content: '' },
+          { id: 3, x: 6, y: 6, w: 6, h: 3, content: '' },
+          { id: 4, x: 0, y: 9, w: 6, h: 3, content: '' },
+          { id: 5, x: 6, y: 9, w: 6, h: 3, content: '' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'other',
+    title: 'Others',
+    presets: [
+      {
+        id: '4',
+        count: 4,
+        icon: '/img/presets/other-4.svg',
+        items: [
+          { id: 1, x: 0, y: 0, w: 12, h: 6, content: '' },
+          { id: 2, x: 0, y: 6, w: 4, h: 6, content: '' },
+          { id: 3, x: 4, y: 6, w: 4, h: 6, content: '' },
+          { id: 4, x: 8, y: 6, w: 4, h: 6, content: '' },
+        ],
+      },
+      {
+        id: '13',
+        count: 13,
+        icon: '/img/presets/vertical-13.svg',
+        items: [
+          { id: 1, x: 3, y: 3, w: 6, h: 6, content: '' },
+          { id: 2, x: 0, y: 0, w: 3, h: 3, content: '' },
+          { id: 3, x: 3, y: 0, w: 3, h: 3, content: '' },
+          { id: 4, x: 6, y: 0, w: 3, h: 3, content: '' },
+          { id: 5, x: 9, y: 0, w: 3, h: 3, content: '' },
+          { id: 6, x: 0, y: 3, w: 3, h: 3, content: '' },
+          { id: 7, x: 9, y: 3, w: 3, h: 3, content: '' },
+          { id: 8, x: 0, y: 6, w: 3, h: 3, content: '' },
+          { id: 9, x: 9, y: 6, w: 3, h: 3, content: '' },
+          { id: 10, x: 0, y: 9, w: 3, h: 3, content: '' },
+          { id: 11, x: 3, y: 9, w: 3, h: 3, content: '' },
+          { id: 12, x: 6, y: 9, w: 3, h: 3, content: '' },
+          { id: 13, x: 9, y: 9, w: 3, h: 3, content: '' },
+        ],
+      },
+    ],
+  },
+];
+
 window.screens['monitoring'] = {
   'menu_weight': 31,
   'menu_name': $.t('monitoring.title'),
@@ -307,6 +557,8 @@ window.screens['monitoring'] = {
             </div>
         </div>
     `);
+
+    self.initCustomGridPresets();
 
     const monitoringModeBtn = document.querySelector('.btn-monitoring-mode');
     monitoringModeBtn.onclick = () => {
@@ -698,35 +950,60 @@ window.screens['monitoring'] = {
       }
     }
   },
+  initCustomGridPresets: function () {
+    const self = this;
+
+    let html = '';
+    customGridPresets.forEach((group) => {
+      let listHtml = '';
+      group.presets.forEach((preset) => {
+        listHtml += `<div class="preset-item" id="${group.id}-${preset.id}">
+            <img src="${preset.icon}" alt="" />
+            <span>${preset.count}</span>
+        </div>`;
+      });
+      html += `<div class="presets-group">
+        <div class="preset-category">${group.title}</div>
+        <div class="preset-list">${listHtml}</div>
+      </div>`;
+    });
+    $('.monitoring .grid-stack-container .btn-grid-presets > .menu-dropdown').html(html);
+
+    $('.monitoring .grid-stack-container .btn-grid-presets .preset-item').on('click', function () {
+      const [category, id] = this.id.split('-');
+      const group = customGridPresets.find((item) => item.id === category);
+      const preset = group.presets.find((item) => item.id === id);
+
+      self.grid.destroy(false);
+      document.querySelector('.monitoring .grid-stack').outerHTML = '<div class="grid-stack"></div>';
+
+      self.initCustomGrid(preset.items);
+      self.camGrid(5);
+    });
+  },
   createCustomGrid: function () {
     $('.ratio2-inner').hide();
     $('.cammap').hide();
 
     const self = this;
     let state = self.getState();
-    const items = state?.gridItems ?? [
-      { id: 1, x: 0, y: 0, w: 4, h: 4, content: '' },
-      { id: 2, x: 4, y: 0, w: 4, h: 4, content: '' },
-      { id: 3, x: 4, y: 4, w: 4, h: 2, content: '' },
-      { id: 4, x: 0, y: 4, w: 2, h: 2, content: '' },
-      { id: 5, x: 8, y: 0, w: 2, h: 2, content: '' },
-      { id: 6, x: 8, y: 2, w: 2, h: 2, content: '' },
-      { id: 7, x: 2, y: 4, w: 2, h: 2, content: '' },
-      { id: 8, x: 10, y: 0, w: 1, h: 1, content: '' },
-      { id: 9, x: 10, y: 1, w: 1, h: 1, content: '' },
-    ];
-    self.grid = GridStack.init();
+    const items = state?.gridItems ?? customGridPresets[1].presets[1].items;
+    self.initCustomGrid(items);
+
+    $('.grid-stack-container').show();
+  },
+  initCustomGrid: function (items) {
+    const self = this;
+    let state = self.getState();
+    const maxColumn = Math.max(...items.map((item) => item.x + item.w));
+    self.grid = GridStack.init({ column: maxColumn });
     self.grid.load(items);
 
     self.grid.on('added change removed', () => {
       state = self.saveCustomGrid(self.grid.engine.nodes);
     });
 
-    $('.grid-stack-container').show();
-
-    if (!state?.gridItems) {
-      self.saveCustomGrid(self.grid.engine.nodes);
-    }
+    self.saveCustomGrid(self.grid.engine.nodes);
 
     self.setPlayerEventListeners();
     self.setCustomGridEventListeners();
