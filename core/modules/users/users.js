@@ -83,7 +83,7 @@ window.screens['users'] = {
 
         }
         table += '</tbody></table>'
-        if (users.length>0) {
+        if (users && users.length>0) {
             $(self.wrapper).find('.userlist').empty().append(table);
             self.wrapper.removeClass('loader');
             if (localStorage.cameraList) {

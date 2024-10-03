@@ -566,8 +566,7 @@ window.screens['cameras'] = {
                     },
                     {
                         field: "hide",
-                        title: "hide",
-                        filterControl: "input",
+                        title: "hide"
                     }
                 ]
 

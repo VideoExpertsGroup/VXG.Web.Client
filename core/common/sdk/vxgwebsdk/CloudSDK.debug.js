@@ -1,6 +1,6 @@
 // CloudSDK.debug.js
 // version: 3.3.27
-// date-of-build: 240927
+// date-of-build: 241002
 // copyright (c) VXG Inc
 // Includes gl-matrix  <https://github.com/toji/gl-matrix>
 // ver: 3.3.0 // Available under MIT License 
@@ -6279,6 +6279,29 @@ CloudPlayerEvent.ACCESS_TOKEN_EXPIRED_IN_5MIN = {
 	text: 'Access token expired in 5 minutes'
 };
 
+CloudPlayerEvent.ACTIVITY_WATCH_LIVE = {
+	name: 'ACTIVITY_WATCH_LIVE',
+	code: 4471,
+	text: 'The user starts and stops watching live video'
+};
+
+CloudPlayerEvent.ACTIVITY_WATCH_RECORDED = {
+	name: 'ACTIVITY_WATCH_RECORDED',
+	code: 4472,
+	text: 'The user starts and stops watching recorded video'
+};
+
+CloudPlayerEvent.ACTIVITY_CLIP_DOWNLOADED = {
+	name: 'ACTIVITY_CLIP_DOWNLOADED',
+	code: 4473,
+	text: 'The user An user downloads a recorded clip'
+};
+
+CloudPlayerEvent.ACTIVITY_PTZ = {
+	name: 'ACTIVITY_CLIP_DOWNLOADED',
+	code: 4474,
+	text: 'Move & zoom ptz from real time, call preset, set preset'
+};
 
 window._cloudPlayers = window._cloudPlayers || {};
 
@@ -6921,6 +6944,12 @@ window.CloudPlayer = function(elid, options){
 			updatePtzPresetSelect();
 			el_ptz_presets_popup.classList.add('show');
 			el_ptz_preset_create_popup.classList.remove('show');
+
+			mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
+				action: 'set_preset',
+				preset_number: res.id,
+				camera_id: self.currentCamID,
+			});
 		});
 	};
 	el_ptz_presets_go_btn.onclick = () => {
@@ -6929,6 +6958,12 @@ window.CloudPlayer = function(elid, options){
 			return;
 		}
 		mConn._getAPI().gotoCameraPtzPreset(self.currentCamID, mSelectedPtzPreset.id);
+
+		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
+			action: 'call_preset',
+			preset_number: mSelectedPtzPreset.id,
+			camera_id: self.currentCamID,
+		});
 	};
 	el_ptz_presets_delete_btn.onclick = () => {
 		const presetId = el_ptz_presets_select.value;
@@ -6942,6 +6977,12 @@ window.CloudPlayer = function(elid, options){
 					mSelectedPtzPreset = null;
 				}
 				updatePtzPresetSelect();
+
+				mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
+					action: 'delete_preset',
+					preset_number: presetId,
+					camera_id: self.currentCamID,
+				});
 			});
 		}
 	};
@@ -7204,6 +7245,12 @@ window.CloudPlayer = function(elid, options){
 	    }).fail(function(r){
 		console.error(r);
 	    });
+
+		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
+			action: 'left',
+			preset_number: mSelectedPtzPreset.id,
+			camera_id: self.mSrc.getID(),
+		});
 	}
 
 	el_controls_ptz_right.onmousedown = function(){
@@ -7224,6 +7271,12 @@ window.CloudPlayer = function(elid, options){
 	    }).fail(function(r){
 		console.error(r);
 	    });
+
+		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
+			action: 'right',
+			preset_number: mSelectedPtzPreset.id,
+			camera_id: self.mSrc.getID(),
+		});
 	}
 
 	el_controls_ptz_up.onmousedown = function(){
@@ -7244,6 +7297,12 @@ window.CloudPlayer = function(elid, options){
 	    }).fail(function(r){
 		console.error(r);
 	    });
+
+		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
+			action: 'top',
+			preset_number: mSelectedPtzPreset.id,
+			camera_id: self.mSrc.getID(),
+		});
 	}
 
 	el_controls_ptz_down.onmousedown = function(){
@@ -7264,6 +7323,12 @@ window.CloudPlayer = function(elid, options){
 	    }).fail(function(r){
 		console.error(r);
 	    });
+
+		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
+			action: 'bottom',
+			preset_number: mSelectedPtzPreset.id,
+			camera_id: self.mSrc.getID(),
+		});
 	}
 
 	el_controls_ptz_zoomin.onmousedown = function(){
@@ -7284,6 +7349,12 @@ window.CloudPlayer = function(elid, options){
 	    }).fail(function(r){
 		console.error(r);
 	    });
+
+		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
+			action: 'zoom_in',
+			preset_number: mSelectedPtzPreset.id,
+			camera_id: self.mSrc.getID(),
+		});
 	}
 
 	el_controls_ptz_zoomout.onmousedown = function(){
@@ -7303,6 +7374,12 @@ window.CloudPlayer = function(elid, options){
 	    }).fail(function(r){
 		console.error(r);
 	    });
+
+		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
+			action: 'zoom_out',
+			preset_number: mSelectedPtzPreset.id,
+			camera_id: self.mSrc.getID(),
+		});
 	}
 
 	el_controls_ptz_zoomin.onmouseup =
@@ -8740,6 +8817,14 @@ window.CloudPlayer = function(elid, options){
 		var downloadLink = document.createElement('a');
 		downloadLink.setAttribute('href', clipinfo.url);
 		downloadLink.click();
+
+				mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_CLIP_DOWNLOADED, {
+					clip_start: clipinfo.start,
+					clip_end: clipinfo.end,
+					clip_id: clipinfo.id,
+					current_time: Date.now(),
+					camera_id: clipinfo.camid,
+				});
 	    } else {
 		console.log("ShareClipInfo: " + description);
 	    }
@@ -8762,7 +8847,7 @@ window.CloudPlayer = function(elid, options){
 	    &&  (cloudcamera !== undefined)
 	    &&  (mAccessToken && (mAccessToken !== undefined))
 	    ) {
-		shareclip.createClip( cloudcamera, mAccessToken, self._shareClipCallback, position, (a+b)*1000 );
+		shareclip.createClip( cloudcamera, mAccessToken, self._shareClipCallback, position, (a+b)*1000);
 		shareClipInterval = setInterval( function(){
 			var el_controls_get_clip = self.player.getElementsByClassName('cloudplayer-get-clip')[0];
 			if (el_controls_get_clip.classList.contains('inprocess')) {
@@ -9109,6 +9194,8 @@ window.CloudPlayer = function(elid, options){
 	}
 
 	self.setPosition = function(t){
+		const isLiveMode = mPosition == -1;
+
 		mPosition = t;
 
 		showTimelapseControls(false);
@@ -9151,6 +9238,30 @@ window.CloudPlayer = function(elid, options){
 				}
 			}, 100);
 		}
+
+		if (isLiveMode && mPosition !== -1) {
+			mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_WATCH_LIVE, {
+				action: 'end',
+				time: Date.now(),
+				camera_id: self.mSrc.getID(),
+			});
+			mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_WATCH_RECORDED, {
+				action: 'begin',
+				time: Date.now(),
+				camera_id: self.mSrc.getID(),
+			});
+		} else if (!isLiveMode && mPosition == -1) {
+			mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_WATCH_LIVE, {
+				action: 'begin',
+				time: Date.now(),
+				camera_id: self.mSrc.getID(),
+			});
+			mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_WATCH_RECORDED, {
+				action: 'end',
+				time: Date.now(),
+				camera_id: self.mSrc.getID(),
+			});
+    }
 	}
 
 	// apply option position
@@ -9193,7 +9304,7 @@ window.CloudPlayer = function(elid, options){
 			return;
 		}
 
-		if ( mPlaying ){
+		if (mPlaying) {
 			self.stop("by_play");
 		} else {
 			self._reset_players();
@@ -9249,6 +9360,10 @@ window.CloudPlayer = function(elid, options){
 		if (mRecordMode !== "records") { //vxgcloudplayer has it's own loader
 			_showloading( self.options.loaderTimeout || 0 );
 		}
+
+		setTimeout(() => {
+			self._onResize();
+		}, 100);
 	}
 
 	self.pause = function (event) {
@@ -9379,19 +9494,19 @@ window.CloudPlayer = function(elid, options){
 
 			if (mVxgcloudplayer){
 				mVxgcloudplayer.setAttribute('src','');
-				mVxgcloudplayer.setTimePromise(Date.now());
+				// mVxgcloudplayer.setTimePromise(Date.now());
 			}
 		}
 
 		if(mWebRTC0_Player != null){
 			mWebRTC0_Player.stopWS();
 			mWebRTC_el.style.display = 'none';
-		};
+		}
 
 		if(mWebRTC2_Player != null){
 			mWebRTC2_Player.stopWS();
 			mWebRTC_el.style.display = 'none';
-		};
+		}
 
 		if (mNativeHLS_Player != null) {
 			mNativeHLS_Player.stop();
@@ -16281,7 +16396,7 @@ window.CloudSDK = window.CloudSDK || {};
 
 // Automaticlly generated
 CloudSDK.version = '3.3.27';
-CloudSDK.datebuild = '240927';
+CloudSDK.datebuild = '241002';
 console.log('CloudSDK.version='+CloudSDK.version + '_' + CloudSDK.datebuild);
 
 window.CloudPlayerList = function(timelineId, o) {
@@ -16906,8 +17021,6 @@ window.JoinedTimelineView = function (viewid, playersdk, options) {
 // Wrapper for VXGCloudPlayer & CloudSDK
 
 window.CloudPlayerSDK = function(playerElementID, o) {
-	console.log(o);
-
     var self = this;
     self.options = o || {};
     self.player = null;
@@ -16934,7 +17047,7 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 
     if (window['_CloudPlayerSDK'][playerElementID]){
         throw 'Oops! CloudPlayerSDK instance with player element ID: ' + playerElementID + ' already exist. Try use another ID.';
-	}
+		}
 
 
     window['_CloudPlayerSDK'][playerElementID] = {};
