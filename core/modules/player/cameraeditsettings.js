@@ -327,6 +327,15 @@ CameraeditsettingsControl = function(){
             html+='  </select></div>';
             if (arr.length>1) allDisabled=false;
             is_data = true;
+
+            const videoEcondingMap = {'h264': 'H.264', 'h265': 'H.265', 'hevc': 'H.265'};
+            const videoEncoding = videoEcondingMap[this.source_data.format.toLowerCase()];
+            if (typeof videoEncoding !== 'undefined') {
+                html += `<div class="form-group">
+                            <label>${$.t('common.videoEncoding')}</label>
+                            <input type="text" class="video_encoding form-control input500" name="video_encoding" value="${videoEncoding}" disabled>
+                        </div>`;
+            }
         }
 //            html+='  <br/><button class="vxgbutton" onclick_toscreen="back">Back</button>&nbsp;&nbsp;&nbsp;';
         if (!allDisabled) {
