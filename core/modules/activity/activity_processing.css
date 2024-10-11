@@ -269,3 +269,7 @@ max-width: 100%;
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
   }
+
+.video-segments-player .controller {
+    bottom: 24px;
+}

@@ -91,6 +91,65 @@ $( document ).ready(function() {
         createMetaList(tags, eventName, false); 
     }
 
+    // window.event_player = new CloudPlayerSDK('event-player', {
+    //     autohide: 3000,
+    //     timeline: true,
+    //     disableZoomControl: false,
+    //     disableAudioControl: false,
+    //     disableGetShot: false,
+    //     disableGetClip: false
+    // });
+	// event_player.setSource(token);
+    // var playerTime = new Date(eventTime);
+    // playerTime = playerTime.getTime();
+    // event_player.setPosition(playerTime);
+    // event_player.pause();
+
+    getEventVideo(token, eventTime).then(async ({ data, type }) => {
+        if (data.objects.length == 0) {
+            $('.video-error-cont').show();
+            $('.error-message').html("No recorded video found at time of event");
+            return;
+        }
+
+        // video from storage/clips
+        if (type === 'clip') {
+            const videoSource = `<source src="${data.objects[data.objects.length-1].url}" type="video/mp4">`;
+            $('#event-video').html(videoSource);
+            $('#event-video').show();
+            return;
+        }
+
+        // video from storage/data
+        const segments = [];
+        let totalClipDuration = 0;
+        
+        for (let i = 0; i < data.objects.length; i++) {
+            const url = data.objects[i].url;
+            const startTime = new Date(data.objects[i].start).getTime();
+            const endTime = new Date(data.objects[i].end).getTime();
+            
+            const clipDuration = (endTime - startTime) / 1000; // Convert milliseconds to seconds
+            const timeLeft = 20 - totalClipDuration;
+        
+            if (clipDuration <= timeLeft) {
+                segments.push({ src: url, from: 0, to: clipDuration });
+                totalClipDuration += clipDuration;
+            } else {
+                segments.push({ src: url, from: 0, to: timeLeft });
+                totalClipDuration += timeLeft;
+                break;
+            }
+
+            // if (timeLeft <= 0) break;
+        }
+
+        window.event_player = new VideoSegmentsPlayer('#event-player', segments);
+        $('#event-player').show();  
+    }, (err) => {
+        console.log(err.responseText);
+    });
+
     window.playback_player = new CloudPlayerSDK('live-player', {
         autohide: 3000,
         timeline: false,
@@ -100,20 +159,6 @@ $( document ).ready(function() {
         disableGetClip: false
     });
 	playback_player.setSource(token);
-
-    window.event_player = new CloudPlayerSDK('event-player', {
-        autohide: 3000,
-        timeline: true,
-        disableZoomControl: false,
-        disableAudioControl: false,
-        disableGetShot: false,
-        disableGetClip: false
-    });
-	event_player.setSource(token);
-    var playerTime = new Date(eventTime);
-    playerTime = playerTime.getTime();
-    event_player.setPosition(playerTime);
-    event_player.pause();
 
     $('.start-btn').click(function() {
         // change processing status to in_progress
@@ -363,25 +408,39 @@ async function getFileMeta(filemeta_download) {
 
 async function getEventVideo(access_token, eventTime) {
     let base_url = getBaseURLFromToken(access_token);
-    if (!base_url) 
-        return new Promise(function(resolve, reject){setTimeout(function(){reject();}, 0);});
-    let args = {};
+    if (!base_url) return new Promise(function(resolve, reject){setTimeout(function(){reject();}, 0);});
+    const args = [];
 
-    var endTimeInt = new Date(eventTime).getTime()// + 1*60*1000;
-    var endTime = new Date(endTimeInt).toISOString().replace("Z", "");
-    
-    var startTimeInt = new Date(eventTime).getTime()// - 1*60*1000;
-    var startTime = new Date(startTimeInt).toISOString().replace("Z", "");
+    const formattedEventTime = new Date(eventTime);
+    // const formattedStartEventTime = new Date(formattedEventTime.getTime() - 20000).toISOString().slice(0, -1); // 20 seconds before
+    const formattedStartEventTime = new Date(formattedEventTime.getTime() - 5000).toISOString().slice(0, -1); // 5 seconds before
+    const formattedEndEventTime = new Date(formattedEventTime.getTime() + 15000).toISOString().slice(0, -1); // 15 seconds after
 
-    var storageUrl = `${base_url}/api/v2/storage/data/?start=${startTime}&end=${endTime}&order_by=-time`;
+    // const storageUrl = `${base_url}/api/v2/storage/data/?start=${formattedStartEventTime}&end=${formattedEndEventTime}&order_by=-time`;
+    // const storageUrl = `${base_url}/api/v2/storage/clips/?event_time__gte=${formattedStartEventTime}&order_by=-event_time`;
 
-    return $.ajax({
+    // const storageClipUrl = `${base_url}/api/v2/storage/clips/?start=${formattedStartEventTime}&end=${formattedEndEventTime}&order_by=-created`;
+    const storageClipUrl = `${base_url}/api/v2/storage/clips/?event_time=${eventTime.slice(0, -1)}&order_by=-event_time`;
+    const storageClip =  await $.ajax({
         type: 'GET',
-        url: storageUrl,
+        url: storageClipUrl,
         headers: {'Authorization': 'Acc ' + access_token},
         contentType: "application/json",
         data: args
     });
+
+    if (storageClip?.meta?.total_count) return { data: storageClip, type: 'clip' };
+
+    const storageDataUrl = `${base_url}/api/v2/storage/data/?start=${formattedStartEventTime}&end=${formattedEndEventTime}&order_by=-time`;
+    const storageData = await $.ajax({
+        type: 'GET',
+        url: storageDataUrl,
+        headers: {'Authorization': 'Acc ' + access_token},
+        contentType: "application/json",
+        data: args
+    });
+
+    return { data: storageData, type: 'recorded video' };
 }
 
 function show_rect(name, type) {

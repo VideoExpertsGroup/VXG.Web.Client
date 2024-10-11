@@ -442,6 +442,8 @@ vxg.api.cloud.setCameraMotionDetectionRegions = function(regions, channel_id_or_
 };
 
 vxg.api.cloud.getCamerasListV2 = function(access_token, limit, offset, args) {
+    if (! args.hasOwnProperty('limit')) args['limit'] = limit;
+    if (! args.hasOwnProperty('offset')) args['offset'] = offset;
     let headers = vxg.api.cloud.getHeader(access_token);
     if (!headers)
         return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});

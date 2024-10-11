@@ -785,10 +785,10 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 			let camera0	= answer[0];
 			let allCamToken	= vxg.user.src.allCamsToken;
 			let apiGetActivityFunc	= vxg.api.cloud.getEventslist;// vs_api.user.camera.event.list;
-			let controlCbFunc 	= listActivityCB2;
+			let controlCbFunc = self.callbackFunc;
 			let targetElement = isActivitiesPage ? $('.activity_activitylist')[0] : isReportPage ? $('.report_activitylist')[0] : $('.eventslist')[0];
 			camera0.getToken().then(function(token){
-				targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),offset,200,true, true);
+				targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc,offset,200,true, true);
 			});
 		})
 	}
@@ -804,12 +804,12 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 				let camera0	= answer[0];
 				let allCamToken	= vxg.user.src.allCamsToken;
 				let apiGetActivityFunc	= vxg.api.cloud.getEventslist;// vs_api.user.camera.event.list;
-				let controlCbFunc 	= listActivityCB2;
+				let controlCbFunc = self.callbackFunc;
 				let targetElement = isActivitiesPage ? $('.activity_activitylist')[0] : isReportPage ? $('.report_activitylist')[0] : $('.eventslist')[0];
 				camera0.getToken().then(function(token){
 					refreshTimer = setInterval(function () {
 						if ((localStorage.getItem('activityTimeFilter') === null || localStorage.getItem('activityTimeFilter') === '') && localStorage.getItem('eventsList') == 'true' && lastPage === 1)
-							targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,200,true, true, false);
+							targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc,0,200,true, true, false);
 					}, 10000);
 				});
 			})

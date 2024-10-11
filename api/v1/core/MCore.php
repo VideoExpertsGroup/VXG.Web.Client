@@ -265,8 +265,9 @@ class MCore extends MConstants{
 //            if (MCore::$core->settings['enable_old_auth'])
 //                MCore::$core->current_user = MUser::getUserByToken(MCore::$core->request['token']);
             if (!MCore::$core->current_user)
-                MCore::$core->current_user = MUser::getUserByFirebaseToken(MCore::$core->request['token'], isset(MCore::$core->request['newdealer']) ? MCore::$core->request['newdealer'] : '');
+                MCore::$core->current_user = MUser::getUserByAuthToken(MCore::$core->request['token'], isset(MCore::$core->request['newdealer']) ? MCore::$core->request['newdealer'] : '');
         }
+
 
         if (MCore::$core->current_user && (MCore::$core->current_user->isPartner() || MCore::$core->current_user->isDistributor()
             || MCore::$core->current_user->isTheater() || MCore::$core->current_user->isChannel() || MCore::$core->current_user->isSuperAdmin()) &&

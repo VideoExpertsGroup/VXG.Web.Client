@@ -30,6 +30,10 @@
     <script type="text/javascript" src="core/common/sdk/vxgwebsdk/CloudSDK.min.js"></script>
     <script type="text/javascript" src="core/common/sdk/vxgwebsdk/LocalPlayer.js"></script>
 
+    <script type="text/javascript" src="core/common/videoSegmentsPlayer/sp-control-play.js"></script>
+    <script type="text/javascript" src="core/common/videoSegmentsPlayer/video-segments-player.js"></script>
+    <link rel="stylesheet" type="text/css" href="core/common/videoSegmentsPlayer/video-segments-player.css">
+
     <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.10/i18next.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-i18next@1.2.1/jquery-i18next.min.js"></script>
     <script src="core/i18n.js"></script>
@@ -54,9 +58,12 @@
             </div>
         </div>
         <div class="image-section event-playback-cont">
-            <!--<video width="100%" controls id="event-video">
-            </video>-->
-            <div id="event-player"></div>
+            <video style="display: none;" width="100%" controls id="event-video"></video>
+            <div style="display: none;" id="event-player"></div>
+
+            <div class="video-error-cont" style="display: none;">
+                <span class="error-message"></span>
+            </div>
         </div>
         <div class="image-section video-live-cont">
             <div id="live-player"></div>

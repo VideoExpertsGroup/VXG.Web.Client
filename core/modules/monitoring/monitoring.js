@@ -2,6 +2,129 @@ window.screens = window.screens || {};
 var path = window.core.getPath('monitoring.js');
 //const locTypes = ["Province", "City", "Zone", "Circuit", "Subcircuit"];
 
+var layoutPresets = [
+  {
+    id: 'average',
+    title: 'Average',
+    presets: [
+      {
+        id: 'average-1',
+        count: 1,
+        icon: '/img/presets/average-1.svg',
+      },
+      {
+        id: 'average-4',
+        count: 4,
+        icon: '/img/presets/average-4.svg',
+      },
+      {
+        id: 'average-9',
+        count: 9,
+        icon: '/img/presets/average-9.svg',
+      },
+      {
+        id: 'average-16',
+        count: 16,
+        icon: '/img/presets/average-16.svg',
+      },
+    ],
+  },
+  {
+    id: 'highlight',
+    title: 'Highlighted',
+    presets: [
+      {
+        id: 'highlight-6',
+        count: 6,
+        icon: '/img/presets/highlight-6.svg',
+      },
+      {
+        id: 'highlight-8',
+        count: 8,
+        icon: '/img/presets/highlight-8.svg',
+      },
+      {
+        id: 'highlight-9',
+        count: 9,
+        icon: '/img/presets/highlight-9.svg',
+      },
+      {
+        id: 'highlight-10',
+        count: 10,
+        icon: '/img/presets/highlight-10.svg',
+      },
+      {
+        id: 'highlight-12',
+        count: 12,
+        icon: '/img/presets/highlight-12.svg',
+      },
+      {
+        id: 'highlight-16',
+        count: 16,
+        icon: '/img/presets/highlight-16.svg',
+      },
+    ],
+  },
+  {
+    id: 'vertical',
+    title: 'Vertical',
+    presets: [
+      {
+        id: 'vertical-2',
+        count: 2,
+        icon: '/img/presets/vertical-2.svg',
+      },
+      {
+        id: 'vertical-3',
+        count: 3,
+        icon: '/img/presets/vertical-3.svg',
+      },
+      {
+        id: 'vertical-5',
+        count: 5,
+        icon: '/img/presets/vertical-5.svg',
+      },
+    ],
+  },
+  {
+    id: 'other',
+    title: 'Others',
+    presets: [
+      {
+        id: 'other-4',
+        count: 4,
+        icon: '/img/presets/other-4.svg',
+      },
+      {
+        id: 'other-13',
+        count: 13,
+        icon: '/img/presets/vertical-13.svg',
+      },
+    ],
+  },
+  {
+    id: 'custom',
+    title: 'Custom',
+    presets: [
+      {
+        id: 'custom',
+        icon: '/img/presets/average-1.svg',
+      },
+    ],
+  },
+];
+var defaultLayoutPreset = 'highlight-8';
+var defaultCustomLayout = [
+  { id: 1, x: 0, y: 0, w: 9, h: 9, content: '' },
+  { id: 2, x: 9, y: 0, w: 3, h: 3, content: '' },
+  { id: 3, x: 9, y: 3, w: 3, h: 3, content: '' },
+  { id: 4, x: 9, y: 6, w: 3, h: 3, content: '' },
+  { id: 5, x: 0, y: 9, w: 3, h: 3, content: '' },
+  { id: 6, x: 3, y: 9, w: 3, h: 3, content: '' },
+  { id: 7, x: 6, y: 9, w: 3, h: 3, content: '' },
+  { id: 8, x: 9, y: 9, w: 3, h: 3, content: '' },
+];
+
 window.screens['monitoring'] = {
   'menu_weight': 31,
   'menu_name': $.t('monitoring.title'),
@@ -74,7 +197,7 @@ window.screens['monitoring'] = {
       }
     }, 1500);
 
-    self.camGrid(self.getState().grid);
+    self.camGrid(self.getState().layout);
 
     $(".camlist-monitoring").empty();
     $(".camlist-monitoring").append($('<div class="loader section-loader monitoring-loader"></div>'))
@@ -155,7 +278,7 @@ window.screens['monitoring'] = {
     var isTelconet = telconetIdStr.length > 0;
 
     let self = this;
-    self.camGrid(this.getState().grid, isTelconet);
+    self.camGrid(this.getState().layout, isTelconet);
     self.timestamp = timestamp;
 
     if (!localStorage.cameraList) {
@@ -177,7 +300,7 @@ window.screens['monitoring'] = {
     var telconetIdStr = hash.includes("?camera_id=") ? hash.replaceAll("%22", "").substring(hash.indexOf("=") + 1) : "";
     // var isTelconet = telconetIdStr.length > 0 ? true : false;
 
-    // self.camGrid(this.getState().grid, isTelconet);
+    // self.camGrid(this.getState().layout, isTelconet);
     self.wrapper.addClass('grid');
     setTimeout(function () {
       onCameraScreenResize();
@@ -283,30 +406,17 @@ window.screens['monitoring'] = {
       return self.createLocationHierarchy();
     });
 
-    let gridStateArray = [];
-    gridStateArray[2] = '2 x 2';
-    gridStateArray[3] = '3 x 3';
-    gridStateArray[4] = '4 x 4';
-    gridStateArray[5] = 'Custom';
-
-    let curState = self.getState();
     core.elements['header-right'].prepend(`
         <div class="monitoring-toolbar d-flex align-items-center">
             <button class="transparent-button active btn-monitoring-mode">${$.t('monitoring.live')}</button>
             <div class="transparent-button active addnote">
                 <span class="add-icon">+</span><span data-i18n="monitoring.createNote">${$.t('monitoring.createNote')}</span>
             </div>
-            <div tabindex="0" class="gridmenu hide transparent-button">
-                <span>${gridStateArray[curState.grid]}</span><i class="fa fa-angle-down" aria-hidden="true"></i>
-                <ul class="menu-dropdown gridmenu-dropdown">
-                    <li class="cam-dropdown-item grid22"><a href="javascript:;">2 x 2</a></li>
-                    <li class="cam-dropdown-item grid33"><a href="javascript:;">3 x 3</a></li>
-                    <li class="cam-dropdown-item grid44"><a href="javascript:;">4 x 4</a></li>
-                    <li class="cam-dropdown-item gridcustom"><a href="javascript:;">Custom</a></li>
-                </ul>
-            </div>
+            <div class="layout-presets-dropdown"></div>
         </div>
     `);
+
+    self.initLayoutPresetsDropdown();
 
     const monitoringModeBtn = document.querySelector('.btn-monitoring-mode');
     monitoringModeBtn.onclick = () => {
@@ -317,7 +427,7 @@ window.screens['monitoring'] = {
       } else {
         monitoringModeBtn.textContent = $.t('monitoring.live');
       }
-      self.camGrid(self.getState().grid);
+      self.camGrid(self.getState().layout);
     };
 
     var notesMode = sessionStorage.notesMode;
@@ -359,95 +469,6 @@ window.screens['monitoring'] = {
         playerCount++;
       }
     })
-
-    core.elements['header-right'].find('.grid22').click(function () {
-      $('.grid-player').removeAttr('playerNumber');
-      var playerCount = 1;
-      $('.grid2').each(function (i, el) {
-        $(el).attr('playerNumber', playerCount);
-        playerCount++;
-      })
-
-      if ($('.hidecameras').hasClass('open')) $('#cameras-list').show();
-      let state = self.getState();
-      state.grid = 2;
-      self.setState(state);
-      if (state.list && self.playerList) {
-        state.list = false;
-        self.setState(state)
-        //location.reload();
-      } else {
-        self.wrapper.find('.ratio2-inner').show();
-        self.wrapper.find('.cambd').show();
-        self.wrapper.find('.cammap').hide();
-        self.wrapper.find('.grid-stack-container').hide();
-        self.camGrid(2);
-        core.elements['header-right'].find('.gridmenu span').text($(this).text());
-      }
-    });
-    core.elements['header-right'].find('.grid33').click(function () {
-      $('.grid-player').removeAttr('playerNumber');
-      var playerCount = 1;
-      $('.grid-player').each(function (i, el) {
-        if ($(el).hasClass('grid2') || $(el).hasClass('grid3')) {
-          $(el).attr('playerNumber', playerCount);
-          playerCount++;
-        }
-      })
-
-      if ($('.hidecameras').hasClass('open')) $('#cameras-list').show();
-      let state = self.getState();
-      state.grid = 3;
-      self.setState(state);
-      if (state.list && self.playerList) {
-        state.list = false;
-        self.setState(state)
-        //location.reload();
-      } else {
-        self.wrapper.find('.ratio2-inner').show();
-        self.wrapper.find('.cambd').show();
-        self.wrapper.find('.cammap').hide();
-        self.wrapper.find('.grid-stack-container').hide();
-        self.camGrid(3);
-        core.elements['header-right'].find('.gridmenu span').text($(this).text());
-      }
-    });
-    core.elements['header-right'].find('.grid44').click(function () {
-      if (self.getState().grid == 1) location.reload();
-
-      $('.grid-player').removeAttr('playerNumber');
-      var playerCount = 1;
-      $('.grid-player').each(function (i, el) {
-        $(el).attr('playerNumber', playerCount);
-        playerCount++;
-      })
-
-      if ($('.hidecameras').hasClass('open')) $('#cameras-list').show();
-      let state = self.getState();
-      state.grid = 4;
-      self.setState(state);
-      if (state.list && self.playerList) {
-        state.list = false;
-        self.setState(state)
-        // location.reload();
-      } else {
-        self.wrapper.find('.ratio2-inner').show();
-        self.wrapper.find('.cambd').show();
-        self.wrapper.find('.cammap').hide();
-        self.wrapper.find('.grid-stack-container').hide();
-        self.camGrid(4);
-        core.elements['header-right'].find('.gridmenu span').text($(this).text());
-      }
-    });
-    core.elements['header-right'].find('.gridcustom').click(function () {
-      let state = self.getState();
-      state.grid = 5;
-      self.setState(state);
-      self.wrapper.find('.ratio2-inner').hide();
-      self.wrapper.find('.cammap').hide();
-      core.elements['header-right'].find('.gridmenu span').text($(this).text());
-      self.camGrid(5);
-    });
 
     $('.monitoring .btn-add-grid-cell').on('click', function () {
       self.addCustomGridCell();
@@ -515,8 +536,12 @@ window.screens['monitoring'] = {
 
     return defaultPromise();
   },
-  camGrid: function (size, /* 2,3,4, 5 - custom */ telconet = false) {
+  camGrid: function (presetId, telconet = false) {
     var self = this;
+    const preset = self.findLayoutPreset(presetId);
+    if (!preset) {
+      return;
+    }
 
     let isLiveMode = self.playMode === 'live';
     if (self.pageMode === 'live') {
@@ -528,7 +553,7 @@ window.screens['monitoring'] = {
       self.timestamp = "";
     }
 
-    if (size === 5) {
+    if (presetId === 'custom') {
       $('.ratio2-inner').hide();
       $('.grid-stack-container').show();
       $('.btn-add-grid-cell').show();
@@ -540,7 +565,7 @@ window.screens['monitoring'] = {
       $('.btn-add-grid-cell').hide();
       $('.grid-stack-container').hide();
       $('.ratio2-inner').show();
-      self.setGridCameras(size, telconet, isLiveMode);
+      self.setGridCameras(preset, telconet, isLiveMode);
     }
 
     self.initPlayerController();
@@ -556,7 +581,7 @@ window.screens['monitoring'] = {
       self.playerController.addEventListener('modeChange', (e) => {
         if (e.mode !== self.playMode) {
           self.playMode = e.mode;
-          self.camGrid(self.getState().grid);
+          self.camGrid(self.getState().layout);
         }
       });
     }
@@ -645,14 +670,17 @@ window.screens['monitoring'] = {
       };
     });
   },
-  setGridCameras: function (size, telconet, isLiveMode) {
+  setGridCameras: function (preset, telconet, isLiveMode) {
     const self = this;
 
-    let el = $('.screens .monitoring .camgrid2')
-    el.removeClass('grid3').removeClass('grid4');
-    if (size === 3) el.addClass('grid3');
-    if (size === 4) el.addClass('grid4');
-    let td = $('.screens .monitoring .camgrid2 > div');
+    let el = $('.screens .monitoring .camgrid2');
+    el.attr('data-layout', preset.id);
+    let gridHtml = '';
+    for (let i = 0; i < preset.count; i ++) {
+      gridHtml += `<div class="grid-player" playerNumber="${i + 1}"></div>`;
+    }
+    el.html(gridHtml);
+    let td = $('.screens .monitoring .camgrid2 > .grid-player');
     let state = self.getState();
     if (!self.playerList) {
       try {
@@ -677,26 +705,78 @@ window.screens['monitoring'] = {
       const playerHtml = isLiveMode
         ? `<player class="player grid-multiplayer" id="player${i}" name="${cameraName}" access_token="${accessToken}" recording="${recording}" ac loader_timeout=-1 ${preferredPlayerFormat}>player</player>`
         : `<vxg-cloud-player class="player" id="player${i}" playtime="${Date.now()}" autoprop muted thumbnails controls="k-control-timepicker" videomodule="k-video-vxg" multiplayer-controller-id="multiplayer-controller" name="${cameraName}" src="${accessToken}" recording="${recording}" options="{&quot;left_prefetch&quot;:1,&quot;right_prefetch&quot;:2,&quot;video_limit&quot;:1000,&quot;max_buffer_size&quot;:1000,&quot;sync_duration&quot;:15}"></vxg-cloud-player>`;
-      if ($(td[i]).hasClass('grid3')) {
-        if (size >= 3) {
-          $(td[i]).html(playerHtml);
-        } else {
-          $(td[i]).empty();
-        }
-      } else if ($(td[i]).hasClass('grid4')) {
-        if (size >= 4) {
-          $(td[i]).html(playerHtml);
-        } else {
-          $(td[i]).empty();
-        }
-      } else {
-        if (size < 2) {
-          $(td[i]).empty();
-        } else {
-          $(td[i]).html(playerHtml);
-        }
+      $(td[i]).html(playerHtml);
+    }
+  },
+  findLayoutPreset: function (presetId) {
+    for (const group of layoutPresets) {
+      const preset = group.presets.find((item) => item.id === presetId);
+      if (preset) {
+        return {
+          ...preset,
+          groupId: group.id,
+          groupName: group.title,
+          title: `${group.title}${preset.count ? ` (${preset.count})` : ''}`,
+        };
       }
     }
+    return null;
+  },
+  initLayoutPresetsDropdown: function () {
+    const self = this;
+
+    let menuHtml = '';
+    layoutPresets.forEach((group) => {
+      let listHtml = '';
+      group.presets.forEach((preset) => {
+        listHtml += `<div class="preset-item" id="${preset.id}">
+            <img src="${preset.icon}" alt="" />
+            <span>${preset.count ?? '?'}</span>
+        </div>`;
+      });
+      menuHtml += `<div class="presets-group">
+        <div class="preset-category">${group.title}</div>
+        <div class="preset-list">${listHtml}</div>
+      </div>`;
+    });
+
+    const html = `
+        <div class="dropdown-button transparent-button">
+            <span>Select Layout</span>&nbsp;&nbsp;&nbsp;
+            <i class="fa fa-angle-down" aria-hidden="true"></i>
+          </div>
+        <div class="dropdown-menu">${menuHtml}</div>
+    `;
+    $('.monitoring-toolbar .layout-presets-dropdown').html(html);
+
+    let curState = self.getState();
+    const currentPreset = self.findLayoutPreset(curState.layout);
+    if (currentPreset) {
+      $('.monitoring-toolbar .layout-presets-dropdown .dropdown-button span').html(currentPreset.title);
+      self.camGrid(currentPreset.id);
+    } else {
+      self.onSelectLayoutPreset(defaultLayoutPreset);
+    }
+
+    $('.monitoring-toolbar .layout-presets-dropdown .preset-item').on('click', function () {
+      self.onSelectLayoutPreset(this.id);
+    });
+  },
+  onSelectLayoutPreset: function (presetId) {
+    const preset = this.findLayoutPreset(presetId);
+    if (!preset) {
+      return;
+    }
+
+    $('.monitoring-toolbar .layout-presets-dropdown .dropdown-button span').html(preset.title);
+
+    let state = this.getState();
+    state.layout = presetId;
+    this.setState(state);
+
+    this.wrapper.find('.cambd').show();
+    this.wrapper.find('.cammap').hide();
+    this.camGrid(presetId);
   },
   createCustomGrid: function () {
     $('.ratio2-inner').hide();
@@ -704,29 +784,23 @@ window.screens['monitoring'] = {
 
     const self = this;
     let state = self.getState();
-    const items = state?.gridItems ?? [
-      { id: 1, x: 0, y: 0, w: 4, h: 4, content: '' },
-      { id: 2, x: 4, y: 0, w: 4, h: 4, content: '' },
-      { id: 3, x: 4, y: 4, w: 4, h: 2, content: '' },
-      { id: 4, x: 0, y: 4, w: 2, h: 2, content: '' },
-      { id: 5, x: 8, y: 0, w: 2, h: 2, content: '' },
-      { id: 6, x: 8, y: 2, w: 2, h: 2, content: '' },
-      { id: 7, x: 2, y: 4, w: 2, h: 2, content: '' },
-      { id: 8, x: 10, y: 0, w: 1, h: 1, content: '' },
-      { id: 9, x: 10, y: 1, w: 1, h: 1, content: '' },
-    ];
-    self.grid = GridStack.init();
+    const items = state?.gridItems ?? defaultCustomLayout;
+    self.initCustomGrid(items);
+
+    $('.grid-stack-container').show();
+  },
+  initCustomGrid: function (items) {
+    const self = this;
+    let state = self.getState();
+    const maxColumn = Math.max(...items.map((item) => item.x + item.w));
+    self.grid = GridStack.init({ column: maxColumn });
     self.grid.load(items);
 
     self.grid.on('added change removed', () => {
       state = self.saveCustomGrid(self.grid.engine.nodes);
     });
 
-    $('.grid-stack-container').show();
-
-    if (!state?.gridItems) {
-      self.saveCustomGrid(self.grid.engine.nodes);
-    }
+    self.saveCustomGrid(self.grid.engine.nodes);
 
     self.setPlayerEventListeners();
     self.setCustomGridEventListeners();

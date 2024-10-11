@@ -12,6 +12,23 @@ vxg.api.cloudone.partner = vxg.api.cloudone.partner || {};
 
 vxg.api.cloudone.user.login = function(obj){
     var d = $.Deferred();
+    $.ajax({
+        type: 'POST',
+        url: vxg.api.cloudone.apiSrc + '/api/v1/user/login/',
+        contentType: "application/json",
+        data: JSON.stringify(obj)
+    }).done(function(res) {
+        d.resolve(res);
+    }).fail(function(err) {
+        localStorage.removeItem("api_token");
+        sessionStorage.removeItem("api_token");
+        d.reject(err);
+    });
+    return d.promise(); 
+}
+
+vxg.api.cloudone.user.login_firebase = function(obj){
+    var d = $.Deferred();
     if (obj['password']) {
 alert('only firebase support!');
 //	obj.password = CryptoJS.SHA3(obj.password, {outputLength: vs_api.hashBits}).toString(CryptoJS.enc.Base64);

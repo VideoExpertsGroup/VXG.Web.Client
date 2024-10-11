@@ -1,6 +1,6 @@
 // CloudSDK.debug.js
 // version: 3.3.27
-// date-of-build: 241002
+// date-of-build: 241009
 // copyright (c) VXG Inc
 // Includes gl-matrix  <https://github.com/toji/gl-matrix>
 // ver: 3.3.0 // Available under MIT License 
@@ -16396,7 +16396,7 @@ window.CloudSDK = window.CloudSDK || {};
 
 // Automaticlly generated
 CloudSDK.version = '3.3.27';
-CloudSDK.datebuild = '241002';
+CloudSDK.datebuild = '241009';
 console.log('CloudSDK.version='+CloudSDK.version + '_' + CloudSDK.datebuild);
 
 window.CloudPlayerList = function(timelineId, o) {
@@ -17052,7 +17052,9 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 
     window['_CloudPlayerSDK'][playerElementID] = {};
 
-    self.element = document.getElementById(playerElementID);
+		const rootElement = document.getElementById(playerElementID);
+		rootElement.innerHTML = '<div></div>';
+    self.element = rootElement.firstChild;
     self.element.classList.add("cloudplayersdk");
     self.element.classList.add("cloudplayer");
     self.element.classList.add("green");
@@ -17091,7 +17093,7 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 	if (!key || key === '') {
 //		var msg = 'Access token is required';
 //		console.error(msg);
-		self.player._showerror(CloudReturnCode.ERROR_ACCESS_TOKEN_REQUIRED);
+// 		self.player._showerror(CloudReturnCode.ERROR_ACCESS_TOKEN_REQUIRED);
 //		self.player._setError(msg);
 //		self.player.showErrorText(msg);
 		return CloudReturnCode.ERROR_ACCESS_TOKEN_REQUIRED;

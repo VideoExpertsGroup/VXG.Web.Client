@@ -2445,7 +2445,7 @@ class CCameraMap extends HTMLElement {
 //        this.getEvents();
 
 
-        return window.vxg.cameras.getCameraListWithLatLonPromise(100,0).then(function(list){
+        return window.vxg.cameras.getCameraListWithLatLonPromise(1000,0).then(function(list){
             self.cameralist = list;
             MapMarkers.add(list);
         });

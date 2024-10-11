@@ -1,0 +1,83 @@
+.video-segments-player {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.video-segments-player * {
+  box-sizing: border-box;
+}
+
+.video-segments-player .players {
+  width: 100%;
+  height: 100%;
+}
+
+.video-segments-player .players video {
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+
+.video-segments-player .players video.active {
+  display: block;
+}
+
+.video-segments-player .controller {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 16px 12px;
+}
+
+.video-segments-player .controller .controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+}
+
+.video-segments-player .controller .controls .control {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+.video-segments-player .controller .playtime {
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.video-segments-player .controller .timeline {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: #d3d3d3;
+  border-radius: 4px;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+.video-segments-player .controller .timeline:hover {
+  opacity: 1;
+}
+.video-segments-player .controller .timeline::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.video-segments-player .controller .timeline::-moz-range-thumb {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+

@@ -883,15 +883,120 @@ class MUser{
 
 
     /**
-     * Get user by firebase token. Create user, if no exist
+     * Calls relevant get user method based on auth identity
+     * Auth config retrieved from /conf.d/auth.php
      * 
      * @param string $token token string
      * @return boolean|MUser false, if user not found or token expired
      */ 
-    public static function getUserByFirebaseToken($token){
+    public static function getUserByAuthToken($token){
         $a = dirname(dirname(dirname(__FILE__)));
         include_once($a.'/vendor/autoload.php');
-        $fj = str_replace('<?php','',file_get_contents($a.'/conf.d/firebase.php'));
+
+        // checks if firebase.php config file exists first
+        if (file_exists($a . '/conf.d/firebase.php')) {
+            $fj = str_replace('<?php','',file_get_contents($a.'/conf.d/firebase.php'));
+            return MUser::getUserByFirebaseToken($token, $fj);
+        }
+
+        $authString = str_replace('<?php','',file_get_contents($a.'/conf.d/auth.php'));
+        $auth = json_decode($authString);
+    
+        $getUserFromAuthMethodName = 'getUserBy' . ucfirst($auth->identity) . 'Token';
+        $arguments = array($token, json_encode($auth->config));
+
+        return call_user_func_array(array('MUser', $getUserFromAuthMethodName), $arguments);
+    }
+
+    /**
+     * Get user by keycloak token. Create user, if no exist
+     * 
+     * @param string $token token string
+     * @param object $kc auth config
+     * @return boolean|MUser false, if user not found or token expired
+     */ 
+    public static function getUserByKeycloakToken($token, $kcString) {
+        $kc = json_decode($kcString);
+
+        $ch = curl_init();
+        $url = $kc->url . 'realms/' . $kc->realm . '/protocol/openid-connect/userinfo';
+        $authorizationToken = 'Bearer ' . $token;
+        $clientId = $kc->clientId;
+        
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: ' . $authorizationToken));
+
+        // Disable SSL verification for dev
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        
+        $verify = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            echo 'cURL error: ' . curl_error($ch);
+        }
+        
+        if ($verify === false) {
+            return false;
+        }
+        curl_close($ch);
+        $keycloak_user = json_decode($verify);
+
+
+
+
+        
+        // $uid = $keycloak_user->sub;
+        // $default_aclrole = MUser::get_default_aclrole_id();
+        // $aclrole_id = isset($keycloak_user->resource_access->$clientId->roles[0]) ? MUser::get_aclrole_id_by_keycloak($keycloak_user->resource_access->$clientId->roles[0]) : $default_aclrole;
+        // $skins = [];
+        // foreach($skin_records as $item) { $skins[] = $item['file']; }
+        // $dom_records = MCore::$core->pdo->fetchAll('SELECT d.key_word, d.display_value FROM doms d JOIN aclrole_dom ars ON d.id = ars.dom_id WHERE ars.aclrole_id = ' . $aclrole_id);
+        // $doms = [];
+        // foreach($dom_records as $item) { $doms[] = [$item['key_word'] => $item['display_value']]; }
+
+
+
+
+        // uncomment after - commented out for testing
+        // if (!$keycloak_user->email) return false;
+        // if (!$keycloak_user->email_verified) error(401, 'Email is not verified');
+
+        $r = MCore::$core->pdo->fetchRow('SELECT * FROM "user" WHERE "email" = ? order by id desc limit 1',[$keycloak_user->email]);
+        if ($r) {
+            // MCore::$core->pdo->query('UPDATE "user" set "aclrole_id"=? where "id" = ?',[$aclrole_id, $r['id']]);
+            $user = new MUser($r);
+        } else {
+            $distr=MUser::getDefaultDistributor();
+            if (!$distr) return false;
+            $user = $distr->createUser($keycloak_user->email);
+        }
+        // $ar = MCore::$core->pdo->fetchRow('SELECT name FROM "aclroles" WHERE "id" = ? order by id desc limit 1', [$aclrole_id]);
+        // $user->aclrole = $ar ? $ar['name'] : "";
+        // $user->aclrole_id = $aclrole_id;
+        // $user->skins = $skins;
+        $user->doms = $doms;
+        $user->keycloak_user = $keycloak_user;
+        $user->keycloak_token = $token;
+
+        return $user;
+    }
+
+
+
+    /**
+     * Get user by firebase token. Create user, if no exist
+     * 
+     * @param string $token token string
+     * @param object $fj auth config
+     * @return boolean|MUser false, if user not found or token expired
+     */ 
+    public static function getUserByFirebaseToken($token, $fj){
+        // return $fj;
+        // $a = dirname(dirname(dirname(__FILE__)));
+        // include_once($a.'/vendor/autoload.php');
+        // $fj = str_replace('<?php','',file_get_contents($a.'/conf.d/firebase.php'));
         $factory = (new Factory)->withServiceAccount($fj);
         $auth = $factory->createAuth();
 

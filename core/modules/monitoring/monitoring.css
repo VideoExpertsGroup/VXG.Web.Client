@@ -4,6 +4,8 @@
 
 .ratio2-inner {
     position: relative;
+    height: 0;
+    flex-grow: 1;
     border: none;
 }
 
@@ -91,7 +93,6 @@ body:not(.monitoring) .header-right .monitoring-toolbar {
 .screens > .monitoring.grid {
     height: 100%;
     overflow-y: auto;
-    padding-bottom: 1rem;
 }
 
 .screens > .monitoring .gridmenu:focus:after {
@@ -146,14 +147,14 @@ camera-map {
 
 .screens > .monitoring .camgrid2 {
     width: 100%;
+    height: 100%;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
 }
 
-.screens > .monitoring .camgrid2 > div {
+.screens > .monitoring .camgrid2 > .grid-player {
+    position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9;
+    height: 100%;
     background: black;
     border-right: 3px solid white;
     box-sizing: border-box;
@@ -161,28 +162,112 @@ camera-map {
     overflow: hidden;
 }
 
-.screens > .monitoring .camgrid2.grid3 {
+.screens > .monitoring .camgrid2[data-layout="average-4"] {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.screens > .monitoring .camgrid2[data-layout="average-9"] {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
 }
 
-.screens > .monitoring .camgrid2.grid4 {
+.screens > .monitoring .camgrid2[data-layout="average-16"] {
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
 }
 
-.screens > .monitoring .camgrid2 > div.grid3, .screens > .monitoring .camgrid2 > div.grid4 {
-    display: none;
+.screens > .monitoring .camgrid2[data-layout="highlight-6"] {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+.screens > .monitoring .camgrid2[data-layout="highlight-6"] > .grid-player:first-child {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
 }
 
-.screens > .monitoring .camgrid2.grid3 > div.grid3 {
-    display: block;
+.screens > .monitoring .camgrid2[data-layout="highlight-8"] {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+.screens > .monitoring .camgrid2[data-layout="highlight-8"] > .grid-player:first-child {
+    grid-column: 1 / 4;
+    grid-row: 1 / 4;
 }
 
-.screens > .monitoring .camgrid2.grid4 > div.grid3, .screens > .monitoring .camgrid2.grid4 > div.grid4 {
-    display: block;
+.screens > .monitoring .camgrid2[data-layout="highlight-9"] {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+.screens > .monitoring .camgrid2[data-layout="highlight-9"] > .grid-player:first-child {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
 }
 
+.screens > .monitoring .camgrid2[data-layout="highlight-10"] {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+}
+.screens > .monitoring .camgrid2[data-layout="highlight-10"] > .grid-player:first-child {
+    grid-column: 1 / 5;
+    grid-row: 1 / 5;
+}
+
+.screens > .monitoring .camgrid2[data-layout="highlight-12"] {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+}
+.screens > .monitoring .camgrid2[data-layout="highlight-12"] > .grid-player:first-child {
+    grid-column: 1 / 6;
+    grid-row: 1 / 6;
+}
+
+.screens > .monitoring .camgrid2[data-layout="highlight-16"] {
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+}
+.screens > .monitoring .camgrid2[data-layout="highlight-16"] > .grid-player:first-child {
+    grid-column: 1 / 8;
+    grid-row: 1 / 8;
+}
+
+.screens > .monitoring .camgrid2[data-layout="vertical-2"] {
+    grid-template-rows: repeat(2, 1fr);
+}
+
+.screens > .monitoring .camgrid2[data-layout="vertical-3"] {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+.screens > .monitoring .camgrid2[data-layout="vertical-3"] > .grid-player:first-child {
+    grid-column: 1 / 3;
+}
+
+.screens > .monitoring .camgrid2[data-layout="vertical-5"] {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+.screens > .monitoring .camgrid2[data-layout="vertical-5"] > .grid-player:first-child {
+    grid-column: 1 / 3;
+    grid-row: 1 / 3;
+}
+
+.screens > .monitoring .camgrid2[data-layout="other-4"] {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+.screens > .monitoring .camgrid2[data-layout="other-4"] > .grid-player:first-child {
+    grid-column: 1 / 4;
+}
+
+.screens > .monitoring .camgrid2[data-layout="other-13"] {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+.screens > .monitoring .camgrid2[data-layout="other-13"] > .grid-player:first-child {
+    grid-column: 2 / 4;
+    grid-row: 2 / 4;
+}
 
 .c2ameras.gridtop .wrapper {
     max-height: calc(100vh - 300px);
@@ -195,6 +280,7 @@ camera-map {
 .monitoring-cont {
     display: flex;
     height: 100%;
+    overflow: auto;
 }
 
 .screens > .monitoring .camlist-monitoring {
@@ -1034,7 +1120,7 @@ input.token-input {
     width: 100%;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow: auto;
 }
 
 .row {
@@ -1207,6 +1293,9 @@ form > .location-hierarchy {
     border-radius: 3px;
 }
 
+.monitoring player > div {
+    height: 100%;
+}
 .monitoring player:not([access_token=""]) .cloudplayer,
 .monitoring vxg-cloud-player:not([src=""]) {
     border: 2px solid var(--main-color) !important;
@@ -1237,7 +1326,7 @@ form > .location-hierarchy {
     width: 100vw;
     height: 100vh !important;
     z-index: 10000;
-    overflow: hidden;
+    overflow: auto;
     background: #fffc;
     gap: 0;
 }
@@ -1253,22 +1342,58 @@ form > .location-hierarchy {
     aspect-ratio: unset;
 }
 
-.monitoring .grid-stack-container {
-    display: flex;
-    flex-direction: column;
-    overflow: scroll;
-}
-
 .monitoring .grid-stack > .grid-stack-item > .grid-stack-item-content {
     inset: 2px;
 }
 
-.monitoring .btn-add-grid-cell {
-    padding: 7px 25px;
-    margin-left: auto;
+.monitoring .grid-stack-container .custom-grid-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
 }
 
 .monitoring #multiplayer-control {
     position: relative;
     z-index: 1;
+}
+
+.monitoring-toolbar .layout-presets-dropdown {
+    position: relative;
+}
+.monitoring-toolbar .layout-presets-dropdown .dropdown-menu {
+    display: none;
+    right: 0;
+    width: 300px;
+    flex-direction: column;
+    row-gap: 16px;
+    padding: 10px;
+    font-size: 13px;
+}
+.monitoring-toolbar .layout-presets-dropdown:hover .dropdown-menu {
+    display: flex;
+    visibility: visible;
+    opacity: 1;
+}
+.monitoring-toolbar .layout-presets-dropdown .preset-category {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+.monitoring-toolbar .layout-presets-dropdown .preset-list {
+    display: grid;
+    grid-template-columns: repeat(4, 64px);
+    grid-gap: 8px;
+}
+.monitoring-toolbar .layout-presets-dropdown .preset-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.monitoring-toolbar .layout-presets-dropdown .preset-item span {
+    position: absolute;
+    width: initial;
+    color: white;
+    font-weight: bold;
 }

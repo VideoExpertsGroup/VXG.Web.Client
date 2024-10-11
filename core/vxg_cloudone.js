@@ -22,7 +22,7 @@ camera_help: 'https://help.videoexpertsgroup.com/kb/sonnecting-ip-cameras'
 vxg.user.getToken = function(){
     if (!window.firebase)
         return new Promise(function(resolve, reject){setTimeout(function(){reject();}, 0);});
-    return Promise.resolve(firebase.auth().currentUser.getIdToken());
+    return Promise.resolve(auth.getToken());
 }
 
 vxg.user.getUsedPlans = function(){

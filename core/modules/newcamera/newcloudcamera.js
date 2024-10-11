@@ -704,7 +704,7 @@ CameraCloudEditControl = function(){
         var classSelf = this;
         locationHierarchy = window.core.locationHierarchy.sortLocations(locationHierarchy);
         if ( Object.keys(locationHierarchy).length == 0) {
-            dropdownTreeStr = `<p class='nolocs font-md'>No ${$.t('common.location')}s have been set for this account. Add a ${$.t('common.location')} below</p>`
+            dropdownTreeStr = "<p class='nolocs font-md'>No locations have been set for this account. Add a location below</p>"
         } else {
             var dropdownTree = this.createLocationList(locationHierarchy)
             dropdownTreeStr = $(dropdownTree).prop('outerHTML');
@@ -714,14 +714,14 @@ CameraCloudEditControl = function(){
         var existingValue = editingLoc ? editingLoc : "";
 
         var locationDialog = `
-            <h4 class="locations-title">${$.t('common.location')}s</h4>
+            <h4 class="locations-title">Locations</h4>
             ${dropdownTreeStr}
             <p class="location-info"> 
-                To add a new location under an existing ${$.t('common.location')}, choose the existing ${$.t('common.location')} from the list above. 
-                Then add the name or list of names seperated by commas you want to add under that chosen ${$.t('common.location')}.
+                To add a new location under an existing location, choose the existing location from the list above. 
+                Then add the name or list of names seperated by commas you want to add under that chosen location.
             </p>
             <div class="existing-loc-cont">
-                <label for="show_existing_loc">Existing ${$.t('common.location')}:</label>
+                <label for="show_existing_loc">Existing Location:</label>
                 <div class="existing-input-cont">
                     <input name="show_existing_loc" class="disabled choosen-location" type="text" value="${showValue}"></input>
                     <input name="existing_loc" class="choosen-location" type="hidden" value="${existingValue}"></input>
@@ -729,8 +729,8 @@ CameraCloudEditControl = function(){
                 </div>
             </div>
             <div class="new-loc-cont">
-                <label for="new_loc" title="${$.t('common.location')} will be added to the existing ${$.t('common.location')} choosen. Separate any sublevel ${$.t('common.location')} you want to add by commas">Add New ${$.t('common.location')}:</label>
-                <input name="new_loc" title="${$.t('common.location')} will be added to the existing ${$.t('common.location')} choosen. Separate any sublevel ${$.t('common.location')} you want to add by commas" class="new-location" type="text"></input>
+                <label for="new_loc" title="Location will be added to the existing location choosen. Separate any sublevel locations you want to add by commas">Add New Location:</label>
+                <input name="new_loc" title="Location will be added to the existing location choosen. Separate any sublevel locations you want to add by commas" class="new-location" type="text"></input>
             </div>
             <button name="select" class="vxgbutton assign-btn">Select</button>
         `
@@ -740,12 +740,12 @@ CameraCloudEditControl = function(){
             var existing_loc = r.form.existing_loc ? r.form.existing_loc.split(":") : [];
             var locArr = r.form.existing_loc ? r.form.existing_loc.split(":") : [];
             if (locArr.length == locTypes.length) {
-                alert("Cannot add a new ${$.t('common.location')} to a "+ locTypes[locTypes.length - 1] +".");
+                alert("Cannot add a new location to a "+ locTypes[locTypes.length - 1] +".");
             }
 
             var bannedLocChars = ["'", '"', '`', ":"];
             if (r.form.new_loc && bannedLocChars.some(c => r.form.new_loc.includes(c))) {
-                alert(`${$.t('common.location')} cannot contain characters ` + bannedLocChars.join(", "));
+                alert("Location cannot contain characters " + bannedLocChars.join(", "));
                 return;
             } 
            
