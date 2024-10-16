@@ -570,14 +570,18 @@ window.screens['login'] = {
 	logout: function() {
 		auth.logout();
 		// firebase.auth().signOut().then(function(){
-		// // sessionStorage.removeItem("backToCam");
-		// // sessionStorage.removeItem("aiCams");
-		// // sessionStorage.removeItem("cameraUrls");
-		// // localStorage.removeItem("cameraList");
-		// // localStorage.removeItem("cameraList_expiry");
-		// // localStorage.removeItem("locPath");
-		// // localStorage.removeItem("locationHierarchy");
-		// // localStorage.removeItem("menuState");
+		sessionStorage.removeItem("backToCam");
+		sessionStorage.removeItem("aiCams");
+		sessionStorage.removeItem("cameraUrls");
+		localStorage.removeItem("cameraList");
+		localStorage.removeItem("cameraList_expiry");
+		localStorage.removeItem("locPath");
+		localStorage.removeItem("locationHierarchy");
+		localStorage.removeItem("locationHierarchyCams");
+		localStorage.removeItem("noLocCams");
+
+		localStorage.removeItem("menuState");
+
 		// sessionStorage.clear();
 		// localStorage.clear();
 

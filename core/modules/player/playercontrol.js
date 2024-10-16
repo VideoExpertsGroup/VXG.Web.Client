@@ -55,6 +55,12 @@ window.controls['player'] = {
                 window.controls['player'].players['player' + this.newid].stop();
             }
         };
+        this.setQuality = function(qualityType) {
+            if (window.controls['player'].players['player' + this.newid] !== undefined) {
+                window.controls['player'].players['player' + this.newid].player._setQuality(qualityType);
+            }
+        }
+
         $(this).html('<div id="player' + this.newid + '"></div>');
         window.controls['player'].players = window.controls['player'].players || {};
 

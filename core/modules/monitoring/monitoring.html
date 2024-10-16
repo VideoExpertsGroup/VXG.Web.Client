@@ -34,6 +34,18 @@
         </div>
       </div>
       <div id="multiplayer-control"></div>
+      <div class="quality-switch">
+        <label class="filter-label custom-checkbox">
+          <span data-i18n="monitoring.reliableMode">Reliable Mode</span>
+          <input type="checkbox" class="hls_checkbox" id="hls_checkbox" name="hls_format" >
+          <span class="checkmark"></span>	
+        </label>
+        <label class="filter-label custom-checkbox">
+          <span data-i18n="monitoring.liveStreamingProfile">Live Streaming Profile (this action may take up to 15 seconds)</span>
+          <input type="checkbox" class="profile_checkbox" id="profile_checkbox" name="live_profile" value="true">
+          <span class="checkmark"></span>	
+        </label>      
+      </div>
     </div>
     <div class="notes-cont monitoring-notes">
       <button class="vxgbutton hidenotes open"><i class="fa fa-angle-right" aria-hidden="true"></i><span class="hide-section" data-i18n="monitoring.hideNotes">Hide Notes</span></button>

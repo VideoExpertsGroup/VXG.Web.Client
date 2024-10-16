@@ -169,6 +169,8 @@ window.screens['monitoring'] = {
             }
         }
 
+        $("#profile_checkbox").prop('checked', false);
+
     let self = this;
     let p = this.wrapper.find('player');
     for (i = 0; i < p.length; i++) {
@@ -405,6 +407,27 @@ window.screens['monitoring'] = {
       $(".camlist-monitoring").append($('<div class="loader section-loader monitoring-loader"></div>'))
       return self.createLocationHierarchy();
     });
+
+    $('#hls_checkbox').on('click', function() {
+      // change to jpeg or hls
+      var format = $(this).is(":checked")? "html5" : "jpeg";
+      localStorage.monitoringMode = format;
+      if (format == "html5") $("#hls_checkbox").prop('checked', true)
+      self.destroyPlayerController();
+      self.camGrid(self.getState().layout);
+    });
+
+    $("#profile_checkbox").on('click', function() {
+      var quality = $(this).is(":checked") ? "live" : "main";
+      localStorage.useLiveMonitoring = quality;
+      let p = self.wrapper.find('player');
+      for (i = 0; i < p.length; i++) {
+        if ($(p[i]).attr('access_token')) {
+          p[i].setQuality(quality);
+        }
+      }
+    });
+    //if (localStorage.useLiveMonitoring == "live") $("#profile_checkbox").prop('checked', true)
 
     core.elements['header-right'].prepend(`
         <div class="monitoring-toolbar d-flex align-items-center">
@@ -689,7 +712,16 @@ window.screens['monitoring'] = {
         self.playerList = null;
       }
     }
-    const preferredPlayerFormat = (window.skin.grid && window.skin.grid.preferredPlayerFormat) ? (' preferredPlayerFormat="' + window.skin.grid.preferredPlayerFormat + '" ') : ('');
+
+    var playerFormat = "jpeg";
+
+    if ($("#hls_checkbox").is(":checked") || localStorage.monitoringMode == "html5") {
+      playerFormat = "html5";
+      $("#hls_checkbox").prop('checked', true);
+      localStorage.monitoringMode = "html5";
+    }
+
+    const preferredPlayerFormat = ' preferredPlayerFormat="' + playerFormat + '" ';
 
     for (let i = 0; i < td.length; i++) {
       let camera = !telconet ? state.cams['player' + i] : null;
@@ -969,6 +1001,11 @@ window.screens['monitoring'] = {
                     }
                     if (noLocsCams_noStorage.length > 0) localStorage.noLocCams = JSON.stringify(noLocsCams_noStorage);
                     $(".camlist-monitoring").append(noLocsDiv);
+
+                    $('.loc-draggable, .parent-cam, .camgrid2').on("dragstart", function(e) {
+                      e.stopPropagation();
+                      e.originalEvent.dataTransfer.setData('text', e.currentTarget.id);
+                  });
                 })
             } else {
                 var noLocsDiv;

@@ -1,6 +1,6 @@
 // CloudSDK.debug.js
 // version: 3.3.27
-// date-of-build: 241009
+// date-of-build: 241016
 // copyright (c) VXG Inc
 // Includes gl-matrix  <https://github.com/toji/gl-matrix>
 // ver: 3.3.0 // Available under MIT License 
@@ -6373,6 +6373,7 @@ window.CloudPlayer = function(elid, options){
 
 	self.mPTZActions = null;
 	self.mPTZShow = true;
+	self.mPTZTimer = null;
 
 	self.isMobile = CloudHelpers.isMobile();
 
@@ -7227,159 +7228,57 @@ window.CloudPlayer = function(elid, options){
 	// 	el_info.style.display = 'none';
 	// }
 
-	el_controls_ptz_left.onmousedown = function(){
-	    var api = mConn._getAPI()
-	    if (api == null) {
-		return;
-	    }
-	    if (!self.mPTZActions || (self.mPTZActions.indexOf('left') == -1) ) {
-		return;
-	    }
+	const executePtzAction = (action, timeout, repeat) => {
+		if (self.mPTZTimer) {
+			clearInterval(self.mPTZTimer);
+			self.mPTZTimer = null;
+		}
 
-	    var data = {
-		"action":"left",
-		"timeout": 10000
-	    }
-	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('shifted to left');
-	    }).fail(function(r){
-		console.error(r);
-	    });
+		const api = mConn._getAPI();
+		if (!api || !self.mPTZActions || !self.mPTZActions.includes(action)) {
+			return;
+		}
+
+		const data = {
+			action,
+			timeout,
+		};
+		api.cameraPtzExecute(self.mSrc.getID(), data);
+		if (repeat) {
+			self.mPTZTimer = setInterval(() => {
+				api.cameraPtzExecute(self.mSrc.getID(), data);
+			}, timeout - 100);
+		}
 
 		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
-			action: 'left',
+			action,
 			preset_number: mSelectedPtzPreset.id,
 			camera_id: self.mSrc.getID(),
 		});
+	};
+
+	el_controls_ptz_left.onmousedown = function(){
+		executePtzAction('left', 1000, true);
 	}
 
 	el_controls_ptz_right.onmousedown = function(){
-	    var api = mConn._getAPI()
-	    if (api == null) {
-		return;
-	    }
-	    if (!self.mPTZActions || (self.mPTZActions.indexOf('right') == -1) ) {
-		return;
-	    }
-
-	    var data = {
-		"action":"right",
-		"timeout": 10000
-	    }
-	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('shifted to right');
-	    }).fail(function(r){
-		console.error(r);
-	    });
-
-		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
-			action: 'right',
-			preset_number: mSelectedPtzPreset.id,
-			camera_id: self.mSrc.getID(),
-		});
+		executePtzAction('right', 1000, true);
 	}
 
 	el_controls_ptz_up.onmousedown = function(){
-    	    var api = mConn._getAPI()
-	    if (api == null) {
-		return;
-	    }
-	    if (!self.mPTZActions || (self.mPTZActions.indexOf('top') == -1) ) {
-		return;
-	    }
-
-	    var data = {
-		"action":"top",
-		"timeout": 10000
-	    }
-	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('shifted to up');
-	    }).fail(function(r){
-		console.error(r);
-	    });
-
-		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
-			action: 'top',
-			preset_number: mSelectedPtzPreset.id,
-			camera_id: self.mSrc.getID(),
-		});
+		executePtzAction('top', 1000, true);
 	}
 
 	el_controls_ptz_down.onmousedown = function(){
-	    var api = mConn._getAPI()
-	    if (api == null) {
-		return;
-	    }
-	    if (!self.mPTZActions || (self.mPTZActions.indexOf('bottom') == -1) ) {
-		return;
-	    }
-
-	    var data = {
-		"action":"bottom",
-		"timeout": 10000
-	    }
-	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('shifted to down');
-	    }).fail(function(r){
-		console.error(r);
-	    });
-
-		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
-			action: 'bottom',
-			preset_number: mSelectedPtzPreset.id,
-			camera_id: self.mSrc.getID(),
-		});
+		executePtzAction('bottom', 1000, true);
 	}
 
 	el_controls_ptz_zoomin.onmousedown = function(){
-	    var api = mConn._getAPI()
-	    if (api == null) {
-		return;
-	    }
-	    if (!self.mPTZActions || (self.mPTZActions.indexOf('zoom_in') == -1) ) {
-		return;
-	    }
-
-	    var data = {
-		"action":"zoom_in",
-		"timeout": 10000
-	    }
-	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('Zoomed in');
-	    }).fail(function(r){
-		console.error(r);
-	    });
-
-		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
-			action: 'zoom_in',
-			preset_number: mSelectedPtzPreset.id,
-			camera_id: self.mSrc.getID(),
-		});
+		executePtzAction('zoom_in', 1000, true);
 	}
 
 	el_controls_ptz_zoomout.onmousedown = function(){
-	    var api = mConn._getAPI()
-	    if (api == null) {
-		return;
-	    }
-	    if (!self.mPTZActions || (self.mPTZActions.indexOf('zoom_out') == -1) ) {
-		return;
-	    }
-	    var data = {
-		"action":"zoom_out",
-		"timeout": 10000
-	    }
-	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('Zoomed out');
-	    }).fail(function(r){
-		console.error(r);
-	    });
-
-		mCallbacks.executeCallbacks(CloudPlayerEvent.ACTIVITY_PTZ, {
-			action: 'zoom_out',
-			preset_number: mSelectedPtzPreset.id,
-			camera_id: self.mSrc.getID(),
-		});
+		executePtzAction('zoom_out', 1000, true);
 	}
 
 	el_controls_ptz_zoomin.onmouseup =
@@ -7388,22 +7287,7 @@ window.CloudPlayer = function(elid, options){
 	el_controls_ptz_right.onmouseup =
 	el_controls_ptz_up.onmouseup =
 	el_controls_ptz_down.onmouseup = function(){
-    	    var api = mConn._getAPI()
-	    if (api == null) {
-		return;
-	    }
-	    if (!self.mPTZActions || (self.mPTZActions.indexOf('stop') == -1) ) {
-		return;
-	    }
-	    var data = {
-		"action": "stop",
-		"timeout": 1000
-	    }
-	    api.cameraPtzExecute(self.mSrc.getID(), data).done(function(r){
-		console.log('stop move');
-	    }).fail(function(r){
-		console.error(r);
-	    });
+		executePtzAction('stop', 1000, false);
 	}
 
 	el_controls_zoom_switcher.onclick = function(){
@@ -8786,6 +8670,10 @@ window.CloudPlayer = function(elid, options){
 			console.error("[CloudPlayer] error save format: ", e)
 		}
 		_updatePlayerFormatUI();
+	}
+
+	self.setQuality = function(s) {
+		_applyQuality(s);
 	}
 
 	self.getPlayerFormat = function(){
@@ -16396,7 +16284,7 @@ window.CloudSDK = window.CloudSDK || {};
 
 // Automaticlly generated
 CloudSDK.version = '3.3.27';
-CloudSDK.datebuild = '241009';
+CloudSDK.datebuild = '241016';
 console.log('CloudSDK.version='+CloudSDK.version + '_' + CloudSDK.datebuild);
 
 window.CloudPlayerList = function(timelineId, o) {
@@ -17066,8 +16954,6 @@ window.CloudPlayerSDK = function(playerElementID, o) {
 
     self.local_player = new vxgplayer(playerElementID+'_lplayer', self.options);
     self.player = new CloudPlayer(playerElementID+'_cplayer', self.options);
-
-    console.log("self.options: ", self.options);
 
 /*
     if((self.options.timeline != null)&&(self.options.timeline != false)){

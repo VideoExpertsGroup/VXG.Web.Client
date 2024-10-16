@@ -371,7 +371,9 @@
     "noNotes": "No notes. Go to the timeline view of a camera to create a note.",
     "live": "Live",
     "recorded": "Recorded",
-    "liveMode": "Live Mode"
+    "liveMode": "Live Mode",
+    "reliableMode": "Reliable Mode",
+    "liveStreamingProfile": "Live Streaming Profile (this action may take up to 15 seconds)"
   },
   "notes": {
     "title": "Notes"
