@@ -904,7 +904,11 @@ CameraEditControl = function(){
                             window.core.locationHierarchy.updateCamInHierarchy(locationHierarchyCams, oldLocArr, formattedCam);
                         localStorage.locationHierarchyCams = JSON.stringify(locationHierarchyCams);
 
-                        var tableData = $("#table").bootstrapTable('getData');
+                        var tableData = $("#table").bootstrapTable('getData', {
+                            useCurrentPage: false,
+                            includeHiddenRows: true,
+                            unfiltered: true
+                        });
                         var rowIndex = tableData.findIndex((cam) => cam.camId == updatedCam.id);
                         var order = rowIndex + 1;
                         let captured = updatedCam && updatedCam.meta && updatedCam.meta.capture_id && vxg.user.src.capture_id == updatedCam.meta.capture_id ? ' captured' : '';
@@ -913,24 +917,23 @@ CameraEditControl = function(){
                         if (tableGroup.toLocaleLowerCase() == "favorite" || tableGroup.toLocaleLowerCase() == "favourite") {
                             tableGroup = $.t('common.favourite');
                         }
-                        $("#table").bootstrapTable('updateRow', {
-                            index: rowIndex,
-                            row: {
-                                camId: updatedCam.id,
-                                state: `<label class="filter-label custom-checkbox" style="margin-left: 25%;">
-                                <input type="checkbox" class="groupCamCheck" cam_name="${updatedCam.name}" cam_id="${updatedCam.id}" cam_order="${order}">
-                                <span class="checkmark"></span>	
-                            </label>`,
-                                id: `<div class="camerablock${captured}" access_token="${updatedCam.id}" id="scrollto${updatedCam.id}">
-                                <campreview onclick_toscreen="tagsview" style="cursor: pointer;"></campreview>`,
-                                status: statusBlock,
-                                recording: updatedCam.recording ? $.t('action.yes') : $.t('action.no'),
-                                name: updatedCam.name +  `${updatedCam.meta?.subid == 'NOPLAN' ? ' (' + $.t('common.noSubscription') + ')' : ''}`,
-                                location: updatedCam.meta && updatedCam.meta.location ? updatedCam.meta.location : "",
-                                group: tableGroup,
-                                hide: 1
-                            }
-                        })
+                        var updatedRow = {
+                            camId: updatedCam.id,
+                            state: `<label class="filter-label custom-checkbox" style="margin-left: 25%;">
+                            <input type="checkbox" class="groupCamCheck" cam_name="${updatedCam.name}" cam_id="${updatedCam.id}" cam_order="${order}">
+                            <span class="checkmark"></span>	
+                        </label>`,
+                            id: `<div class="camerablock${captured}" access_token="${updatedCam.id}" id="scrollto${updatedCam.id}">
+                            <campreview onclick_toscreen="tagsview" style="cursor: pointer;"></campreview>`,
+                            status: statusBlock,
+                            recording: updatedCam.recording ? $.t('action.yes') : $.t('action.no'),
+                            name: updatedCam.name +  `${updatedCam.meta?.subid == 'NOPLAN' ? ' (' + $.t('common.noSubscription') + ')' : ''}`,
+                            location: updatedCam.meta && updatedCam.meta.location ? updatedCam.meta.location : "",
+                            group: tableGroup,
+                            hide: 1
+                        }
+                        tableData[rowIndex] = { ...tableData[rowIndex], ...updatedRow };
+                        $("#table").bootstrapTable('load', tableData);
 
 						return screens['cameras'].on_show();
 					})
