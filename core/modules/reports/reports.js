@@ -42,6 +42,7 @@ function wrapRequest_cameraList_vxcore_to_vsapi (obj){
 };
 
 function listActivityCB( operation,  obj ) {
+	if (!obj) return;
 	let camid = obj['camid'];
 	let time  = obj['time'];
 	let timestamp = (new Date(time)).getTime();

@@ -220,7 +220,7 @@ window.screens['activity'] = {
 
 			var activityFilter = localStorage.getItem("activityFilter");
 			var savedFiltersStr = activityFilter == null ? window.skin.use_filter : activityFilter;
-			var savedFilters = savedFiltersStr ? savedFiltersStr.split(',') : [];
+			var savedFilters = Array.isArray(savedFiltersStr) ? savedFiltersStr : (savedFiltersStr ? savedFiltersStr.split(',') : []);
 			const mergedAliasesAndEvents = [...self.aliases, ...self.events];
 			var defaultFilters = mergedAliasesAndEvents.join(',');
 			var customFiltersList = savedFilters.filter(f => !defaultFilters.includes(f) );

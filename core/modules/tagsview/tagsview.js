@@ -230,7 +230,8 @@ window.screens['tagsview'] = {
 	console.warn('Something wrong' + err);
     },
     listActivityCB: function ( operation,  obj ) {
-	let camid = obj['camid'];
+    // if (!obj) return;
+	// let camid = obj['camid'];
 	let time  = obj['time'];
 	let timestamp = (new Date(time)).getTime();
 	let self = window.screens['tagsview'];
