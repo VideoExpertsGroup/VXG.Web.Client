@@ -1095,3 +1095,16 @@ vxg.api.cloud.getAllNotes = function(group_access_token) {
 //         data: JSON.stringify(data)
 //     });
 // }
+
+vxg.api.cloud.getAliases = function(user_lkey){
+    var headers = {};
+    headers['Authorization'] = 'LKey ' + user_lkey;
+    if (!headers)
+        return new Promise(function(resolve, reject){setTimeout(function(){reject('No token for access');}, 0);});
+    return $.ajax({
+        type: 'GET',
+        url: vxg.api.cloud.apiSrc+'/api/v3/aliases',
+        headers: headers,
+        contentType: "application/json",
+    });
+};

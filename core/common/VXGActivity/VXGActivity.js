@@ -19,8 +19,9 @@ VXGActivityModel.prototype.getData = function getData( params, updateDataCBFunc,
 			waitFunc(true);
 
 	// Konst We need to change requestParams on parameters and change API a little bit 
-	if (requestParams.events != undefined || requestParams.camid != undefined || requestParams.end != undefined) hasFilter = true;
+	if (requestParams.events != undefined || requestParams.aliases != undefined || requestParams.camid != undefined || requestParams.end != undefined) hasFilter = true;
 	else hasFilter = false;
+	
     apiFunc (requestParams['token'], requestParams['limit'], requestParams['offset'], requestParams ).done(function (eventlist) {
 	waitFunc(false);
 	params.requestParams.offset = prevOffset;
@@ -236,8 +237,8 @@ VXGActivityView.prototype.ActivitiesList_resolve_name = function ActivitiesList_
     var name = "";
     switch(event_name) {
 	case "yolov4_detection":
-	case "object_and_scene_detection":
-	    name=$.t('common.eventTypes.objectDetection');break;
+	// case "object_and_scene_detection":
+	//     name=$.t('common.eventTypes.objectDetection');break;
 	case "post_object_and_scene_detection":
 	    name=$.t('common.eventTypes.peopleDetection');break;
 	case "facial_analysis":
@@ -256,6 +257,16 @@ VXGActivityView.prototype.ActivitiesList_resolve_name = function ActivitiesList_
 		name=$.t('common.eventTypes.crowd');break;
 	case "plate_recognition":
 		name=$.t('common.eventTypes.LPR');break;
+	case "face_detection":
+		name=$.t('common.eventTypes.face_detection');break;
+	case "intrusion":
+		name=$.t('common.eventTypes.intrusion');break;
+	case "line_crossing":
+		name=$.t('common.eventTypes.line_crossing');break;
+	case "object_and_scene_detection":
+		name=$.t('common.eventTypes.object_and_scene_detection');break;
+	case "search_multiple_users_in_image_v2":
+		name=$.t('common.eventTypes.search_multiple_users_in_image_v2');break;
 	default:
 	    name=event_name;break;
     }
@@ -599,7 +610,7 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 				// 				</div>`,
 				time: `<span class="text-muted">${timeString}</span>`,
 				cameraInfo: `<span>${cameraInfo}</span>`,
-				type: `<div class="event-name ${eventStatus}" id="event_name_${this.id}"><span class="font-md">${self.ActivitiesList_resolve_name(this.name)}</span></div>`,
+				type: `<div class="event-name ${eventStatus}" id="event_name_${this.id}"><span class="font-md">${self.ActivitiesList_resolve_name(this.alias ? this.alias : this.name)}</span></div>`,
 				status: statusBlock,
 				meta: metaData,
 			});
@@ -821,6 +832,10 @@ VXGActivityView.prototype.render = function render(controller, params, VXGActivi
 		localStorage.setItem('initialLoading', false);
 	}
 
+	if (localStorage.getItem('page') === 'activity') {
+		self.callbackFunc('event', null);
+	}
+
 	$('.VXGActivityContainer .pagination li.page-pre').addClass('disabled');
 
 	$(activitiesContainer).on('page-change.bs.table', function (e, arg1, arg2) {
@@ -1036,7 +1051,26 @@ VXGActivityController.prototype.showActivityList = function showActivityList ( r
 		}
 	};
 	if (localStorage.getItem("page") === "activity") {
-		if (f) params.requestParams.events = f;
+
+		if (f) {
+			const aliases = [];
+			const events = [];
+
+			let fArray;
+			if (typeof f === 'string') fArray = f.split(',');
+			else fArray = f;
+
+			fArray.forEach(item => {
+				if (['network', 'object_and_scene_detection', 'search_multiple_users_in_image_v2'].includes(item)) events.push(item);
+				else aliases.push(item);
+			});
+
+			params.requestParams.aliases = aliases.length ? aliases.join(',') : undefined;
+			params.requestParams.events =  events.length ? events.join(',') : undefined;
+		}
+
+
+		// if (f) params.requestParams.aliases = f;
 		if (tf) params.requestParams.end = tf;
 		if (c1f) params.requestParams.camid = c1f;
 

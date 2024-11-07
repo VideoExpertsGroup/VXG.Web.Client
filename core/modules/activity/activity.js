@@ -6,6 +6,10 @@ function somethingWrong2( err ) {
 }
 
 function listActivityCB2( operation,  obj ) {
+	$('.activity').not('.menu-item').removeClass('loader');
+
+	if (!obj) return;
+
 	let access_token = obj['access_token'];
 	let time  = obj['time'];
 	let camera = obj['camera'];
@@ -62,11 +66,22 @@ window.screens['activity'] = {
 	this.activate();
         // targetElement.acceptVXGFilter(search_obj);
     },
-    'on_before_show':function(r){
+    'on_before_show':async function(r){
+			const self = this;
 			localStorage.setItem("page", "activity");
         if (this.from_back) return defaultPromise();;
         if (this.scroll_top!==undefined)
             delete this.scroll_top;
+
+				const { data: lkey } = await vxg.api.cloudone.license();
+				const aliasesRes = await vxg.api.cloud.getAliases(lkey);
+				this.aliases = aliasesRes.objects.map(aliases => aliases.alias_name);
+
+				const activityFilter = localStorage.getItem("activityFilter");
+				const mergedAliasesAndEvents = [...this.aliases, ...this.events]
+				if (activityFilter) window.skin.use_filter = activityFilter;
+				else window.skin.use_filter = mergedAliasesAndEvents;
+
 
 //        alert('show Testscreen');
 	    targetElement = this.wrapper.find('.activity_activitylist')[0];
@@ -83,6 +98,7 @@ window.screens['activity'] = {
 				newCam.src = cam;
 				return newCam;
 			})
+			
 			if (cameras.length > 0) {
 				let camera0	= cameras[0];
 				
@@ -92,7 +108,7 @@ window.screens['activity'] = {
 				targetElement.setCameraArray(cameras);
 						camera0.getToken().then(function(token){
 													localStorage.setItem("initialLoading", true);
-													targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,200,true, true);
+													targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,200,true, true, null);
 						});
 	
 			} else {
@@ -109,7 +125,7 @@ window.screens['activity'] = {
 					targetElement.setCameraArray(answer);
 							camera0.getToken().then(function(token){
 														localStorage.setItem("initialLoading", true);
-														targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,200,true, true);
+														targetElement.showActivityList( token, allCamToken, apiGetActivityFunc.bind(this) , somethingWrong2.bind(this), controlCbFunc.bind(this),0,200,true);
 							});
 		
 				}else {
@@ -120,6 +136,7 @@ window.screens['activity'] = {
         return defaultPromise();
     },
     'on_show':function(r){
+			$('.activity').not('.menu-item').addClass('loader');
 		core.elements['header-search'].show();
 		$('.mainsearch').find('input').attr("placeholder", "Search Tags");
         if (core.elements['header-search']) core.elements['header-search'].find('input').val(localStorage.getItem('activityTextFilter') ?? window.skin.use_text_filter);
@@ -140,7 +157,7 @@ window.screens['activity'] = {
     },
 // Когда все скрипты и стили загружены <i class="fa fa-filter" aria-hidden="true"></i>
 
-    'on_ready':function(){
+    'on_ready': async function(){
         let self = this;
         core.elements['header-right'].prepend(`<div class="activityfilterContainer">
 													<div class="transparent-button activityfilter">
@@ -196,10 +213,16 @@ window.screens['activity'] = {
 			// 	buttonClass = 'set';
 			// }
 
+			// const { data: lkey } = await vxg.api.cloudone.license();
+			// const aliasesRes = await vxg.api.cloud.getAliases(lkey);
+			// const aliases = aliasesRes.objects.map(aliases => aliases.alias_name)
+			// console.log(aliases);
+
 			var activityFilter = localStorage.getItem("activityFilter");
 			var savedFiltersStr = activityFilter == null ? window.skin.use_filter : activityFilter;
 			var savedFilters = savedFiltersStr ? savedFiltersStr.split(',') : [];
-			var defaultFilters = "motion,object_and_scene_detection,post_object_and_scene_detection,network,vehicle_stopped_detection,plate_recognition,crowd_detection";
+			const mergedAliasesAndEvents = [...self.aliases, ...self.events];
+			var defaultFilters = mergedAliasesAndEvents.join(',');
 			var customFiltersList = savedFilters.filter(f => !defaultFilters.includes(f) );
 			var customFilterString = "";
 			customFiltersList.forEach(c => { customFilterString += (customFilterString?', ':'')+c; });
@@ -222,62 +245,21 @@ window.screens['activity'] = {
 					<div class="type-filter-cont">
 						<label class="type-filter-label font-md" data-i18n="activity.eventTypeLabel">${$.t('activity.eventTypeLabel')}</label>
 						<ul class="activitylist">
-							<li>
-								<label class="filter-label custom-checkbox">
-									<span>${$.t('common.eventTypes.network')}</span>
-									<input type="checkbox" `+(savedFilters.indexOf('network')!==-1?'checked':'')+` name="network">
-									<span class="checkmark"></span>		
-								</label>
-							</li>
-							<li>
-								<label class="filter-label custom-checkbox">
-									<span>${$.t('common.eventTypes.motion')}</span>
-									<input type="checkbox" `+(savedFilters.indexOf('motion')!==-1?'checked':'')+` name="motion">
-									<span class="checkmark"></span>	
-								</label>
-							</li>
-							<li>
-								<label class="filter-label custom-checkbox">
-									<span>${$.t('common.eventTypes.objectDetection')}</span>
-									<input type="checkbox" `+(savedFilters.indexOf('object_and_scene_detection')!==-1?'checked':'')+` name="object_and_scene_detection">
-									<span class="checkmark"></span>	
-								</label>
-							</li>
-							<li>
-								<label class="filter-label custom-checkbox">
-									<span class="event-disabled">${$.t('common.eventTypes.facialRecognition')}</span>
-									<input type="checkbox" disabled name="facial_recognition">
-									<span class="checkmark"></span>		
-								</label>
-							</li>
-							<!--<li>
-								<label class="filter-label custom-checkbox">
-									<span>${$.t('common.eventTypes.peopleDetection')}</span>
-									<input type="checkbox" `+(savedFilters.indexOf('post_object_and_scene_detection')!==-1?'checked':'')+` name="post_object_and_scene_detection">
-									<span class="checkmark"></span>		
-								</label>
-							</li>
-							<li>
-								<label class="filter-label custom-checkbox">
-									<span>${$.t('common.eventTypes.vehicleStopped')}</span>
-									<input type="checkbox" `+(savedFilters.indexOf('vehicle_stopped_detection')!==-1?'checked':'')+` name="vehicle_stopped_detection">
-									<span class="checkmark"></span>		
-								</label>
-							</li>
-							<li>
-								<label class="filter-label custom-checkbox">
-									<span>${$.t('common.eventTypes.LPR')}</span>
-									<input type="checkbox" `+(savedFilters.indexOf('plate_recognition')!==-1?'checked':'')+` name="plate_recognition">
-									<span class="checkmark"></span>		
-								</label>
-							</li>
-							<li>
-								<label class="filter-label custom-checkbox">
-									<span>${$.t('common.eventTypes.crowd')}</span>
-									<input type="checkbox" `+(savedFilters.indexOf('crowd_detection')!==-1?'checked':'')+` name="crowd_detection">
-									<span class="checkmark"></span>		
-								</label>
-							</li>-->
+
+							${
+								mergedAliasesAndEvents.map(name => (
+									`
+									<li>
+										<label class="filter-label custom-checkbox">
+											<span>${$.t(`common.eventTypes.${name}`)}</span>
+											<input type="checkbox" `+(savedFilters.indexOf(name)!==-1?'checked':'')+` name=${name}>
+											<span class="checkmark"></span>		
+										</label>
+									</li>
+									`
+								)).join('')
+							}
+
 							<li>
 								<p class="custom-input-label">${$.t('activity.customEventList')}</p>
 								<input type="text" class="custom-filter-input" name="custom_filter_list" value="${customFilterString}">
@@ -351,7 +333,9 @@ window.screens['activity'] = {
 			}
 //        alert('on_init Test screen');
         return defaultPromise();
-    }
+    },
+		aliases: [],
+		events: ['network', 'object_and_scene_detection', 'search_multiple_users_in_image_v2']
 };
 
 const isEmpty = value => {
